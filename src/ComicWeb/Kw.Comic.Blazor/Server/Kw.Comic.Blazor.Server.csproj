@@ -1,0 +1,32 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <UserSecretsId>4a1191c3-3e43-4b21-9fa1-157cc703be93</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.15.0-rc1" />
+    <PackageReference Include="Grpc.AspNetCore.Server" Version="2.35.0" />
+    <PackageReference Include="Grpc.AspNetCore.Web" Version="2.35.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.35.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="LruCacheNet" Version="1.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="5.0.3" />
+    <PackageReference Include="Kw.Core" Version="1.0.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Kw.Comic\Kw.Comic.csproj" />
+    <ProjectReference Include="..\Client\Kw.Comic.Blazor.Client.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="..\..\protos\analysis.proto" GrpcServices="Server" />
+  </ItemGroup>
+  <ProjectExtensions><VisualStudio><UserProperties properties_4launchsettings_1json__JsonSchema="" /></VisualStudio></ProjectExtensions>
+
+
+</Project>

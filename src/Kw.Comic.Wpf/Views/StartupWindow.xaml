@@ -1,0 +1,158 @@
+﻿<fw:AcrylicWindow x:Class="Kw.Comic.Wpf.Views.StartupWindow"
+                  xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                  xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                  xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                  xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                  xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+                  xmlns:visio="clr-namespace:Kw.Visio.Controls;assembly=Kw.Visio"
+                  xmlns:vm="clr-namespace:Kw.Comic.Wpf.ViewModels"
+                  xmlns:cm="clr-namespace:Kw.Core.Commands;assembly=Kw.Core"
+                  xmlns:conv="clr-namespace:Kw.Comic.Wpf.Converters"
+                  xmlns:v="clr-namespace:Kw.Visio;assembly=Kw.Visio"
+                  xmlns:mto="http://metro.mahapps.com/winfx/xaml/controls"
+                  mc:Ignorable="d"
+                  fw:AcrylicWindow.AcrylicWindowStyle="NoIcon"
+                  fw:AcrylicWindow.NoiseOpacity="0"
+                  fw:AcrylicWindow.TitleBarMode="{Binding ExtensionToTitle,Converter={StaticResource TitleBarModeConverter}}"
+                  fw:AcrylicWindow.ExtendViewIntoTitleBar="{Binding ExtensionToTitle}"
+                  Height="450" Width="800"
+                  Background="#55123456"
+                  d:DataContext="{x:Type vm:StartupViewModel}"
+                  WindowStartupLocation="CenterScreen">
+    <fw:AcrylicWindow.InputBindings>
+        <KeyBinding Key="Tab" Modifiers="Ctrl" Command="{Binding UpdateCommandVisibilityCommand}"/>
+    </fw:AcrylicWindow.InputBindings>
+    <Grid VerticalAlignment="Center" fw:PointerTracker.Enabled="True">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <TextBlock HorizontalAlignment="Center" 
+                           FontSize="24"
+                           Margin="0,0,0,100"
+                           Text="{Binding Tip}">
+        </TextBlock>
+        <visio:ActiveInputBox x:Name="KeyInput"
+                            VerticalAlignment="Center"
+                            MaxWidth="650"
+                            Margin="6,0"
+                            Grid.Row="0"
+                            InputText="{Binding Address,Mode=TwoWay}"
+                            ButtonCommand="{Binding LoadCommand}"
+                            InputIsEnable="{Binding Enable}"
+                            Visibility="{Binding InputVisibility}">
+            <visio:ActiveInputBox.InputBindings>
+                <KeyBinding Key="W" Modifiers="Ctrl" Command="{Binding DownSeachCommand}"/>
+                <KeyBinding Key="S" Modifiers="Ctrl" Command="{Binding UpSeachCommand}"/>
+                <KeyBinding Key="Q" Modifiers="Ctrl" Command="{Binding LeftSourceCommand}"/>
+                <KeyBinding Key="E" Modifiers="Ctrl" Command="{Binding RightSourceCommand}"/>
+            </visio:ActiveInputBox.InputBindings>
+            <visio:ActiveInputBox.ButtonContent>
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE705;"/>
+            </visio:ActiveInputBox.ButtonContent>
+        </visio:ActiveInputBox>
+        <fw:AcrylicPopup PlacementTarget="{Binding ElementName=KeyInput}"
+                         Placement="Bottom"
+                         MaxHeight="300"
+                         Width="{Binding ElementName=KeyInput,Path=ActualWidth}"
+                         IsOpen="{Binding ElementName=KeyInput,Path=InputIsFocused,Mode=OneWay}">
+            <fw:DropShadowPanel Background="Transparent">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Margin="6,3">
+                        <TextBlock HorizontalAlignment="Left">
+                            <Run Text="正在选用"/>
+                            <Run Text=" - "/>
+                            <Run Text="{Binding CurrentSnapshot.Name}" FontWeight="Bold"/>
+                        </TextBlock>
+                        <TextBlock HorizontalAlignment="Center">
+                            Ctrl+WS 选取漫画 Ctrl+QE选取源
+                        </TextBlock>
+                        <TextBlock HorizontalAlignment="Right">
+                            <Run Text="源: "/>
+                            <Run Text="{Binding CurrentSource.Name}" FontWeight="Bold"/>
+                        </TextBlock>
+                    </Grid>
+                    <ListView Background="Gray"
+                              Grid.Row="1"
+                              BorderThickness="0"
+                              ItemsSource="{Binding Snapshots}"
+                              SelectedItem="{Binding CurrentSnapshot,Mode=TwoWay}">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Orientation="Vertical"
+                                                    HorizontalAlignment="Stretch"
+                                                    VerticalAlignment="Stretch"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid ToolTip="{Binding CurrentSource.TargetUrl}">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="60"/>
+                                        <ColumnDefinition Width="*"></ColumnDefinition>
+                                    </Grid.ColumnDefinitions>
+                                    <Image Source="{Binding ImageUri}"
+                                           Margin="0,0,6,0"
+                                           ToolTip="{Binding ImageUri}"
+                                           RenderOptions.BitmapScalingMode="NearestNeighbor"/>
+                                    <StackPanel Orientation="Vertical" Grid.Column="1">
+                                        <TextBlock TextWrapping="Wrap">
+                                        <Run Text="{Binding Name}" FontWeight="Bold"/>
+                                        <Run Text="("/>
+                                        <Run Text="{Binding Author}" FontWeight="Bold"/>
+                                        <Run Text=")"/>
+                                        </TextBlock>
+                                        <TextBlock  TextWrapping="Wrap"
+                                                Text="{Binding Descript}"
+                                                ToolTip="{Binding Descript}"/>
+                                    </StackPanel>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                        <ListView.ItemContainerStyle>
+                            <Style TargetType="ListViewItem">
+                                <Setter Property="Background" Value="Transparent"></Setter>
+                                <Setter Property="Padding" Value="6"></Setter>
+                                <Setter Property="BorderThickness" Value="0"></Setter>
+                                <Style.Triggers>
+                                    <Trigger Property="IsSelected" Value="True">
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Setter Property="Background" Value="DarkGray"></Setter>
+                                    </Trigger>
+                                    <Trigger Property="IsMouseOver" Value="True">
+                                        <Setter Property="BorderThickness" Value="0"/>
+                                        <Setter Property="Background" Value="DarkGray"></Setter>
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </ListView.ItemContainerStyle>
+                    </ListView>
+                </Grid>
+            </fw:DropShadowPanel>
+        </fw:AcrylicPopup>
+
+        <Border Grid.Row="0" VerticalAlignment="Center" Padding="12,3" Visibility="{Binding ExecuteVisibility}">
+            <ProgressBar Maximum="{Binding TotalChapter}"
+                                 Value="{Binding ChapterWithPages.Count, Mode=OneWay}"
+                                 MaxWidth="500"/>
+        </Border>
+        <Border Grid.Row="1" Visibility="{Binding ExecuteVisibility}">
+            <Button Width="100" 
+                    Padding="3"
+                    BorderBrush="Transparent"
+                    Background="Gray"
+                    Foreground="Red"
+                    v:ButtonElement.BorderRadius="6"
+                    fw:RevealElement.MouseOverForeground="Red"
+                    fw:RevealElement.MouseOverBackground="Gray"
+                    Command="{Binding CancelCommand}"
+                    Style="{StaticResource Kw.Visio.ButtonAccentRevealStyle}">
+                <TextBlock FontFamily="Segoe MDL2 Assets" Text="&#xE106;"/>
+            </Button>
+        </Border>
+    </Grid>
+</fw:AcrylicWindow>

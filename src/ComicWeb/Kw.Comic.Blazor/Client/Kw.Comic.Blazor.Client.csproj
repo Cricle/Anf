@@ -1,0 +1,42 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net5.0</TargetFramework>
+    <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
+    <DefineConstants>INERNAL_INFO</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Grpc.Net.Client" Version="2.35.0" />
+    <PackageReference Include="Grpc.Net.Client.Web" Version="2.35.0" />
+    <PackageReference Include="Google.Protobuf" Version="3.15.0-rc1" />
+    <!--<PackageReference Include="Microsoft.AspNetCore.Blazor.Mono" Version="3.2.*" />-->
+    <PackageReference Include="Kw.Core" Version="1.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="5.0.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="5.0.3" PrivateAssets="all" />
+    <PackageReference Include="System.Net.Http.Json" Version="5.0.0" />
+    <PackageReference Include="Grpc.Tools" Version="2.35.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Protobuf Include="..\..\protos\analysis.proto" GrpcServices="Client" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="..\..\..\Kw.Comic\Engine\ChapterWithPage.cs" Link="Models\ChapterWithPage.cs"></Compile>
+    <Compile Include="..\..\..\Kw.Comic\ComicChapter.cs" Link="Models\ComicChapter.cs"></Compile>
+    <Compile Include="..\..\..\Kw.Comic\ComicPage.cs" Link="Models\ComicPage.cs"></Compile>
+    <Compile Include="..\..\..\Kw.Comic\ComicRef.cs" Link="Models\ComicRef.cs"></Compile>
+    <Compile Include="..\Server\Models\AnalysisResult.cs" Link="Models\AnalysisResult.cs"></Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ServiceWorker Include="wwwroot\service-worker.js" PublishedContent="wwwroot\service-worker.published.js" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+</Project>
