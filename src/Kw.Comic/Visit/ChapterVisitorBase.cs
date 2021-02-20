@@ -57,6 +57,7 @@ namespace Kw.Comic.Visit
             await locker.WaitAsync();
             if (IsLoaded)
             {
+                locker.Release();
                 return;
             }
             try
@@ -74,5 +75,10 @@ namespace Kw.Comic.Visit
             }
         }
         protected abstract Task OnLoadAsync(Stream stream);
+        public override string ToString()
+        {
+            return $"{{Page:{Page.Name} Loaded:{IsLoaded}}}";
+        }
+
     }
 }

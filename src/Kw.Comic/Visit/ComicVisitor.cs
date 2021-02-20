@@ -48,6 +48,7 @@ namespace Kw.Comic.Visit
             await locker.WaitAsync();
             if (IsLoaded)
             {
+                locker.Release();
                 return;
             }
             try

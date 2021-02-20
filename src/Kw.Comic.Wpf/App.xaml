@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Kw.Comic.Wpf" 
              xmlns:conv="clr-namespace:Kw.Comic.Wpf.Converters"
-             StartupUri="Views/StartupWindow.xaml">
+             StartupUri="Views/MainWindow.xaml">
     <Application.Resources>
         <ResourceDictionary>
             <ResourceDictionary.MergedDictionaries>

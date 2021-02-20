@@ -37,10 +37,6 @@ namespace Kw.Comic.Visit
             mem.Seek(0, SeekOrigin.Begin);
             Stream = mem;
         }
-        public override string ToString()
-        {
-            return $"{{Page:{Page.Name} Loaded:{IsLoaded}}}";
-        }
         private string GetDebuggerDisplay()
         {
             return ToString();
