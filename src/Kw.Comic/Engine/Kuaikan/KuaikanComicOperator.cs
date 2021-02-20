@@ -64,6 +64,7 @@ namespace Kw.Comic.Engine.Kuaikan
                 Chapters = caps.ToArray(),
                 Name = title,
                 Descript = desc?.InnerText,
+                 ComicUrl=targetUrl,
                 ImageUrl = img?.Attributes["src"]?.Value
             };
         }

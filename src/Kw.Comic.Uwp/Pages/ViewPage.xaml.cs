@@ -53,9 +53,10 @@ namespace Kw.Comic.Uwp.Pages
             base.OnNavigatedTo(e);
         }
 
-        private void ListView_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        private void FlipView_PointerPressed(object sender, PointerRoutedEventArgs e)
         {
-
+            vm.ControlVisibility = vm.ControlVisibility == Visibility.Visible ?
+                 Visibility.Collapsed : Visibility.Visible;
         }
     }
 }

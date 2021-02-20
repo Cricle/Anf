@@ -8,6 +8,8 @@
 #endif 
      class ComicInfo
     {
+        public string ComicUrl { get; set; }
+
         public string Name { get; set; }
 
         public string Descript { get; set; }

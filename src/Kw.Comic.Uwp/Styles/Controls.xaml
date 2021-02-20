@@ -167,7 +167,7 @@
                                     </NavigationViewList>
                                     <Button x:Name="TopNavOverflowButton" Content="More" Grid.Column="4" Style="{StaticResource NavigationViewOverflowButtonStyleWhenPaneOnTop}" Visibility="{Binding TemplateSettings.OverflowButtonVisibility, RelativeSource={RelativeSource Mode=TemplatedParent}}">
                                         <Button.Flyout>
-                                            <Flyout Placement="Bottom" ShouldConstrainToRootBounds="False">
+                                            <Flyout Placement="Bottom">
                                                 <Flyout.FlyoutPresenterStyle>
                                                     <Style TargetType="FlyoutPresenter">
                                                         <Setter Property="Padding" Value="0,8"/>

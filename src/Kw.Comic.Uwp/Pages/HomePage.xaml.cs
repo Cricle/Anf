@@ -35,5 +35,20 @@ namespace Kw.Comic.Uwp.Pages
         {
             await vm.SearchAsync();
         }
+
+        private void OpenMenu_Click(object sender, RoutedEventArgs e)
+        {
+            vm.OpenSource();
+        }
+
+        private void CopyMenu_Click(object sender, RoutedEventArgs e)
+        {
+            vm.CopySource();
+        }
+
+        private void ViewMenu_Click(object sender, RoutedEventArgs e)
+        {
+            vm.ViewComic();
+        }
     }
 }

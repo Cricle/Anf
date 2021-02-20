@@ -72,6 +72,7 @@ namespace Kw.Comic.Engine.Dm5
             {
                 Chapters = caps.ToArray(),
                 Descript = descBlock?.InnerText,
+                 ComicUrl=targetUrl,
                 ImageUrl = imgBlock?.Attributes["src"]?.Value,
                 Name = titleBlock?.Trim()
             };

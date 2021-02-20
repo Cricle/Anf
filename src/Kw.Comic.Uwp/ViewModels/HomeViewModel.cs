@@ -1,4 +1,5 @@
 ﻿using GalaSoft.MvvmLight;
+using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
 using Kw.Comic.Uwp.Managers;
 using Kw.Comic.Uwp.Models;
@@ -11,8 +12,12 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Input;
+using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
+using Windows.UI.Xaml.Controls;
 
 namespace Kw.Comic.Uwp.ViewModels
 {
@@ -36,6 +41,9 @@ namespace Kw.Comic.Uwp.ViewModels
             this.briefRemarkManager = briefRemarkManager;
             this.searchEngine = searchEngine;
             ComicSnapshots = new ObservableCollection<ComicSnapshotInfo>();
+            CopySourceCommand = new RelayCommand(CopySource);
+            OpenSourceCommand = new RelayCommand(OpenSource);
+            ViewComicCommand = new RelayCommand(ViewComic);
         }
         private string keyword;
         private bool canSearch=true;
@@ -75,7 +83,7 @@ namespace Kw.Comic.Uwp.ViewModels
 
         private void CurrentSnapshot_SourceChanged(ComicSnapshotInfo arg1, ComicSourceInfo arg2)
         {
-            //TODO:
+            ViewComic();
         }
 
         public bool CanSearch
@@ -93,7 +101,38 @@ namespace Kw.Comic.Uwp.ViewModels
             get { return keyword; }
             set => Set(ref keyword, value);
         }
+
+
+        public ICommand CopySourceCommand { get; }
+        public ICommand OpenSourceCommand { get; }
+        public ICommand ViewComicCommand { get; }
+
         public ObservableCollection<ComicSnapshotInfo> ComicSnapshots { get; }
+
+        public void ViewComic()
+        {
+            if (CurrentSource!=null&& CurrentSource.CanParse && Window.Current.Content is Frame frame)
+            {
+                frame.Navigate(typeof(ViewPage), CurrentSource.Source.TargetUrl);
+            }
+        }
+
+        public void CopySource()
+        {
+            if (CurrentSource != null)
+            {
+                var dp = new DataPackage();
+                dp.SetText(CurrentSource.Source.TargetUrl);
+                Clipboard.SetContent(dp);
+            }
+        }
+        public async void OpenSource()
+        {
+            if (CurrentSource != null)
+            {
+                await Launcher.LaunchUriAsync(new Uri(CurrentSource.Source.TargetUrl));
+            }
+        }
 
         public async void LoopUpdateHitokoto()
         {

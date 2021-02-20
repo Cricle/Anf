@@ -19,7 +19,8 @@
     </Page.Resources>
     <Grid>
         <FlipView ItemsSource="{Binding Watcher.PageInfos}"
-                  SelectedItem="{Binding Watcher.CurrentPageInfo,Mode=TwoWay}">
+                  SelectedItem="{Binding Watcher.CurrentPageInfo,Mode=TwoWay}"
+                  PointerPressed="FlipView_PointerPressed">
             <FlipView.ItemTemplate>
                 <DataTemplate x:DataType="m:ComicPageInfo">
                     <Grid>
@@ -71,7 +72,7 @@
                      Foreground="AliceBlue"
                      Maximum="{Binding Watcher.TotalPage}"
                      Value="{Binding Watcher.PageIndex}"/>
-        <Grid>
+        <Grid Visibility="{Binding ControlVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
@@ -107,12 +108,15 @@
                                Height="36">
                             <Image.ContextFlyout>
                                 <MenuFlyout>
-                                    <MenuFlyoutItem Text="打开">
+                                    <MenuFlyoutItem Text="打开"
+                                                    Command="{Binding OpenComicCommand}">
                                         <MenuFlyoutItem.Icon>
                                             <icon:PathIconJamIcons Kind="Link"/>
                                         </MenuFlyoutItem.Icon>
                                     </MenuFlyoutItem>
-                                    <MenuFlyoutItem Text="导出">
+                                    <MenuFlyoutItem x:Name="ExportMenu" 
+                                                    Text="导出"
+                                                    Command="{Binding ExportCommand}">
                                         <MenuFlyoutItem.Icon>
                                             <icon:PathIconJamIcons Kind="Camera"/>
                                         </MenuFlyoutItem.Icon>
@@ -135,7 +139,6 @@
                                       HorizontalScrollBarVisibility="Auto">
                             <ListView ItemsSource="{Binding ComicVisitors}"
                                       SelectedItem="{Binding CurrentComicVisitor,Mode=TwoWay}"
-                                      SelectionChanged="ListView_SelectionChanged"
                                       VerticalAlignment="Center">
                                 <ListView.ItemsPanel>
                                     <ItemsPanelTemplate>

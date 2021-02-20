@@ -20,8 +20,8 @@ namespace Kw.Comic.Uwp.ViewModels
             MenuItems = new ObservableCollection<ComicMenuItem>
             {
                 new ComicMenuItem(new PathIconJamIcons{Kind= PackIconJamIconsKind.Home},"Home",typeof(HomePage)),
-                new ComicMenuItem(new PathIconJamIcons{Kind= PackIconJamIconsKind.Box},"Bookshelf",typeof(BookshelfPage)),
-                new ComicMenuItem(new PathIconJamIcons{Kind= PackIconJamIconsKind.Download},"Download",typeof(DownloadPage)),
+                //new ComicMenuItem(new PathIconJamIcons{Kind= PackIconJamIconsKind.Box},"Bookshelf",typeof(BookshelfPage)),
+                //new ComicMenuItem(new PathIconJamIcons{Kind= PackIconJamIconsKind.Download},"Download",typeof(DownloadPage)),
             };
             MenuVisitStack = new Stack<ComicMenuItem>();
             ComicViewManager = UwpAppEngine.Instance.GetRequiredService<ComicViewManager>();

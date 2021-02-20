@@ -7,12 +7,16 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Windows.Storage;
+using Windows.Storage.Pickers;
 using Windows.Storage.Streams;
+using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media.Imaging;
@@ -60,10 +64,20 @@ namespace Kw.Comic.Uwp.ViewModels
             NextChapterCommand = new RelayCommand(NextChapter);
             PrevChapterCommand = new RelayCommand(PrevChapter);
             GoBackCommand = new RelayCommand(GoBack);
+            ExportCommand = new RelayCommand(ExportComicImage);
+            OpenComicCommand = new RelayCommand(OpenComic);
         }
         private readonly IHttpClientFactory httpClientFactory;
         private readonly IServiceScope scope;
+        private InMemoryRandomAccessStream convertStream;
 
+        private Visibility controlVisibility= Visibility.Collapsed;
+
+        public Visibility ControlVisibility
+        {
+            get { return controlVisibility; }
+            set => Set(ref controlVisibility, value);
+        }
         private BitmapImage converImage;
         private ComicVisitor currentComicVisitor;
 
@@ -94,6 +108,15 @@ namespace Kw.Comic.Uwp.ViewModels
         public ICommand NextChapterCommand { get; }
         public ICommand PrevChapterCommand { get; }
         public ICommand GoBackCommand { get; }
+        public ICommand ExportCommand { get; }
+        public ICommand OpenComicCommand { get; }
+
+        public async void OpenComic()
+        {
+            var uri = new Uri(ComicEntity.ComicUrl);
+
+            await Launcher.LaunchUriAsync(uri);
+        }
 
         public void NextChapter()
         {
@@ -118,6 +141,31 @@ namespace Kw.Comic.Uwp.ViewModels
                 frame.GoBack();
             }
         }
+        private readonly HashSet<char> unsuoop = new HashSet<char>(Path.GetInvalidFileNameChars());
+        public async void ExportComicImage()
+        {
+            if (convertStream==null)
+            {
+                return;
+            }
+            var picker = new FileSavePicker();
+            picker.DefaultFileExtension = ".png";
+            picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
+            picker.FileTypeChoices.Add("Images", new string[] { ".png" });
+            var name = new string(Watcher.Comic.Name.Select(x => unsuoop.Contains(x) ? '_' : x).ToArray());
+            picker.SuggestedFileName = $"{name}.png";
+            var file =await picker.PickSaveFileAsync();
+            if (file!=null)
+            {
+                using (var s = await file.OpenAsync(FileAccessMode.ReadWrite))
+                using (var fs = s.AsStreamForWrite())
+                {
+                    convertStream.Seek(0);
+                    var convers = convertStream.AsStreamForRead();
+                    await convers.CopyToAsync(fs);
+                }
+            }
+        }
 
         private async void InitConverImage()
         {
@@ -125,13 +173,13 @@ namespace Kw.Comic.Uwp.ViewModels
             {
                 using (var client = new Windows.Web.Http.HttpClient())
                 using (var str = await client.GetAsync(new Uri(Watcher.Comic.ImageUrl)))
-                using (var mem = new InMemoryRandomAccessStream())
                 {
+                    convertStream = new InMemoryRandomAccessStream();
                     var buffer=await str.Content.ReadAsBufferAsync();
-                    await mem.WriteAsync(buffer);
+                    await convertStream.WriteAsync(buffer);
                     var bm = new BitmapImage();
-                    mem.Seek(0);
-                    await bm.SetSourceAsync(mem);
+                    convertStream.Seek(0);
+                    await bm.SetSourceAsync(convertStream);
                     ConverImage = bm;
                 }
             }
@@ -144,6 +192,8 @@ namespace Kw.Comic.Uwp.ViewModels
         public void Dispose()
         {
             scope.Dispose();
+            convertStream.Dispose();
+            convertStream = null;
         }
     }
 }

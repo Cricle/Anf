@@ -92,6 +92,7 @@ namespace Kw.Comic.Engine.Dmzj
             {
                 Chapters = chartps.ToArray(),
                 Descript = desc?.InnerText,
+                 ComicUrl=targetUrl,
                 ImageUrl = img?.Attributes["src"]?.Value,
                 Name = title?.Trim()
             };

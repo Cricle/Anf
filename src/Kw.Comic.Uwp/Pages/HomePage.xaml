@@ -29,7 +29,7 @@
         <AutoSuggestBox x:Name="SearchBox" 
                         MaxWidth="300" 
                         Margin="0,20"
-                        PlaceholderText="keywork"
+                        PlaceholderText="输入关键字以搜索"
                         IsEnabled="{Binding CanSearch}"
                         Text="{Binding Keyword,Mode=TwoWay}"
                         QueryIcon="Find"
@@ -52,18 +52,24 @@
                 </ListView.ItemsPanel>
                 <ListView.ContextFlyout>
                     <MenuFlyout>
-                        <MenuFlyoutItem Text="观看"
-                                        IsEnabled="{Binding CanParse,Mode=OneTime}">
+                        <MenuFlyoutItem x:Name="ViewMenu"
+                                        Text="观看"
+                                        IsEnabled="{Binding CanParse,Mode=OneTime}"
+                                        Click="ViewMenu_Click">
                             <MenuFlyoutItem.Icon>
                                 <icon:PathIconJamIcons Kind="PieChartAlt" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="复制">
+                        <MenuFlyoutItem x:Name="CopyMenu"
+                                        Text="复制"
+                                        Click="CopyMenu_Click">
                             <MenuFlyoutItem.Icon>
                                 <icon:PathIconJamIcons Kind="Attachment" />
                             </MenuFlyoutItem.Icon>
                         </MenuFlyoutItem>
-                        <MenuFlyoutItem Text="打开">
+                        <MenuFlyoutItem x:Name="OpenMenu"
+                                        Text="打开"
+                                        Click="OpenMenu_Click">
                             <MenuFlyoutItem.Icon>
                                 <icon:PathIconJamIcons Kind="Cloud" />
                             </MenuFlyoutItem.Icon>
