@@ -1,5 +1,7 @@
-﻿using Kw.Core;
+﻿using Kw.Comic.Wpf.Managers;
+using Kw.Core;
 using Kw.Core.Commands;
+using Kw.Visio.Selectors;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
@@ -16,12 +18,14 @@ namespace Kw.Comic.Wpf
             base.Register(context);
             context.Services.AddHttpClient();
             context.Services.AddSingleton<ICommandManager, CommandManager>();
+            context.Services.AddSingleton(new MainNavigationService());
         }
         public override Task ReadyAsync(IReadyContext context)
         {
             var cm = context.GetRequiredService<ICommandManager>();
             var builder=cm.Root.GetBuilder();
             builder.AddAssembly(GetType().Assembly, new ProviderInstanceFactory());
+
             return base.ReadyAsync(context);
         }
     }

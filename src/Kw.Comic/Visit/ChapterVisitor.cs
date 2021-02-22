@@ -8,12 +8,7 @@ namespace Kw.Comic.Visit
     [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
     public class ChapterVisitor : ChapterVisitorBase, IStreamVisitor
     {
-
         private Stream stream;
-
-        public ChapterVisitor()
-        {
-        }
 
         public ChapterVisitor(ComicPage page, HttpClient httpClient) : base(page, httpClient)
         {

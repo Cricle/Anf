@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Kw.Comic.Wpf.Views;
+using MahApps.Metro.Controls;
+using System;
 using System.Collections.Generic;
 using System.Configuration;
 using System.Data;

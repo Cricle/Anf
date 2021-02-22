@@ -15,11 +15,6 @@ namespace Kw.Comic.Visit
 
         private bool isLoaded;
 
-
-        public ChapterVisitorBase()
-        {
-        }
-
         public ChapterVisitorBase(ComicPage page,HttpClient httpClient)
         {
             this.httpClient = httpClient;

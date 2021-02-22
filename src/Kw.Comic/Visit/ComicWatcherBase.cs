@@ -135,11 +135,11 @@ namespace Kw.Comic.Visit
         protected abstract Task<PageCursorBase<T>> MakePageCursorAsync(int i, HttpClient httpClient);
         protected abstract Task<PageCursorBase<T>> MakePageCursorAsync(HttpClient httpClient);
 
-
         private async Task LoadChapterAsync()
         {
             var old = PageCursor;
-            PageCursor = await CoreLoadChapterAsync(ChapterCursor.Index, ForceNewPageCursor, CachePageCursor);
+            var idx = ChapterCursor.Index < 0 ? 0 : ChapterCursor.Index;
+            PageCursor = await CoreLoadChapterAsync(idx, ForceNewPageCursor, CachePageCursor);
             await OnLoadChapterAsync(old, PageCursor);
             if (PageCursor != null)
             {

@@ -20,10 +20,6 @@ namespace Kw.Comic.Uwp.Managers
             private set => RaisePropertyChanged(ref stream, value);
         }
 
-        public UwpChapterVisitor()
-        {
-        }
-
         public UwpChapterVisitor(ComicPage page, HttpClient httpClient) : base(page, httpClient)
         {
         }

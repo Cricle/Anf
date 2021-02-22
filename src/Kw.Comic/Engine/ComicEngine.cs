@@ -40,13 +40,19 @@ namespace Kw.Comic.Engine
         }
         public IComicSourceCondition GetComicSourceProviderType(string targetUri)
         {
-            var ctx = new ComicSourceContext(targetUri);
-            return CoreGetComicSourceProviderType(ctx);
+            return GetComicSourceProviderType(new Uri(targetUri));
         }
         public IComicSourceCondition GetComicSourceProviderType(Uri targetUri)
         {
-            var ctx = new ComicSourceContext(targetUri);
-            return CoreGetComicSourceProviderType(ctx);
+            try
+            {
+                var ctx = new ComicSourceContext(targetUri);
+                return CoreGetComicSourceProviderType(ctx);
+            }
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

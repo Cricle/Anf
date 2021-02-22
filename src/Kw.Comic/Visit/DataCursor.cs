@@ -36,7 +36,10 @@ namespace Kw.Comic.Visit
         public int Index
         {
             get => index;
-            private set => RaisePropertyChanged(ref index, value);
+            private set
+            {
+                RaisePropertyChanged(ref index, value);
+            }
         }
 
         public bool IsFirst => index == 0;
@@ -75,8 +78,9 @@ namespace Kw.Comic.Visit
             {
                 await LoadIndexAsync(idx);
                 Index = idx;
-                Current = Datas[idx];
-                IndexChanged?.Invoke(this, idx);
+                Current = this[idx];
+                RaisePropertyChanged(nameof(Index));
+                IndexChanged?.Invoke(this, i);
                 return true;
             }
             return false;

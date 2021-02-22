@@ -2,9 +2,11 @@
 using Kw.Comic.Engine;
 using Kw.Comic.Managers;
 using Kw.Comic.Visit;
+using Kw.Comic.Wpf.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -34,16 +36,47 @@ namespace Kw.Comic.Wpf.Managers
             NextPageCommand = new RelayCommand(() => _ = NextPageAsync());
             PrevPageCommand = new RelayCommand(() => _ = PrevPageAsync());
 
-            PageCache = new PageCache(10);
             ChapterCacher = new NormalComicChapterCacher<ChapterVisitor>(10);
+            PageInfos = new ObservableCollection<ComicPageInfo>();
         }
 
-        private ImageSource comicImage;
+        private ComicPageInfo currentPageInfo;
+        private int pageIndex;
+        private int totalPage;
 
-        public ImageSource ComicImage
+        public int TotalPage
         {
-            get { return comicImage; }
-            set => RaisePropertyChanged(ref comicImage, value);
+            get { return totalPage; }
+            private set => RaisePropertyChanged(ref totalPage, value);
+        }
+
+        public int PageIndex
+        {
+            get { return pageIndex; }
+            private set => RaisePropertyChanged(ref pageIndex, value);
+        }
+
+        public ComicPageInfo CurrentPageInfo
+        {
+            get { return currentPageInfo; }
+            set
+            {
+                RaisePropertyChanged(ref currentPageInfo, value);
+                if (value != null)
+                {
+                    _ = value.LoadAsync();
+                    PageIndex = PageInfos.IndexOf(value);
+                    if (PageIndex != -1)
+                    {
+                        var preLoadCount = Math.Max(0, PreLoadCount);
+                        for (int i = PageIndex; i < PageInfos.Count && preLoadCount > 0; i++)
+                        {
+                            _ = PageInfos[i].LoadAsync();
+                            preLoadCount--;
+                        }
+                    }
+                }
+            }
         }
 
         public IServiceScope ServiceScope { get; }
@@ -55,9 +88,12 @@ namespace Kw.Comic.Wpf.Managers
         public ICommand NextPageCommand { get; }
         public ICommand PrevPageCommand { get; }
 
-        public PageCache PageCache { get; }
+        public int PreLoadCount { get; set; } = 3;
 
-        protected override async Task OnLoadChapterAsync(PageCursorBase<ChapterVisitor> old, PageCursorBase<ChapterVisitor> @new)
+
+        public ObservableCollection<ComicPageInfo> PageInfos { get; }
+
+        protected override Task OnLoadChapterAsync(PageCursorBase<ChapterVisitor> old, PageCursorBase<ChapterVisitor> @new)
         {
             if (old != null)
             {
@@ -67,42 +103,21 @@ namespace Kw.Comic.Wpf.Managers
             {
                 @new.IndexChanged += Old_IndexChanged;
             }
-            if (@new.Index == -1)
+            CurrentPageInfo = null;
+            PageInfos.Clear();
+            foreach (var item in @new.Datas)
             {
-                await @new.LoadIndexAsync(0);
+                PageInfos.Add(new ComicPageInfo(item));
             }
-        }
-        private BitmapImage Update(Stream stream)
-        {
-            stream.Seek(0, SeekOrigin.Begin);
-            var bitmap = new BitmapImage();
-            bitmap.BeginInit();
-            bitmap.StreamSource = stream;
-            bitmap.CacheOption = BitmapCacheOption.OnLoad;
-            bitmap.EndInit();
-            ComicImage = bitmap;
-            return bitmap;
+            TotalPage = PageInfos.Count;
+            CurrentPageInfo = PageInfos.FirstOrDefault();
+            return Task.CompletedTask;
         }
         private void Old_IndexChanged(DataCursor<ChapterVisitor> arg1, int arg2)
         {
             var chp = arg1.Current;
-            if (chp != null)
-            {
-                var pc = PageCache;
-                if (pc != null)
-                {
-                    var cur = new PageCursorIndex(ChapterCursor.Index, arg2);
-                    ComicImage = PageCache.GetCache(cur);
-                }
-                var val = Update(chp.Stream);
-                if (pc != null)
-                {
-                    var cur = new PageCursorIndex(ChapterCursor.Index, arg2);
-                    PageCache.SetCache(cur, val);
-                }
-            }
+            CurrentPageInfo = PageInfos.FirstOrDefault(x => x.Visitor == chp);
         }
-
         public void Dispose()
         {
             ServiceScope?.Dispose();

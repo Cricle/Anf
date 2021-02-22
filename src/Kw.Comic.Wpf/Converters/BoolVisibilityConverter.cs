@@ -9,24 +9,53 @@ using System.Windows.Data;
 
 namespace Kw.Comic.Wpf.Converters
 {
-    public class BoolVisibilityConverter : IValueConverter
+    public class BoolRevConverter:IValueConverter
     {
-        public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
+        public object Convert(object value, Type targetType, object parameter, CultureInfo language)
         {
             if (value is bool b)
             {
-                if (parameter?.ToString()=="rev")
+                return !b;
+            }
+            return null;
+        }
+
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo language)
+        {
+            if (value is bool b)
+            {
+                return !b;
+            }
+            return null;
+        }
+    }
+    public class BoolVisibilityConverter:IValueConverter
+    {
+        public object Convert(object value, Type targetType, object parameter, CultureInfo language)
+        {
+            if (value is bool b)
+            {
+                if (parameter?.ToString() == "rev")
                 {
                     b = !b;
                 }
                 return b ? Visibility.Visible : Visibility.Collapsed;
             }
-            return Binding.DoNothing;
+            return null;
         }
 
-        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo culture)
+        public object ConvertBack(object value, Type targetType, object parameter, CultureInfo language)
         {
-            throw new NotImplementedException();
+            if (value is Visibility visibility)
+            {
+                var r = visibility == Visibility.Visible;
+                if (parameter?.ToString()=="rev")
+                {
+                    r = !r;
+                }
+                return r;
+            }
+            return null;
         }
     }
 }
