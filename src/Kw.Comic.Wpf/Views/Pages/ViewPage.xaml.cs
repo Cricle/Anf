@@ -60,7 +60,7 @@ namespace Kw.Comic.Wpf.Views.Pages
             var rightChapter = new Button
             {
                 Content = new PackIconMaterialLight { Kind = PackIconMaterialLightKind.ArrowRight },
-                Command = vm.PrevChapterCommand
+                Command = vm.NextChapterCommand
             };
             controls.Add(rightChapter);
             val.RightCommands.Add(leftChapter);

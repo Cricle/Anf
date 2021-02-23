@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Visit;
+using Kw.Comic.Wpf.Managers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -15,7 +16,6 @@ namespace Kw.Comic.Wpf.Models
 {
     public class ComicPageInfo : ObservableObject,IDisposable
     {
-
         public ComicPageInfo(ChapterVisitor visitor)
         {
             Visitor = visitor;
@@ -66,22 +66,50 @@ namespace Kw.Comic.Wpf.Models
         {
             semaphoreSlim.Dispose();
         }
-
+        public async Task UnLoadAsync()
+        {
+            if (Image==null)
+            {
+                return;
+            }
+            try
+            {
+                await semaphoreSlim.WaitAsync();
+                if (Image == null)
+                {
+                    return;
+                }
+                Image = null;
+                Done = false;
+            }
+            catch(Exception ex)
+            {
+                Error = true;
+                ErrorMsg = ex.Message;
+            }
+            finally
+            {
+                try
+                {
+                    semaphoreSlim.Release();
+                }
+                catch (Exception) { }
+            }
+        }
         public async Task LoadAsync()
         {
             if (Image != null)
             {
                 return;
             }
-            await semaphoreSlim.WaitAsync();
-            if (Image != null)
-            {
-                semaphoreSlim.Release();
-                return;
-            }
-            Loading = true;
             try
             {
+                await semaphoreSlim.WaitAsync();
+                if (Image != null)
+                {
+                    return;
+                }
+                Loading = true;
                 await Visitor.LoadAsync();
                 Visitor.Stream.Seek(0, SeekOrigin.Begin);
                 var bitmap = new BitmapImage();
@@ -89,6 +117,8 @@ namespace Kw.Comic.Wpf.Models
                 bitmap.CacheOption = BitmapCacheOption.OnLoad;
                 bitmap.StreamSource = Visitor.Stream;
                 bitmap.EndInit();
+                bitmap.Freeze();
+                await Visitor.UnLoadAsync();
                 Image = bitmap;
                 Done = true;
             }
@@ -100,7 +130,11 @@ namespace Kw.Comic.Wpf.Models
             finally
             {
                 Loading = false;
-                semaphoreSlim.Release();
+                try
+                {
+                    semaphoreSlim.Release();
+                }
+                catch (Exception) { }
             }
         }
     }

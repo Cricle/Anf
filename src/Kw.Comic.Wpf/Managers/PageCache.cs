@@ -9,6 +9,7 @@ namespace Kw.Comic.Wpf.Managers
         public PageCache(int max = 5) 
             : base(max)
         {
+
         }
     }
 }

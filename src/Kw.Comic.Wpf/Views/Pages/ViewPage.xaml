@@ -68,9 +68,9 @@
                      Maximum="{Binding Watcher.ChapterCursor.Length}"
                      Value="{Binding Watcher.ChapterCursor.Index,Mode=OneWay}"/>
         <mto:MetroProgressBar VerticalAlignment="Bottom"
-                     Foreground="AliceBlue"
+                    FocusVisualStyle="{x:Null}"
                      Maximum="{Binding Watcher.TotalPage}"
-                     Value="{Binding Watcher.PageIndex,Mode=OneWay}"/>
+                     Value="{Binding Watcher.PageIndex,Mode=TwoWay,UpdateSourceTrigger=LostFocus}"/>
         <Grid>
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
@@ -171,7 +171,8 @@
                 <mto:ProgressRing IsActive="True"
                               Margin="10"
                               Width="44"
-                              Height="44">
+                              Height="44"
+                                  Foreground="White">
                 </mto:ProgressRing>
             </StackPanel>
         </Grid>

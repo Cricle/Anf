@@ -174,6 +174,7 @@ namespace Kw.Comic.Wpf.ViewModels
         public void Dispose()
         {
             scope.Dispose();
+            Watcher.Dispose();
             convertStream.Dispose();
             convertStream = null;
         }

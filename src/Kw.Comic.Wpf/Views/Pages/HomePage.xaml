@@ -67,19 +67,22 @@
                                 Margin="3">
                         <StackPanel.ContextMenu>
                             <ContextMenu>
-                                <MenuItem Header="观看">
+                                <MenuItem Header="观看"
+                                          Command="{Binding WatchCommand}">
                                     <MenuItem.Icon>
                                         <icon:PackIconMaterialLight Kind="{Binding Icon}"
                                                                     Style="{StaticResource Kw.Comic.MetroIcon.Title}"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="复制">
+                                <MenuItem Header="复制"
+                                          Command="{Binding CopyCommand}">
                                     <MenuItem.Icon>
                                         <icon:PackIconMaterialLight Kind="Crop"
                                                                     Style="{StaticResource Kw.Comic.MetroIcon.Title}"/>
                                     </MenuItem.Icon>
                                 </MenuItem>
-                                <MenuItem Header="打开">
+                                <MenuItem Header="打开"
+                                          Command="{Binding OpenCommand}">
                                     <MenuItem.Icon>
                                         <icon:PackIconMaterialLight Kind="Label"
                                                                     Style="{StaticResource Kw.Comic.MetroIcon.Title}"/>
