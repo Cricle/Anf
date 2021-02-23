@@ -43,6 +43,32 @@ namespace Kw.Comic.Visit
             Dispose();
         }
 
+        public async Task UnLoadAsync()
+        {
+            if (!IsLoaded)
+            {
+                return;
+            }
+            await locker.WaitAsync();
+            try
+            {
+                if (!IsLoaded)
+                {
+                    return;
+                }
+                IsLoaded = false;
+                await OnUnLoadAsync();
+            }
+            finally
+            {
+                locker.Release();
+            }
+        }
+        protected virtual Task OnUnLoadAsync()
+        {
+            return Task.CompletedTask;
+        }
+
         public virtual async Task LoadAsync()
         {
             if (IsLoaded)

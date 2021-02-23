@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using System;
+using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
 using System.Threading.Tasks;
@@ -24,6 +25,12 @@ namespace Kw.Comic.Visit
         {
             stream?.Dispose();
             base.Dispose();
+        }
+        protected override Task OnUnLoadAsync()
+        {
+            Stream.Dispose();
+            Stream = null;
+            return Task.CompletedTask;
         }
         protected override async Task OnLoadAsync(Stream stream)
         {

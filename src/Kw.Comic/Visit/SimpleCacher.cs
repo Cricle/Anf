@@ -69,9 +69,9 @@ namespace Kw.Comic.Visit
                 if (SwitchDisposable)
                 {
 
-                    foreach (IDisposable item in slots.Values)
+                    foreach (var item in slots)
                     {
-                        item?.Dispose();
+                        OnSwitch(item.Key,item.Value);
                     }
                 }
                 slots.Clear();
@@ -91,11 +91,7 @@ namespace Kw.Comic.Visit
                 {
                     if (SwitchDisposable)
                     {
-
-                        if (val is IDisposable disposable)
-                        {
-                            disposable.Dispose();
-                        }
+                        OnSwitch(i, val);
                     }
                     slots[i] = cursor;
                 }
@@ -105,13 +101,7 @@ namespace Kw.Comic.Visit
                     if (max != null && slots.Count > max)
                     {
                         var pair= slots.First();
-                        if (SwitchDisposable)
-                        {
-                            if (pair.Value is IDisposable disposable)
-                            {
-                                disposable.Dispose();
-                            }
-                        }
+                        OnSwitch(pair.Key, pair.Value);
                         slots.Remove(pair.Key);
                     }
                     slots.Add(i, cursor);
@@ -120,6 +110,16 @@ namespace Kw.Comic.Visit
             finally
             {
                 LockSlim.ExitWriteLock();
+            }
+        }
+        protected virtual void OnSwitch(TKey key,TValue value)
+        {
+            if (SwitchDisposable)
+            {
+                if (value is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
             }
         }
     }
