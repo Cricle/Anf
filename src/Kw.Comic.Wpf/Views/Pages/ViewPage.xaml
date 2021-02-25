@@ -12,7 +12,7 @@
     <Page.Resources>
         <conv:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
     </Page.Resources>
-    <Grid>
+    <Grid MouseLeftButtonUp="Grid_MouseLeftButtonUp">
         <mto:FlipView ItemsSource="{Binding Watcher.PageInfos}"
                   SelectedItem="{Binding Watcher.CurrentPageInfo,Mode=TwoWay}"
                       IsBannerEnabled="False"
@@ -67,16 +67,22 @@
         <mto:MetroProgressBar VerticalAlignment="Top"
                      Maximum="{Binding Watcher.ChapterCursor.Length}"
                      Value="{Binding Watcher.ChapterCursor.Index,Mode=OneWay}"/>
-        <mto:MetroProgressBar VerticalAlignment="Bottom"
+        <!--<mto:MetroProgressBar VerticalAlignment="Bottom"
                     FocusVisualStyle="{x:Null}"
                      Maximum="{Binding Watcher.TotalPage}"
-                     Value="{Binding Watcher.PageIndex,Mode=TwoWay,UpdateSourceTrigger=LostFocus}"/>
-        <Grid>
+                     Value="{Binding Watcher.PageIndex,Mode=OneWay}"/>-->
+        <Slider VerticalAlignment="Bottom"
+                AutoToolTipPlacement="TopLeft"
+                IsMoveToPointEnabled="True"
+                Maximum="{Binding Watcher.TotalPage}"
+                Style="{DynamicResource MahApps.Styles.Slider.Flat}"
+                Value="{Binding Watcher.CurrentPageIndex,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}"></Slider>
+        <Grid Visibility="{Binding ControlVisibility}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-            <Grid>
+            <Grid Background="{DynamicResource MahApps.Brushes.BackgroundHighlighted}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="Auto"/>

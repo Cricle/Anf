@@ -7,10 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Costura.Fody" Version="5.0.2" Condition="'$(TargetFramework)'=='net461'">
+    <!--<PackageReference Include="Costura.Fody" Version="5.0.2" Condition="'$(TargetFramework)'=='net461'">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+    </PackageReference>-->
     <PackageReference Include="Kw.Core" Version="1.0.0" />
     <PackageReference Include="Kw.Notification" Version="1.0.0" />
     <PackageReference Include="Kw.Services" Version="1.1.0" />

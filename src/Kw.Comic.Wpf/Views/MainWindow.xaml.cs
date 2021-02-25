@@ -27,6 +27,20 @@ namespace Kw.Comic.Wpf.Views
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
+
+
+        public string ParsetUri
+        {
+            get { return (string)GetValue(ParsetUriProperty); }
+            set { SetValue(ParsetUriProperty, value); }
+        }
+
+        // Using a DependencyProperty as the backing store for ParsetUri.  This enables animation, styling, binding, etc...
+        public static readonly DependencyProperty ParsetUriProperty =
+            DependencyProperty.Register("ParsetUri", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
+
+
+
         public MainWindow()
         {
             InitializeComponent();
@@ -38,7 +52,6 @@ namespace Kw.Comic.Wpf.Views
                 RightCommands.ShowLastSeparator = true;
             LeftCommands.ItemsSource = barSer.LeftCommands;
             RightCommands.ItemsSource= barSer.RightCommands;
-
 
             navSer.Frame.NavigationUIVisibility = NavigationUIVisibility.Hidden;
             Content = navSer.Frame;

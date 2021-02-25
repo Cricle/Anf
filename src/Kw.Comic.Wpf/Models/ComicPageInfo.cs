@@ -19,9 +19,11 @@ namespace Kw.Comic.Wpf.Models
         public ComicPageInfo(ChapterVisitor visitor)
         {
             Visitor = visitor;
+            semaphoreSlim = new SemaphoreSlim(1,1);
             LoadCommand = new RelayCommand(() => _ = LoadAsync());
         }
-        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
+
+        private readonly SemaphoreSlim semaphoreSlim;
         private bool loading;
         private BitmapImage image;
         private bool error;
@@ -64,7 +66,7 @@ namespace Kw.Comic.Wpf.Models
 
         public void Dispose()
         {
-            semaphoreSlim.Dispose();
+            Visitor.Dispose();
         }
         public async Task UnLoadAsync()
         {

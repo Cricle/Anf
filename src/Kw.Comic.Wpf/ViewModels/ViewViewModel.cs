@@ -20,7 +20,7 @@ using System.Windows.Media.Imaging;
 
 namespace Kw.Comic.Wpf.ViewModels
 {
-    public class ViewViewModel : ViewModelBase,IDisposable
+    public partial class ViewViewModel : ViewModelBase,IDisposable
     {
         public static async Task<ViewViewModel> FromUriAsync(string uri)
         {
@@ -55,25 +55,34 @@ namespace Kw.Comic.Wpf.ViewModels
                 condition, provider);
             ComicVisitors = Watcher.ChapterCursor.Datas;
             InitConverImage();
-
+            disposables = new List<IDisposable> {  };
             NextChapterCommand = new RelayCommand(NextChapter);
             PrevChapterCommand = new RelayCommand(PrevChapter);
             ExportCommand = new RelayCommand(ExportComicImage);
             OpenComicCommand = new RelayCommand(OpenComic);
+            ToggleControlVisibilityCommand = new RelayCommand(ToggleControlVisibility);
         }
+        private readonly List<IDisposable> disposables;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly IServiceScope scope;
         private MemoryStream convertStream;
+        private BitmapImage converImage;
+        private ComicVisitor currentComicVisitor;
 
-        private Visibility controlVisibility = Visibility.Collapsed;
+        private Visibility controlVisibility = Visibility.Visible;
+        private int currentIndex;
+
+        public int CurrentIndex
+        {
+            get { return currentIndex; }
+            set => Set(ref currentIndex, value);
+        }
 
         public Visibility ControlVisibility
         {
             get { return controlVisibility; }
             set => Set(ref controlVisibility, value);
         }
-        private BitmapImage converImage;
-        private ComicVisitor currentComicVisitor;
 
         public ComicVisitor CurrentComicVisitor
         {
@@ -103,6 +112,13 @@ namespace Kw.Comic.Wpf.ViewModels
         public ICommand PrevChapterCommand { get; }
         public ICommand ExportCommand { get; }
         public ICommand OpenComicCommand { get; }
+        public ICommand ToggleControlVisibilityCommand { get; }
+
+        public void ToggleControlVisibility()
+        {
+            ControlVisibility = ControlVisibility == Visibility.Visible ?
+                 Visibility.Collapsed : Visibility.Visible;
+        }
 
         public void OpenComic()
         {
@@ -176,6 +192,11 @@ namespace Kw.Comic.Wpf.ViewModels
             scope.Dispose();
             Watcher.Dispose();
             convertStream.Dispose();
+            foreach (var item in disposables)
+            {
+                item.Dispose();
+            }
+            disposables.Clear();
             convertStream = null;
         }
     }

@@ -107,7 +107,7 @@ namespace Kw.Comic.Engine.Dm5
             var part = $"{refAddr}/chapterfun.ashx?cid={cid}&page={{0}}&key=&language=1&gtk=6&_cid={cid}&_mid={mid}&_dt={dt}&_sign={viewSign}";
 
             var pages = new List<ComicPage>();
-
+            var containPages = new HashSet<string>();
             for (int i = 0; i < val; i++)
             {
                 var partBlock = string.Format(part, i+1);
@@ -119,10 +119,15 @@ namespace Kw.Comic.Engine.Dm5
                     //var arr = JsonConvert.DeserializeObject<string[]>(ret.ToString());
                     for (int j = 0; j < arr.Length; j++)
                     {
+                        var addr = arr[j];
+                        if (!containPages.Add(addr))
+                        {
+                            continue;
+                        }
                         pages.Add(new ComicPage
                         {
                             Name = (pages.Count + 1).ToString(),
-                            TargetUrl = arr[j]
+                            TargetUrl = addr
                         });
                     }
                 }

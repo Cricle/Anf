@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.CommandWpf;
 using Kw.Comic.Engine;
+using Kw.Comic.Wpf.Managers;
 using Kw.Comic.Wpf.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -11,6 +12,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using Kw.Comic.Wpf.Views.Pages;
 
 namespace Kw.Comic.Wpf.ViewModels
 {
@@ -22,6 +24,7 @@ namespace Kw.Comic.Wpf.ViewModels
             comicEngine = WpfAppEngine.Instance.GetRequiredService<ComicEngine>();
 
             SearchCommand = new RelayCommand(Search);
+            GoCommand = new RelayCommand(Go);
 
             Snapshots = new ObservableCollection<ComicSnapshotInfo>();
         }
@@ -31,6 +34,13 @@ namespace Kw.Comic.Wpf.ViewModels
         private string keyword;
         private Visibility loadingVisibility = Visibility.Collapsed;
         private ComicSnapshotInfo currentComicSnapshot;
+        private Visibility directGoVisibility= Visibility.Collapsed;
+
+        public Visibility DirectGoVisibility
+        {
+            get { return directGoVisibility; }
+            set => Set(ref directGoVisibility, value);
+        }
 
         public ComicSnapshotInfo CurrentComicSnapshot
         {
@@ -48,12 +58,39 @@ namespace Kw.Comic.Wpf.ViewModels
         public string Keyword
         {
             get { return keyword; }
-            set => Set(ref keyword, value);
+            set
+            {
+                Set(ref keyword, value);
+                DirectGoVisibility = Visibility.Collapsed;
+                if (value!=null&&value.StartsWith("http://")||value.StartsWith("www."))
+                {
+                    try
+                    {
+                        var condition = comicEngine.GetComicSourceProviderType(value);
+                        if (condition != null)
+                        {
+                            DirectGoVisibility = Visibility.Visible;
+                        }
+                    }
+                    catch (Exception)
+                    {
+
+                    }
+                }
+            }
         }
 
         public ObservableCollection<ComicSnapshotInfo> Snapshots { get; }
 
         public ICommand SearchCommand { get; }
+        public ICommand GoCommand { get; }
+
+        public void Go()
+        {
+            var navSer = WpfAppEngine.Instance.GetRequiredService<MainNavigationService>();
+            var vp = new ViewPage(Keyword);
+            navSer.Frame.Navigate(vp);
+        }
 
         public async void Search()
         {

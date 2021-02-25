@@ -29,8 +29,20 @@ namespace Kw.Comic.Visit
         private bool cachePageCursor = true;
         private bool singleOperator;
         private bool forceNewPageCursor;
+        private int currentPageIndex;
 
-        public IComicChapterCacher<T> ChapterCacher { get; set; }
+        public int CurrentPageIndex
+        {
+            get { return currentPageIndex; }
+            set
+            {
+                if (currentPageIndex!=value)
+                {
+                    RaisePropertyChanged(ref currentPageIndex, value);
+                    _ = PageCursor.SetIndexAsync(value);
+                }
+            }
+        }
 
         public bool ForceNewPageCursor
         {
@@ -64,6 +76,7 @@ namespace Kw.Comic.Visit
                 RaisePropertyChanged(ref pageCursor, value);
             }
         }
+        public IComicChapterCacher<T> ChapterCacher { get; set; }
 
         public ComicEntity Comic { get; }
 
@@ -138,8 +151,16 @@ namespace Kw.Comic.Visit
         private async Task LoadChapterAsync()
         {
             var old = PageCursor;
+            if (old!=null)
+            {
+                old.IndexChanged -= Old_IndexChanged;
+            }
             var idx = ChapterCursor.Index < 0 ? 0 : ChapterCursor.Index;
             PageCursor = await CoreLoadChapterAsync(idx, ForceNewPageCursor, CachePageCursor);
+            if (PageCursor!=null)
+            {
+                PageCursor.IndexChanged += Old_IndexChanged;
+            }
             await OnLoadChapterAsync(old, PageCursor);
             if (PageCursor != null)
             {
@@ -151,6 +172,13 @@ namespace Kw.Comic.Visit
                 old?.Dispose();
             }
         }
+
+        private void Old_IndexChanged(DataCursor<T> arg1, int arg2)
+        {
+            currentPageIndex = arg2;
+            RaisePropertyChanged(nameof(CurrentPageIndex));
+        }
+
         protected virtual Task OnLoadChapterAsync(PageCursorBase<T> old, PageCursorBase<T> @new)
         {
             return Task.CompletedTask;

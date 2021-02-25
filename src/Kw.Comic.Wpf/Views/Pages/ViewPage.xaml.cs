@@ -44,10 +44,10 @@ namespace Kw.Comic.Wpf.Views.Pages
                 val.RightCommands.Remove(item);
             }
         }
-
+        private ViewViewModel vm;
         private async void ViewPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var vm =await ViewViewModel.FromUriAsync(Uri);
+            vm =await ViewViewModel.FromUriAsync(Uri);
             DataContext = vm;
             vm.CurrentComicVisitor = vm.ComicVisitors.FirstOrDefault();
             var val = WpfAppEngine.Instance.GetRequiredService<CommandBarManager>();
@@ -65,6 +65,11 @@ namespace Kw.Comic.Wpf.Views.Pages
             controls.Add(rightChapter);
             val.RightCommands.Add(leftChapter);
             val.RightCommands.Add(rightChapter);
+        }
+
+        private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
+        {
+            vm?.ToggleControlVisibility();
         }
     }
 }

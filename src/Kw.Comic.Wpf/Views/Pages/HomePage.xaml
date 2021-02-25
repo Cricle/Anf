@@ -26,14 +26,22 @@
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid MaxWidth="400"
+        <StackPanel MaxWidth="400"
               Margin="0,12">
-            <TextBox FontSize="16"
-                     Text="{Binding Keyword,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
-                <TextBox.InputBindings>
-                    <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
-                </TextBox.InputBindings>
-                <!--<mto:TextBoxHelper.ButtonContent>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBox x:Name="TbxKeyword" 
+                         FontSize="16"
+                         fw:Extensions.PlaceholderText="aaa"
+                         mto:TextBoxHelper.Watermark="dsaboiasb"
+                         Text="{Binding Keyword,Mode=TwoWay,UpdateSourceTrigger=PropertyChanged}">
+                    <TextBox.InputBindings>
+                        <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
+                    </TextBox.InputBindings>
+                    <!--<mto:TextBoxHelper.ButtonContent>
                     <icon:PackIconMaterialLight Kind="Magnify"
                                         Grid.Column="1"
                                         VerticalAlignment="Center"
@@ -44,8 +52,28 @@
                         </icon:PackIconMaterialLight.InputBindings>
                     </icon:PackIconMaterialLight>
                 </mto:TextBoxHelper.ButtonContent>-->
-            </TextBox>
-        </Grid>
+                </TextBox>
+                <Button Grid.Column="1"
+                    Style="{DynamicResource MahApps.Styles.Button.Window.VisualStudio}"
+                    Foreground="{DynamicResource MahApps.Brushes.LinkButton.Foreground}"
+                        Command="{Binding SearchCommand}">
+                    <icon:PackIconMaterialLight Kind="Crop"/>
+                </Button>
+            </Grid>
+            <StackPanel Orientation="Horizontal"
+                        HorizontalAlignment="Center"
+                        Margin="0,5,0,0"
+                        Visibility="{Binding ElementName=TbxKeyword,Path=IsFocused,Mode=OneWay,Converter={StaticResource BooleanToVisibilityConverter}}">
+                <TextBlock Foreground="{DynamicResource MahApps.Brushes.Foreground}"
+                           >输入关键字搜索或网址直接解析</TextBlock>
+                <Button Visibility="{Binding DirectGoVisibility}"
+                        Margin="3,0,0,0"
+                        Style="{DynamicResource MahApps.Styles.Button.Link.VisualStudio}"
+                        Command="{Binding GoCommand}">
+                    进入
+                </Button>
+            </StackPanel>
+        </StackPanel>
         <Border Grid.Row="1"
                 Margin="0,5"
                 Visibility="{Binding LoadingVisibility}">
