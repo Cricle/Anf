@@ -6,7 +6,7 @@
       xmlns:local="clr-namespace:Kw.Comic.Wpf.Views.Pages"
       xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:mto="http://metro.mahapps.com/winfx/xaml/controls"
-      xmlns:conv="clr-namespace:Kw.Comic.Wpf.Converters"
+      xmlns:conv="clr-namespace:Kw.Comic.Wpf.Converters" 
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800">
     <Page.Resources>
@@ -14,18 +14,20 @@
     </Page.Resources>
     <Grid MouseLeftButtonUp="Grid_MouseLeftButtonUp">
         <mto:FlipView ItemsSource="{Binding Watcher.PageInfos}"
-                  SelectedItem="{Binding Watcher.CurrentPageInfo,Mode=TwoWay}"
+                      SelectedItem="{Binding Watcher.CurrentPageInfo,Mode=TwoWay}"
                       IsBannerEnabled="False"
                       ShowIndex="False"
+                      VirtualizingPanel.IsVirtualizing="True"
                       MouseHoverBorderEnabled="False">
             <mto:FlipView.ItemTemplate>
                 <DataTemplate DataType="m:ComicPageInfo">
                     <Grid>
                         <ScrollViewer Visibility="{Binding Done,Converter={StaticResource BoolVisibilityConverter}}">
-                            <Image Source="{Binding Image}" 
+                            <Image Source="{Binding Image,Mode=OneWay}" 
+                                   RenderOptions.BitmapScalingMode="Fant"
+                                   RenderOptions.EdgeMode="Unspecified"
                                    Stretch="None"/>
                         </ScrollViewer>
-                        <!--加载页-->
                         <Grid Visibility="{Binding Loading,Converter={StaticResource BoolVisibilityConverter}}">
                             <StackPanel Orientation="Vertical"
                                         HorizontalAlignment="Center"
@@ -33,16 +35,15 @@
                                 <TextBlock HorizontalAlignment="Center"
                                            Foreground="{DynamicResource MahApps.Brushes.Foreground}">
                                     <Run Text="正在加载 - "/>
-                                    <Run Text="{Binding Visitor.Page.Name}"
+                                    <Run Text="{Binding Visitor.Page.Name,Mode=OneTime}"
                                          FontWeight="Bold"/>
                                 </TextBlock>
                                 <TextBlock Foreground="{DynamicResource MahApps.Brushes.Foreground}">
-                                    <Run Text="{Binding Visitor.Page.TargetUrl}"/>
+                                    <Run Text="{Binding Visitor.Page.TargetUrl,Mode=OneTime}"/>
                                 </TextBlock>
-                                <mto:MetroProgressBar IsIndeterminate="True"/>
+                                <mto:MetroProgressBar IsIndeterminate="{Binding Loading}"/>
                             </StackPanel>
                         </Grid>
-                        <!--错误页-->
                         <Grid Visibility="{Binding Error,Converter={StaticResource BoolVisibilityConverter}}">
                             <StackPanel Orientation="Vertical"
                                         HorizontalAlignment="Center"
@@ -67,10 +68,10 @@
         <mto:MetroProgressBar VerticalAlignment="Top"
                      Maximum="{Binding Watcher.ChapterCursor.Length}"
                      Value="{Binding Watcher.ChapterCursor.Index,Mode=OneWay}"/>
-        <!--<mto:MetroProgressBar VerticalAlignment="Bottom"
+        <mto:MetroProgressBar VerticalAlignment="Bottom"
                     FocusVisualStyle="{x:Null}"
                      Maximum="{Binding Watcher.TotalPage}"
-                     Value="{Binding Watcher.PageIndex,Mode=OneWay}"/>-->
+                     Value="{Binding Watcher.CurrentIndex,Mode=TwoWay}"/>
         <Slider VerticalAlignment="Bottom"
                 AutoToolTipPlacement="TopLeft"
                 IsMoveToPointEnabled="True"
@@ -174,11 +175,11 @@
                 <TextBlock FontWeight="ExtraLight"
                            Foreground="{DynamicResource MahApps.Brushes.Foreground}"
                            FontSize="12"/>
-                <mto:ProgressRing IsActive="True"
+                <mto:ProgressRing IsActive="{Binding Watcher.IsLoading}"
                               Margin="10"
                               Width="44"
                               Height="44"
-                                  Foreground="White">
+                              Foreground="White">
                 </mto:ProgressRing>
             </StackPanel>
         </Grid>

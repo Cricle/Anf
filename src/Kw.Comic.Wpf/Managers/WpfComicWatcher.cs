@@ -1,6 +1,7 @@
-﻿using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
 using Kw.Comic.Managers;
+using Kw.Comic.PreLoading;
 using Kw.Comic.Visit;
 using Kw.Comic.Wpf.Models;
 using Microsoft.Extensions.DependencyInjection;
@@ -8,91 +9,22 @@ using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 
 namespace Kw.Comic.Wpf.Managers
 {
-    public enum PreLoadingDirections
-    {
-        None = 0,
-        Left = 1,
-        Right = Left << 1,
-        Both = Left | Right
-    }
-    public class ComicPageInfoCollection : ObservableCollection<ComicPageInfo>
-    {
-        public ComicPageInfoCollection()
-        {
-            PreLoading = 5;
-            Directions = PreLoadingDirections.Right;
-        }
-
-        public PreLoadingDirections Directions { get; set; }
-
-        public int PreLoading { get; set; }
-
-        public async Task UnActiveAllAsync()
-        {
-            for (int i = 0; i < Count; i++)
-            {
-                await this[i].UnLoadAsync();
-            }
-        }
-
-        public async Task ActiveAsync(int index)
-        {
-            if (index < 0 || index >= Count)
-            {
-                return;
-            }
-            var left = index;
-            var right = index;
-            if ((Directions& PreLoadingDirections.Left)!=0)
-            {
-                left = Math.Max(0, index - PreLoading);
-            }
-            if ((Directions & PreLoadingDirections.Right) != 0)
-            {
-                right = Math.Min(index + PreLoading, Count);
-            }
-            for (int i = 0; i < left; i++)
-            {
-                var val = this[i];
-                if (val.Done)
-                {
-                    await val.UnLoadAsync();
-                }
-            }
-            for (int i = right + 1; i < Count; i++)
-            {
-                var val = this[i];
-                if (val.Done)
-                {
-                    await val.UnLoadAsync();
-                }
-            }
-            if (left == right)
-            {
-                await this[left].LoadAsync();
-            }
-            else
-            {
-                for (int i = left; i < right; i++)
-                {
-                    await this[i].LoadAsync();
-                }
-            }
-        }
-    }
-    public class WpfComicWatcher : ComicWatcher, IDisposable
+    public abstract class WpfComicWatcher<T> : ComicWatcherBase<T>, IDisposable
+         where T : ChapterVisitorBase
     {
         public WpfComicWatcher(IServiceScope serviceScope,
             ComicEntity comic,
@@ -111,11 +43,22 @@ namespace Kw.Comic.Wpf.Managers
             PrevPageCommand = new RelayCommand(() => _ = PrevPageAsync());
             LoadCommand = new RelayCommand(Load);
 
-            //ChapterCacher = new NormalComicChapterCacher<ChapterVisitor>(1);
-            PageInfos = new ComicPageInfoCollection();
+            //ChapterCacher = new NormalComicChapterCacher<SkiaChapterVisitor>(1);
+            PageInfos = new ComicPageInfoCollection<WpfComicPageInfo<T>,T,ImageSource>();
         }
-        private ComicPageInfo currentPageInfo;
+        private WpfComicPageInfo<T> currentPageInfo;
         private int totalPage;
+        private int currentIndex;
+
+        public int CurrentIndex
+        {
+            get { return currentIndex; }
+            set
+            {
+                RaisePropertyChanged(ref currentIndex, value);
+                CurrentPageInfo = PageInfos[value];
+            }
+        }
 
         public int TotalPage
         {
@@ -123,13 +66,14 @@ namespace Kw.Comic.Wpf.Managers
             private set => RaisePropertyChanged(ref totalPage, value);
         }
 
-        public ComicPageInfo CurrentPageInfo
+        public WpfComicPageInfo<T> CurrentPageInfo
         {
             get { return currentPageInfo; }
             set
             {
                 if (currentPageInfo != value)
                 {
+                    currentPageInfo = value;
                     OnSwitch(value);
                 }
             }
@@ -146,18 +90,20 @@ namespace Kw.Comic.Wpf.Managers
         public ICommand PrevPageCommand { get; }
         public ICommand LoadCommand { get; }
 
-        public ComicPageInfoCollection PageInfos { get; }
+        public ComicPageInfoCollection<WpfComicPageInfo<T>, T, ImageSource> PageInfos { get; }
+
+        public event Action<WpfComicWatcher<T>, WpfComicPageInfo<T>> SwitchedPage;
 
         private async void Load()
         {
-            if (CurrentPageInfo!=null)
+            if (CurrentPageInfo != null)
             {
                 await CurrentPageInfo.UnLoadAsync();
                 await CurrentPageInfo.LoadAsync();
             }
         }
 
-        private async void OnSwitch(ComicPageInfo value)
+        private async void OnSwitch(WpfComicPageInfo<T> value)
         {
             //await semaphoreSlim.WaitAsync();
             try
@@ -168,10 +114,11 @@ namespace Kw.Comic.Wpf.Managers
                 {
                     index = PageInfos.IndexOf(value);
                 }
+                _= PageInfos.ActiveAsync(index);
                 await PageCursor.SetIndexAsync(index);
-                await PageInfos.ActiveAsync(index);
                 currentPageInfo = value;
                 RaisePropertyChanged(nameof(CurrentPageInfo));
+                SwitchedPage?.Invoke(this, value);
             }
             finally
             {
@@ -179,11 +126,12 @@ namespace Kw.Comic.Wpf.Managers
             }
         }
 
-        protected override Task OnLoadChapterAsync(PageCursorBase<ChapterVisitor> old, PageCursorBase<ChapterVisitor> @new)
+        protected override Task OnLoadChapterAsync(PageCursorBase<T> old, PageCursorBase<T> @new)
         {
             if (old != null)
             {
                 old.IndexChanged -= Old_IndexChanged;
+                old.Dispose();
             }
             if (@new != null)
             {
@@ -197,13 +145,15 @@ namespace Kw.Comic.Wpf.Managers
             PageInfos.Clear();
             foreach (var item in @new.Datas)
             {
-                PageInfos.Add(new ComicPageInfo(item));
+                PageInfos.Add(CreatePageInfo(item));
             }
             TotalPage = PageInfos.Count;
             CurrentPageInfo = PageInfos.FirstOrDefault();
+            GC.Collect();
             return Task.CompletedTask;
         }
-        private void Old_IndexChanged(DataCursor<ChapterVisitor> arg1, int arg2)
+        protected abstract WpfComicPageInfo<T> CreatePageInfo(T item);
+        private void Old_IndexChanged(DataCursor<T> arg1, int arg2)
         {
             var chp = arg1.Current;
             CurrentPageInfo = PageInfos.FirstOrDefault(x => x.Visitor == chp);

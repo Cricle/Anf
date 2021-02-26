@@ -1,24 +1,14 @@
 ﻿using Kw.Comic.Wpf.Managers;
-using Kw.Comic.Wpf.ViewModels;
 using Kw.Comic.Wpf.Views.Pages;
 using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
 using Microsoft.Extensions.DependencyInjection;
-using SourceChord.FluentWPF;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
-using System.Windows.Shapes;
 
 namespace Kw.Comic.Wpf.Views
 {
@@ -27,19 +17,6 @@ namespace Kw.Comic.Wpf.Views
     /// </summary>
     public partial class MainWindow : MetroWindow
     {
-
-
-        public string ParsetUri
-        {
-            get { return (string)GetValue(ParsetUriProperty); }
-            set { SetValue(ParsetUriProperty, value); }
-        }
-
-        // Using a DependencyProperty as the backing store for ParsetUri.  This enables animation, styling, binding, etc...
-        public static readonly DependencyProperty ParsetUriProperty =
-            DependencyProperty.Register("ParsetUri", typeof(string), typeof(MainWindow), new PropertyMetadata(null));
-
-
 
         public MainWindow()
         {
@@ -55,7 +32,6 @@ namespace Kw.Comic.Wpf.Views
 
             navSer.Frame.NavigationUIVisibility = NavigationUIVisibility.Hidden;
             Content = navSer.Frame;
-            DataContext = new MainViewModel();
             var BackBtn = new Button
             {
                 Content = new PackIconMaterialLight { Kind = PackIconMaterialLightKind.ChevronLeft }
@@ -68,9 +44,10 @@ namespace Kw.Comic.Wpf.Views
                     navSer.Frame.GoBack();
                 }
             };
+            
             barSer.LeftCommands.Add(BackBtn);
-            navSer.Frame.Navigate(new HomePage());
-            //navSer.Frame.Navigate(new ViewPage("http://www.dm5.com/manhua-monvzhilv/"));
+            //navSer.Frame.Navigate(new HomePage());
+            navSer.Frame.Navigate(new ViewPage("http://www.dm5.com/manhua-monvzhilv/"));
         }
     }
 }

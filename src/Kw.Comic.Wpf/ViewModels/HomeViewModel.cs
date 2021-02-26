@@ -1,5 +1,4 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
 using Kw.Comic.Engine;
 using Kw.Comic.Wpf.Managers;
 using Kw.Comic.Wpf.Models;
@@ -13,6 +12,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Kw.Comic.Wpf.Views.Pages;
+using GalaSoft.MvvmLight.Command;
 
 namespace Kw.Comic.Wpf.ViewModels
 {

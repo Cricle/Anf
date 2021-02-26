@@ -1,6 +1,7 @@
 ﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
+using Kw.Comic.PreLoading;
 using Kw.Comic.Visit;
 using Kw.Comic.Wpf.Managers;
 using Microsoft.Extensions.DependencyInjection;
@@ -17,6 +18,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+#if EnableWin10
+using Windows.Storage.Streams;
+#endif
 
 namespace Kw.Comic.Wpf.ViewModels
 {
@@ -50,10 +54,14 @@ namespace Kw.Comic.Wpf.ViewModels
             httpClientFactory = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>();
             ComicEntity = entity;
 
-            Watcher = new WpfComicWatcher(scope,entity,
+            Watcher = new SoftwareWpfComicWatcher(scope,entity,
                 httpClientFactory,
                 condition, provider);
+            Watcher.PageInfos.Directions = PreLoadingDirections.Both;
+            Watcher.PageInfos.PreLoading = null;
+            Watcher.PageInfos.AsyncLoad = false;
             ComicVisitors = Watcher.ChapterCursor.Datas;
+
             InitConverImage();
             disposables = new List<IDisposable> {  };
             NextChapterCommand = new RelayCommand(NextChapter);
@@ -102,7 +110,7 @@ namespace Kw.Comic.Wpf.ViewModels
 
         public int ChapterIndex => ComicVisitors.IndexOf(CurrentComicVisitor);
 
-        public WpfComicWatcher Watcher { get; }
+        public SoftwareWpfComicWatcher Watcher { get; }
 
         public ComicEntity ComicEntity { get; }
 

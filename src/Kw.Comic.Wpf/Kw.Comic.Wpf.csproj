@@ -2,15 +2,24 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>net462</TargetFramework>
     <UseWPF>true</UseWPF>
+    <EnableSkia>false</EnableSkia>
+    <EnableGdi>false</EnableGdi>
+    <EnableWin10>false</EnableWin10>
+    <EnableFody>false</EnableFody>
+    <NotEnableNavite>true</NotEnableNavite>
   </PropertyGroup>
-
-  <ItemGroup>
-    <!--<PackageReference Include="Costura.Fody" Version="5.0.2" Condition="'$(TargetFramework)'=='net461'">
+  <PropertyGroup Condition="'$(TargetFramework.TrimEnd(`0123456789-`))' == 'net' and '$(NotEnableNavite)'!='enable'">
+    <EnableNavite>true</EnableNavite>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(EnableFody)'==true">
+    <PackageReference Include="Costura.Fody" Version="5.0.2" Condition="'$(TargetFramework)'=='net461'">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>-->
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
     <PackageReference Include="Kw.Core" Version="1.0.0" />
     <PackageReference Include="Kw.Notification" Version="1.0.0" />
     <PackageReference Include="Kw.Services" Version="1.1.0" />
@@ -21,11 +30,29 @@
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="MvvmLightLibsStd10" Version="5.4.1.1" />
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Kw.Comic\Kw.Comic.csproj" />
+  <ItemGroup Condition="'$(EnableNavite)'=='true'">
+    <PackageReference Include="Microsoft.DotNet.Framework.NativeImageCompiler" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup Condition="'$(EnableWin10)'">
+    <DefineConstants>$(DefineConstants);EnableWin10;</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(EnableWin10)'">
+    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(EnableSkia)'=='false'">
+    <Compile Remove="Managers\Skia\*.cs"></Compile>
+  </ItemGroup>
+  <ItemGroup Condition="'$(EnableGdi)'=='false'">
+    <Compile Remove="Managers\Gdi\*.cs"></Compile>
+  </ItemGroup>
+  <ItemGroup Condition="'$(EnableSkia)'">
+    <PackageReference Include="SkiaSharp" Version="2.80.2" />
   </ItemGroup>
   <ItemGroup>
-    <Reference Include="System.Web" />
+    <ProjectReference Include="..\Kw.Comic\Kw.Comic.csproj" />
   </ItemGroup>
 
 </Project>

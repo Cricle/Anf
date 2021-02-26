@@ -74,7 +74,7 @@ namespace Kw.Comic.Visit
                 return true;
             }
             var i = index;
-            if (Interlocked.CompareExchange(ref index, i, idx) == i)
+            if (Interlocked.CompareExchange(ref index, idx, i) == i)
             {
                 await LoadIndexAsync(idx);
                 Index = idx;

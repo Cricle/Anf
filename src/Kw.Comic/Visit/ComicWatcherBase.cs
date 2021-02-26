@@ -146,7 +146,10 @@ namespace Kw.Comic.Visit
             }
         }
         protected abstract Task<PageCursorBase<T>> MakePageCursorAsync(int i, HttpClient httpClient);
-        protected abstract Task<PageCursorBase<T>> MakePageCursorAsync(HttpClient httpClient);
+        protected virtual Task<PageCursorBase<T>> MakePageCursorAsync(HttpClient httpClient)
+        {
+            return MakePageCursorAsync(ChapterCursor.Index, httpClient);
+        }
 
         private async Task LoadChapterAsync()
         {

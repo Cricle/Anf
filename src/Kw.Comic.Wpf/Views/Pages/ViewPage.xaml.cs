@@ -47,14 +47,14 @@ namespace Kw.Comic.Wpf.Views.Pages
         private ViewViewModel vm;
         private async void ViewPage_Loaded(object sender, RoutedEventArgs e)
         {
-            vm =await ViewViewModel.FromUriAsync(Uri);
+            vm = await ViewViewModel.FromUriAsync(Uri);
             DataContext = vm;
             vm.CurrentComicVisitor = vm.ComicVisitors.FirstOrDefault();
             var val = WpfAppEngine.Instance.GetRequiredService<CommandBarManager>();
             var leftChapter = new Button
             {
                 Content = new PackIconMaterialLight { Kind = PackIconMaterialLightKind.ArrowLeft },
-                Command =vm.PrevChapterCommand
+                Command = vm.PrevChapterCommand
             };
             controls.Add(leftChapter);
             var rightChapter = new Button

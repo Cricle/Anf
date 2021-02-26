@@ -34,6 +34,7 @@ namespace Kw.Comic.Visit
 
         public virtual void Dispose()
         {
+            UnLoadAsync().GetAwaiter().GetResult();
             Disposed?.Invoke(this);
             locker?.Dispose();
             isLoaded = false;
@@ -68,7 +69,6 @@ namespace Kw.Comic.Visit
         {
             return Task.CompletedTask;
         }
-
         public virtual async Task LoadAsync()
         {
             if (IsLoaded)

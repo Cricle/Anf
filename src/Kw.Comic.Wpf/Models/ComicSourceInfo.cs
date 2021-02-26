@@ -1,11 +1,9 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.CommandWpf;
+﻿using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
 using Kw.Comic.Wpf.Managers;
 using Kw.Comic.Wpf.Views.Pages;
 using MahApps.Metro.IconPacks;
 using Microsoft.Extensions.DependencyInjection;
-using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -16,31 +14,6 @@ using System.Windows.Input;
 
 namespace Kw.Comic.Wpf.Models
 {
-    public class ComicSnapshotInfo : ObservableObject
-    {
-        private ComicSourceInfo currentSource;
-
-       
-
-        public ComicSourceInfo CurrentSource
-        {
-            get { return currentSource; }
-            set
-            {
-                Set(ref currentSource, value);
-                SourceChanged?.Invoke(this, value);
-            }
-        }
-
-        public ComicSnapshot Snapshot { get; set; }
-
-        public ComicSourceInfo[] SourceInfos { get; set; }
-
-        public bool HasSourceUri => CurrentSource != null && CurrentSource.CanParse && CurrentSource.Source?.TargetUrl != null;
-
-        public event Action<ComicSnapshotInfo, ComicSourceInfo> SourceChanged;
-
-    }
     public class ComicSourceInfo
     {
         public ComicSourceInfo()
