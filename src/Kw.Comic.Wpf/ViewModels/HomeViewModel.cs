@@ -45,7 +45,14 @@ namespace Kw.Comic.Wpf.ViewModels
         public ComicSnapshotInfo CurrentComicSnapshot
         {
             get { return currentComicSnapshot; }
-            set => Set(ref currentComicSnapshot, value);
+            set
+            {
+                Set(ref currentComicSnapshot, value);
+                if (value != null)
+                {
+                    GoComicDetail(value);
+                }
+            }
         }
 
         public Visibility LoadingVisibility
@@ -87,8 +94,14 @@ namespace Kw.Comic.Wpf.ViewModels
 
         public void Go()
         {
-            var navSer = WpfAppEngine.Instance.GetRequiredService<MainNavigationService>();
+            var navSer = WpfAppEngine.GetNavigationService();
             var vp = new ViewPage(Keyword);
+            navSer.Frame.Navigate(vp);
+        }
+        public void GoComicDetail(ComicSnapshotInfo info)
+        {
+            var navSer = WpfAppEngine.GetNavigationService();
+            var vp = new Views.Pages.ComicPage(info);
             navSer.Frame.Navigate(vp);
         }
 

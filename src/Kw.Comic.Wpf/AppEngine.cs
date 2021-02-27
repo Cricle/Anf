@@ -1,4 +1,5 @@
-﻿using Kw.Core;
+﻿using Kw.Comic.Wpf.Managers;
+using Kw.Core;
 using Kw.Services;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -27,6 +28,10 @@ namespace Kw.Comic.Wpf
             var eng = new WpfAppEngine();
             eng.Modules.Add(new AppModuleEntry());
             return eng;
+        }
+        public static MainNavigationService GetNavigationService()
+        {
+            return Instance.GetRequiredService<MainNavigationService>();
         }
     }
 }

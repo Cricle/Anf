@@ -58,8 +58,8 @@ namespace Kw.Comic.Wpf.ViewModels
                 httpClientFactory,
                 condition, provider);
             Watcher.PageInfos.Directions = PreLoadingDirections.Both;
-            Watcher.PageInfos.PreLoading = null;
-            Watcher.PageInfos.AsyncLoad = false;
+            Watcher.PageInfos.PreLoading = 10;
+            Watcher.PageInfos.AsyncLoad = true;
             ComicVisitors = Watcher.ChapterCursor.Datas;
 
             InitConverImage();

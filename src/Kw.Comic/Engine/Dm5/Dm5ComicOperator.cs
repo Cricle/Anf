@@ -107,30 +107,46 @@ namespace Kw.Comic.Engine.Dm5
             var part = $"{refAddr}/chapterfun.ashx?cid={cid}&page={{0}}&key=&language=1&gtk=6&_cid={cid}&_mid={mid}&_dt={dt}&_sign={viewSign}";
 
             var pages = new List<ComicPage>();
-            var containPages = new HashSet<string>();
-            for (int i = 0; i < val; i++)
+            async Task<ComicPage[]> RunBlockAsync(int index)
             {
-                var partBlock = string.Format(part, i+1);
-                using (var partRep=await httpClient.GetAsync(partBlock))
+                var pgs = new List<ComicPage>();
+                var partBlock = string.Format(part, index);
+                using (var partRep = await httpClient.GetAsync(partBlock))
                 {
                     var partEncod = await partRep.Content.ReadAsStringAsync();
                     var ret = v8.Evaluate<string>(partEncod);
                     var arr = ret.Split(',');
-                    //var arr = JsonConvert.DeserializeObject<string[]>(ret.ToString());
                     for (int j = 0; j < arr.Length; j++)
                     {
                         var addr = arr[j];
-                        if (!containPages.Add(addr))
-                        {
-                            continue;
-                        }
-                        pages.Add(new ComicPage
+                        pgs.Add(new ComicPage
                         {
                             Name = (pages.Count + 1).ToString(),
                             TargetUrl = addr
                         });
                     }
                 }
+                return pgs.ToArray();
+            }
+            var maxBlocks = new List<Func<Task<ComicPage[]>>>();
+            for (int i = 0; i < val; i++)
+            {
+                var j = i;
+                maxBlocks.Add(() => RunBlockAsync(j));
+            }
+            var datas= await TaskQuene.RunAsync(maxBlocks.ToArray(), 5);
+            var containPages = new HashSet<string>();
+            foreach (var item in datas)
+            {
+                var res = item;
+                for (int q = 0; q < res.Length; q++)
+                {
+                    var r = res[q];
+                    if (containPages.Add(r.TargetUrl))
+                    {
+                        pages.Add(r);
+                    }
+                }  
             }
             return pages.ToArray();
         }

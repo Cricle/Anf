@@ -1,0 +1,91 @@
+﻿<Page x:Class="Kw.Comic.Wpf.Views.Pages.ComicPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+      xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+      xmlns:local="clr-namespace:Kw.Comic.Wpf.Views.Pages"
+      xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks" xmlns:sys="clr-namespace:System;assembly=mscorlib"
+      mc:Ignorable="d" 
+      xmlns:mto="http://metro.mahapps.com/winfx/xaml/controls"
+      d:DesignHeight="450" d:DesignWidth="800">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0"
+              Margin="25,20">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border>
+                <Image Source="{Binding Comic.Snapshot.ImageUri}"
+                       Stretch="None"
+                       Width="300"/>
+            </Border>
+            <StackPanel Grid.Column="1"
+                        Orientation="Vertical">
+                <StackPanel.Resources>
+                    <Thickness x:Key="IconMargin">0,0,12,0</Thickness>
+                    <Thickness x:Key="DescMargin">0,12,0,0</Thickness>
+                    <sys:Double x:Key="DescFontSize">22</sys:Double>
+                </StackPanel.Resources>
+                <TextBlock Text="{Binding Comic.Snapshot.Name}"
+                           Foreground="{DynamicResource MahApps.Brushes.SystemControlForegroundChromeGray}"
+                           FontSize="26"/>
+                <Grid Margin="{StaticResource DescMargin}">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <icon:PackIconMaterialLight Kind="Briefcase"
+                                                Margin="{StaticResource IconMargin}"
+                                                FontSize="{StaticResource DescFontSize}"
+                                                VerticalAlignment="Center"
+                                                Foreground="{DynamicResource MahApps.Brushes.SystemControlForegroundChromeGray}"/>
+                    <TextBlock Text="{Binding Comic.Snapshot.Author}"
+                           Foreground="{DynamicResource MahApps.Brushes.SystemControlForegroundChromeGray}"
+                           FontSize="{StaticResource DescFontSize}"
+                               Grid.Column="1"/>
+                </Grid>
+                <ItemsControl ItemsSource="{Binding Comic.Snapshot.Sources}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button Style="{DynamicResource MahApps.Styles.Button.Chromeless}"
+                                    FontSize="{StaticResource DescFontSize}"
+                                    FocusVisualStyle="{x:Null}"
+                                    Margin="6">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}"
+                                               Foreground="{DynamicResource MahApps.Brushes.SystemControlForegroundChromeGray}"
+                                               Grid.Column="1">
+                                    </TextBlock>
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Grid Margin="{StaticResource DescMargin}">
+                    <TextBlock Text="{Binding Comic.Snapshot.Descript}"
+                               Foreground="{DynamicResource MahApps.Brushes.SystemControlForegroundChromeGray}"
+                               FontSize="{StaticResource DescFontSize}"
+                               TextWrapping="Wrap"
+                               MaxHeight="300"
+                               Grid.Column="1">
+                        <ToolTipService.ToolTip>
+                            <TextBlock Text="{Binding Comic.Snapshot.Descript}"
+                                       TextWrapping="Wrap"
+                                       MaxWidth="400"/>
+                        </ToolTipService.ToolTip>
+                    </TextBlock>
+                </Grid>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</Page>

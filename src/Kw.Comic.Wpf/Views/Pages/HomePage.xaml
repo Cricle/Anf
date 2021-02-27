@@ -12,7 +12,8 @@
     xmlns:m="clr-namespace:Kw.Comic.Wpf.Models"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
-      Title="HomePage">
+      Title="HomePage"
+      Background="Transparent">
     <Page.Resources>
         <Style x:Key="Kw.Comic.MetroIcon.Title"
                TargetType="icon:PackIconMaterialLight">
@@ -64,8 +65,9 @@
                         HorizontalAlignment="Center"
                         Margin="0,5,0,0"
                         Visibility="{Binding ElementName=TbxKeyword,Path=IsFocused,Mode=OneWay,Converter={StaticResource BooleanToVisibilityConverter}}">
-                <TextBlock Foreground="{DynamicResource MahApps.Brushes.Foreground}"
-                           >输入关键字搜索或网址直接解析</TextBlock>
+                <TextBlock Foreground="{DynamicResource MahApps.Brushes.Foreground}">
+                    输入关键字搜索或网址直接解析
+                </TextBlock>
                 <Button Visibility="{Binding DirectGoVisibility}"
                         Margin="3,0,0,0"
                         Style="{DynamicResource MahApps.Styles.Button.Link.VisualStudio}"
@@ -79,56 +81,11 @@
                 Visibility="{Binding LoadingVisibility}">
             <mto:MetroProgressBar IsIndeterminate="True"/>
         </Border>
-        <ListView Grid.Row="2"
-                  ItemsSource="{Binding CurrentComicSnapshot.SourceInfos}"
-                  SelectedItem="{Binding CurrentComicSnapshot.CurrentSource,Mode=TwoWay}"
-                  Margin="6">
-            <ListView.ItemsPanel>
-                <ItemsPanelTemplate>
-                    <StackPanel Orientation="Horizontal"/>
-                </ItemsPanelTemplate>
-            </ListView.ItemsPanel>
-            <ListView.ItemTemplate>
-                <DataTemplate DataType="{x:Type m:ComicSourceInfo}">
-                    <StackPanel Orientation="Horizontal"
-                                ToolTipService.ToolTip="{Binding Source.TargetUrl}"
-                                Margin="3">
-                        <StackPanel.ContextMenu>
-                            <ContextMenu>
-                                <MenuItem Header="观看"
-                                          Command="{Binding WatchCommand}">
-                                    <MenuItem.Icon>
-                                        <icon:PackIconMaterialLight Kind="{Binding Icon}"
-                                                                    Style="{StaticResource Kw.Comic.MetroIcon.Title}"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="复制"
-                                          Command="{Binding CopyCommand}">
-                                    <MenuItem.Icon>
-                                        <icon:PackIconMaterialLight Kind="Crop"
-                                                                    Style="{StaticResource Kw.Comic.MetroIcon.Title}"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                                <MenuItem Header="打开"
-                                          Command="{Binding OpenCommand}">
-                                    <MenuItem.Icon>
-                                        <icon:PackIconMaterialLight Kind="Label"
-                                                                    Style="{StaticResource Kw.Comic.MetroIcon.Title}"/>
-                                    </MenuItem.Icon>
-                                </MenuItem>
-                            </ContextMenu>
-                        </StackPanel.ContextMenu>
-                        <icon:PackIconMaterialLight Style="{StaticResource Kw.Comic.MetroIcon.Title}"
-                                                    Kind="LinkVariant"/>
-                        <TextBlock Text="{Binding Source.Name}"/>
-                    </StackPanel>
-                </DataTemplate>
-            </ListView.ItemTemplate>
-        </ListView>
         <ListView Grid.Row="3"
                   ItemsSource="{Binding Snapshots}"
                   SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}"
-                  ScrollViewer.HorizontalScrollBarVisibility="Disabled">
+                  ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                  Background="Transparent">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>

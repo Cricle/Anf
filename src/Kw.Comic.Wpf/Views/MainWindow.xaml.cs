@@ -3,6 +3,7 @@ using Kw.Comic.Wpf.Views.Pages;
 using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
 using Microsoft.Extensions.DependencyInjection;
+using SourceChord.FluentWPF;
 using System;
 using System.Windows;
 using System.Windows.Controls;
@@ -28,7 +29,7 @@ namespace Kw.Comic.Wpf.Views
             LeftCommands.ShowLastSeparator =
                 RightCommands.ShowLastSeparator = true;
             LeftCommands.ItemsSource = barSer.LeftCommands;
-            RightCommands.ItemsSource= barSer.RightCommands;
+            RightCommands.ItemsSource = barSer.RightCommands;
 
             navSer.Frame.NavigationUIVisibility = NavigationUIVisibility.Hidden;
             Content = navSer.Frame;

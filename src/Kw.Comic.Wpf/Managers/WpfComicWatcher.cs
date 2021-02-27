@@ -78,7 +78,6 @@ namespace Kw.Comic.Wpf.Managers
                 }
             }
         }
-        private readonly SemaphoreSlim semaphoreSlim = new SemaphoreSlim(1, 1);
 
         public IServiceScope ServiceScope { get; }
 
@@ -126,7 +125,7 @@ namespace Kw.Comic.Wpf.Managers
             }
         }
 
-        protected override Task OnLoadChapterAsync(PageCursorBase<T> old, PageCursorBase<T> @new)
+        protected override async Task OnLoadChapterAsync(PageCursorBase<T> old, PageCursorBase<T> @new)
         {
             if (old != null)
             {
@@ -147,10 +146,21 @@ namespace Kw.Comic.Wpf.Managers
             {
                 PageInfos.Add(CreatePageInfo(item));
             }
+            //foreach (var item in @new.Datas)
+            //{
+            //    await item.LoadAsync();
+            //}
+            //var sw = Stopwatch.GetTimestamp();
+            //foreach (var item in PageInfos)
+            //{
+            //    await item.LoadAsync();
+            //}
+            //var ed = Stopwatch.GetTimestamp();
+            //MessageBox.Show(new TimeSpan(ed - sw).ToString());
             TotalPage = PageInfos.Count;
             CurrentPageInfo = PageInfos.FirstOrDefault();
             GC.Collect();
-            return Task.CompletedTask;
+            //return Task.CompletedTask;
         }
         protected abstract WpfComicPageInfo<T> CreatePageInfo(T item);
         private void Old_IndexChanged(DataCursor<T> arg1, int arg2)

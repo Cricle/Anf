@@ -2,23 +2,17 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net462</TargetFramework>
+    <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
     <EnableSkia>false</EnableSkia>
     <EnableGdi>false</EnableGdi>
-    <EnableWin10>false</EnableWin10>
+    <EnableWin10>true</EnableWin10>
     <EnableFody>false</EnableFody>
-    <NotEnableNavite>true</NotEnableNavite>
+    <NotEnableNavite>false</NotEnableNavite>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(TargetFramework.TrimEnd(`0123456789-`))' == 'net' and '$(NotEnableNavite)'!='enable'">
+  <PropertyGroup Condition="'$(TargetFramework.TrimEnd(`0123456789-`))' == 'net' and '$(NotEnableNavite)'!='true'">
     <EnableNavite>true</EnableNavite>
   </PropertyGroup>
-  <ItemGroup Condition="'$(EnableFody)'==true">
-    <PackageReference Include="Costura.Fody" Version="5.0.2" Condition="'$(TargetFramework)'=='net461'">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Kw.Core" Version="1.0.0" />
     <PackageReference Include="Kw.Notification" Version="1.0.0" />
@@ -36,8 +30,17 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
+  <ItemGroup Condition="'$(EnableFody)'==true">
+    <PackageReference Include="Costura.Fody" Version="5.0.2">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
   <PropertyGroup Condition="'$(EnableWin10)'">
-    <DefineConstants>$(DefineConstants);EnableWin10;</DefineConstants>
+    <DefineConstants>DEBUG;TRACE;EnableWin10;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
   <ItemGroup Condition="'$(EnableWin10)'">
     <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />

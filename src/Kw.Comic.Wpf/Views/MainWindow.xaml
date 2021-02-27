@@ -12,7 +12,6 @@
         xmlns:m="clr-namespace:Kw.Comic.Wpf.Models"
         mc:Ignorable="d"
         Title="Anf" Height="800" Width="1100"
-        d:DataContext="{x:Type vm:MainViewModel}"
         FontSize="16">
     <mto:MetroWindow.Resources>
         <Style x:Key="Kw.Comic.MetroIcon.Title"
