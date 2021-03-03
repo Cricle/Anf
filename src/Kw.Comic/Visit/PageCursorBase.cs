@@ -1,4 +1,5 @@
-﻿using Kw.Comic.Visit.Interceptors;
+﻿using Kw.Comic.Engine;
+using Kw.Comic.Visit.Interceptors;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,23 +13,27 @@ namespace Kw.Comic.Visit
     {
         public IPageLoadInterceptor<TChapterVisitor> Interceptor { get; set; }
 
+        public IComicSourceProvider SourceProvider { get; }
+
         public ChapterCursor ChapterCursor { get; }
 
-        public HttpClient HttpClient { get; }
-
-        public PageCursorBase(HttpClient httpclient, ChapterCursor chapterCursor, IReadOnlyList<TChapterVisitor> datas)
+        public PageCursorBase(ChapterCursor chapterCursor, 
+            IComicSourceProvider sourceProvider,
+            IReadOnlyList<TChapterVisitor> datas)
             : base(datas)
         {
+            SourceProvider = sourceProvider;
             ChapterCursor = chapterCursor;
-            HttpClient = httpclient;
             Watch();
         }
 
-        public PageCursorBase(HttpClient httpclient, ChapterCursor chapterCursor, IEnumerable<TChapterVisitor> datas)
+        public PageCursorBase(ChapterCursor chapterCursor,
+            IComicSourceProvider sourceProvider,
+            IEnumerable<TChapterVisitor> datas)
             : base(datas)
         {
+            this.SourceProvider = sourceProvider;
             ChapterCursor = chapterCursor;
-            HttpClient = httpclient;
             Watch();
         }
         private void Watch()
@@ -79,7 +84,6 @@ namespace Kw.Comic.Visit
                 item.Dispose();
             }
             base.Dispose();
-            HttpClient?.Dispose();
         }
     }
 }

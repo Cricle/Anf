@@ -1,20 +1,16 @@
-﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using JavaScriptEngineSwitcher.Core;
 using HtmlAgilityPack;
-using Microsoft.Extensions.Options;
-using Kw.Comic.Engine;
 using Microsoft.Extensions.DependencyInjection;
 using Kw.Core.Annotations;
 using Newtonsoft.Json.Linq;
 using System.Web;
+using System.Net;
+using System.IO;
 
 namespace Kw.Comic.Engine.Dmzj
 {
@@ -23,16 +19,32 @@ namespace Kw.Comic.Engine.Dmzj
     {
         private static readonly Regex regex = new Regex(@"eval\((.*?)\{.*?\}\)\)", RegexOptions.Compiled);
         
-        private readonly HttpClient http;
         private readonly IJsEngine v8;
 
 
-        public DmzjComicOperator(IHttpClientFactory httpClientFactory, IJsEngine v8)
+        public DmzjComicOperator(IJsEngine v8)
         {
-            http = httpClientFactory.CreateClient(ComicConst.EngineDMZJ);
             this.v8 = v8;
         }
-
+        private async Task<Stream> GetOriginStreamAsync(string address)
+        {
+            var req = CreateRequest(address);
+            var rep = await req.GetResponseAsync();
+            return rep.GetResponseStream();
+        }
+        private WebRequest CreateRequest(string url)
+        {
+            var req = WebRequest.Create(url);
+            req.Headers.Add("Referrer", "https://www.dmzj.com/");
+            return req;
+        }
+        private WebRequest CreateImageRequest(string url)
+        {
+            var req = WebRequest.Create(url);
+            req.Headers.Add("Referrer", "https://www.dmzj.com/");
+            req.Headers.Add("Host", "images.dmzj1.com");
+            return req;
+        }
 
         public static string GetTrueUrl(string url)
         {
@@ -47,9 +59,9 @@ namespace Kw.Comic.Engine.Dmzj
         {
             targetUrl = GetTrueUrl(targetUrl);
             string str = null;
-            using (var rep = await http.GetAsync(targetUrl))
+            using (var sr=new StreamReader(await GetOriginStreamAsync(targetUrl)))
             {
-                str = await rep.Content.ReadAsStringAsync();
+                str = sr.ReadToEnd();
             }
             var doc = new HtmlDocument();
             doc.LoadHtml(str);
@@ -103,9 +115,9 @@ namespace Kw.Comic.Engine.Dmzj
         {
             var blocks = new List<ComicPage>();
             string str = null;
-            using (var rep = await http.GetAsync(targetUrl))
+            using (var sr = new StreamReader(await GetOriginStreamAsync(targetUrl)))
             {
-                str = await rep.Content.ReadAsStringAsync();
+                str = sr.ReadToEnd();
             }
             var match = regex.Match(str);
             {
@@ -134,6 +146,13 @@ namespace Kw.Comic.Engine.Dmzj
                 }
             }
             return blocks.ToArray();
+        }
+
+        public async Task<Stream> GetImageStreamAsync(string targetUrl)
+        {
+            var req = CreateImageRequest(targetUrl);
+            var rep = await req.GetResponseAsync();
+            return rep.GetResponseStream();
         }
     }
 }

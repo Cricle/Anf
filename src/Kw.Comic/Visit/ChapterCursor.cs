@@ -11,16 +11,18 @@ namespace Kw.Comic.Visit
     public class ChapterCursor : DataCursor<ComicVisitor>
     {
 
-        public ChapterCursor(ComicEntity comic,IReadOnlyList<ComicVisitor> datas)
+        public ChapterCursor(ComicEntity comic, IComicSourceProvider sourceProvider, IReadOnlyList<ComicVisitor> datas)
             : base(datas)
         {
+            this.SourceProvider = sourceProvider;
             Comic = comic;
             Watch();
         }
 
-        public ChapterCursor(ComicEntity comic, IEnumerable<ComicVisitor> datas)
+        public ChapterCursor(ComicEntity comic, IComicSourceProvider sourceProvider, IEnumerable<ComicVisitor> datas)
             : base(datas)
         {
+            this.SourceProvider = sourceProvider;
             Comic = comic;
             Watch();
         }
@@ -46,6 +48,8 @@ namespace Kw.Comic.Visit
 
         public ComicEntity Comic { get; }
 
+        public IComicSourceProvider SourceProvider { get; }
+
         public IChapterLoadInterceptor Interceptor { get; set; }
 
         public event Action<ChapterCursor, ComicVisitor, ChapterWithPage> ComicVisitorLoaded;
@@ -66,14 +70,14 @@ namespace Kw.Comic.Visit
                 }
             }
         }
-        public Task<PageCursor> MakePageCursorAsync(HttpClient httpClient)
+        public Task<PageCursor> MakePageCursorAsync()
         {
-            return MakePageCursorAsync(Index, httpClient);
+            return MakePageCursorAsync(Index);
         }
-        public async Task<PageCursor> MakePageCursorAsync(int i,HttpClient httpClient)
+        public async Task<PageCursor> MakePageCursorAsync(int i)
         {
             await LoadIndexAsync(i);
-            var pages= Datas[i].ChapterWithPage.Pages.MakePageCursor(this,httpClient);
+            var pages= Datas[i].ChapterWithPage.Pages.MakePageCursor(this);
             return pages;
         }
         public override void Dispose()

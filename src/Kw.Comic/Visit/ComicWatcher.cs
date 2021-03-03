@@ -9,21 +9,15 @@ namespace Kw.Comic.Visit
     public class ComicWatcher : ComicWatcherBase<ChapterVisitor>
     {
         public ComicWatcher(ComicEntity comic,
-            IHttpClientFactory httpClientFactory,
             IComicSourceCondition condition,
             IComicSourceProvider comicSourceProvider)
-            : base(comic, httpClientFactory, condition, comicSourceProvider)
+            : base(comic, condition, comicSourceProvider)
         {
         }
 
-        protected override async Task<PageCursorBase<ChapterVisitor>> MakePageCursorAsync(int i,HttpClient httpClient)
+        protected override async Task<PageCursorBase<ChapterVisitor>> MakePageCursorAsync(int i)
         {
-            var val = await ChapterCursor.MakePageCursorAsync(i,httpClient);
-            return val;
-        }
-        protected override async Task<PageCursorBase<ChapterVisitor>> MakePageCursorAsync(HttpClient httpClient)
-        {
-            var val = await ChapterCursor.MakePageCursorAsync(ChapterCursor.Index, httpClient);
+            var val = await ChapterCursor.MakePageCursorAsync(i);
             return val;
         }
     }

@@ -12,12 +12,8 @@ namespace Kw.Comic.Engine.Jisu
     [EnableService(ServiceLifetime = ServiceLifetime.Scoped)]
     public class JisuComicOperator : Dm5ComicOperator
     {
-        public JisuComicOperator(IHttpClientFactory clientFactory, IJsEngine v8) : base(clientFactory, v8)
+        public JisuComicOperator(IJsEngine v8) : base(v8)
         {
-        }
-        protected override HttpClient GetHttpClient(IHttpClientFactory clientFactory)
-        {
-            return clientFactory.CreateClient(ComicConst.EngineJisu);
         }
         protected override string GetBaseAddress()
         {

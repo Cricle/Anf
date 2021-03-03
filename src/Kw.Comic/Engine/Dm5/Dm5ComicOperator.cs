@@ -1,11 +1,13 @@
 ﻿using HtmlAgilityPack;
 using JavaScriptEngineSwitcher.Core;
+using Jint.Native.Array;
 using Kw.Core.Annotations;
 using Microsoft.Extensions.DependencyInjection;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -22,26 +24,36 @@ namespace Kw.Comic.Engine.Dm5
         private static readonly Regex viewSignRegex = new Regex(@"var DM5_VIEWSIGN=(.*)?;", RegexOptions.Compiled );
         private static readonly Regex imageCountRegex = new Regex(@"var DM5_IMAGE_COUNT=(.*)?;", RegexOptions.Compiled );
 
-
-        private readonly HttpClient httpClient;
         private readonly IJsEngine v8;
 
-        public Dm5ComicOperator(IHttpClientFactory clientFactory, IJsEngine v8)
+        public Dm5ComicOperator(IJsEngine v8)
         {
-            this.httpClient = GetHttpClient(clientFactory);
             this.v8 = v8;
         }
-        protected virtual HttpClient GetHttpClient(IHttpClientFactory clientFactory)
+
+        private async Task<Stream> GetStreamAsync(string address)
         {
-            return clientFactory.CreateClient(ComicConst.EngineDM5);
+            var req = CreateRequest(address);
+            var rep = await req.GetResponseAsync();
+            return rep.GetResponseStream();
         }
+
+        private WebRequest CreateRequest(string address)
+        {
+            var req = (HttpWebRequest)WebRequest.Create(address);
+            req.Method = HttpMethod.Get.Method;
+            req.Proxy = null;
+            req.Referer = GetBaseAddress();
+            return req;
+        }
+
 
         public async Task<ComicEntity> GetChaptersAsync(string targetUrl)
         {
             var str = string.Empty;
-            using (var rep = await httpClient.GetAsync(targetUrl))
+            using(var sr=new StreamReader(await GetStreamAsync(targetUrl)))
             {
-                str = await rep.Content.ReadAsStringAsync();
+                str = sr.ReadToEnd();
             }
             var html = new HtmlDocument();
             html.LoadHtml(str);
@@ -85,9 +97,9 @@ namespace Kw.Comic.Engine.Dm5
         public async Task<ComicPage[]> GetPagesAsync(string targetUrl)
         {
             var str = string.Empty;
-            using (var rep = await httpClient.GetAsync(targetUrl))
+            using (var sr = new StreamReader(await GetStreamAsync(targetUrl)))
             {
-                str = await rep.Content.ReadAsStringAsync();
+                str = sr.ReadToEnd();
             }
             var cidRgx = cidRegex.Match(str).Groups[0].Value;
             var dtRgx = dtRegex.Match(str).Groups[0].Value;
@@ -104,25 +116,24 @@ namespace Kw.Comic.Engine.Dm5
 
             var refAddr = targetUrl.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)
                 .Last();
-            var part = $"{refAddr}/chapterfun.ashx?cid={cid}&page={{0}}&key=&language=1&gtk=6&_cid={cid}&_mid={mid}&_dt={dt}&_sign={viewSign}";
+            var part = $"http://www.dm5.com/{refAddr}/chapterfun.ashx?cid={cid}&page={{0}}&key=&language=1&gtk=6&_cid={cid}&_mid={mid}&_dt={dt}&_sign={viewSign}";
 
             var pages = new List<ComicPage>();
             async Task<ComicPage[]> RunBlockAsync(int index)
             {
                 var pgs = new List<ComicPage>();
                 var partBlock = string.Format(part, index);
-                using (var partRep = await httpClient.GetAsync(partBlock))
+                using (var sr = new StreamReader(await GetStreamAsync(partBlock)))
                 {
-                    var partEncod = await partRep.Content.ReadAsStringAsync();
-                    var ret = v8.Evaluate<string>(partEncod);
-                    var arr = ret.Split(',');
-                    for (int j = 0; j < arr.Length; j++)
+                    var partEncod = sr.ReadToEnd();
+                    var ret = (ArrayInstance)v8.Evaluate(partEncod);
+                    var length = ret.GetLength();
+                    for (int i = 0; i < length; i++)
                     {
-                        var addr = arr[j];
                         pgs.Add(new ComicPage
                         {
                             Name = (index + 1).ToString(),
-                            TargetUrl = addr
+                            TargetUrl = ret.GetProperty(i.ToString()).Value.ToString()
                         });
                     }
                 }
@@ -149,6 +160,11 @@ namespace Kw.Comic.Engine.Dm5
                 }  
             }
             return pages.ToArray();
+        }
+
+        public Task<Stream> GetImageStreamAsync(string targetUrl)
+        {
+            return GetStreamAsync(targetUrl);
         }
     }
 }

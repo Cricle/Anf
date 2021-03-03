@@ -52,7 +52,6 @@ namespace Kw.Comic.Wpf.ViewModels
             IComicSourceProvider provider)
         {
             this.scope = scope;
-            httpClientFactory = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>();
 #if EnableRecyclableStream
             recyclableMemoryStreamManager = scope.ServiceProvider.GetRequiredService<RecyclableMemoryStreamManager>();
 #endif
@@ -61,7 +60,6 @@ namespace Kw.Comic.Wpf.ViewModels
             historyManager.AddComic(ComicEntity);
 
             Watcher = new SoftwareWpfComicWatcher(scope,entity,
-                httpClientFactory,
                 condition, provider);
             new DebugVisitorLoadInfo<SoftwareChapterVisitor>(Watcher);
             Watcher.PageInfos.Directions = PreLoadingDirections.Both;
@@ -79,7 +77,6 @@ namespace Kw.Comic.Wpf.ViewModels
         }
         private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         private readonly List<IDisposable> disposables;
-        private readonly IHttpClientFactory httpClientFactory;
         private readonly IServiceScope scope;
         private MemoryStream convertStream;
         private BitmapImage converImage;

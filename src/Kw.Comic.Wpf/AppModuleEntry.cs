@@ -17,7 +17,6 @@ namespace Kw.Comic.Wpf
         public override void Register(IRegisteContext context)
         {
             base.Register(context);
-            context.Services.AddHttpClient();
             context.Services.AddSingleton<ICommandManager, CommandManager>();
             context.Services.AddSingleton(new MainNavigationService());
 #if EnableRecyclableStream

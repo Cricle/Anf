@@ -16,6 +16,11 @@ namespace Kw.Comic.Wpf
     {
         private static Lazy<WpfAppEngine> instance = new Lazy<WpfAppEngine>(Create);
 
+        public WpfAppEngine()
+            : base(new ServiceCollection())
+        {
+        }
+
         public static WpfAppEngine Instance
         {
             get
@@ -32,6 +37,11 @@ namespace Kw.Comic.Wpf
         public static MainNavigationService GetNavigationService()
         {
             return Instance.GetRequiredService<MainNavigationService>();
+        }
+
+        protected override IServiceProvider BuildProvider()
+        {
+            return Services.BuildServiceProvider(true);
         }
     }
 }

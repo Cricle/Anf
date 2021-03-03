@@ -14,15 +14,13 @@ namespace Kw.Comic.Visit
         where T : ChapterVisitorBase
     {
         public ComicWatcherBase(ComicEntity comic,
-            IHttpClientFactory httpClientFactory,
             IComicSourceCondition condition,
             IComicSourceProvider comicSourceProvider)
         {
-            HttpClientFactory = httpClientFactory ?? throw new ArgumentNullException(nameof(httpClientFactory));
             Comic = comic ?? throw new ArgumentNullException(nameof(comic));
             Condition = condition ?? throw new ArgumentNullException(nameof(condition));
             ComicSourceProvider = comicSourceProvider ?? throw new ArgumentNullException(nameof(comicSourceProvider));
-            ChapterCursor = new ChapterCursor(comic,comic.Chapters.Select(x => new ComicVisitor(x, comicSourceProvider)));
+            ChapterCursor = new ChapterCursor(comic, comicSourceProvider, comic.Chapters.Select(x => new ComicVisitor(x, comicSourceProvider)));
         }
 
         private PageCursorBase<T> pageCursor;
@@ -87,8 +85,6 @@ namespace Kw.Comic.Visit
 
         public IComicSourceProvider ComicSourceProvider { get; }
 
-        public IHttpClientFactory HttpClientFactory { get; }
-
         public SemaphoreSlim Locker { get; } = new SemaphoreSlim(1, 1);
 
         public event Action<ComicWatcherBase<T>, PageCursorBase<T>> PageCursorCreated;
@@ -133,8 +129,7 @@ namespace Kw.Comic.Visit
                         return cursor;
                     }
                 }
-                var httpClient = HttpClientFactory.CreateClient(Condition.ImageHttpName);
-                var pageCursor = await MakePageCursorAsync(index,httpClient);
+                var pageCursor = await MakePageCursorAsync(index);
                 if (cachePageCursor && ChapterCacher != null)
                 {
                     ChapterCacher.SetCache(index, pageCursor);
@@ -148,10 +143,10 @@ namespace Kw.Comic.Visit
                 Locker.Release();
             }
         }
-        protected abstract Task<PageCursorBase<T>> MakePageCursorAsync(int i, HttpClient httpClient);
-        protected virtual Task<PageCursorBase<T>> MakePageCursorAsync(HttpClient httpClient)
+        protected abstract Task<PageCursorBase<T>> MakePageCursorAsync(int i);
+        protected virtual Task<PageCursorBase<T>> MakePageCursorAsync()
         {
-            return MakePageCursorAsync(ChapterCursor.Index, httpClient);
+            return MakePageCursorAsync(ChapterCursor.Index);
         }
 
         private async Task LoadChapterAsync()

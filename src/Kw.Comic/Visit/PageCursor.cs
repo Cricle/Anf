@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kw.Comic.Engine;
+using System;
 using System.Collections.Generic;
 using System.Net.Http;
 
@@ -7,14 +8,18 @@ namespace Kw.Comic.Visit
     public class PageCursor<T> : PageCursorBase<T>
         where T : ChapterVisitorBase
     {
-        public PageCursor(HttpClient httpclient, ChapterCursor chapterCursor, IReadOnlyList<T> datas)
-            : base(httpclient,chapterCursor, datas)
+        public PageCursor(ChapterCursor chapterCursor,
+            IComicSourceProvider sourceProvider,
+            IReadOnlyList<T> datas)
+            : base(chapterCursor, sourceProvider, datas)
         {
             Watch();
         }
 
-        public PageCursor(HttpClient httpclient, ChapterCursor chapterCursor, IEnumerable<T> datas) 
-            : base(httpclient,chapterCursor, datas)
+        public PageCursor(ChapterCursor chapterCursor,
+            IComicSourceProvider sourceProvider, 
+            IEnumerable<T> datas) 
+            : base(chapterCursor, sourceProvider, datas)
         {
             Watch();
         }
@@ -47,13 +52,17 @@ namespace Kw.Comic.Visit
     }
     public class PageCursor : PageCursorBase<ChapterVisitor>
     {
-        public PageCursor(HttpClient httpclient, ChapterCursor chapterCursor, IReadOnlyList<ChapterVisitor> datas) 
-            : base(httpclient,chapterCursor, datas)
+        public PageCursor(ChapterCursor chapterCursor,
+            IComicSourceProvider sourceProvider,
+            IReadOnlyList<ChapterVisitor> datas) 
+            : base(chapterCursor,sourceProvider, datas)
         {
         }
 
-        public PageCursor(HttpClient httpclient, ChapterCursor chapterCursor, IEnumerable<ChapterVisitor> datas)
-            : base(httpclient,chapterCursor, datas)
+        public PageCursor(ChapterCursor chapterCursor,
+            IComicSourceProvider sourceProvider,
+            IEnumerable<ChapterVisitor> datas)
+            : base(chapterCursor,sourceProvider, datas)
         {
         }
 

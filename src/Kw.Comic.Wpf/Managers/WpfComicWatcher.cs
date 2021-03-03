@@ -6,7 +6,6 @@ using Kw.Comic.Rendering;
 using Kw.Comic.Visit;
 using Kw.Comic.Wpf.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -29,10 +28,9 @@ namespace Kw.Comic.Wpf.Managers
     {
         public WpfComicWatcher(IServiceScope serviceScope,
             ComicEntity comic,
-            IHttpClientFactory httpClientFactory,
             IComicSourceCondition condition,
             IComicSourceProvider comicSourceProvider)
-            : base(comic, httpClientFactory, condition, comicSourceProvider)
+            : base(comic, condition, comicSourceProvider)
         {
             ServiceScope = serviceScope;
 
@@ -140,12 +138,11 @@ namespace Kw.Comic.Wpf.Managers
             }
             var chapter = ChapterCursor.Current.Chapter;
             #region TEST
-
+            //var sw = Stopwatch.GetTimestamp();
             //foreach (var item in @new.Datas)
             //{
             //    await item.LoadAsync();
             //}
-            //var sw = Stopwatch.GetTimestamp();
             //foreach (var item in PageInfos)
             //{
             //    await item.LoadAsync();
@@ -155,7 +152,9 @@ namespace Kw.Comic.Wpf.Managers
             #endregion
             TotalPage = PageInfos.Count;
             CurrentPageInfo = PageInfos.FirstOrDefault();
+            //var start = GC.GetTotalMemory(false) / 1024 / 1024f;
             GC.Collect();
+            //MessageBox.Show($"GC after {start-(GC.GetTotalMemory(false) / 1024/1024):f4}M");
             //return Task.CompletedTask;
         }
         protected abstract WpfComicPageInfo<T> CreatePageInfo(T item);

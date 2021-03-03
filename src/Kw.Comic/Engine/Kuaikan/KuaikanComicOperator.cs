@@ -5,9 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
@@ -18,21 +19,32 @@ namespace Kw.Comic.Engine.Kuaikan
     {
         private static readonly Regex regex = new Regex(@"<script>window.__NUXT__=(.*)?;</script>", RegexOptions.Compiled);
 
-        private readonly HttpClient httpClient;
         private readonly IJsEngine jsEngine;
 
-        public KuaikanComicOperator(IHttpClientFactory factory,IJsEngine jsEngine)
+        public KuaikanComicOperator(IJsEngine jsEngine)
         {
-            this.httpClient = factory.CreateClient(ComicConst.EngineKuaiKan);
             this.jsEngine = jsEngine;
         }
-
+        private async Task<Stream> GetStreamAsync(string address)
+        {
+            var req = CreateRequest(address);
+            var rep = await req.GetResponseAsync();
+            return rep.GetResponseStream();
+        }
+        private WebRequest CreateRequest(string url)
+        {
+            var req = WebRequest.Create(url);
+            req.Headers.Add("Referrer", "https://www.kuaikanmanhua.com/");
+            return req;
+        }
         public async Task<ComicEntity> GetChaptersAsync(string targetUrl)
         {
             var str = string.Empty;
-            using (var rep = await httpClient.GetAsync(targetUrl))
+            var req = CreateRequest(targetUrl);
+            using (var rep = await req.GetRequestStreamAsync())
+            using (var sr = new StreamReader(rep))
             {
-                str = await rep.Content.ReadAsStringAsync();
+                str = await sr.ReadToEndAsync();
             }
             var html = new HtmlDocument();
             html.LoadHtml(str);
@@ -72,9 +84,9 @@ namespace Kw.Comic.Engine.Kuaikan
         public async Task<ComicPage[]> GetPagesAsync(string targetUrl)
         {
             var str = string.Empty;
-            using (var rep=await httpClient.GetAsync(targetUrl))
+            using (var sr = new StreamReader(await GetStreamAsync(targetUrl)))
             {
-                str = await rep.Content.ReadAsStringAsync();
+                str = sr.ReadToEnd();
             }
             var jsCodesRgx = regex.Match(str);
             var jsCode = jsCodesRgx.Groups[1].Value;
@@ -95,6 +107,11 @@ namespace Kw.Comic.Engine.Kuaikan
                 pages.Add(page);
             }
             return pages.ToArray();
+        }
+
+        public Task<Stream> GetImageStreamAsync(string targetUrl)
+        {
+            return GetStreamAsync(targetUrl);
         }
     }
 }

@@ -6,19 +6,14 @@ namespace Kw.Comic.Visit
 {
     public static class ComicPageExtensions
     {
-        public static PageCursor MakePageCursor(this ComicPage[] pages, ChapterCursor chapterCursor, HttpClient httpClient)
+        public static PageCursor MakePageCursor(this ComicPage[] pages, ChapterCursor chapterCursor)
         {
             if (pages is null)
             {
                 throw new ArgumentNullException(nameof(pages));
             }
 
-            if (httpClient is null)
-            {
-                throw new ArgumentNullException(nameof(httpClient));
-            }
-
-            return new PageCursor(httpClient,chapterCursor,pages.Select(x => new ChapterVisitor(x, httpClient)));
+            return new PageCursor(chapterCursor,chapterCursor.SourceProvider,pages.Select(x => new ChapterVisitor(x,chapterCursor.SourceProvider)));
         }
     }
 }

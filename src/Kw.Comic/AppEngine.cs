@@ -7,13 +7,18 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic
 {
-    public class AppEngine : IServiceProvider
+    public abstract class AppEngine : IServiceProvider
     {
-        private readonly IServiceCollection services = new ServiceCollection();
+        private readonly IServiceCollection services;
         private readonly ModuleCollection modules = new ModuleCollection();
         private bool loaded;
 
         private IServiceProvider serviceProvider;
+
+        protected AppEngine(IServiceCollection services)
+        {
+            this.services = services;
+        }
 
         public bool Loaded => loaded;
 
@@ -34,8 +39,9 @@ namespace Kw.Comic
             var ctx = new RegisteContext(services);
             modules.ReadyRegister(ctx);
             modules.Register(ctx);
-            serviceProvider = services.BuildServiceProvider(true);
+            serviceProvider = BuildProvider();
         }
+        protected abstract IServiceProvider BuildProvider();
         public async Task ReadyAsync()
         {
             var ctx = new ReadyContext(ServiceProvider);

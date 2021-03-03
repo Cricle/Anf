@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kw.Comic.Engine;
+using System;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
@@ -11,7 +12,8 @@ namespace Kw.Comic.Visit
     {
         private Stream stream;
 
-        public ChapterVisitor(ComicPage page, HttpClient httpClient) : base(page, httpClient)
+        public ChapterVisitor(ComicPage page, IComicSourceProvider sourceProvider)
+            : base(page, sourceProvider)
         {
         }
 

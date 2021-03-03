@@ -1,4 +1,5 @@
-﻿using Kw.Core.Input;
+﻿using Kw.Comic.Engine;
+using Kw.Core.Input;
 using System;
 using System.IO;
 using System.Net.Http;
@@ -9,15 +10,15 @@ namespace Kw.Comic.Visit
 {
     public abstract class ChapterVisitorBase : ViewModelBase, IResourceVisitor, IDisposable
     {
-        private readonly HttpClient httpClient;
+        private readonly IComicSourceProvider sourceProvider;
 
         private readonly SemaphoreSlim locker = new SemaphoreSlim(1, 1);
 
         private bool isLoaded;
 
-        public ChapterVisitorBase(ComicPage page,HttpClient httpClient)
+        public ChapterVisitorBase(ComicPage page, IComicSourceProvider sourceProvider)
         {
-            this.httpClient = httpClient;
+            this.sourceProvider = sourceProvider;
             Page = page;
         }
 
@@ -115,7 +116,7 @@ namespace Kw.Comic.Visit
 
         public virtual Task LoadAsync()
         {
-            return LoadFromAsync(() => httpClient.GetStreamAsync(Page.TargetUrl));
+            return LoadFromAsync(() => sourceProvider.GetImageStreamAsync(Page.TargetUrl));
         }
 
         public virtual Stream GetStream()

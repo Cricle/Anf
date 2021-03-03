@@ -13,7 +13,9 @@ namespace Kw.Comic.Wpf.Managers
 {
     public class SoftwareWpfComicWatcher : WpfComicWatcher<SoftwareChapterVisitor>, IDisposable
     {
-        public SoftwareWpfComicWatcher(IServiceScope serviceScope, ComicEntity comic, IHttpClientFactory httpClientFactory, IComicSourceCondition condition, IComicSourceProvider comicSourceProvider) : base(serviceScope, comic, httpClientFactory, condition, comicSourceProvider)
+        public SoftwareWpfComicWatcher(IServiceScope serviceScope, ComicEntity comic, 
+            IComicSourceCondition condition, IComicSourceProvider comicSourceProvider) 
+            : base(serviceScope, comic, condition, comicSourceProvider)
         {
         }
 
@@ -22,12 +24,12 @@ namespace Kw.Comic.Wpf.Managers
             return new SoftwareComicPageInfo(item);
         }
 
-        protected override async Task<PageCursorBase<SoftwareChapterVisitor>> MakePageCursorAsync(int i, HttpClient httpClient)
+        protected override async Task<PageCursorBase<SoftwareChapterVisitor>> MakePageCursorAsync(int i)
         {
             await ChapterCursor.LoadIndexAsync(i);
             var pages = ChapterCursor.Datas[i].ChapterWithPage.Pages;
-            var uwpc = new PageCursor<SoftwareChapterVisitor>(httpClient,ChapterCursor,
-                pages.Select(x => new SoftwareChapterVisitor(x, httpClient)));
+            var uwpc = new PageCursor<SoftwareChapterVisitor>(ChapterCursor,ComicSourceProvider,
+                pages.Select(x => new SoftwareChapterVisitor(x,ComicSourceProvider)));
             return uwpc;
         }
     }

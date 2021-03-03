@@ -10,6 +10,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Text;
 using System.Threading.Tasks;
+using Kw.Comic.Engine;
 #if EnableWin10
 using Windows.Storage.Streams;
 #elif EnableRecyclableStream
@@ -23,7 +24,8 @@ namespace Kw.Comic.Wpf.Managers
 #if EnableRecyclableStream
         internal static readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager=new RecyclableMemoryStreamManager();
 #endif
-        public SoftwareChapterVisitor(ComicPage page, HttpClient httpClient) : base(page, httpClient)
+        public SoftwareChapterVisitor(ComicPage page, IComicSourceProvider sourceProvider) 
+            : base(page, sourceProvider)
         {
         }
         private Stream image;
