@@ -1,5 +1,6 @@
 ﻿using Kw.Comic.Wpf.Managers;
 using Kw.Comic.Wpf.ViewModels;
+using MahApps.Metro.Controls;
 using MahApps.Metro.IconPacks;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -35,6 +36,13 @@ namespace Kw.Comic.Wpf.Views.Pages
             Loaded += ViewPage_Loaded;
             Unloaded += ViewPage_Unloaded;
         }
+        public ViewPage(ViewViewModel vm)
+        {
+            DataContext = vm;
+            InitializeComponent();
+            Loaded += ViewPage_Loaded;
+            Unloaded += ViewPage_Unloaded;
+        }
 
         private void ViewPage_Unloaded(object sender, RoutedEventArgs e)
         {
@@ -47,9 +55,12 @@ namespace Kw.Comic.Wpf.Views.Pages
         private ViewViewModel vm;
         private async void ViewPage_Loaded(object sender, RoutedEventArgs e)
         {
-            vm = await ViewViewModel.FromUriAsync(Uri);
-            DataContext = vm;
-            vm.CurrentComicVisitor = vm.ComicVisitors.FirstOrDefault();
+            if (vm == null)
+            {
+                vm = await ViewViewModel.FromUriAsync(Uri);
+                DataContext = vm;
+                vm.CurrentComicVisitor = vm.ComicVisitors.FirstOrDefault();
+            }
             var val = WpfAppEngine.Instance.GetRequiredService<CommandBarManager>();
             var leftChapter = new Button
             {
@@ -63,13 +74,53 @@ namespace Kw.Comic.Wpf.Views.Pages
                 Command = vm.NextChapterCommand
             };
             controls.Add(rightChapter);
+            var sw = new ToggleSwitch
+            {
+                Width = 80,
+                Content = "锁",
+                VerticalAlignment = VerticalAlignment.Center
+            };
+            sw.Toggled += Sw_Toggled;
+            sw.SetResourceReference(ToggleSwitch.ForegroundProperty, "MahApps.Brushes.Foreground");
+            val.RightCommands.Add(sw);
             val.RightCommands.Add(leftChapter);
             val.RightCommands.Add(rightChapter);
+        }
+        private bool swEnable;
+        private void Sw_Toggled(object sender, RoutedEventArgs e)
+        {
+            if (sender is ToggleSwitch @switch)
+            {
+                swEnable = @switch.IsOn;
+            }
         }
 
         private void Grid_MouseLeftButtonUp(object sender, MouseButtonEventArgs e)
         {
-            vm?.ToggleControlVisibility();
+            if (!swEnable)
+            {
+                vm?.ToggleControlVisibility();
+            }
+        }
+
+        private async void Fv_PreviewKeyUp(object sender, KeyEventArgs e)
+        {
+            if (e.Key== Key.Left)
+            {
+                await vm.Watcher.PrevPageAsync();
+            }
+            else if (e.Key== Key.Right)
+            {
+                await vm.Watcher.NextPageAsync();
+            }
+            else if (e.Key== Key.Up)
+            {
+                await vm.Watcher.PrevChapterAsync();
+            }
+            else if (e.Key== Key.Down)
+            {
+                await vm.Watcher.NextChapterAsync();
+            }
         }
     }
 }

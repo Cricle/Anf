@@ -26,7 +26,7 @@ namespace Kw.Comic.Wpf.Managers
         {
             await ChapterCursor.LoadIndexAsync(i);
             var pages = ChapterCursor.Datas[i].ChapterWithPage.Pages;
-            var uwpc = new PageCursor<SoftwareChapterVisitor>(httpClient,
+            var uwpc = new PageCursor<SoftwareChapterVisitor>(httpClient,ChapterCursor,
                 pages.Select(x => new SoftwareChapterVisitor(x, httpClient)));
             return uwpc;
         }

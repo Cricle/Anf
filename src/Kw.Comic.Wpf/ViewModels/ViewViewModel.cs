@@ -8,7 +8,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
@@ -20,6 +19,8 @@ using System.Windows.Input;
 using System.Windows.Media.Imaging;
 #if EnableWin10
 using Windows.Storage.Streams;
+#elif EnableRecyclableStream
+using Microsoft.IO;
 #endif
 
 namespace Kw.Comic.Wpf.ViewModels
@@ -52,13 +53,19 @@ namespace Kw.Comic.Wpf.ViewModels
         {
             this.scope = scope;
             httpClientFactory = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>();
+#if EnableRecyclableStream
+            recyclableMemoryStreamManager = scope.ServiceProvider.GetRequiredService<RecyclableMemoryStreamManager>();
+#endif
             ComicEntity = entity;
+            var historyManager = scope.ServiceProvider.GetRequiredService<DownloadManager>();
+            historyManager.AddComic(ComicEntity);
 
             Watcher = new SoftwareWpfComicWatcher(scope,entity,
                 httpClientFactory,
                 condition, provider);
+            new DebugVisitorLoadInfo<SoftwareChapterVisitor>(Watcher);
             Watcher.PageInfos.Directions = PreLoadingDirections.Both;
-            Watcher.PageInfos.PreLoading = 10;
+            Watcher.PageInfos.PreLoading = null;
             Watcher.PageInfos.AsyncLoad = true;
             ComicVisitors = Watcher.ChapterCursor.Datas;
 
@@ -70,6 +77,7 @@ namespace Kw.Comic.Wpf.ViewModels
             OpenComicCommand = new RelayCommand(OpenComic);
             ToggleControlVisibilityCommand = new RelayCommand(ToggleControlVisibility);
         }
+        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         private readonly List<IDisposable> disposables;
         private readonly IHttpClientFactory httpClientFactory;
         private readonly IServiceScope scope;
@@ -108,13 +116,26 @@ namespace Kw.Comic.Wpf.ViewModels
             private set => Set(ref converImage, value);
         }
 
-        public int ChapterIndex => ComicVisitors.IndexOf(CurrentComicVisitor);
+        public int ChapterIndex
+        {
+            get
+            {
+                for (int i = 0; i < ComicVisitors.Count; i++)
+                {
+                    if (ComicVisitors[i]==CurrentComicVisitor)
+                    {
+                        return i;
+                    }
+                }
+                return -1;
+            }
+        }
 
         public SoftwareWpfComicWatcher Watcher { get; }
 
         public ComicEntity ComicEntity { get; }
 
-        public ImmutableArray<ComicVisitor> ComicVisitors { get; }
+        public IReadOnlyList<ComicVisitor> ComicVisitors { get; }
 
         public ICommand NextChapterCommand { get; }
         public ICommand PrevChapterCommand { get; }
@@ -136,7 +157,7 @@ namespace Kw.Comic.Wpf.ViewModels
         public void NextChapter()
         {
             var index = ChapterIndex;
-            if (index < ComicVisitors.Length)
+            if (index < ComicVisitors.Count)
             {
                 CurrentComicVisitor = ComicVisitors[index + 1];
             }
@@ -177,7 +198,11 @@ namespace Kw.Comic.Wpf.ViewModels
                 using (var client = new HttpClient())
                 using (var str = await client.GetAsync(new Uri(Watcher.Comic.ImageUrl)))
                 {
+#if EnableRecyclableStream
+                    convertStream = recyclableMemoryStreamManager.GetStream();
+#else
                     convertStream = new MemoryStream();
+#endif
                     var buffer = await str.Content.ReadAsStreamAsync();
                     await buffer.CopyToAsync(convertStream);
                     convertStream.Seek(0, SeekOrigin.Begin);

@@ -121,7 +121,7 @@ namespace Kw.Comic.Engine.Dm5
                         var addr = arr[j];
                         pgs.Add(new ComicPage
                         {
-                            Name = (pages.Count + 1).ToString(),
+                            Name = (index + 1).ToString(),
                             TargetUrl = addr
                         });
                     }

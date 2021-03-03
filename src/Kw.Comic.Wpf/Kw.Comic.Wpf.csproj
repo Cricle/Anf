@@ -6,13 +6,20 @@
     <UseWPF>true</UseWPF>
     <EnableSkia>false</EnableSkia>
     <EnableGdi>false</EnableGdi>
-    <EnableWin10>true</EnableWin10>
+    <EnableWin10>false</EnableWin10>
+    <EnableRecyclableStream>true</EnableRecyclableStream>
     <EnableFody>false</EnableFody>
     <NotEnableNavite>false</NotEnableNavite>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework.TrimEnd(`0123456789-`))' == 'net' and '$(NotEnableNavite)'!='true'">
     <EnableNavite>true</EnableNavite>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableRecyclableStream)' == 'true'">
+    <DefineConstants>$(DefineConstants);EnableRecyclableStream</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(EnableRecyclableStream)' == 'true'">
+    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="1.4.0" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Kw.Core" Version="1.0.0" />
     <PackageReference Include="Kw.Notification" Version="1.0.0" />
@@ -56,6 +63,9 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Kw.Comic\Kw.Comic.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="ZoomableCanvas\" />
   </ItemGroup>
 
 </Project>

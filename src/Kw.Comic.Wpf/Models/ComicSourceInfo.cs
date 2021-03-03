@@ -28,6 +28,8 @@ namespace Kw.Comic.Wpf.Models
 
         public IComicSourceCondition Condition { get; set; }
 
+        public string ComicName { get; set; }
+
         public ComicSource Source { get; set; }
 
 
@@ -42,6 +44,7 @@ namespace Kw.Comic.Wpf.Models
                 var navSer = WpfAppEngine.Instance.GetRequiredService<MainNavigationService>();
                 var viewPage = new ViewPage(Source.TargetUrl);
                 navSer.Frame.Navigate(viewPage);
+                navSer.SetTitle($"正在阅读{ComicName} - {Source.Name}");
             }
         }
         public void Copy()

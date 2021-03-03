@@ -5,11 +5,10 @@
       xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
       xmlns:local="clr-namespace:Kw.Comic.Wpf.Views.Pages"
       xmlns:mto="http://metro.mahapps.com/winfx/xaml/controls"
-    xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
-    xmlns:vm="clr-namespace:Kw.Comic.Wpf.ViewModels"
-    xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
-    xmlns:eng="clr-namespace:Kw.Comic.Engine;assembly=Kw.Comic"
-    xmlns:m="clr-namespace:Kw.Comic.Wpf.Models"
+      xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+      xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+      xmlns:m="clr-namespace:Kw.Comic.Wpf.Models"
+      xmlns:conv="clr-namespace:Kw.Comic.Wpf.Converters"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800"
       Title="HomePage"
@@ -19,6 +18,7 @@
                TargetType="icon:PackIconMaterialLight">
             <Setter Property="VerticalAlignment" Value="Center"/>
         </Style>
+        <conv:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
     </Page.Resources>
     <Grid>
         <Grid.RowDefinitions>
@@ -42,17 +42,6 @@
                     <TextBox.InputBindings>
                         <KeyBinding Key="Enter" Command="{Binding SearchCommand}"/>
                     </TextBox.InputBindings>
-                    <!--<mto:TextBoxHelper.ButtonContent>
-                    <icon:PackIconMaterialLight Kind="Magnify"
-                                        Grid.Column="1"
-                                        VerticalAlignment="Center"
-                                        Margin="6,0">
-                        <icon:PackIconMaterialLight.InputBindings>
-                            <MouseBinding Command="{Binding SearchCommand}"
-                                  MouseAction="LeftClick"/>
-                        </icon:PackIconMaterialLight.InputBindings>
-                    </icon:PackIconMaterialLight>
-                </mto:TextBoxHelper.ButtonContent>-->
                 </TextBox>
                 <Button Grid.Column="1"
                     Style="{DynamicResource MahApps.Styles.Button.Window.VisualStudio}"
@@ -81,11 +70,64 @@
                 Visibility="{Binding LoadingVisibility}">
             <mto:MetroProgressBar IsIndeterminate="True"/>
         </Border>
+        <Border Grid.RowSpan="4"
+                Visibility="{Binding HasData,Converter={StaticResource BoolVisibilityConverter},ConverterParameter=rev}">
+            <StackPanel VerticalAlignment="Center"
+                        HorizontalAlignment="Stretch">
+                <TextBlock FontWeight="ExtraLight"
+                           FontSize="22"
+                           HorizontalAlignment="Center"
+                           Foreground="{DynamicResource MahApps.Brushes.Foreground}">
+                    <Run>可以从上方输入框输入</Run>
+                    <Run FontWeight="ExtraBlack" ToolTip="Good luck">关键字</Run>
+                    <Run>搜索或直接输入</Run>
+                    <Run FontWeight="ExtraBlack" ToolTip="如果可解析输入框下面会出现按钮的">可解析</Run>
+                    <Run>漫画网址</Run>
+                </TextBlock>
+                <StackPanel Orientation="Vertical">
+                    <ListView Margin="10,6"
+                          ItemsSource="{Binding HistoryInfos}"
+                          Visibility="{Binding HistoryHasData,Converter={StaticResource BoolVisibilityConverter}}">
+                        <ListView.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <VirtualizingStackPanel Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ListView.ItemsPanel>
+                        <ListView.ItemTemplate>
+                            <DataTemplate>
+                                <Grid>
+                                    <Grid.ToolTip>
+                                        <TextBlock Text="{Binding Info.Descript}"
+                                       MaxWidth="300"
+                                       TextWrapping="Wrap"/>
+                                    </Grid.ToolTip>
+                                    <Image Width="300"
+                                       Height="300"
+                                       Source="{Binding Info.ImageUrl}">
+                                    </Image>
+                                    <Border Background="#A1666666"
+                                VerticalAlignment="Bottom">
+                                        <TextBlock Text="{Binding Info.Name}"
+                                       FontSize="16"
+                                       Margin="0,16"
+                                       HorizontalAlignment="Center"/>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </StackPanel>
+            </StackPanel>
+        </Border>
         <ListView Grid.Row="3"
+                  x:Name="LvMain"
+                  ScrollViewer.ScrollChanged="LvMain_ScrollChanged"
                   ItemsSource="{Binding Snapshots}"
                   SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}"
                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
-                  Background="Transparent">
+                  ScrollViewer.VerticalScrollBarVisibility="Auto"
+                  Background="Transparent"
+                  Visibility="{Binding HasData,Converter={StaticResource BoolVisibilityConverter}}">
             <ListBox.ItemsPanel>
                 <ItemsPanelTemplate>
                     <WrapPanel Orientation="Horizontal" IsItemsHost="True"/>

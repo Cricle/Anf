@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
+
 namespace Kw.Comic.Wpf
 {
     internal class AppModuleEntry : AutoModuleEntity
@@ -19,6 +20,9 @@ namespace Kw.Comic.Wpf
             context.Services.AddHttpClient();
             context.Services.AddSingleton<ICommandManager, CommandManager>();
             context.Services.AddSingleton(new MainNavigationService());
+#if EnableRecyclableStream
+            context.Services.AddSingleton(SoftwareChapterVisitor.recyclableMemoryStreamManager);
+#endif
         }
         public override Task ReadyAsync(IReadyContext context)
         {

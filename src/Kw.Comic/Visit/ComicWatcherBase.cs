@@ -2,6 +2,7 @@
 using Kw.Core.Input;
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Threading;
@@ -21,12 +22,12 @@ namespace Kw.Comic.Visit
             Comic = comic ?? throw new ArgumentNullException(nameof(comic));
             Condition = condition ?? throw new ArgumentNullException(nameof(condition));
             ComicSourceProvider = comicSourceProvider ?? throw new ArgumentNullException(nameof(comicSourceProvider));
-            ChapterCursor = new ChapterCursor(comic.Chapters.Select(x => new ComicVisitor(x, comicSourceProvider)));
+            ChapterCursor = new ChapterCursor(comic,comic.Chapters.Select(x => new ComicVisitor(x, comicSourceProvider)));
         }
 
         private PageCursorBase<T> pageCursor;
         private bool isLoading;
-        private bool cachePageCursor = true;
+        private bool cachePageCursor = false;
         private bool singleOperator;
         private bool forceNewPageCursor;
         private int currentPageIndex;
@@ -93,6 +94,8 @@ namespace Kw.Comic.Visit
         public event Action<ComicWatcherBase<T>, PageCursorBase<T>> PageCursorCreated;
         public event Action<ComicWatcherBase<T>, PageCursorBase<T>> PageCursorCacheCreated;
         public event Action<ComicWatcherBase<T>, PageCursorBase<T>> LoadedChapter;
+        public event Action<ComicWatcherBase<T>, DataCursor<T>, int, int> IndexChanged;
+        public event Action<ComicResourceLoadInfo<T>> VisitorLoaded;
 
         public void ResetCache()
         {
@@ -132,7 +135,7 @@ namespace Kw.Comic.Visit
                 }
                 var httpClient = HttpClientFactory.CreateClient(Condition.ImageHttpName);
                 var pageCursor = await MakePageCursorAsync(index,httpClient);
-                if (cachePageCursor&&ChapterCacher!=null)
+                if (cachePageCursor && ChapterCacher != null)
                 {
                     ChapterCacher.SetCache(index, pageCursor);
                     PageCursorCacheCreated?.Invoke(this, pageCursor);
@@ -157,12 +160,14 @@ namespace Kw.Comic.Visit
             if (old!=null)
             {
                 old.IndexChanged -= Old_IndexChanged;
+                PageCursor.ResourceLoaded -= PageCursor_VisitorLoaded;
             }
             var idx = ChapterCursor.Index < 0 ? 0 : ChapterCursor.Index;
             PageCursor = await CoreLoadChapterAsync(idx, ForceNewPageCursor, CachePageCursor);
             if (PageCursor!=null)
             {
                 PageCursor.IndexChanged += Old_IndexChanged;
+                PageCursor.ResourceLoaded += PageCursor_VisitorLoaded;
             }
             await OnLoadChapterAsync(old, PageCursor);
             if (PageCursor != null)
@@ -176,10 +181,20 @@ namespace Kw.Comic.Visit
             }
         }
 
+        private void PageCursor_VisitorLoaded(DataCursor<T> arg1, T arg2)
+        {
+            VisitorLoaded?.Invoke(new ComicResourceLoadInfo<T>(this, 
+                (PageCursorBase<T>)arg1, 
+                arg2,
+                ChapterCursor.Current));
+        }
+
         private void Old_IndexChanged(DataCursor<T> arg1, int arg2)
         {
+            var old = currentPageIndex;
             currentPageIndex = arg2;
             RaisePropertyChanged(nameof(CurrentPageIndex));
+            IndexChanged?.Invoke(this, arg1, old, arg2);
         }
 
         protected virtual Task OnLoadChapterAsync(PageCursorBase<T> old, PageCursorBase<T> @new)

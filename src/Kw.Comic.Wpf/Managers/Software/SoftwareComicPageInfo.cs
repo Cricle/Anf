@@ -35,19 +35,11 @@ namespace Kw.Comic.Wpf.Managers
 
         protected override Task<ImageSource> OnLoadResourceAsync(SoftwareChapterVisitor visitor)
         {
-#if EnableWin10
-            visitor.Image.Seek(0);
-#else
-            visitor.Image.Seek(0,SeekOrigin.Begin);
-#endif
+            visitor.Image.Seek(0, SeekOrigin.Begin);
             var bitmapImage = new BitmapImage();
             bitmapImage.BeginInit();
             bitmapImage.CacheOption = BitmapCacheOption.OnLoad;
-#if EnableWin10
-            bitmapImage.StreamSource = visitor.Image.AsStream();
-#else
             bitmapImage.StreamSource = visitor.Image;
-#endif
             bitmapImage.DecodePixelHeight = DecodePixelHeight;
             bitmapImage.DecodePixelWidth = DecodePixelWdith;
             bitmapImage.EndInit();

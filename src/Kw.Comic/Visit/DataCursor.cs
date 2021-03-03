@@ -1,7 +1,8 @@
 ﻿using Kw.Core.Input;
 using System;
 using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -11,10 +12,10 @@ namespace Kw.Comic.Visit
     {
         private int index = -1;
 
-        public DataCursor(ImmutableArray<T> datas)
+        public DataCursor(IReadOnlyList<T> datas)
         {
             Datas = datas;
-            Length = Datas.Length;
+            Length = Datas.Count;
         }
         public DataCursor(IEnumerable<T> datas)
         {
@@ -23,13 +24,13 @@ namespace Kw.Comic.Visit
                 throw new ArgumentNullException(nameof(datas));
             }
 
-            Datas = datas.ToImmutableArray();
-            Length = Datas.Length;
+            Datas = datas.ToArray();
+            Length = Datas.Count;
         }
 
         private T current;
 
-        public ImmutableArray<T> Datas { get; }
+        public IReadOnlyList<T> Datas { get; }
 
         public int Length { get; }
 
@@ -44,7 +45,7 @@ namespace Kw.Comic.Visit
 
         public bool IsFirst => index == 0;
 
-        public bool IsLast => index == Datas.Length - 1;
+        public bool IsLast => index == Datas.Count - 1;
 
         public T Current 
         {
@@ -53,6 +54,7 @@ namespace Kw.Comic.Visit
         }
 
         public event Action<DataCursor<T>, int> IndexChanged;
+        public event Action<DataCursor<T>, T> ResourceLoaded;
 
         public T this[int idx]
         {
@@ -65,7 +67,7 @@ namespace Kw.Comic.Visit
 
         public async Task<bool> SetIndexAsync(int idx)
         {
-            if (idx < 0 || idx >= Datas.Length)
+            if (idx < 0 || idx >= Datas.Count)
             {
                 return false;
             }
@@ -84,6 +86,10 @@ namespace Kw.Comic.Visit
                 return true;
             }
             return false;
+        }
+        protected void RaiseResourceLoaded(T val)
+        {
+            ResourceLoaded?.Invoke(this, val);
         }
         public virtual Task LoadIndexAsync(int index)
         {

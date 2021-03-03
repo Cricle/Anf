@@ -7,26 +7,38 @@
       xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
       xmlns:mto="http://metro.mahapps.com/winfx/xaml/controls"
       xmlns:conv="clr-namespace:Kw.Comic.Wpf.Converters" 
+      xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+      xmlns:beh="clr-namespace:Kw.Comic.Wpf.Behaviors" xmlns:h="http://schemas.microsoft.com/expression/2010/interactivity"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800">
     <Page.Resources>
         <conv:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
     </Page.Resources>
     <Grid MouseLeftButtonUp="Grid_MouseLeftButtonUp">
-        <mto:FlipView ItemsSource="{Binding Watcher.PageInfos}"
+        <mto:FlipView x:Name="Fv"
+                      ItemsSource="{Binding Watcher.PageInfos}"
                       SelectedItem="{Binding Watcher.CurrentPageInfo,Mode=TwoWay}"
                       IsBannerEnabled="False"
                       ShowIndex="False"
                       VirtualizingPanel.IsVirtualizing="True"
-                      MouseHoverBorderEnabled="False">
+                      MouseHoverBorderEnabled="False"
+                      PreviewKeyUp="Fv_PreviewKeyUp">
             <mto:FlipView.ItemTemplate>
                 <DataTemplate DataType="m:ComicPageInfo">
                     <Grid>
-                        <ScrollViewer Visibility="{Binding Done,Converter={StaticResource BoolVisibilityConverter}}">
-                            <Image Source="{Binding Image,Mode=OneWay}" 
+                        <ScrollViewer Visibility="{Binding Done,Converter={StaticResource BoolVisibilityConverter}}"
+                                          VerticalScrollBarVisibility="Auto">
+                            <Grid ClipToBounds="True">
+                                <Image Source="{Binding Image,Mode=OneWay}" 
                                    RenderOptions.BitmapScalingMode="Fant"
                                    RenderOptions.EdgeMode="Unspecified"
                                    Stretch="None"/>
+                                <!--<h:Interaction.Behaviors>
+                                    <beh:ZoomWithWheelAndMoveBehavior UseInParent="True" 
+                                                    IsCenterInZoom="True"
+                                                    IsReturn="False"/>
+                                </h:Interaction.Behaviors>-->
+                            </Grid>
                         </ScrollViewer>
                         <Grid Visibility="{Binding Loading,Converter={StaticResource BoolVisibilityConverter}}">
                             <StackPanel Orientation="Vertical"
@@ -44,7 +56,8 @@
                                 <mto:MetroProgressBar IsIndeterminate="{Binding Loading}"/>
                             </StackPanel>
                         </Grid>
-                        <Grid Visibility="{Binding Error,Converter={StaticResource BoolVisibilityConverter}}">
+                        <Grid Visibility="{Binding Error,Converter={StaticResource BoolVisibilityConverter}}"
+                              fw:PointerTracker.Enabled="True">
                             <StackPanel Orientation="Vertical"
                                         HorizontalAlignment="Center"
                                         VerticalAlignment="Center">
@@ -56,10 +69,14 @@
                                 <TextBlock >
                                     <Run Text="{Binding Visitor.Page.TargetUrl}"/>
                                 </TextBlock>
-                            </StackPanel>
                             <Button Command="{Binding LoadCommand}"
+                                    Style="{DynamicResource Kw.Visio.ButtonAccentRevealStyle}"
                                     HorizontalAlignment="Center"
-                                    VerticalAlignment="Bottom">重新加载</Button>
+                                    VerticalAlignment="Bottom"
+                                    Margin="15"
+                                    Padding="6"
+                                    Height="auto">重新加载</Button>
+                            </StackPanel>
                         </Grid>
                     </Grid>
                 </DataTemplate>

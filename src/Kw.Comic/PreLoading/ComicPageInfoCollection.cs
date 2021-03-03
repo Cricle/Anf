@@ -3,6 +3,8 @@ using Kw.Comic.Visit;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kw.Comic.PreLoading
@@ -33,6 +35,10 @@ namespace Kw.Comic.PreLoading
             {
                 await this[i].UnLoadAsync();
             }
+        }
+        protected virtual Task OnActiveAsync(TPageInfo pageInfo)
+        {
+            return pageInfo.LoadAsync();
         }
 
         public async Task ActiveAsync(int index)
@@ -89,7 +95,7 @@ namespace Kw.Comic.PreLoading
                     var tasks = new List<Task>();
                     for (int i = left; i < right; i++)
                     {
-                        tasks.Add(this[i].LoadAsync());
+                        tasks.Add(OnActiveAsync(this[i]));
                     }
                     await Task.WhenAll(tasks);
                 }
@@ -97,7 +103,7 @@ namespace Kw.Comic.PreLoading
                 {
                     for (int i = left; i < right; i++)
                     {
-                        await this[i].LoadAsync();
+                        await OnActiveAsync(this[i]);
                     }
                 }
             }

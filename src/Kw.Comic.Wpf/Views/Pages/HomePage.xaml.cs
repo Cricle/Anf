@@ -21,10 +21,35 @@ namespace Kw.Comic.Wpf.Views.Pages
     /// </summary>
     public partial class HomePage : Page
     {
+        private HomeViewModel vm;
         public HomePage()
         {
+            DataContext = vm = new HomeViewModel();
             InitializeComponent();
-            DataContext = new HomeViewModel();
+        }
+        private bool loaded;
+        private void LvMain_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (!loaded)
+            {
+                loaded = true;
+                if (e.OriginalSource is ScrollViewer viewer)
+                {
+                    viewer.ScrollChanged += Viewer_ScrollChanged;
+                    Unloaded+=(_,__)=> viewer.ScrollChanged -= Viewer_ScrollChanged;
+                }
+            }
+        }
+
+        private void Viewer_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (sender is ScrollViewer viewer)
+            {
+                if (viewer.VerticalOffset == viewer.ScrollableHeight)
+                {
+                    vm.Next();
+                }
+            }
         }
     }
 }

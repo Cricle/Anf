@@ -1,5 +1,6 @@
 ﻿using Kw.Comic.Engine;
 using Kw.Core.Input;
+using System;
 using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
@@ -34,6 +35,8 @@ namespace Kw.Comic.Visit
 
         public ComicChapter Chapter { get; }
 
+        public event Action<ComicVisitor, ChapterWithPage> Loaded;
+
         public void Dispose()
         {
             locker?.Dispose();
@@ -46,15 +49,15 @@ namespace Kw.Comic.Visit
                 return;
             }
             await locker.WaitAsync();
-            if (IsLoaded)
-            {
-                locker.Release();
-                return;
-            }
             try
             {
+                if (IsLoaded)
+                {
+                    return;
+                }
                 var pages = await comicSourceProvider.GetPagesAsync(Chapter.TargetUrl);
                 ChapterWithPage = new ChapterWithPage(Chapter, pages);
+                Loaded?.Invoke(this, ChapterWithPage);
                 IsLoaded = true;
             }
             finally

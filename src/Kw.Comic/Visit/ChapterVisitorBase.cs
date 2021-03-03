@@ -69,7 +69,7 @@ namespace Kw.Comic.Visit
         {
             return Task.CompletedTask;
         }
-        public virtual async Task LoadAsync()
+        public async Task LoadFromAsync(Func<Task<Stream>> loadFunc, bool leaveOpen = false)
         {
             if (IsLoaded)
             {
@@ -83,10 +83,19 @@ namespace Kw.Comic.Visit
             }
             try
             {
-                using (var s = await httpClient.GetStreamAsync(Page.TargetUrl))
+                if (leaveOpen)
                 {
-                    await OnLoadAsync(s);
+                    var stream = await loadFunc();
+                    await OnLoadAsync(stream);
                 }
+                else
+                {
+                    using (var stream = await loadFunc())
+                    {
+                        await OnLoadAsync(stream);
+                    }
+                }
+                
                 Loaded?.Invoke(this);
                 IsLoaded = true;
             }
@@ -95,6 +104,25 @@ namespace Kw.Comic.Visit
                 locker.Release();
             }
         }
+        public Task LoadFromStreamAsync(Stream stream)
+        {
+            return LoadFromAsync(() => Task.FromResult(stream),true);
+        }
+        public Task LoadFromFileAsync(string filePath)
+        {
+            return LoadFromAsync(() => Task.FromResult<Stream>(File.OpenRead(filePath)));
+        }
+
+        public virtual Task LoadAsync()
+        {
+            return LoadFromAsync(() => httpClient.GetStreamAsync(Page.TargetUrl));
+        }
+
+        public virtual Stream GetStream()
+        {
+            return null;
+        }
+
         protected abstract Task OnLoadAsync(Stream stream);
         public override string ToString()
         {
