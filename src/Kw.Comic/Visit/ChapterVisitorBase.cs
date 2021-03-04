@@ -30,6 +30,7 @@ namespace Kw.Comic.Visit
 
         public ComicPage Page { get; }
 
+        public event Action<ChapterVisitorBase> Loading;
         public event Action<ChapterVisitorBase> Loaded;
         public event Action<ChapterVisitorBase> Disposed;
 
@@ -68,7 +69,11 @@ namespace Kw.Comic.Visit
         }
         protected virtual Task OnUnLoadAsync()
         {
+#if NET452
+            return Task.FromResult(0);
+#else
             return Task.CompletedTask;
+#endif
         }
         public async Task LoadFromAsync(Func<Task<Stream>> loadFunc, bool leaveOpen = false)
         {
@@ -84,6 +89,7 @@ namespace Kw.Comic.Visit
             }
             try
             {
+                Loading?.Invoke(this);
                 if (leaveOpen)
                 {
                     var stream = await loadFunc();

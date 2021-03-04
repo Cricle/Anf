@@ -1,7 +1,6 @@
 ﻿using HtmlAgilityPack;
 using JavaScriptEngineSwitcher.Core;
-using Kw.Core.Annotations;
-using Microsoft.Extensions.DependencyInjection;
+using Kw.Comic.Engine.Networks;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
@@ -14,35 +13,32 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine.Kuaikan
 {
-    [EnableService(ServiceLifetime = ServiceLifetime.Scoped)]
     public class KuaikanComicOperator : IComicSourceProvider
     {
         private static readonly Regex regex = new Regex(@"<script>window.__NUXT__=(.*)?;</script>", RegexOptions.Compiled);
 
+        private readonly INetworkAdapter networkAdapter;
         private readonly IJsEngine jsEngine;
 
-        public KuaikanComicOperator(IJsEngine jsEngine)
+        public KuaikanComicOperator(IJsEngine jsEngine,
+            INetworkAdapter networkAdapter)
         {
+            this.networkAdapter = networkAdapter;
             this.jsEngine = jsEngine;
         }
-        private async Task<Stream> GetStreamAsync(string address)
+        private Task<Stream> CreateRequest(string url)
         {
-            var req = CreateRequest(address);
-            var rep = await req.GetResponseAsync();
-            return rep.GetResponseStream();
-        }
-        private WebRequest CreateRequest(string url)
-        {
-            var req = WebRequest.Create(url);
-            req.Headers.Add("Referrer", "https://www.kuaikanmanhua.com/");
-            return req;
+            return networkAdapter.GetStreamAsync(new RequestSettings
+            {
+                Address=url,
+                Referrer= "https://www.kuaikanmanhua.com/"
+            });
         }
         public async Task<ComicEntity> GetChaptersAsync(string targetUrl)
         {
             var str = string.Empty;
             var req = CreateRequest(targetUrl);
-            using (var rep = await req.GetRequestStreamAsync())
-            using (var sr = new StreamReader(rep))
+            using (var sr = new StreamReader(await CreateRequest(targetUrl)))
             {
                 str = await sr.ReadToEndAsync();
             }
@@ -84,7 +80,7 @@ namespace Kw.Comic.Engine.Kuaikan
         public async Task<ComicPage[]> GetPagesAsync(string targetUrl)
         {
             var str = string.Empty;
-            using (var sr = new StreamReader(await GetStreamAsync(targetUrl)))
+            using (var sr = new StreamReader(await CreateRequest(targetUrl)))
             {
                 str = sr.ReadToEnd();
             }
@@ -111,7 +107,7 @@ namespace Kw.Comic.Engine.Kuaikan
 
         public Task<Stream> GetImageStreamAsync(string targetUrl)
         {
-            return GetStreamAsync(targetUrl);
+            return CreateRequest(targetUrl);
         }
     }
 }

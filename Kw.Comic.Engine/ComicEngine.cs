@@ -1,7 +1,4 @@
-﻿using Ao.Lang;
-using Kw.Core.Annotations;
-using Microsoft.Extensions.DependencyInjection;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
@@ -12,7 +9,6 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine
 {
-    [EnableService(ServiceLifetime = ServiceLifetime.Singleton)]
     public class ComicEngine : ObservableCollection<IComicSourceCondition>
     {
         public ComicEngine()

@@ -5,6 +5,7 @@ using Kw.Comic.Engine.Dm5;
 using Kw.Comic.Engine.Dmzj;
 using Kw.Comic.Engine.Jisu;
 using Kw.Comic.Engine.Kuaikan;
+using Kw.Comic.Engine.Networks;
 using Kw.Comic.Engine.Soman;
 using Kw.Core;
 using Microsoft.Extensions.DependencyInjection;
@@ -12,6 +13,7 @@ using Microsoft.Extensions.DependencyInjection.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Net;
+using System.Net.Cache;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -22,11 +24,22 @@ namespace Kw.Comic
     {
         public override void Register(IRegisteContext context)
         {
+            WebRequest.DefaultCachePolicy = new RequestCachePolicy(RequestCacheLevel.NoCacheNoStore);
             WebRequest.DefaultWebProxy = null;
 
             base.Register(context);
 
+            context.Services.AddSingleton<ComicEngine>();
+            context.Services.AddSingleton<SearchEngine>();
+
+            context.Services.AddScoped<JisuComicOperator>();
+            context.Services.AddScoped<Dm5ComicOperator>();
+            context.Services.AddScoped<DmzjComicOperator>();
+            context.Services.AddScoped<KuaikanComicOperator>();
+            context.Services.AddScoped<SomanSearchProvider>();
+
             context.Services.AddScoped<IJsEngine, JintJsEngine>();
+            context.Services.AddScoped<INetworkAdapter, WebRequestAdapter>();
         }
         public override Task ReadyAsync(IReadyContext context)
         {

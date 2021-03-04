@@ -35,6 +35,7 @@ namespace Kw.Comic.Visit
 
         public ComicChapter Chapter { get; }
 
+        public event Action<ComicVisitor, ChapterWithPage> Loading;
         public event Action<ComicVisitor, ChapterWithPage> Loaded;
 
         public void Dispose()
@@ -55,6 +56,7 @@ namespace Kw.Comic.Visit
                 {
                     return;
                 }
+                Loading?.Invoke(this, ChapterWithPage);
                 var pages = await comicSourceProvider.GetPagesAsync(Chapter.TargetUrl);
                 ChapterWithPage = new ChapterWithPage(Chapter, pages);
                 Loaded?.Invoke(this, ChapterWithPage);

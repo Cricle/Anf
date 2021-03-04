@@ -12,10 +12,6 @@ namespace Kw.Comic.Engine
 
         int Order { get; }
 
-        string HttpName { get; }
-
-        string ImageHttpName { get; }
-
         EngineDescript Descript { get; }
 
         Type ProviderType { get; }

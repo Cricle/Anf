@@ -1,7 +1,6 @@
 ﻿using JavaScriptEngineSwitcher.Core;
 using Kw.Comic.Engine.Dm5;
-using Kw.Core.Annotations;
-using Microsoft.Extensions.DependencyInjection;
+using Kw.Comic.Engine.Networks;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
@@ -9,10 +8,10 @@ using System.Text;
 
 namespace Kw.Comic.Engine.Jisu
 {
-    [EnableService(ServiceLifetime = ServiceLifetime.Scoped)]
     public class JisuComicOperator : Dm5ComicOperator
     {
-        public JisuComicOperator(IJsEngine v8) : base(v8)
+        public JisuComicOperator(IJsEngine v8,INetworkAdapter networkAdapter)
+            : base(v8,networkAdapter)
         {
         }
         protected override string GetBaseAddress()

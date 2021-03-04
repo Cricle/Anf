@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Visit
 {
-    public class DataCursor<T> : ViewModelBase,IDisposable
+    public class DataCursor<T> : ViewModelBase, IDisposable
     {
         private int index = -1;
 
@@ -29,6 +29,13 @@ namespace Kw.Comic.Visit
         }
 
         private T current;
+        private bool waitLoad;
+
+        public bool WaitLoad
+        {
+            get { return waitLoad; }
+            set => RaisePropertyChanged(ref waitLoad, value);
+        }
 
         public IReadOnlyList<T> Datas { get; }
 
@@ -40,6 +47,7 @@ namespace Kw.Comic.Visit
             private set
             {
                 RaisePropertyChanged(ref index, value);
+                IndexChanged?.Invoke(this, value);
             }
         }
 
@@ -47,13 +55,19 @@ namespace Kw.Comic.Visit
 
         public bool IsLast => index == Datas.Count - 1;
 
-        public T Current 
+        public T Current
         {
             get => current;
-            private set => RaisePropertyChanged(ref current, value);
+            private set
+            {
+                RaisePropertyChanged(ref current, value);
+                CurrentChanged?.Invoke(this, value);
+            }
         }
 
         public event Action<DataCursor<T>, int> IndexChanged;
+        public event Action<DataCursor<T>, T> CurrentChanged;
+        public event Action<DataCursor<T>, T> ResourceLoading;
         public event Action<DataCursor<T>, T> ResourceLoaded;
 
         public T this[int idx]
@@ -76,16 +90,23 @@ namespace Kw.Comic.Visit
                 return true;
             }
             var i = index;
+            var waitLoad = WaitLoad;
+            var task = LoadIndexAsync(idx);
+            if (waitLoad)
+            {
+                await task;
+            }
             if (Interlocked.CompareExchange(ref index, idx, i) == i)
             {
-                await LoadIndexAsync(idx);
                 Index = idx;
                 Current = this[idx];
-                RaisePropertyChanged(nameof(Index));
-                IndexChanged?.Invoke(this, i);
                 return true;
             }
             return false;
+        }
+        protected void RaiseResourceLoading(T val)
+        {
+            ResourceLoading?.Invoke(this, val);
         }
         protected void RaiseResourceLoaded(T val)
         {
@@ -93,7 +114,11 @@ namespace Kw.Comic.Visit
         }
         public virtual Task LoadIndexAsync(int index)
         {
+#if NET452
+            return Task.FromResult(0);
+#else
             return Task.CompletedTask;
+#endif
         }
     }
 }

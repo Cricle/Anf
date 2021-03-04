@@ -20,7 +20,11 @@ namespace Kw.Comic.Visit
             {
                 return ResolvedChapter(context);
             }
+#if NET452
+            return Task.FromResult(0);
+#else
             return Task.CompletedTask;
+#endif
         }
 
         public Task SaveAsync(ComicSaveContext context)
@@ -29,7 +33,11 @@ namespace Kw.Comic.Visit
             {
                 return Save(context);
             }
+#if NET452
+            return Task.FromResult(0);
+#else
             return Task.CompletedTask;
+#endif
         }
     }
 }

@@ -32,7 +32,11 @@ namespace Kw.Comic.Visit
         {
             Stream.Dispose();
             Stream = null;
+#if NET452
+            return Task.FromResult(0);
+#else
             return Task.CompletedTask;
+#endif
         }
         protected override async Task OnLoadAsync(Stream stream)
         {

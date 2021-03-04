@@ -1,9 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
   </PropertyGroup>
-
   <ItemGroup>
     <PackageReference Include="Ao.Lang" Version="3.0.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
@@ -11,6 +10,7 @@
     <PackageReference Include="Kw.Core" Version="1.0.0" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.3" />
   </ItemGroup>
-
-
+  <ItemGroup>
+    <ProjectReference Include="..\..\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
+  </ItemGroup>
 </Project>

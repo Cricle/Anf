@@ -31,19 +31,27 @@ namespace Kw.Comic.Visit
             foreach (var item in this.Datas)
             {
                 item.Loaded += OnItemLoaded;
+                item.Loading += OnItemLoading;
             }
         }
+
+        private void OnItemLoading(ComicVisitor arg1, ChapterWithPage arg2)
+        {
+            RaiseResourceLoading(arg1);
+        }
+
         private void UnWatch()
         {
             foreach (var item in this.Datas)
             {
                 item.Loaded -= OnItemLoaded;
+                item.Loading -= OnItemLoading;
             }
         }
 
         private void OnItemLoaded(ComicVisitor arg1, ChapterWithPage arg2)
         {
-            ComicVisitorLoaded?.Invoke(this, arg1, arg2);
+            RaiseResourceLoaded(arg1);
         }
 
         public ComicEntity Comic { get; }
@@ -51,8 +59,6 @@ namespace Kw.Comic.Visit
         public IComicSourceProvider SourceProvider { get; }
 
         public IChapterLoadInterceptor Interceptor { get; set; }
-
-        public event Action<ChapterCursor, ComicVisitor, ChapterWithPage> ComicVisitorLoaded;
 
         public override async Task LoadIndexAsync(int index)
         {

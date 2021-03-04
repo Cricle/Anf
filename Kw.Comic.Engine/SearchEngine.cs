@@ -1,12 +1,10 @@
-﻿using Kw.Core.Annotations;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine
 {
-    [EnableService(ServiceLifetime = ServiceLifetime.Singleton)]
     public class SearchEngine : List<Type>
     {
         private readonly IServiceScopeFactory serviceScopeFactory;

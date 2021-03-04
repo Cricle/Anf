@@ -194,7 +194,11 @@ namespace Kw.Comic.Visit
 
         protected virtual Task OnLoadChapterAsync(PageCursorBase<T> old, PageCursorBase<T> @new)
         {
+#if NET452
+            return Task.FromResult(0);
+#else
             return Task.CompletedTask;
+#endif
         }
 
         public async Task ToPageAsync(int index)

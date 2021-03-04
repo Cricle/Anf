@@ -9,20 +9,18 @@ namespace Kw.Comic.Engine
         protected ComicSourceConditionBase()
         {
             ProviderType = typeof(T);
+#if !NETSTANDARD1_3
             if (ProviderType.GetInterface(typeof(IComicSourceProvider).FullName)==null)
             {
                 throw new InvalidOperationException($"Type {ProviderType} does not implement IComicSourceProvider");
             }
+#endif
             Descript = new EngineDescript();
         }
 
         public virtual int Order { get; }
 
         public Type ProviderType { get; }
-
-        public abstract string HttpName { get; }
-
-        public abstract string ImageHttpName { get; }
 
         public abstract string EnginName { get; }
 

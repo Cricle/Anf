@@ -1,24 +1,21 @@
-﻿using Kw.Core.Annotations;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Kw.Comic.Engine.Networks;
 using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
+using System.IO;
 using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine.Soman
 {
-    [EnableService(ServiceLifetime = ServiceLifetime.Scoped)]
     public class SomanSearchProvider : ISearchProvider
     {
         public const string SeachUrl = "https://api.soman.com/soman.ashx?action=getsomancomics2&pageindex={0}&pagesize={1}&keyword={2}";
 
-        private readonly HttpClient httpClient;
+        private readonly INetworkAdapter networkAdapter;
 
-        public SomanSearchProvider(HttpClient httpClient)
+        public SomanSearchProvider(INetworkAdapter networkAdapter)
         {
-            this.httpClient = httpClient;
+            this.networkAdapter = networkAdapter;
         }
 
         public async Task<SearchComicResult> SearchAsync(string keywork, int skip, int take)
@@ -30,9 +27,10 @@ namespace Kw.Comic.Engine.Soman
             }
             var targetUrl = string.Format(SeachUrl, page, take, keywork);
             string str = string.Empty;
-            using (var rep = await httpClient.GetAsync(targetUrl))
+            using (var rep = await networkAdapter.GetStreamAsync(new RequestSettings { Address=targetUrl}))
+            using(var sr=new StreamReader(rep))
             {
-                str = await rep.Content.ReadAsStringAsync();
+                str = sr.ReadToEnd();
             }
             var jobj = JObject.Parse(str);
             var total = jobj["Total"].Value<int>();

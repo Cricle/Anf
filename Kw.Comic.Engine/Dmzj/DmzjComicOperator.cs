@@ -1,49 +1,46 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using JavaScriptEngineSwitcher.Core;
 using HtmlAgilityPack;
-using Microsoft.Extensions.DependencyInjection;
-using Kw.Core.Annotations;
 using Newtonsoft.Json.Linq;
+#if NETSTANDARD2_0
 using System.Web;
-using System.Net;
+#endif
 using System.IO;
+using Kw.Comic.Engine.Networks;
 
 namespace Kw.Comic.Engine.Dmzj
 {
-    [EnableService(ServiceLifetime = ServiceLifetime.Scoped)]
     public class DmzjComicOperator : IComicSourceProvider
     {
         private static readonly Regex regex = new Regex(@"eval\((.*?)\{.*?\}\)\)", RegexOptions.Compiled);
         
         private readonly IJsEngine v8;
+        private readonly INetworkAdapter networkAdapter;
 
-
-        public DmzjComicOperator(IJsEngine v8)
+        public DmzjComicOperator(IJsEngine v8, INetworkAdapter networkAdapter)
         {
+            this.networkAdapter = networkAdapter;
             this.v8 = v8;
         }
-        private async Task<Stream> GetOriginStreamAsync(string address)
+        private Task<Stream> CreateRequest(string url)
         {
-            var req = CreateRequest(address);
-            var rep = await req.GetResponseAsync();
-            return rep.GetResponseStream();
+            return networkAdapter.GetStreamAsync(new RequestSettings
+            {
+                Address=url,
+                Referrer= "https://www.dmzj.com/"
+            });
         }
-        private WebRequest CreateRequest(string url)
+        private Task<Stream> CreateImageRequest(string url)
         {
-            var req = WebRequest.Create(url);
-            req.Headers.Add("Referrer", "https://www.dmzj.com/");
-            return req;
-        }
-        private WebRequest CreateImageRequest(string url)
-        {
-            var req = WebRequest.Create(url);
-            req.Headers.Add("Referrer", "https://www.dmzj.com/");
-            req.Headers.Add("Host", "images.dmzj1.com");
-            return req;
+            return networkAdapter.GetStreamAsync(new RequestSettings
+            {
+                Address = url,
+                Referrer = "https://www.dmzj.com/",
+                Host= "images.dmzj1.com"
+            });
         }
 
         public static string GetTrueUrl(string url)
@@ -59,7 +56,7 @@ namespace Kw.Comic.Engine.Dmzj
         {
             targetUrl = GetTrueUrl(targetUrl);
             string str = null;
-            using (var sr=new StreamReader(await GetOriginStreamAsync(targetUrl)))
+            using (var sr=new StreamReader(await CreateRequest(targetUrl)))
             {
                 str = sr.ReadToEnd();
             }
@@ -115,7 +112,7 @@ namespace Kw.Comic.Engine.Dmzj
         {
             var blocks = new List<ComicPage>();
             string str = null;
-            using (var sr = new StreamReader(await GetOriginStreamAsync(targetUrl)))
+            using (var sr = new StreamReader(await CreateRequest(targetUrl)))
             {
                 str = sr.ReadToEnd();
             }
@@ -148,11 +145,9 @@ namespace Kw.Comic.Engine.Dmzj
             return blocks.ToArray();
         }
 
-        public async Task<Stream> GetImageStreamAsync(string targetUrl)
+        public Task<Stream> GetImageStreamAsync(string targetUrl)
         {
-            var req = CreateImageRequest(targetUrl);
-            var rep = await req.GetResponseAsync();
-            return rep.GetResponseStream();
+            return CreateImageRequest(targetUrl);
         }
     }
 }

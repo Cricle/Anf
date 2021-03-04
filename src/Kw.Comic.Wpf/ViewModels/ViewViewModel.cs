@@ -64,7 +64,7 @@ namespace Kw.Comic.Wpf.ViewModels
             new DebugVisitorLoadInfo<SoftwareChapterVisitor>(Watcher);
             Watcher.PageInfos.Directions = PreLoadingDirections.Both;
             Watcher.PageInfos.PreLoading = null;
-            Watcher.PageInfos.AsyncLoad = true;
+            Watcher.PageInfos.AsyncLoad = false;
             ComicVisitors = Watcher.ChapterCursor.Datas;
 
             InitConverImage();

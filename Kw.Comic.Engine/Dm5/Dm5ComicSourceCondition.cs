@@ -4,10 +4,6 @@
     {
         public override string EnginName => ComicConst.EngineDM5;
 
-        public override string HttpName => ComicConst.EngineDM5;
-
-        public override string ImageHttpName => ComicConst.EngineDM5;
-
 
         public override bool Condition(ComicSourceContext context)
         {

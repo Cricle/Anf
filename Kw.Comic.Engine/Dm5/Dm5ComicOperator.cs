@@ -1,21 +1,17 @@
 ﻿using HtmlAgilityPack;
 using JavaScriptEngineSwitcher.Core;
 using Jint.Native.Array;
-using Kw.Core.Annotations;
-using Microsoft.Extensions.DependencyInjection;
+using Kw.Comic.Engine.Networks;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Net;
-using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine.Dm5
 {
-    [EnableService(ServiceLifetime = ServiceLifetime.Scoped)]
     public class Dm5ComicOperator : IComicSourceProvider
     {
         private static readonly Regex cidRegex = new Regex(@"var DM5_CID=(.*)?;", RegexOptions.Compiled);
@@ -24,27 +20,23 @@ namespace Kw.Comic.Engine.Dm5
         private static readonly Regex viewSignRegex = new Regex(@"var DM5_VIEWSIGN=(.*)?;", RegexOptions.Compiled );
         private static readonly Regex imageCountRegex = new Regex(@"var DM5_IMAGE_COUNT=(.*)?;", RegexOptions.Compiled );
 
-        private readonly IJsEngine v8;
+        protected readonly INetworkAdapter networkAdapter;
+        protected readonly IJsEngine v8;
 
-        public Dm5ComicOperator(IJsEngine v8)
+        public Dm5ComicOperator(IJsEngine v8,
+            INetworkAdapter networkAdapter)
         {
+            this.networkAdapter = networkAdapter;
             this.v8 = v8;
         }
 
-        private async Task<Stream> GetStreamAsync(string address)
+        protected virtual Task<Stream> GetStreamAsync(string address)
         {
-            var req = CreateRequest(address);
-            var rep = await req.GetResponseAsync();
-            return rep.GetResponseStream();
-        }
-
-        private WebRequest CreateRequest(string address)
-        {
-            var req = (HttpWebRequest)WebRequest.Create(address);
-            req.Method = HttpMethod.Get.Method;
-            req.Proxy = null;
-            req.Referer = GetBaseAddress();
-            return req;
+            return networkAdapter.GetStreamAsync(new RequestSettings
+            {
+                Address=address,
+                Referrer=GetBaseAddress()
+            });
         }
 
 

@@ -41,7 +41,13 @@ namespace Kw.Comic.Visit
             foreach (var item in Datas)
             {
                 item.Loaded += OnItemLoaded;
+                item.Loading += OnItemLoading;
             }
+        }
+
+        private void OnItemLoading(ChapterVisitorBase obj)
+        {
+            RaiseResourceLoading((TChapterVisitor)obj);
         }
 
         private void UnWatch()
@@ -49,6 +55,7 @@ namespace Kw.Comic.Visit
             foreach (var item in Datas)
             {
                 item.Loaded -= OnItemLoaded;
+                item.Loading -= OnItemLoading;
             }
         }
         private void OnItemLoaded(ChapterVisitorBase obj)
