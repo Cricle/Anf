@@ -1,5 +1,6 @@
 ﻿using Kw.Comic.Rendering;
 using Kw.Comic.Visit;
+using Kw.Comic.Visit.Interceptors;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -9,15 +10,16 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.PreLoading
 {
-    public class ComicPageInfoCollection<TPageInfo, TVisitor, TImage> : ObservableCollection<TPageInfo>
+    public class ComicPageInfoCollection<TVisitor>
         where TVisitor : ChapterVisitorBase
-        where TPageInfo: ComicPageInfo<TVisitor, TImage>
     {
         public ComicPageInfoCollection()
         {
             PreLoading = 5;
             Directions = PreLoadingDirections.Right;
         }
+
+        public IPageLoadInterceptor<TVisitor> Interceptor { get; set; }
 
         public PreLoadingDirections Directions { get; set; }
 
@@ -27,23 +29,35 @@ namespace Kw.Comic.PreLoading
 
         public int? PreLoading { get; set; }
 
-        public event Action<ComicPageInfoCollection<TPageInfo, TVisitor, TImage>, int> ActivedDone;
+        public PageCursorBase<TVisitor> PageCursor { get; set; }
+
+        public event Action<ComicPageInfoCollection<TVisitor>, int> ActivedDone;
 
         public async Task UnActiveAllAsync()
         {
-            for (int i = 0; i < Count; i++)
+            foreach (var item in PageCursor.Datas)
             {
-                await this[i].UnLoadAsync();
+                await item.UnLoadAsync();
             }
         }
-        protected virtual Task OnActiveAsync(TPageInfo pageInfo)
+        protected virtual Task OnActiveAsync(TVisitor pageInfo)
         {
+            var inter = Interceptor;
+            if (inter!=null)
+            {
+                return inter.LoadAsync(PageCursor, pageInfo);
+            }
             return pageInfo.LoadAsync();
         }
 
         public async Task ActiveAsync(int index)
         {
-            if (index < 0 || index >= Count)
+            var cur = PageCursor;
+            if (cur==null)
+            {
+                return;
+            }
+            if (index < 0 || index >= cur.Length)
             {
                 return;
             }
@@ -52,7 +66,7 @@ namespace Kw.Comic.PreLoading
             if (PreLoading == null)
             {
                 left = 0;
-                right = Count;
+                right = cur.Length;
             }
             else
             {
@@ -62,23 +76,23 @@ namespace Kw.Comic.PreLoading
                 }
                 if ((Directions & PreLoadingDirections.Right) != 0)
                 {
-                    right = Math.Min(index + PreLoading.Value, Count);
+                    right = Math.Min(index + PreLoading.Value, cur.Length);
                 }
             }
             if (Mode == PreLoadingMode.UnLoadOnReplace)
             {
                 for (int i = 0; i < left; i++)
                 {
-                    var val = this[i];
-                    if (val.Done)
+                    var val = cur[i];
+                    if (val.IsLoaded)
                     {
                         _ = val.UnLoadAsync();
                     }
                 }
-                for (int i = right + 1; i < Count; i++)
+                for (int i = right + 1; i < cur.Length; i++)
                 {
-                    var val = this[i];
-                    if (val.Done)
+                    var val = cur[i];
+                    if (val.IsLoaded)
                     {
                         _ = val.UnLoadAsync();
                     }
@@ -86,7 +100,7 @@ namespace Kw.Comic.PreLoading
             }
             if (left == right)
             {
-                await this[left].LoadAsync();
+                await cur[left].LoadAsync();
             }
             else
             {
@@ -95,7 +109,7 @@ namespace Kw.Comic.PreLoading
                     var tasks = new List<Task>();
                     for (int i = left; i < right; i++)
                     {
-                        tasks.Add(OnActiveAsync(this[i]));
+                        tasks.Add(OnActiveAsync(cur[i]));
                     }
                     await Task.WhenAll(tasks);
                 }
@@ -103,7 +117,7 @@ namespace Kw.Comic.PreLoading
                 {
                     for (int i = left; i < right; i++)
                     {
-                        await OnActiveAsync(this[i]);
+                        await OnActiveAsync(cur[i]);
                     }
                 }
             }

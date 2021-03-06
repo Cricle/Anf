@@ -3,7 +3,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 
-namespace Kw.Comic.Wpf.Managers
+namespace Kw.Comic
 {
     public static class PathHelper
     {

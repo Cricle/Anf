@@ -62,9 +62,11 @@ namespace Kw.Comic.Wpf.ViewModels
             Watcher = new SoftwareWpfComicWatcher(scope,entity,
                 condition, provider);
             new DebugVisitorLoadInfo<SoftwareChapterVisitor>(Watcher);
-            Watcher.PageInfos.Directions = PreLoadingDirections.Both;
-            Watcher.PageInfos.PreLoading = null;
-            Watcher.PageInfos.AsyncLoad = false;
+            Watcher.ComicPageInfos.Directions = PreLoadingDirections.Both;
+            Watcher.ComicPageInfos.PreLoading = null;
+            Watcher.ComicPageInfos.AsyncLoad = false;
+            Watcher.PageLoadInterceptor = historyManager;
+            Watcher.ComicPageInfos.Interceptor = historyManager;
             ComicVisitors = Watcher.ChapterCursor.Datas;
 
             InitConverImage();

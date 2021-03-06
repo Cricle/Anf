@@ -33,11 +33,11 @@
                                    RenderOptions.BitmapScalingMode="Fant"
                                    RenderOptions.EdgeMode="Unspecified"
                                    Stretch="None"/>
-                                <!--<h:Interaction.Behaviors>
+                                <h:Interaction.Behaviors>
                                     <beh:ZoomWithWheelAndMoveBehavior UseInParent="True" 
                                                     IsCenterInZoom="True"
                                                     IsReturn="False"/>
-                                </h:Interaction.Behaviors>-->
+                                </h:Interaction.Behaviors>
                             </Grid>
                         </ScrollViewer>
                         <Grid Visibility="{Binding Loading,Converter={StaticResource BoolVisibilityConverter}}">

@@ -15,6 +15,7 @@ namespace Kw.Comic.Wpf.Managers
             File = file;
             Folder = folder;
         }
+
         public FileInfo File { get; }
 
         public DirectoryInfo Folder { get; }

@@ -1,4 +1,5 @@
 ﻿using Kw.Comic.Engine;
+using Kw.Comic.Visit.Interceptors;
 using Kw.Core.Input;
 using System;
 using System.Collections.Concurrent;
@@ -20,7 +21,8 @@ namespace Kw.Comic.Visit
             Comic = comic ?? throw new ArgumentNullException(nameof(comic));
             Condition = condition ?? throw new ArgumentNullException(nameof(condition));
             ComicSourceProvider = comicSourceProvider ?? throw new ArgumentNullException(nameof(comicSourceProvider));
-            ChapterCursor = new ChapterCursor(comic, comicSourceProvider, comic.Chapters.Select(x => new ComicVisitor(x, comicSourceProvider)));
+            ChapterCursor = new ChapterCursor(comic, comicSourceProvider,
+                comic.Chapters.Select(x => new ComicVisitor(x, comic, comicSourceProvider)));
         }
 
         private PageCursorBase<T> pageCursor;
@@ -29,13 +31,40 @@ namespace Kw.Comic.Visit
         private bool singleOperator;
         private bool forceNewPageCursor;
         private int currentPageIndex;
+        private IChapterLoadInterceptor chapterLoadInterceptor;
+        private IPageLoadInterceptor<T> pageLoadInterceptor;
+
+        public IPageLoadInterceptor<T> PageLoadInterceptor
+        {
+            get { return pageLoadInterceptor; }
+            set
+            {
+                RaisePropertyChanged(ref pageLoadInterceptor, value);
+                var pc = PageCursor;
+                if (pc != null)
+                {
+                    pc.Interceptor = value;
+                    OnPageLoadInterceptorSet(value);
+                }
+            }
+        }
+        public IChapterLoadInterceptor ChapterLoadInterceptor
+        {
+            get { return chapterLoadInterceptor; }
+            set
+            {
+                RaisePropertyChanged(ref chapterLoadInterceptor, value);
+                ChapterCursor.Interceptor = value;
+                OnChapterLoadInterceptorSet(value);
+            }
+        }
 
         public int CurrentPageIndex
         {
             get { return currentPageIndex; }
             set
             {
-                if (currentPageIndex!=value)
+                if (currentPageIndex != value)
                 {
                     RaisePropertyChanged(ref currentPageIndex, value);
                     _ = PageCursor.SetIndexAsync(value);
@@ -121,7 +150,7 @@ namespace Kw.Comic.Visit
             try
             {
 
-                if (!forceNewPageCursor&&ChapterCacher!=null)
+                if (!forceNewPageCursor && ChapterCacher != null)
                 {
                     var cursor = ChapterCacher.GetCache(index);
                     if (cursor != null)
@@ -152,17 +181,19 @@ namespace Kw.Comic.Visit
         private async Task LoadChapterAsync()
         {
             var old = PageCursor;
-            if (old!=null)
+            if (old != null)
             {
                 old.IndexChanged -= Old_IndexChanged;
                 PageCursor.ResourceLoaded -= PageCursor_VisitorLoaded;
+                PageCursor.Interceptor = null;
             }
             var idx = ChapterCursor.Index < 0 ? 0 : ChapterCursor.Index;
             PageCursor = await CoreLoadChapterAsync(idx, ForceNewPageCursor, CachePageCursor);
-            if (PageCursor!=null)
+            if (PageCursor != null)
             {
                 PageCursor.IndexChanged += Old_IndexChanged;
                 PageCursor.ResourceLoaded += PageCursor_VisitorLoaded;
+                PageCursor.Interceptor = PageLoadInterceptor;
             }
             await OnLoadChapterAsync(old, PageCursor);
             if (PageCursor != null)
@@ -178,8 +209,8 @@ namespace Kw.Comic.Visit
 
         private void PageCursor_VisitorLoaded(DataCursor<T> arg1, T arg2)
         {
-            VisitorLoaded?.Invoke(new ComicResourceLoadInfo<T>(this, 
-                (PageCursorBase<T>)arg1, 
+            VisitorLoaded?.Invoke(new ComicResourceLoadInfo<T>(this,
+                (PageCursorBase<T>)arg1,
                 arg2,
                 ChapterCursor.Current));
         }
@@ -192,6 +223,14 @@ namespace Kw.Comic.Visit
             IndexChanged?.Invoke(this, arg1, old, arg2);
         }
 
+        protected virtual void OnPageLoadInterceptorSet(IPageLoadInterceptor<T> interceptor)
+        {
+
+        }
+        protected virtual void OnChapterLoadInterceptorSet(IChapterLoadInterceptor interceptor)
+        {
+
+        }
         protected virtual Task OnLoadChapterAsync(PageCursorBase<T> old, PageCursorBase<T> @new)
         {
 #if NET452

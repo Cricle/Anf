@@ -1,4 +1,5 @@
 ﻿using Kw.Comic.Visit;
+using Kw.Comic.Visit.Interceptors;
 using Kw.Core.Input;
 using System;
 using System.Runtime.CompilerServices;
@@ -10,8 +11,9 @@ namespace Kw.Comic.Rendering
     public abstract class ComicPageInfo<TVisitor,TImage> : ViewModelBase, IDisposable
         where TVisitor : ChapterVisitorBase
     {
-        public ComicPageInfo(TVisitor visitor)
+        public ComicPageInfo(TVisitor visitor,PageCursorBase<TVisitor> pageCursor)
         {
+            PageCursor = pageCursor;
             Visitor = visitor;
         }
 
@@ -21,6 +23,13 @@ namespace Kw.Comic.Rendering
         private bool error;
         private string errorMsg;
         private bool done;
+        private IPageLoadInterceptor<TVisitor> interceptor;
+
+        public IPageLoadInterceptor<TVisitor> Interceptor
+        {
+            get { return interceptor; }
+            set => RaisePropertyChanged(ref interceptor, value);
+        }
 
         public bool Done
         {
@@ -54,6 +63,8 @@ namespace Kw.Comic.Rendering
             get { return loading; }
             private set => RaisePropertyChanged(ref loading, value);
         }
+
+        public PageCursorBase<TVisitor> PageCursor { get; }
 
         public TVisitor Visitor { get; }
 
@@ -123,7 +134,16 @@ namespace Kw.Comic.Rendering
                 Loading = true;
                 if (!Visitor.IsLoaded)
                 {
-                    await Visitor.LoadAsync();
+                    var inter = Interceptor;
+                    if (inter != null)
+                    {
+                        await inter.LoadAsync(PageCursor, Visitor);
+                    }
+                    else
+                    {
+
+                        await Visitor.LoadAsync();
+                    }
                 }
                 Image = await OnLoadResourceAsync(Visitor);
                 Done = true;

@@ -1,0 +1,33 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0;netstandard1.4;net461;net45</TargetFrameworks>
+    <Authors>Kw</Authors>
+    <Product>Kw</Product>
+    <Description>A comic visit easy pkg!</Description>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <Copyright>GPL</Copyright>
+    <Version>1.0.2</Version>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net461'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Http">
+      <Version>5.0.0</Version>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net45' or '$(TargetFramework)' == 'netstandard1.4'">
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="1.4.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Kw.Comic.Wpf\Managers\PathHelper.cs"></Compile>
+  </ItemGroup>
+
+</Project>

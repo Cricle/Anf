@@ -1,4 +1,5 @@
 ﻿using Kw.Comic.Engine;
+using Kw.Comic.Visit.Interceptors;
 using Kw.Core.Input;
 using System;
 using System.IO;

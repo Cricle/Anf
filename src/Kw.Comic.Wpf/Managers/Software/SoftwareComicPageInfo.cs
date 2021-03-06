@@ -1,4 +1,5 @@
-﻿using Kw.Comic.Wpf.Models;
+﻿using Kw.Comic.Visit;
+using Kw.Comic.Wpf.Models;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -12,7 +13,8 @@ namespace Kw.Comic.Wpf.Managers
 {
     public class SoftwareComicPageInfo : WpfComicPageInfo<SoftwareChapterVisitor>
     {
-        public SoftwareComicPageInfo(SoftwareChapterVisitor visitor) : base(visitor)
+        public SoftwareComicPageInfo(SoftwareChapterVisitor visitor,PageCursorBase<SoftwareChapterVisitor> pageCursor)
+            : base(visitor,pageCursor)
         {
             DecodePixelWdith = 0;
             DecodePixelHeight = 0;

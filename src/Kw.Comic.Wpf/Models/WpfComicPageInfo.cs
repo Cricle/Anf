@@ -15,8 +15,8 @@ namespace Kw.Comic.Wpf.Models
     public abstract class WpfComicPageInfo<T> : ComicPageInfo<T, ImageSource>
         where T : ChapterVisitorBase
     {
-        public WpfComicPageInfo(T visitor)
-            : base(visitor)
+        public WpfComicPageInfo(T visitor,PageCursorBase<T> pageCursor)
+            : base(visitor,pageCursor)
         {
             LoadCommand = new RelayCommand(() => _ = LoadAsync());
         }

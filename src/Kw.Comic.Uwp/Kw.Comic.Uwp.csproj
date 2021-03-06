@@ -250,6 +250,10 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Kw.Comic.Engine\Kw.Comic.Engine.csproj">
+      <Project>{319ede37-bb2a-4f1e-bcc7-3002f2152fce}</Project>
+      <Name>Kw.Comic.Engine</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Kw.Comic\Kw.Comic.csproj">
       <Project>{273a4b17-273c-4476-9b72-be48efdb83ad}</Project>
       <Name>Kw.Comic</Name>

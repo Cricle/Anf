@@ -21,7 +21,7 @@ namespace Kw.Comic.Wpf.Managers
 
         protected override WpfComicPageInfo<SoftwareChapterVisitor> CreatePageInfo(SoftwareChapterVisitor item)
         {
-            return new SoftwareComicPageInfo(item);
+            return new SoftwareComicPageInfo(item,PageCursor);
         }
 
         protected override async Task<PageCursorBase<SoftwareChapterVisitor>> MakePageCursorAsync(int i)

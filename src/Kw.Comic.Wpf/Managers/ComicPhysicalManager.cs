@@ -9,8 +9,6 @@ namespace Kw.Comic.Wpf.Managers
 {
     public class ComicPhysicalManager
     {
-        public const string FolderName = "Physical";
-
         public ComicPhysicalManager(string basePath)
         {
             if (string.IsNullOrEmpty(basePath))
@@ -19,7 +17,7 @@ namespace Kw.Comic.Wpf.Managers
             }
 
             BasePath = basePath;
-            Folder = new DirectoryInfo(Path.Combine(BasePath, FolderName));
+            Folder = new DirectoryInfo(BasePath);
         }
         private char invalidReplaceChar = PathHelper.DefaultInvalidReplaceChar;
 
@@ -78,7 +76,7 @@ namespace Kw.Comic.Wpf.Managers
                             var str = sr.ReadToEnd();
                             var inst = JsonConvert.DeserializeObject<ComicEntity>(str);
                             var dirName = PathHelper.EnsureName(inst.Name);
-                            var dirPath = Path.Combine(item.FullName, dirName);
+                            var dirPath = item.FullName;
                             var dirInfo = new DirectoryInfo(dirPath);
                             info = new PhysicalComicInfo(file, inst, dirInfo);
                         }

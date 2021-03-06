@@ -15,8 +15,9 @@ namespace Kw.Comic.Visit
         private bool isLoaded;
         private ChapterWithPage chapterWithPage;
 
-        public ComicVisitor(ComicChapter chapter, IComicSourceProvider comicSourceProvider)
+        public ComicVisitor(ComicChapter chapter, ComicEntity comic, IComicSourceProvider comicSourceProvider)
         {
+            Comic = comic;
             Chapter = chapter ?? throw new System.ArgumentNullException(nameof(chapter));
             this.comicSourceProvider = comicSourceProvider ?? throw new System.ArgumentNullException(nameof(comicSourceProvider));
         }
@@ -33,6 +34,8 @@ namespace Kw.Comic.Visit
             private set => RaisePropertyChanged(ref isLoaded, value);
         }
 
+        public ComicEntity Comic { get; }
+
         public ComicChapter Chapter { get; }
 
         public event Action<ComicVisitor, ChapterWithPage> Loading;
@@ -43,8 +46,13 @@ namespace Kw.Comic.Visit
             locker?.Dispose();
         }
 
-        public async Task LoadAsync()
+        public async Task LoadAsync(Func<Task<ChapterWithPage>> loadFunc)
         {
+            if (loadFunc is null)
+            {
+                throw new ArgumentNullException(nameof(loadFunc));
+            }
+
             if (IsLoaded)
             {
                 return;
@@ -57,8 +65,7 @@ namespace Kw.Comic.Visit
                     return;
                 }
                 Loading?.Invoke(this, ChapterWithPage);
-                var pages = await comicSourceProvider.GetPagesAsync(Chapter.TargetUrl);
-                ChapterWithPage = new ChapterWithPage(Chapter, pages);
+                ChapterWithPage = await loadFunc();
                 Loaded?.Invoke(this, ChapterWithPage);
                 IsLoaded = true;
             }
@@ -66,6 +73,16 @@ namespace Kw.Comic.Visit
             {
                 locker.Release();
             }
+        }
+
+        public Task LoadAsync()
+        {
+            return LoadAsync(DefaultLoadAsync);
+        }
+        private async Task<ChapterWithPage> DefaultLoadAsync()
+        {
+            var pages = await comicSourceProvider.GetPagesAsync(Chapter.TargetUrl);
+            return new ChapterWithPage(Chapter, pages);
         }
         public override string ToString()
         {

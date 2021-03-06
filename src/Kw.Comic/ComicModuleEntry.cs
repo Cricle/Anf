@@ -39,7 +39,12 @@ namespace Kw.Comic
             context.Services.AddScoped<SomanSearchProvider>();
 
             context.Services.AddScoped<IJsEngine, JintJsEngine>();
-            context.Services.AddScoped<INetworkAdapter, WebRequestAdapter>();
+#if NET452
+            context.Services.AddSingleton<HttpClient>();
+#else
+            context.Services.AddHttpClient();
+#endif
+            context.Services.AddScoped<INetworkAdapter, HttpClientAdapter>();
         }
         public override Task ReadyAsync(IReadyContext context)
         {
