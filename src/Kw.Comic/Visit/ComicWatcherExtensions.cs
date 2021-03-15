@@ -23,7 +23,7 @@ namespace Kw.Comic.Visit
                 {
                     token.ThrowIfCancellationRequested();
                     var chapter = watcher.ChapterCursor[i];
-                    var pageCursor = await watcher.CoreLoadChapterAsync(i, false, options.CachePageCursor);
+                    var pageCursor = await watcher.CoreLoadChapterAsync(i);
                     solts[i] = pageCursor;
                     if (saver != null)
                     {

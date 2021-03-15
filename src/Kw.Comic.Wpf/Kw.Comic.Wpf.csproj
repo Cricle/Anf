@@ -64,9 +64,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
     <ProjectReference Include="..\Kw.Comic\Kw.Comic.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="ZoomableCanvas\" />
+    <ProjectReference Include="..\ZoomControl\ZoomControl\ZoomControl.csproj" />
   </ItemGroup>
 
 </Project>

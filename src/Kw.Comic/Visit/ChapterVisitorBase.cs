@@ -70,7 +70,7 @@ namespace Kw.Comic.Visit
         }
         protected virtual Task OnUnLoadAsync()
         {
-#if NET452
+#if NET45
             return Task.FromResult(0);
 #else
             return Task.CompletedTask;
@@ -130,7 +130,7 @@ namespace Kw.Comic.Visit
         {
             return null;
         }
-
+        //TODO:使用资源池
         protected abstract Task OnLoadAsync(Stream stream);
         public override string ToString()
         {

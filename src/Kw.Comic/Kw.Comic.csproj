@@ -1,10 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net452</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net45</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Ao.Lang" Version="3.0.0" />
     <PackageReference Include="HtmlAgilityPack" Version="1.11.29" />
     <PackageReference Include="JavaScriptEngineSwitcher.Jint" Version="3.1.0" />
     <PackageReference Include="Kw.Core" Version="1.0.0" />

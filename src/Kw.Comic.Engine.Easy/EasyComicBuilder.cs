@@ -19,7 +19,7 @@ namespace Kw.Comic.Engine.Easy
 {
     public class EasyComicBuilder
     {
-        private static readonly Lazy<IComicHost> @default=new Lazy<IComicHost>(MakeDefault);
+        private static readonly Lazy<IComicHost> @default = new Lazy<IComicHost>(MakeDefault);
 
         public static IComicHost Default => @default.Value;
 
@@ -35,52 +35,12 @@ namespace Kw.Comic.Engine.Easy
 
         public void AddComicServices()
         {
-            Services.AddSingleton(x=> 
-            {
-                var eng = new ComicEngine
-                {
-                    new DmzjComicSourceCondition(),
-                    new Dm5ComicSourceCondition(),
-                    new JisuComicSourceCondition(),
-                    new KuaikanComicSourceCondition()
-                };
-                return eng;
-            });
-            Services.AddSingleton(x=>
-            {
-                var factory=x.GetRequiredService<IServiceScopeFactory>();
-                var eng = new SearchEngine(factory) { typeof(SomanSearchProvider) };
-                return eng;
-            });
-            Services.AddSingleton<IComicDownloader,ComicDownloader>();
-
-            Services.AddScoped<JisuComicOperator>();
-            Services.AddScoped<Dm5ComicOperator>();
-            Services.AddScoped<DmzjComicOperator>();
-            Services.AddScoped<KuaikanComicOperator>();
-            Services.AddScoped<SomanSearchProvider>();
-
-            Services.AddScoped<IJsEngine, JintJsEngine>();
-            Services.AddSingleton<RecyclableMemoryStreamManager>();
-#if NET45||NETSTANDARD1_4
-            Services.AddSingleton<HttpClient>();
-            Services.AddScoped<INetworkAdapter, HttpClientAdapter>();
-#else
-            Services.AddHttpClient();
-            if (NetworkAdapterType == NetworkAdapterTypes.HttpClient)
-            {
-                Services.AddScoped<INetworkAdapter, HttpClientAdapter>();
-            }
-            else
-            {
-                Services.AddScoped<INetworkAdapter, WebRequestAdapter>();
-            }
-#endif
+            Services.AddEasyComic(NetworkAdapterType);
         }
         public IComicHost Build()
         {
             var provider = Services.BuildServiceProvider();
-            var host= new ComicHost(provider);
+            var host = new ComicHost(provider);
             return host;
         }
         private static IComicHost MakeDefault()
@@ -93,9 +53,9 @@ namespace Kw.Comic.Engine.Easy
         {
             return Default.GetComicAsync(address);
         }
-        public static Task DownloadAsync(string address,IComicSaver saver,CancellationToken token=default)
+        public static Task DownloadAsync(string address, IComicSaver saver, CancellationToken token = default)
         {
-            return Default.DownloadAsync(address,saver,token);
+            return Default.DownloadAsync(address, saver, token);
         }
         public static void Download(string address, IComicSaver saver, CancellationToken token = default)
         {
@@ -103,9 +63,9 @@ namespace Kw.Comic.Engine.Easy
         }
         public static void BatchDownload(string address, IComicSaver saver, int concurrent = 5, CancellationToken token = default)
         {
-            Default.BatchDownloadAsync(address, saver,concurrent, token).GetAwaiter().GetResult();
+            Default.BatchDownloadAsync(address, saver, concurrent, token).GetAwaiter().GetResult();
         }
-        public static Task BatchDownloadAsync(string address, IComicSaver saver,int concurrent=5, CancellationToken token = default)
+        public static Task BatchDownloadAsync(string address, IComicSaver saver, int concurrent = 5, CancellationToken token = default)
         {
             return Default.BatchDownloadAsync(address, saver, concurrent, token);
         }

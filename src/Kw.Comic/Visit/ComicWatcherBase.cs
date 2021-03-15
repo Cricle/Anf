@@ -27,9 +27,7 @@ namespace Kw.Comic.Visit
 
         private PageCursorBase<T> pageCursor;
         private bool isLoading;
-        private bool cachePageCursor = false;
         private bool singleOperator;
-        private bool forceNewPageCursor;
         private int currentPageIndex;
         private IChapterLoadInterceptor chapterLoadInterceptor;
         private IPageLoadInterceptor<T> pageLoadInterceptor;
@@ -72,23 +70,12 @@ namespace Kw.Comic.Visit
             }
         }
 
-        public bool ForceNewPageCursor
-        {
-            get { return forceNewPageCursor; }
-            set => RaisePropertyChanged(ref forceNewPageCursor, value);
-        }
-
         public bool SingleOperator
         {
             get { return singleOperator; }
             set => RaisePropertyChanged(ref singleOperator, value);
         }
 
-        public bool CachePageCursor
-        {
-            get { return cachePageCursor; }
-            set => RaisePropertyChanged(ref cachePageCursor, value);
-        }
 
         public bool IsLoading
         {
@@ -104,7 +91,6 @@ namespace Kw.Comic.Visit
                 RaisePropertyChanged(ref pageCursor, value);
             }
         }
-        public IComicChapterCacher<T> ChapterCacher { get; set; }
 
         public ComicEntity Comic { get; }
 
@@ -122,25 +108,16 @@ namespace Kw.Comic.Visit
         public event Action<ComicWatcherBase<T>, DataCursor<T>, int, int> IndexChanged;
         public event Action<ComicResourceLoadInfo<T>> VisitorLoaded;
 
-        public void ResetCache()
-        {
-            ChapterCacher?.Reset();
-        }
-
         public virtual bool CanDoes()
         {
             return !SingleOperator || !IsLoading;
-        }
+        }    
         /// <summary>
         /// 加载章节
         /// </summary>
         /// <param name="index">目标索引</param>
-        /// <param name="forceNewPageCursor">强制使用新章节游标</param>
-        /// <param name="cachePageCursor">缓存章节游标</param>
         /// <returns></returns>
-        public async Task<PageCursorBase<T>> CoreLoadChapterAsync(int index,
-            bool forceNewPageCursor,
-            bool cachePageCursor)
+        public virtual async Task<PageCursorBase<T>> CoreLoadChapterAsync(int index)
         {
             if (index < 0 || index >= ChapterCursor.Length)
             {
@@ -149,21 +126,7 @@ namespace Kw.Comic.Visit
             await Locker.WaitAsync();
             try
             {
-
-                if (!forceNewPageCursor && ChapterCacher != null)
-                {
-                    var cursor = ChapterCacher.GetCache(index);
-                    if (cursor != null)
-                    {
-                        return cursor;
-                    }
-                }
                 var pageCursor = await MakePageCursorAsync(index);
-                if (cachePageCursor && ChapterCacher != null)
-                {
-                    ChapterCacher.SetCache(index, pageCursor);
-                    PageCursorCacheCreated?.Invoke(this, pageCursor);
-                }
                 PageCursorCreated?.Invoke(this, pageCursor);
                 return pageCursor;
             }
@@ -188,7 +151,7 @@ namespace Kw.Comic.Visit
                 PageCursor.Interceptor = null;
             }
             var idx = ChapterCursor.Index < 0 ? 0 : ChapterCursor.Index;
-            PageCursor = await CoreLoadChapterAsync(idx, ForceNewPageCursor, CachePageCursor);
+            PageCursor = await CoreLoadChapterAsync(idx);
             if (PageCursor != null)
             {
                 PageCursor.IndexChanged += Old_IndexChanged;
@@ -201,10 +164,7 @@ namespace Kw.Comic.Visit
                 await PageCursor.SetFirstAsync();
             }
             LoadedChapter?.Invoke(this, PageCursor);
-            if (!CachePageCursor)
-            {
-                old?.Dispose();
-            }
+            old?.Dispose();
         }
 
         private void PageCursor_VisitorLoaded(DataCursor<T> arg1, T arg2)
@@ -233,7 +193,7 @@ namespace Kw.Comic.Visit
         }
         protected virtual Task OnLoadChapterAsync(PageCursorBase<T> old, PageCursorBase<T> @new)
         {
-#if NET452
+#if NET45
             return Task.FromResult(0);
 #else
             return Task.CompletedTask;

@@ -1,0 +1,36 @@
+<div style="margin:60px 2% 0 2%">
+    <div class="container" style="display: flex;justify-content: center;">
+        <div style="width: 600px;">
+            <nz-input-group nzSize="large" [nzSuffix]="suffixIcon">
+                <input placeholder="Search or search!" nz-input [nzAutocomplete]="auto" />
+            </nz-input-group>
+            <ng-template #suffixIcon>
+                <i nz-icon nzType="search"></i>
+            </ng-template>
+            <nz-autocomplete #auto>
+            </nz-autocomplete>
+        </div>
+    </div>
+    <div>
+        <h5 style="text-align: center;">
+            You can try input keyword or a website to search or visit.
+        </h5>
+    </div>
+    <!-- <div>
+        <h3 [ngStyle]="{ margin: '16px 0' }">Includes</h3>
+        <nz-list nzSize="small" nzSplit="false">
+            <nz-list-item *ngFor="let item of [1,2,3,4]" style="display: block;">
+                <div>
+                    <div>河镇鱼</div>
+                    <div>
+                        <nz-progress [nzPercent]="50" nzSize="small" [nzShowInfo]="false"></nz-progress>
+                        <nz-spin nzSimple [nzIndicator]="indicatorTemplate"></nz-spin>
+                    </div>
+                </div>
+            </nz-list-item>
+        </nz-list>
+        <ng-template #indicatorTemplate>
+            <i nz-icon nzType="loading"></i>
+        </ng-template>
+    </div> -->
+</div>

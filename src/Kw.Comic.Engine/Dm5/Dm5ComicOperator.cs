@@ -115,9 +115,7 @@ namespace Kw.Comic.Engine.Dm5
             {
                 var pgs = new List<ComicPage>();
                 var partBlock = string.Format(part, index);
-#if NETSTANDARD2_0
-                partBlock = System.Web.HttpUtility.UrlEncode(partBlock);
-#endif
+
                 string partEncod = null;
                 using (var sr = new StreamReader(await GetStreamAsync(partBlock)))
                 {

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard1.4;net461;net45</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;netstandard1.4;net45</TargetFrameworks>
     <Authors>Kw</Authors>
     <Product>Kw</Product>
     <Description>A comic visit easy pkg!</Description>
@@ -29,5 +29,4 @@
   <ItemGroup>
     <Compile Include="..\Kw.Comic.Wpf\Managers\PathHelper.cs"></Compile>
   </ItemGroup>
-
 </Project>

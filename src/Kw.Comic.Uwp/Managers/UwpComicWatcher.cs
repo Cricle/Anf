@@ -25,10 +25,9 @@ namespace Kw.Comic.Uwp.Managers
     {
         public UwpComicWatcher(IServiceScope serviceScope,
             ComicEntity comic,
-            IHttpClientFactory httpClientFactory,
             IComicSourceCondition condition,
             IComicSourceProvider comicSourceProvider)
-            : base(comic, httpClientFactory, condition, comicSourceProvider)
+            : base(comic, condition, comicSourceProvider)
         {
             ServiceScope = serviceScope;
 

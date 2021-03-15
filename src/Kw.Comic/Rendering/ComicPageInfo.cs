@@ -10,6 +10,7 @@ namespace Kw.Comic.Rendering
 {
     public abstract class ComicPageInfo<TVisitor,TImage> : ViewModelBase, IDisposable
         where TVisitor : ChapterVisitorBase
+        where TImage:class
     {
         public ComicPageInfo(TVisitor visitor,PageCursorBase<TVisitor> pageCursor)
         {
@@ -54,19 +55,35 @@ namespace Kw.Comic.Rendering
             get { return image; }
             private set
             {
+                var old = image;
                 RaisePropertyChanged(ref image, value);
+                if (old != value)
+                {
+                    ImageSwap?.Invoke(this, old, value);
+                }
             }
         }
 
         public bool Loading
         {
             get { return loading; }
-            private set => RaisePropertyChanged(ref loading, value);
+            private set
+            {
+                var old = loading;
+                RaisePropertyChanged(ref loading, value);
+                if (old != value)
+                {
+                    LoadingChanged?.Invoke(this, value);
+                }
+            }
         }
 
         public PageCursorBase<TVisitor> PageCursor { get; }
 
         public TVisitor Visitor { get; }
+
+        public event Action<ComicPageInfo<TVisitor, TImage>, TImage, TImage> ImageSwap;
+        public event Action<ComicPageInfo<TVisitor, TImage>, bool> LoadingChanged;
 
         public void Dispose()
         {

@@ -30,6 +30,9 @@ namespace Kw.Comic.Visit
 
         private T current;
         private bool waitLoad;
+        private Task loadTask;
+
+        public Task LoadTask => loadTask;
 
         public bool WaitLoad
         {
@@ -69,6 +72,7 @@ namespace Kw.Comic.Visit
         public event Action<DataCursor<T>, T> CurrentChanged;
         public event Action<DataCursor<T>, T> ResourceLoading;
         public event Action<DataCursor<T>, T> ResourceLoaded;
+        public event Action<DataCursor<T>, Task> LoadTaskCreated;
 
         public T this[int idx]
         {
@@ -91,10 +95,11 @@ namespace Kw.Comic.Visit
             }
             var i = index;
             var waitLoad = WaitLoad;
-            var task = LoadIndexAsync(idx);
+            loadTask = LoadIndexAsync(idx);
+            LoadTaskCreated?.Invoke(this, loadTask);
             if (waitLoad)
             {
-                await task;
+                await LoadTask;
             }
             if (Interlocked.CompareExchange(ref index, idx, i) == i)
             {
@@ -114,7 +119,7 @@ namespace Kw.Comic.Visit
         }
         public virtual Task LoadIndexAsync(int index)
         {
-#if NET452
+#if NET45
             return Task.FromResult(0);
 #else
             return Task.CompletedTask;

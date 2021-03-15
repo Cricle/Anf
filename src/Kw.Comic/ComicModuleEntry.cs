@@ -39,7 +39,7 @@ namespace Kw.Comic
             context.Services.AddScoped<SomanSearchProvider>();
 
             context.Services.AddScoped<IJsEngine, JintJsEngine>();
-#if NET452
+#if NET45
             context.Services.AddSingleton<HttpClient>();
 #else
             context.Services.AddHttpClient();

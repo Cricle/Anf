@@ -5,20 +5,20 @@ namespace Kw.Comic.Engine.Easy
 {
     public readonly struct ComicDownloadContext
     {
-        public readonly ComicDetail ComicDetail;
-        public readonly ChapterWithPage Chapter;
+        public readonly ComicEntity Entity;
+        public readonly ComicChapter Chapter;
         public readonly ComicPage Page;
         public readonly Stream SourceStream;
         public readonly CancellationToken Token;
 
-        public ComicDownloadContext(ComicDetail comicDetail,
-            ChapterWithPage chapter, 
+        public ComicDownloadContext(ComicEntity entity,
+            ComicChapter chapter,
             ComicPage page, 
             Stream sourceStream,
             CancellationToken token)
         {
             Token = token;
-            ComicDetail = comicDetail;
+            Entity = entity;
             Chapter = chapter;
             Page = page;
             SourceStream = sourceStream;

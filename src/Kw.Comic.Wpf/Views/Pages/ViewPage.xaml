@@ -8,7 +8,8 @@
       xmlns:mto="http://metro.mahapps.com/winfx/xaml/controls"
       xmlns:conv="clr-namespace:Kw.Comic.Wpf.Converters" 
       xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
-      xmlns:beh="clr-namespace:Kw.Comic.Wpf.Behaviors" xmlns:h="http://schemas.microsoft.com/expression/2010/interactivity"
+      xmlns:z="clr-namespace:Denxorz.ZoomControl;assembly=ZoomControl"
+      xmlns:h="http://schemas.microsoft.com/expression/2010/interactivity"
       mc:Ignorable="d" 
       d:DesignHeight="450" d:DesignWidth="800">
     <Page.Resources>
@@ -26,20 +27,13 @@
             <mto:FlipView.ItemTemplate>
                 <DataTemplate DataType="m:ComicPageInfo">
                     <Grid>
-                        <ScrollViewer Visibility="{Binding Done,Converter={StaticResource BoolVisibilityConverter}}"
-                                          VerticalScrollBarVisibility="Auto">
-                            <Grid ClipToBounds="True">
-                                <Image Source="{Binding Image,Mode=OneWay}" 
-                                   RenderOptions.BitmapScalingMode="Fant"
-                                   RenderOptions.EdgeMode="Unspecified"
-                                   Stretch="None"/>
-                                <h:Interaction.Behaviors>
-                                    <beh:ZoomWithWheelAndMoveBehavior UseInParent="True" 
-                                                    IsCenterInZoom="True"
-                                                    IsReturn="False"/>
-                                </h:Interaction.Behaviors>
-                            </Grid>
-                        </ScrollViewer>
+                        <z:ZoomControl Visibility="{Binding Done,Converter={StaticResource BoolVisibilityConverter}}"
+                                       AnimationLength="0:0:0.1">
+                            <Image Source="{Binding Image,Mode=OneWay}" 
+                                           RenderOptions.BitmapScalingMode="Fant"
+                                           RenderOptions.EdgeMode="Unspecified"
+                                           Stretch="None"/>
+                        </z:ZoomControl>
                         <Grid Visibility="{Binding Loading,Converter={StaticResource BoolVisibilityConverter}}">
                             <StackPanel Orientation="Vertical"
                                         HorizontalAlignment="Center"

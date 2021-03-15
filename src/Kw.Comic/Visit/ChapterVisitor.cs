@@ -32,7 +32,7 @@ namespace Kw.Comic.Visit
         {
             Stream.Dispose();
             Stream = null;
-#if NET452
+#if NET45
             return Task.FromResult(0);
 #else
             return Task.CompletedTask;
