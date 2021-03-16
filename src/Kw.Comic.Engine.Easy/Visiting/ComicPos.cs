@@ -13,6 +13,12 @@ namespace Kw.Comic.Engine.Easy.Visiting
         /// </summary>
         public readonly int PageIndex;
 
+        public ComicPos(int chapterIndex, int pageIndex)
+        {
+            ChapterIndex = chapterIndex;
+            PageIndex = pageIndex;
+        }
+
         public override int GetHashCode()
         {
             return ChapterIndex << 16 | (PageIndex & 0xFFFF) >> 16;

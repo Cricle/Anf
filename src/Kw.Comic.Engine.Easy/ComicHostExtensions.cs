@@ -12,10 +12,9 @@ namespace Kw.Comic.Engine.Easy
 {
     public static class ComicHostExtensions
     {
-        public static IComicVisiting CreateVisiting(this IComicHost host, int? cap = 50)
+        public static IComicVisiting CreateVisiting(this IComicHost host)
         {
-            var mgr = host.GetRequiredService<RecyclableMemoryStreamManager>();
-            return new ComicVisiting(mgr, host) { SharedCapacity = cap };
+            return new ComicVisiting(host);
         }
         public static IServiceScope GetServiceScope(this IComicHost host)
         {

@@ -14,6 +14,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\src\Kw.Comic.Engine.Easy\Kw.Comic.Engine.Easy.csproj" />
     <ProjectReference Include="..\..\src\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
   </ItemGroup>
 

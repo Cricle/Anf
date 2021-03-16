@@ -23,9 +23,9 @@ namespace Kw.Comic.Engine.Easy
 
         public static IComicHost Default => @default.Value;
 
-        public EasyComicBuilder()
+        public EasyComicBuilder(IServiceCollection services = null)
         {
-            Services = new ServiceCollection();
+            Services = services??new ServiceCollection();
             NetworkAdapterType = NetworkAdapterTypes.HttpClient;
         }
 
