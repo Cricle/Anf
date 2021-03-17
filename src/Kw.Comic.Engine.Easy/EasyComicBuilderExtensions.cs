@@ -52,11 +52,12 @@ namespace Microsoft.Extensions.DependencyInjection
 
             services.AddScoped<IJsEngine, JintJsEngine>();
             services.AddSingleton<RecyclableMemoryStreamManager>();
-#if NET45||NETSTANDARD1_4
+#if NET45 || NETSTANDARD1_4
             services.AddSingleton<HttpClient>();
             services.AddScoped<INetworkAdapter, HttpClientAdapter>();
 #else
             services.AddHttpClient();
+#endif
             if (networkAdapterType == NetworkAdapterTypes.HttpClient)
             {
                 services.AddScoped<INetworkAdapter, HttpClientAdapter>();
@@ -65,7 +66,6 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 services.AddScoped<INetworkAdapter, WebRequestAdapter>();
             }
-#endif
         }
     }
 }

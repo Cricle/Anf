@@ -1,9 +1,13 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
+    [DebuggerDisplay("{" + nameof(GetDebuggerDisplay) + "(),nq}")]
     public readonly struct ComicPos : IEquatable<ComicPos>
     {
+        public static readonly ComicPos Zero = new ComicPos(0, 0);
+
         /// <summary>
         /// 章节索引
         /// </summary>
@@ -15,6 +19,10 @@ namespace Kw.Comic.Engine.Easy.Visiting
 
         public ComicPos(int chapterIndex, int pageIndex)
         {
+            if (chapterIndex < 0 || pageIndex < 0)
+            {
+                throw new ArgumentException("chapterIndex or pageIndex can't min than zero!");
+            }
             ChapterIndex = chapterIndex;
             PageIndex = pageIndex;
         }
@@ -40,6 +48,11 @@ namespace Kw.Comic.Engine.Easy.Visiting
         {
             return ChapterIndex == other.ChapterIndex
                 && PageIndex == other.PageIndex;
+        }
+
+        private string GetDebuggerDisplay()
+        {
+            return ToString();
         }
     }
 }

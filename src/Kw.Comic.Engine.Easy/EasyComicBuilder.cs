@@ -1,17 +1,5 @@
-﻿using JavaScriptEngineSwitcher.Core;
-using JavaScriptEngineSwitcher.Jint;
-using Kw.Comic.Engine.Dm5;
-using Kw.Comic.Engine.Dmzj;
-using Kw.Comic.Engine.Jisu;
-using Kw.Comic.Engine.Kuaikan;
-using Kw.Comic.Engine.Networks;
-using Kw.Comic.Engine.Soman;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IO;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
-using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -25,7 +13,7 @@ namespace Kw.Comic.Engine.Easy
 
         public EasyComicBuilder(IServiceCollection services = null)
         {
-            Services = services??new ServiceCollection();
+            Services = services ?? new ServiceCollection();
             NetworkAdapterType = NetworkAdapterTypes.HttpClient;
         }
 

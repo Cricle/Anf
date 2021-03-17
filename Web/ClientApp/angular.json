@@ -22,8 +22,7 @@
             "tsConfig": "src/tsconfig.app.json",
             "assets": ["src/assets", "src/manifest.webmanifest"],
             "styles": [
-              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
-              "node_modules/ng-zorro-antd/ng-zorro-antd.dark.css",
+              "node_modules/ng-zorro-antd/ng-zorro-antd.dark.min.css",
               "src/styles.css"
             ],
             "scripts": []
