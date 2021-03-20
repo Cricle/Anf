@@ -2,6 +2,7 @@
 using Kw.Comic.Engine;
 using Kw.Comic.Engine.Easy;
 using System;
+using System.Linq;
 
 namespace KwC.Hubs
 {

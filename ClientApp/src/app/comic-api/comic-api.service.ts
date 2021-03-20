@@ -11,6 +11,7 @@ const comivPart: string = part + "visiting";
   providedIn: 'root'
 })
 export class ComicApiService {
+  
   constructor(private http: HttpClient) {
   }
 
@@ -22,6 +23,9 @@ export class ComicApiService {
   }
   public getComic(address:string):Observable<EntityResult<ComicEntity>>{
     return this.http.get<EntityResult<ComicEntity>>(`${comivPart}/GetComic?address=${address}`);
+  }
+  public getUnComplatedTask():Observable<EntityResult<ComicEntity[]>>{
+    return this.http.get<EntityResult<ComicEntity[]>>(`${comivPart}/GetUnComplatedTask`);
   }
   public getCurrentComic():Observable<EntityResult<ComicEntity>>{
     return this.http.get<EntityResult<ComicEntity>>(`${comivPart}/GetCurrentComic`);

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace KwC.Services
@@ -6,6 +7,7 @@ namespace KwC.Services
     public interface IDownloadManager
     {
         ITaskDispatch TaskDispatch { get; }
+        IEnumerable<DownloadTask> Tasks { get; }
 
         event Action<DownloadManager, DownloadTask> Added;
         event Action<DownloadManager, DownloadTask> Done;

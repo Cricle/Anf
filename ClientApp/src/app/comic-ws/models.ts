@@ -1,3 +1,4 @@
+import { Position } from '../comic-api/model'
 export enum NotifyTypes
 {
     BeginFetchPage = 0,
@@ -10,13 +11,13 @@ export enum NotifyTypes
     ReadySave = 7,
 }
 export interface ProcessInfo{
-    Type:NotifyTypes;
-    Name:string;
-    ComicUrl:string;
-    Chapter:ProcessItemSnapshot;
-    Page:ProcessItemSnapshot;
+    type:NotifyTypes;
+    name:string;
+    comicUrl:string;
+    chapter:ProcessItemSnapshot;
+    page:ProcessItemSnapshot;
 }
-export interface ProcessItemSnapshot{
-    Name:string;
-    Url:string;
+export interface ProcessItemSnapshot extends Position{
+    name:string;
+    url:string;
 }

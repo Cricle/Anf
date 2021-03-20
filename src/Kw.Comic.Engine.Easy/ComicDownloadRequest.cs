@@ -28,9 +28,11 @@ namespace Kw.Comic.Engine.Easy
     {
         public ComicDownloadRequest(IComicSaver saver,
             ComicEntity entity,
+            ComicDetail detail,
             IReadOnlyCollection<DownloadItemRequest> requests, 
             IComicSourceProvider provider)
         {
+            Detail = detail;
             Entity = entity;
             Saver = saver;
             DownloadRequests=requests;
@@ -40,6 +42,8 @@ namespace Kw.Comic.Engine.Easy
         public IComicSaver Saver { get; }
 
         public ComicEntity Entity { get; }
+
+        public ComicDetail Detail { get; }
 
         public IReadOnlyCollection<DownloadItemRequest> DownloadRequests { get; }
 

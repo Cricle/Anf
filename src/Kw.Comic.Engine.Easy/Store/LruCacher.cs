@@ -1,8 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 
-namespace KwC.Services
+namespace Kw.Comic.Engine.Easy.Store
 {
     /// <summary>
     /// lru缓存器
@@ -18,6 +19,10 @@ namespace KwC.Services
         /// 最大个数
         /// </summary>
         public int Max { get; }
+        /// <summary>
+        /// 同步根
+        /// </summary>
+        public object SyncRoot=>locker;
         /// <summary>
         /// 当前的个数
         /// </summary>
@@ -52,7 +57,7 @@ namespace KwC.Services
         /// </summary>
         /// <param name="key">缓存键</param>
         /// <returns></returns>
-        public bool Remove(TKey key,out TValue value)
+        public bool Remove(TKey key, out TValue value)
         {
             if (caches.ContainsKey(key))
             {
@@ -85,9 +90,9 @@ namespace KwC.Services
             }
             return default(TValue);
         }
-        public virtual TValue GetOrAdd(TKey key,Func<TValue> creator)
+        public virtual TValue GetOrAdd(TKey key, Func<TValue> creator)
         {
-            lock (this)
+            lock (locker)
             {
                 if (caches.TryGetValue(key, out var value))
                 {

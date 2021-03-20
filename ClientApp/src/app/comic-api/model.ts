@@ -1,44 +1,44 @@
 export interface Result {
-    Code: number;
-    Msg: string;
-    Succeed: boolean;
+    code: number;
+    msg: string;
+    succeed: boolean;
 }
 
 export interface EntityResult<T> extends Result {
-    Data: T;
+    data: T;
 }
 export interface EntitySetResult<T> extends Result {
-    Data: T;
-    Total: number;
-    Skip: number | null;
-    Take: number | null;
+    data: T;
+    total: number;
+    skip: number | null;
+    take: number | null;
 }
 export interface SetResult<T> extends EntitySetResult<T[]> {
 }
 
 export interface ComicInfo {
-    ComicUrl: string;
-    Name: string;
-    Descript: string;
-    ImageUrl: string;
+    comicUrl: string;
+    name: string;
+    descript: string;
+    imageUrl: string;
 }
 export interface ComicRef {
-    TargetUrl: string;
+    targetUrl: string;
 }
 export interface ComicChapter extends ComicRef {
-    Title: string;
+    title: string;
 }
 export interface ComicEntity extends ComicInfo {
-    Chapters: ComicChapter[];
+    chapters: ComicChapter[];
 }
 export interface ComicPage extends ComicRef {
-    Name: string;
+    name: string;
 }
 export interface ChapterWithPage {
-    Chapter: ComicChapter;
-    Pages: ComicPage[];
+    chapter: ComicChapter;
+    pages: ComicPage[];
 }
 export interface Position{
-    Current:number;
-    Total:number;
+    current:number;
+    total:number;
 }

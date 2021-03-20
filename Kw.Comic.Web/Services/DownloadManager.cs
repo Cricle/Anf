@@ -20,6 +20,8 @@ namespace KwC.Services
         private int total;
         private int current;
 
+        public IEnumerable<DownloadTask> Tasks => tasks.Values;
+
         public DownloadManager(IServiceProvider host)
         {
             this.host = host;
@@ -28,6 +30,12 @@ namespace KwC.Services
             downloadListener = new NotifyListener(scope.ServiceProvider);
             tasks = new ConcurrentDictionary<string, DownloadTask>();
             taskDispatch = new TaskDispatch(this);
+            taskDispatch.Done += TaskDispatch_Done;
+        }
+
+        private void TaskDispatch_Done(DownloadTask obj)
+        {
+            tasks.TryRemove(obj.Address, out _);
         }
 
         public ITaskDispatch TaskDispatch => taskDispatch;

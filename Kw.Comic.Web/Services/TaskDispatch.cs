@@ -20,6 +20,7 @@ namespace KwC.Services
 
         public event Action<DownloadTask, Exception> Exception;
         public event Action<DownloadTask> CurrentTaskChanged;
+        public event Action<DownloadTask> Done;
         public event Action<DownloadTask, int> MovedNext;
 
         private async void Run(object mgr)
@@ -39,6 +40,7 @@ namespace KwC.Services
                         {
                             await Task.Yield();
                         }
+                        Done?.Invoke(current);
                         current = null;
                     }
                 }

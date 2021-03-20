@@ -35,6 +35,21 @@ namespace Kw.Comic.Engine.Easy
         {
             return host.GetRequiredService<ComicEngine>();
         }
+        public static DownloadLink LoadDownloadAsync(this IServiceProvider host,
+            string address,
+            ComicDetail detail,
+            IComicSaver saver)
+        {
+            var provider = host.GetComicProvider(address);
+            if (provider == null)
+            {
+                return default;
+            }
+            var downloader = host.GetRequiredService<IComicDownloader>();
+            var reqs = detail.Chapters.SelectMany(x => x.Pages.Select(y => new DownloadItemRequest(x.Chapter, y))).ToArray();
+            var dreq = new ComicDownloadRequest(saver, detail.Entity, detail, reqs, provider);
+            return new DownloadLink(provider, downloader, dreq);
+        }
         public static async Task<DownloadLink> MakeDownloadAsync(this IServiceProvider host,
             string address,
             IComicSaver saver)
@@ -49,10 +64,7 @@ namespace Kw.Comic.Engine.Easy
             {
                 return default;
             }
-            var downloader = host.GetRequiredService<IComicDownloader>();
-            var reqs = detail.Chapters.SelectMany(x => x.Pages.Select(y => new DownloadItemRequest(x.Chapter, y))).ToArray();
-            var dreq = new ComicDownloadRequest(saver, detail.Entity, reqs, provider);
-            return new DownloadLink(provider, downloader, dreq);
+            return LoadDownloadAsync(host, address, detail, saver);
         }
         public static async Task<bool> DownloadAsync(this IServiceProvider host,
             string address,

@@ -11,6 +11,7 @@ using System;
 using System.IO;
 using System.Reflection;
 using CompressedStaticFiles;
+using Microsoft.AspNetCore.Http.Connections;
 #if !MiniService
 using Microsoft.OpenApi.Models;
 #endif
@@ -55,7 +56,8 @@ namespace KwC
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            services.AddSignalR().AddJsonProtocol();
+            services.AddSignalR()
+                .AddJsonProtocol();
 
 #if !MiniService
             services.AddMiniProfiler(options => 
@@ -101,7 +103,9 @@ namespace KwC
             }
 
             app.UseRouting();
+#if !MiniService
             app.UseSwaggerUI();
+#endif
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapHub<ComicHub>("/api/hubs/comic");
@@ -120,7 +124,6 @@ namespace KwC
                 // see https://go.microsoft.com/fwlink/?linkid=864501
 
                 spa.Options.SourcePath = "ClientApp";
-
                 if (env.IsDevelopment())
                 {
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200/");

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
-    internal class ComicVisiting<TResource> : IComicVisiting<TResource>, IDisposable
+    public class ComicVisiting<TResource> : IComicVisiting<TResource>, IDisposable
     {
         private string address;
         private ComicEntity entity;
@@ -102,7 +102,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
         public async Task<IComicChapterManager<TResource>> GetChapterManagerAsync(int index)
         {
             await LoadChapterAsync(index);
-            var mgr = new ComicChapterManager(chapterWithPages[index], this);
+            var mgr = new ComicChapterManager<TResource>(chapterWithPages[index], this);
             var inter = VisitingInterceptor;
             if (inter != null)
             {
@@ -122,49 +122,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
             semaphoreSlim.Wait();
             semaphoreSlim.Dispose();
         }
-        struct PageBox : IComicVisitPage<TResource>
-        {
-            public ComicPage Page { get; set; }
-
-            public TResource Resource { get; set; }
-        }
-        class ComicChapterManager : IComicChapterManager<TResource>
-        {
-            public ComicChapterManager(ChapterWithPage chapterWithPage,
-                ComicVisiting<TResource> comicVisiting)
-            {
-                ComicVisiting = comicVisiting;
-                ChapterWithPage = chapterWithPage;
-            }
-
-            public ComicVisiting<TResource> ComicVisiting { get; }
-
-            public ChapterWithPage ChapterWithPage { get; }
-
-            public async Task<IComicVisitPage<TResource>> GetVisitPageAsync(int index)
-            {
-                var page = ChapterWithPage.Pages[index];
-                var inter = ComicVisiting.VisitingInterceptor;
-                GettingPageInterceptorContext<TResource> context = null;
-                if (inter != null)
-                {
-                    context = new GettingPageInterceptorContext<TResource>
-                    {
-                        Index = index,
-                        ChapterManager = this,
-                        Page = page,
-                        Visiting = ComicVisiting
-                    };
-                    await inter.GettingPageAsync(context);
-                }
-                var s = await ComicVisiting.ResourceFactory.GetAsync(page.TargetUrl);
-                if (inter != null)
-                {
-                    await inter.GotPageAsync(context);
-                }
-                return new PageBox { Page = page, Resource = s };
-            }
-        }
 
     }
+
 }

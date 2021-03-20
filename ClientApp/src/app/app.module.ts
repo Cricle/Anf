@@ -4,9 +4,10 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
-import { NgZorroAntdModule} from 'ng-zorro-antd'
+import { NgZorroAntdModule, NzDrawerModule, NzIconModule} from 'ng-zorro-antd'
 
 import { ComicApiService } from './comic-api/comic-api.service';
+import { ComicManager } from './comic-api/comic-mgr'
 import { ComicWsService } from './comic-ws/comic-ws.service';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
@@ -20,7 +21,7 @@ import { AnalysisSearchComponent } from './analysis-search/analysis-search/analy
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-
+import { IconDefinition } from '@ant-design/icons-angular';
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { environment } from '../environments/environment';
   providers: [
     ComicApiService,
     ComicWsService,
+    ComicManager
   ],
   bootstrap: [AppComponent]
 })

@@ -23,6 +23,7 @@
             "assets": ["src/assets", "src/manifest.webmanifest"],
             "styles": [
               "src/assets/css/ng-zorro-antd.dark.min.css",
+              "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",
               "src/styles.css"
             ],
             "scripts": []

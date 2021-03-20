@@ -4,6 +4,7 @@ using KwC.Services;
 using Microsoft.AspNetCore.Mvc;
 using MimeMapping;
 using System;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace KwC.Controllers
@@ -61,6 +62,20 @@ namespace KwC.Controllers
             };
             return Ok(res);
         }
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<ComicEntity[]>), 200)]
+        public IActionResult GetUnComplatedTask()
+        {
+            var entities = Startup.DownloadManager.Tasks
+                .Select(x=>x.Link.Request.Entity)
+                .ToArray();
+            var res = new EntityResult<ComicEntity[]>
+            {
+                Data = entities
+            };
+            return Ok(res);
+        }
+
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(EntityResult<ComicEntity>), 200)]
         public async Task<IActionResult> GetComic(string address)
