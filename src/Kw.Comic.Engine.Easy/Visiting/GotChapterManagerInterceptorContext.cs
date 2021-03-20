@@ -1,7 +1,7 @@
 ﻿namespace Kw.Comic.Engine.Easy.Visiting
 {
-    public class GotChapterManagerInterceptorContext : ComicVisitingInterceptorContext
+    public class GotChapterManagerInterceptorContext<TResource> : ComicVisitingInterceptorContext<TResource>
     {
-        public IComicChapterManager ChapterManager { get; internal set; }
+        public IComicChapterManager<TResource> ChapterManager { get; internal set; }
     }
 }

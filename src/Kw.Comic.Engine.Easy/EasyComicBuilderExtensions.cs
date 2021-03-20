@@ -11,6 +11,7 @@ using Kw.Comic.Engine.Networks;
 using Kw.Comic.Engine.Soman;
 using Microsoft.IO;
 using System;
+using System.IO;
 using System.Net.Http;
 
 namespace Microsoft.Extensions.DependencyInjection
@@ -42,7 +43,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 return eng;
             });
             services.AddSingleton<IComicDownloader, ComicDownloader>();
-            services.AddScoped<IComicVisiting, ComicVisiting>();
+            services.AddScoped<IComicVisiting<Stream>>(x => new ComicVisiting<Stream>(x, StreamResourceFactory.Default));
 
             services.AddScoped<JisuComicOperator>();
             services.AddScoped<Dm5ComicOperator>();
@@ -57,7 +58,6 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<INetworkAdapter, HttpClientAdapter>();
 #else
             services.AddHttpClient();
-#endif
             if (networkAdapterType == NetworkAdapterTypes.HttpClient)
             {
                 services.AddScoped<INetworkAdapter, HttpClientAdapter>();
@@ -66,6 +66,7 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 services.AddScoped<INetworkAdapter, WebRequestAdapter>();
             }
+#endif
         }
     }
 }

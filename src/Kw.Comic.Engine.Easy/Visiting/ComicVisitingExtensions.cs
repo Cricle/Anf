@@ -11,13 +11,13 @@ namespace Kw.Comic.Engine.Easy.Visiting
 {
     public static class ComicVisitingExtensions
     {
-        public static async Task<IComicVisitPage> GoToPageAsync(this IComicVisiting visiting, ComicPos pos)
+        public static async Task<IComicVisitPage<TResource>> GoToPageAsync<TResource>(this IComicVisiting<TResource> visiting, ComicPos pos)
         {
             var mgr = await visiting.GetChapterManagerAsync(pos.ChapterIndex);
             var page = await mgr.GetVisitPageAsync(pos.PageIndex);
             return page;
         }
-        public static async Task<IComicVisitPage[]> DownloadChapterAsync(this IComicVisiting visiting,
+        public static async Task<IComicVisitPage<TResource>[]> DownloadChapterAsync<TResource>(this IComicVisiting<TResource> visiting,
             int index,
             int concurrent = 1)
         {
@@ -28,7 +28,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                 return null;
             }
             var workingTask = Enumerable.Range(0, mgr.ChapterWithPage.Pages.Length)
-                .Select(x => new Func<Task<IComicVisitPage>>(() => mgr.GetVisitPageAsync(x)))
+                .Select(x => new Func<Task<IComicVisitPage<TResource>>>(() => mgr.GetVisitPageAsync(x)))
                 .ToArray();
             var orderMap = Enumerable.Range(0, mgr.ChapterWithPage.Pages.Length)
                 .ToDictionary(x => mgr.ChapterWithPage.Pages[x]);

@@ -1,6 +1,6 @@
 ﻿namespace Kw.Comic.Engine.Easy.Visiting
 {
-    public class GettingPageInterceptorContext : GotChapterManagerInterceptorContext
+    public class GettingPageInterceptorContext<TResource> : GotChapterManagerInterceptorContext<TResource>
     {
         public int Index { get; internal set; }
 

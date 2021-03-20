@@ -1,7 +1,7 @@
 ﻿namespace Kw.Comic.Engine.Easy.Visiting
 {
-    public class ComicVisitingInterceptorContext
+    public class ComicVisitingInterceptorContext<TResource>
     {
-        public IComicVisiting Visiting { get; internal set; }
+        public IComicVisiting<TResource> Visiting { get; internal set; }
     }
 }

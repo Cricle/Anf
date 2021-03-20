@@ -44,11 +44,12 @@ namespace Kw.Comic.Engine
         public static byte[] UrlDecodeToBytes(byte[] bytes) => bytes == null ? null : UrlDecodeToBytes(bytes, 0, bytes.Length);
 
         public static byte[] UrlDecodeToBytes(byte[] bytes, int offset, int count) => UrlDecode(bytes, offset, count);
-        public static string UrlDecode(string str, Encoding e) => UrlDecode(str, e);
-
+        public static string UrlDecode(string str, Encoding e) 
+        {
+            var bytes = e.GetBytes(str);
+            return e.GetString(UrlDecode(bytes, 0, bytes.Length));
+        }
         public static string UrlDecode(string str) => UrlDecode(str, Encoding.UTF8);
-        public static string UrlDecode(byte[] bytes, int offset, int count, Encoding e) =>
-            UrlDecode(bytes, offset, count, e);
 
         internal static byte[] UrlDecode(byte[] bytes, int offset, int count)
         {

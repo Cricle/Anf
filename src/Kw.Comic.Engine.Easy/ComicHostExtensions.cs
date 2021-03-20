@@ -12,20 +12,30 @@ namespace Kw.Comic.Engine.Easy
 {
     public static class ComicHostExtensions
     {
-        public static IComicVisiting CreateVisiting(this IComicHost host)
+        public static IComicVisiting<TResource> CreateVisiting<TResource>(this IServiceProvider host,
+            IResourceFactoryCreator<TResource> resourceFactoryCreator)
         {
-            return new ComicVisiting(host);
+            return new ComicVisiting<TResource>(host, resourceFactoryCreator);
         }
-        public static IServiceScope GetServiceScope(this IComicHost host)
+        public static IComicVisiting<Stream> CreateVisiting(this IServiceProvider host,
+            IResourceFactoryCreator<Stream> resourceFactoryCreator=null)
+        {
+            if (resourceFactoryCreator==null)
+            {
+                resourceFactoryCreator = StreamResourceFactory.Default;
+            }
+            return new ComicVisiting<Stream>(host, resourceFactoryCreator);
+        }
+        public static IServiceScope GetServiceScope(this IServiceProvider host)
         {
             var factory = host.GetRequiredService<IServiceScopeFactory>();
             return factory.CreateScope();
         }
-        public static ComicEngine GetComicEngine(this IComicHost host)
+        public static ComicEngine GetComicEngine(this IServiceProvider host)
         {
             return host.GetRequiredService<ComicEngine>();
         }
-        public static async Task<DownloadLink> MakeDownloadAsync(this IComicHost host,
+        public static async Task<DownloadLink> MakeDownloadAsync(this IServiceProvider host,
             string address,
             IComicSaver saver)
         {
@@ -44,7 +54,7 @@ namespace Kw.Comic.Engine.Easy
             var dreq = new ComicDownloadRequest(saver, detail.Entity, reqs, provider);
             return new DownloadLink(provider, downloader, dreq);
         }
-        public static async Task<bool> DownloadAsync(this IComicHost host,
+        public static async Task<bool> DownloadAsync(this IServiceProvider host,
             string address,
             IComicSaver saver,
             CancellationToken token = default)
@@ -60,7 +70,7 @@ namespace Kw.Comic.Engine.Easy
                 return true;
             }
         }
-        public static async Task<bool> BatchDownloadAsync(this IComicHost host,
+        public static async Task<bool> BatchDownloadAsync(this IServiceProvider host,
             string address,
             IComicSaver saver,
             int concurrent = 5,
@@ -77,7 +87,7 @@ namespace Kw.Comic.Engine.Easy
                 return true;
             }
         }
-        public static IComicSourceProviderHost GetComicProvider(this IComicHost host, string address)
+        public static IComicSourceProviderHost GetComicProvider(this IServiceProvider host, string address)
         {
             var eng = host.GetComicEngine();
             var type = eng.GetComicSourceProviderType(address);
@@ -89,7 +99,7 @@ namespace Kw.Comic.Engine.Easy
             var provider = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(type.ProviderType);
             return new ComicSourceProviderHost(provider, scope);
         }
-        public static async Task<ComicEntity> GetComicAsync(this IComicHost host, string address)
+        public static async Task<ComicEntity> GetComicAsync(this IServiceProvider host, string address)
         {
             var provider = host.GetComicProvider(address);
             if (provider == null)
@@ -101,7 +111,7 @@ namespace Kw.Comic.Engine.Easy
                 return await provider.GetChaptersAsync(address);
             }
         }
-        public static async Task<ComicDetail> GetComicWithChaptersAsync(this IComicHost host, string address)
+        public static async Task<ComicDetail> GetComicWithChaptersAsync(this IServiceProvider host, string address)
         {
             var provider = host.GetComicProvider(address);
             if (provider == null)
@@ -113,12 +123,12 @@ namespace Kw.Comic.Engine.Easy
                 return await provider.GetChapterWithPageAsync(address);
             }
         }
-        public static Task<SearchComicResult> SearchAsync(this IComicHost host, string keywork, int skip, int take)
+        public static Task<SearchComicResult> SearchAsync(this IServiceProvider host, string keywork, int skip, int take)
         {
             var eng = host.GetSearchEngine();
             return eng.SearchAsync(keywork, skip, take);
         }
-        public static SearchEngine GetSearchEngine(this IComicHost host)
+        public static SearchEngine GetSearchEngine(this IServiceProvider host)
         {
             return host.GetRequiredService<SearchEngine>();
         }

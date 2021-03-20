@@ -8,7 +8,7 @@
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Copyright>GPL</Copyright>
-    <Version>1.0.2</Version>
+    <Version>1.0.7</Version>
   </PropertyGroup>
 
   <ItemGroup>

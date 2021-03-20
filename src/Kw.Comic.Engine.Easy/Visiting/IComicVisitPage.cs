@@ -2,10 +2,10 @@
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
-    public interface IComicVisitPage
+    public interface IComicVisitPage<TResource>
     {
         ComicPage Page { get; }
 
-        Stream Stream { get; }
+        TResource Resource { get; }
     }
 }

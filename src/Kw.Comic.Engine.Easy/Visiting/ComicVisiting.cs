@@ -10,25 +10,25 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
-    internal class ComicVisiting : IComicVisiting, IDisposable
+    internal class ComicVisiting<TResource> : IComicVisiting<TResource>, IDisposable
     {
         private string address;
         private ComicEntity entity;
-        private IResourceFactoryCreator resourceFactoryCreator;
+        private IResourceFactoryCreator<TResource> resourceFactoryCreator;
         private IComicSourceProvider sourceProvider;
-        private IResourceFactory resourceFactory;
+        private IResourceFactory<TResource> resourceFactory;
 
-        public IComicHost Host { get; }
+        public IServiceProvider Host { get; }
         public IComicSourceProvider SourceProvider => sourceProvider;
 
         public string Address => address;
         public ComicEntity Entity => entity;
 
-        public IResourceFactory ResourceFactory => resourceFactory;
+        public IResourceFactory<TResource> ResourceFactory => resourceFactory;
 
-        public IComicVisitingInterceptor VisitingInterceptor { get; set; }
+        public IComicVisitingInterceptor<TResource> VisitingInterceptor { get; set; }
 
-        public IResourceFactoryCreator ResourceFactoryCreator
+        public IResourceFactoryCreator<TResource> ResourceFactoryCreator
         {
             get => resourceFactoryCreator;
             set => resourceFactoryCreator = value ?? throw new ArgumentNullException("ResourceFactoryCreator can't be null!");
@@ -37,10 +37,16 @@ namespace Kw.Comic.Engine.Easy.Visiting
         private readonly SemaphoreSlim semaphoreSlim;
         private ChapterWithPage[] chapterWithPages;
 
-        public ComicVisiting(IComicHost host)
+        public ComicVisiting(IServiceProvider host, IResourceFactoryCreator<TResource> resourceFactoryCreator)
         {
+            if (resourceFactoryCreator is null)
+            {
+                throw new ArgumentNullException(nameof(resourceFactoryCreator));
+            }
+
             Host = host;
-            resourceFactoryCreator = DefaultResourceFactory.Default;
+            semaphoreSlim = new SemaphoreSlim(1);
+            this.resourceFactoryCreator = resourceFactoryCreator;
         }
 
         public async Task LoadAsync(string address)
@@ -49,7 +55,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
             sourceProvider = Host.GetComicProvider(address);
             entity = await Host.GetComicAsync(address);
             chapterWithPages = new ChapterWithPage[entity.Chapters.Length];
-            var ctx = new ResourceFactoryCreateContext
+            var ctx = new ResourceFactoryCreateContext<TResource>
             {
                 Address = address,
                 SourceProvider = sourceProvider,
@@ -72,7 +78,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                 var chapter = entity.Chapters[index];
                 if (visitor != null)
                 {
-                    var context = new ChapteringVisitingInterceptorContext
+                    var context = new ChapteringVisitingInterceptorContext<TResource>
                     {
                         Chapter = chapter,
                         Visiting = this
@@ -83,7 +89,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                 chapterWithPages[index] = new ChapterWithPage(chapter, cwp);
                 if (visitor != null)
                 {
-                    var ctx = new ChapterVisitingInterceptorContext { Chapter = chapterWithPages[index], Visiting = this };
+                    var ctx = new ChapterVisitingInterceptorContext<TResource> { Chapter = chapterWithPages[index], Visiting = this };
                     await visitor.LoadedChapterAsync(ctx);
                 }
             }
@@ -93,14 +99,14 @@ namespace Kw.Comic.Engine.Easy.Visiting
             }
         }
 
-        public async Task<IComicChapterManager> GetChapterManagerAsync(int index)
+        public async Task<IComicChapterManager<TResource>> GetChapterManagerAsync(int index)
         {
             await LoadChapterAsync(index);
             var mgr = new ComicChapterManager(chapterWithPages[index], this);
             var inter = VisitingInterceptor;
             if (inter != null)
             {
-                await inter.GotChapterManagerAsync(new GotChapterManagerInterceptorContext
+                await inter.GotChapterManagerAsync(new GotChapterManagerInterceptorContext<TResource>
                 {
                     ChapterManager = mgr,
                     Visiting = this
@@ -116,33 +122,33 @@ namespace Kw.Comic.Engine.Easy.Visiting
             semaphoreSlim.Wait();
             semaphoreSlim.Dispose();
         }
-        struct PageBox : IComicVisitPage
+        struct PageBox : IComicVisitPage<TResource>
         {
             public ComicPage Page { get; set; }
 
-            public Stream Stream { get; set; }
+            public TResource Resource { get; set; }
         }
-        class ComicChapterManager : IComicChapterManager
+        class ComicChapterManager : IComicChapterManager<TResource>
         {
             public ComicChapterManager(ChapterWithPage chapterWithPage,
-                ComicVisiting comicVisiting)
+                ComicVisiting<TResource> comicVisiting)
             {
                 ComicVisiting = comicVisiting;
                 ChapterWithPage = chapterWithPage;
             }
 
-            public ComicVisiting ComicVisiting { get; }
+            public ComicVisiting<TResource> ComicVisiting { get; }
 
             public ChapterWithPage ChapterWithPage { get; }
 
-            public async Task<IComicVisitPage> GetVisitPageAsync(int index)
+            public async Task<IComicVisitPage<TResource>> GetVisitPageAsync(int index)
             {
                 var page = ChapterWithPage.Pages[index];
                 var inter = ComicVisiting.VisitingInterceptor;
-                GettingPageInterceptorContext context = null;
+                GettingPageInterceptorContext<TResource> context = null;
                 if (inter != null)
                 {
-                    context = new GettingPageInterceptorContext
+                    context = new GettingPageInterceptorContext<TResource>
                     {
                         Index = index,
                         ChapterManager = this,
@@ -156,7 +162,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                 {
                     await inter.GotPageAsync(context);
                 }
-                return new PageBox { Page = page, Stream = s };
+                return new PageBox { Page = page, Resource = s };
             }
         }
 

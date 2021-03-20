@@ -2,8 +2,8 @@
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
-    public interface IResourceFactoryCreator
+    public interface IResourceFactoryCreator<TResource>
     {
-        Task<IResourceFactory> CreateAsync(ResourceFactoryCreateContext context);
+        Task<IResourceFactory<TResource>> CreateAsync(ResourceFactoryCreateContext<TResource> context);
     }
 }

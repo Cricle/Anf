@@ -4,19 +4,19 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
-    public class DefaultResourceFactory : IResourceFactoryCreator
+    public class StreamResourceFactory : IResourceFactoryCreator<Stream>
     {
-        public static readonly DefaultResourceFactory Default = new DefaultResourceFactory();
+        public static readonly StreamResourceFactory Default = new StreamResourceFactory();
 
-        public Task<IResourceFactory> CreateAsync(ResourceFactoryCreateContext context)
+        public Task<IResourceFactory<Stream>> CreateAsync(ResourceFactoryCreateContext<Stream> context)
         {
-            return Task.FromResult<IResourceFactory>(new ResourceFactory(context.SourceProvider));
+            return Task.FromResult<IResourceFactory<Stream>>(new ResourceFactory(context.SourceProvider));
         }
 
         public void Dispose()
         {
         }
-        class ResourceFactory : IResourceFactory
+        class ResourceFactory : IResourceFactory<Stream>
         {
             private readonly IComicSourceProvider sourceProvider;
 

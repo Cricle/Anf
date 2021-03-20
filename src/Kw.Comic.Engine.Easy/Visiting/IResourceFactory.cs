@@ -4,8 +4,8 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
-    public interface IResourceFactory : IDisposable
+    public interface IResourceFactory<TResource> : IDisposable
     {
-        Task<Stream> GetAsync(string address);
+        Task<TResource> GetAsync(string address);
     }
 }

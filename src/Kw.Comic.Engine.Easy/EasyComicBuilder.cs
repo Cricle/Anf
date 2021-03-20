@@ -7,9 +7,9 @@ namespace Kw.Comic.Engine.Easy
 {
     public class EasyComicBuilder
     {
-        private static readonly Lazy<IComicHost> @default = new Lazy<IComicHost>(MakeDefault);
+        private static readonly Lazy<IServiceProvider> @default = new Lazy<IServiceProvider>(MakeDefault);
 
-        public static IComicHost Default => @default.Value;
+        public static IServiceProvider Default => @default.Value;
 
         public EasyComicBuilder(IServiceCollection services = null)
         {
@@ -25,13 +25,12 @@ namespace Kw.Comic.Engine.Easy
         {
             Services.AddEasyComic(NetworkAdapterType);
         }
-        public IComicHost Build()
+        public IServiceProvider Build()
         {
             var provider = Services.BuildServiceProvider();
-            var host = new ComicHost(provider);
-            return host;
+            return provider;
         }
-        private static IComicHost MakeDefault()
+        private static IServiceProvider MakeDefault()
         {
             var builder = new EasyComicBuilder();
             builder.AddComicServices();

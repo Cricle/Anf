@@ -1,6 +1,6 @@
 ﻿namespace Kw.Comic.Engine.Easy.Visiting
 {
-    public class LoadVisitingInterceptorContext
+    public class LoadVisitingInterceptorContext<TResource> : ComicVisitingInterceptorContext<TResource>
     {
         public bool IsSwitch { get; internal set; }
 

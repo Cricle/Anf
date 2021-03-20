@@ -1,0 +1,30 @@
+<div style="padding:2% 4% 0 4%">
+    <div>
+        <article nz-typography *ngIf='this.entity!=null'>
+            <h1 nz-typography class="center-text">
+                {{this.entity.Name}}
+            </h1>
+            <h3 nz-typography class="center-text">
+                {{this.chapter.Title}} [{{currentPage}}/{{maxPage}}]
+                <nz-spin nzSimple [nzIndicator]="indicatorTemplate" class="inline-icon"> </nz-spin>            
+            </h3>
+        </article>
+        <nz-progress [nzPercent]="pos" [nzSuccessPercent]='posChapter' [nzStrokeColor]="{ '0%': '#EEEFFF', '100%': '#123456' }" [nzShowInfo]='false'></nz-progress>
+    </div>
+    <div *ngIf='this.entity!=null'>
+        <article nz-typography>
+            <h2 nz-typography class="center-text">
+                描述
+            </h2>
+            <p nz-typography 
+            nzEllipsis
+            nzExpandable
+            [nzEllipsisRows]='4'>
+                {{this.entity.Descript}}
+            </p>
+        </article>
+    </div>
+</div>
+
+
+<ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>

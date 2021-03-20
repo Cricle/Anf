@@ -50,10 +50,10 @@ namespace Kw.Comic.Engine
                 return false;
             }
         }
-        public static async Task<IComicCursor> GetSearchCursorAsync(this SearchEngine eng, string keyword, int skip = 0, int take = 50)
+        public static Task<IComicCursor> GetSearchCursorAsync(this SearchEngine eng, string keyword, int skip = 0, int take = 50)
         {
             var scope = eng.ServiceScopeFactory.CreateScope();
-            return new DefaultComicCursor(scope, eng.GetEnumerator(), keyword, skip, take);
+            return Task.FromResult<IComicCursor>(new DefaultComicCursor(scope, eng.GetEnumerator(), keyword, skip, take));
         }
         public static async Task<SearchComicResult> SearchAsync(this SearchEngine eng, string keyword, int skip, int take)
         {

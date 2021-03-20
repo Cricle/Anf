@@ -1,10 +1,10 @@
 ﻿namespace Kw.Comic.Engine.Easy.Visiting
 {
-    public class ChapterVisitingInterceptorContext : ComicVisitingInterceptorContext
+    public class ChapterVisitingInterceptorContext<TResource> : ComicVisitingInterceptorContext<TResource>
     {
         public ChapterWithPage Chapter { get; internal set; }
     }
-    public class ChapteringVisitingInterceptorContext : ComicVisitingInterceptorContext
+    public class ChapteringVisitingInterceptorContext<TResource> : ComicVisitingInterceptorContext<TResource>
     {
         public int Index { get; internal set; }
 

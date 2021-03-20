@@ -1,0 +1,1 @@
+./node_modules/.bin/rxjs-grpc -o ./src/app/proto-services/grpc-comic.ts ../Protos/*.proto
