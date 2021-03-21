@@ -42,3 +42,24 @@ export interface Position{
     current:number;
     total:number;
 }
+export interface ComicDetail{
+    entity:ComicEntity;
+    chapters:ChapterWithPage[];
+}
+export interface ProcessChangedInfo{
+    sign:string;
+    current:number;
+    total:number;
+}
+export interface ProcessInfo extends ProcessChangedInfo{
+    detail:ComicDetail;
+}
+export interface ComicSource extends ComicRef{
+    name:string;
+}
+export interface ComicSnapshot extends ComicSource{
+    author:string;
+    imageUri:string;
+    sources:ComicSource[];
+    descript:string;
+}

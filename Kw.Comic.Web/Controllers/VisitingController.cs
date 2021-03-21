@@ -15,15 +15,19 @@ namespace KwC.Controllers
     [Route(ComicConst.RouteWithControllerName)]
     public class VisitingController : ControllerBase
     {
+        private readonly SearchEngine searchEngine;
         private readonly VisitingManager visitingManager;
         private readonly IRecordDownloadCenter downloadCenter;
 
         public VisitingController(IRecordDownloadCenter downloadCenter,
-            VisitingManager visitingManager)
+            VisitingManager visitingManager,
+            SearchEngine searchEngine)
         {
+            this.searchEngine = searchEngine;
             this.visitingManager = visitingManager;
             this.downloadCenter = downloadCenter;
         }
+
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(EntityResult<ComicDetail>), 200)]
         public async Task<IActionResult> AddDownload([FromQuery]string address)
@@ -37,6 +41,17 @@ namespace KwC.Controllers
             var res = new EntityResult<ComicDetail>
             {
                 Data = box?.Link.Request.Detail
+            };
+            return Ok(res);
+        }
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<ComicSnapshot[]>), 200)]
+        public async Task<IActionResult> Search([FromQuery]string keywork)
+        {
+            var result = await searchEngine.SearchAsync(keywork, 0, 30);
+            var res = new EntityResult<ComicSnapshot[]>
+            {
+                Data = result.Snapshots
             };
             return Ok(res);
         }

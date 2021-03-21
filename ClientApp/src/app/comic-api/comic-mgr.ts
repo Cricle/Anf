@@ -1,106 +1,81 @@
 import { ComicApiService } from './comic-api.service'
 import { ComicWsService } from '../comic-ws/comic-ws.service'
-import { ComicEntity, Position } from './model';
-import { NotifyTypes, ProcessInfo } from '../comic-ws/models';
+import { ComicDetail, ComicEntity, Position, ProcessInfo } from './model';
 import { Injectable } from '@angular/core';
 
 @Injectable({
     providedIn: 'root'
 })
 export class ComicManager {
-    private _unComplatedTasks: ComicEntity[];
-    private _entity: ComicEntity;
-    private _currentInfo: ProcessInfo;
-    private _position: Position;
-    private _comicPos:number;
-    private _chapterPos:number;
+    private _processInfos: Map<string, ProcessInfo>;
+    private _allTotal: number;
+    private _allCurrent: number;
 
     private tk1: Object;
     private tk2: Object;
     private tk3: Object;
+    private tk4: Object;
 
     private _isListening: boolean;
 
-    
-    public get comicPos() : number {
-        return this._comicPos;
-    }
-    
-    
-    public get chapterPos() : number {
-        return this._chapterPos;
-    }
-    
 
-    public get isListening(): boolean {
-        return this._isListening;
-    }
-
-    public get currentInfo(): ProcessInfo {
-        return this._currentInfo;
-    }
-
-    public get position(): Position {
-        return this._position;
-    }
-
-    public get entity(): ComicEntity {
-        return this._entity;
-    }
-
-    public get unComplatedTasks(): ComicEntity[] {
-        if (!this._unComplatedTasks) {
-            return this._unComplatedTasks;
+    public get processInfos(): Array<ProcessInfo> {
+        if (this._processInfos) {
+            const values = new Array();
+            this._processInfos.forEach(x=>values.push(x));
+            return values;
         }
         return [];
     }
 
+
+    public get allTotal(): number {
+        return this._allTotal
+    }
+
+    public get allCurrent(): number {
+        return this._allCurrent;
+    }
+    private updatePos() {
+        let t = 0;
+        let c = 0;
+        if (this._processInfos) {
+            for (const ire of this._processInfos.values()) {
+                t += ire.total;
+                c += ire.current;
+            }
+        }
+        this._allTotal = t;
+        this._allCurrent = c;
+    }
+
     constructor(private api: ComicApiService,
         private ws: ComicWsService) {
-        this._position = {
-            current: 0,
-            total: 0
-        };
-        this._unComplatedTasks = [];
+        this._processInfos=new Map<string, ProcessInfo>();
         this.listen();
-        this.api.getCurrentComic().subscribe(x => {
-            if (x && x.data) {
-                this._entity = x.data
-            }
-        });
-        this.updateUnComplatedTasks();
-        // this.loadTemplateData();
-        // this._unComplatedTasks=[this.entity,this.entity,this.entity];
-        // this.updatePos();
-    }
-    private updatePos(){
-        if (this._position) {
-            this._chapterPos=(this._position.current/this._position.total)*100;
-        }else{
-            this._chapterPos=0;
-        }
-        if (this._currentInfo) {
-            this._comicPos=(this._currentInfo.chapter.current/this._currentInfo.chapter.total)*100;
-        }else{
-            this._comicPos=0;
-        }
+        this.updateUnComplatedTasks().then(() => this.updatePos());
     }
     public listen() {
         if (this._isListening) {
             return;
         }
         this._isListening = true;
-        this.tk1 = this.ws.comicObservalble.subscribe(x => {
-            this._entity = x;
+        this.tk1 = this.ws.wsCleared.subscribe(x => {
+            this.updateUnComplatedTasks().then(() => this.updatePos());
+        });
+        this.tk2 = this.ws.wsComicEntity.subscribe(x => {
+            this._processInfos.set(x.sign, x);
             this.updatePos();
         });
-        this.tk2 = this.ws.infoObservable.subscribe(x => {
-            this._currentInfo = x;
-            this.updatePos();
-            console.log(x);
+        this.tk3 = this.ws.wsProcessChanged.subscribe(x => {
+            const entity = this._processInfos.get(x.sign);
+            if (entity) {
+                entity.total = x.total;
+                entity.current = x.current;
+                this.updatePos();
+            }
         });
-        this.tk3 = this.ws.prositionObservable.subscribe(x => {
-            this._position = x;
+        this.tk4 = this.ws.wsRemoved.subscribe(x => {
             this.updatePos();
         });
     }
@@ -109,18 +84,20 @@ export class ComicManager {
             return;
         }
         this._isListening = false;
-        this.ws.comicObservalble.remove(this.tk1);
-        this.ws.infoObservable.remove(this.tk2);
-        this.ws.prositionObservable.remove(this.tk3);
+        this.ws.wsCleared.remove(this.tk1);
+        this.ws.wsComicEntity.remove(this.tk2);
+        this.ws.wsProcessChanged.remove(this.tk3);
+        this.ws.wsRemoved.remove(this.tk4);
     }
-    public async updateUnComplatedTasks(): Promise<ComicEntity[]> {
-        this._unComplatedTasks=[];
+    public async updateUnComplatedTasks(): Promise<void> {
+        this._processInfos.clear();
         try {
-            const res = await this.api.getUnComplatedTask().toPromise();
-            this._unComplatedTasks = res.data;
-            return res.data;
+            const res = await this.api.getAll().toPromise();
+            for (const ire of res.data) {
+                this._processInfos.set(ire.sign, ire);
+            }
         } catch (error) {
-            return [];
+            console.log(error);
         }
     }
     // private loadTemplateData() {

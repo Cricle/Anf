@@ -54,6 +54,7 @@ namespace KwC
                 var visi = x.GetRequiredService<ComicHubVisitor>();
                 var cacher = x.GetRequiredService<ComicDetailCacher>();
                 var center = new RecordDownloadCenter(x, new QueneDownloadManager(), store,visi, cacher);
+                center.Start();
                 return center;
             });
             services.AddCompressedStaticFiles();

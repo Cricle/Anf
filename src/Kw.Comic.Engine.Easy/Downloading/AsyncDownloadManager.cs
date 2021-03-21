@@ -10,6 +10,8 @@ namespace Kw.Comic.Engine.Easy.Downloading
 {
     public abstract class AsyncDownloadManager : ThreadSafeList<DownloadTask>, IDownloadManager
     {
+
+        public static readonly TimeSpan DefaultWaitTime = TimeSpan.FromMilliseconds(500);
         protected AsyncDownloadManager()
         {
         }
@@ -22,6 +24,8 @@ namespace Kw.Comic.Engine.Easy.Downloading
         public bool IsStart => isStart != 1;
 
         public Task Task => task;
+
+        public TimeSpan WaitTime { get; set; } = DefaultWaitTime;
 
         public CancellationToken CancellationToken => tokenSource.Token;
 
@@ -81,7 +85,7 @@ namespace Kw.Comic.Engine.Easy.Downloading
                     OnComplated(ok);
                     Remove(ok);
                 }
-                await Task.Yield();
+                await Task.Delay(WaitTime);
             }
         }
         protected virtual void OnException(DownloadTask task,Exception exception)

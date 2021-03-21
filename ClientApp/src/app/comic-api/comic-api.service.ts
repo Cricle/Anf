@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs';
-import {EntityResult,EntitySetResult,ComicChapter,ComicEntity,ComicInfo,ComicPage,ChapterWithPage,ComicRef,Position} from './model'
+import {EntityResult,ComicDetail,EntitySetResult,ComicChapter,ComicEntity,ComicInfo,ComicPage,ChapterWithPage,ComicRef,Position, ProcessInfo, ComicSnapshot} from './model'
 
 const part: string = "/api/v1/";
 const comivPart: string = part + "visiting";
@@ -14,21 +14,17 @@ export class ComicApiService {
   
   constructor(private http: HttpClient) {
   }
-
-  public getStatus():Observable<EntityResult<Position>> {
-   return this.http.get<EntityResult<Position>>(`${comivPart}/GetStatus`);
+  public addDownload(address:string):Observable<EntityResult<ComicDetail>>{
+    return this.http.get<EntityResult<ComicDetail>>(`${comivPart}/AddDownload?address=${address}`);
   }
-  public addDownload(address:string):Observable<EntityResult<ComicEntity>>{
-    return this.http.get<EntityResult<ComicEntity>>(`${comivPart}/AddDownload?address=${address}`);
+  public search(keywork:string):Observable<EntityResult<ComicSnapshot[]>>{
+    return this.http.get<EntityResult<ComicSnapshot[]>>(`${comivPart}/Search?keywork=${keywork}`);
   }
-  public getComic(address:string):Observable<EntityResult<ComicEntity>>{
-    return this.http.get<EntityResult<ComicEntity>>(`${comivPart}/GetComic?address=${address}`);
+  public getAll():Observable<EntityResult<ProcessInfo[]>>{
+    return this.http.get<EntityResult<ProcessInfo[]>>(`${comivPart}/getAll`);
   }
-  public getUnComplatedTask():Observable<EntityResult<ComicEntity[]>>{
-    return this.http.get<EntityResult<ComicEntity[]>>(`${comivPart}/GetUnComplatedTask`);
-  }
-  public getCurrentComic():Observable<EntityResult<ComicEntity>>{
-    return this.http.get<EntityResult<ComicEntity>>(`${comivPart}/GetCurrentComic`);
+  public getComic(address:string):Observable<EntityResult<ComicDetail>>{
+    return this.http.get<EntityResult<ComicDetail>>(`${comivPart}/GetComic?address=${address}`);
   }
   public getChapter(address:string,index:number):Observable<EntityResult<ChapterWithPage>>{
     return this.http.get<EntityResult<ChapterWithPage>>(`${comivPart}/GetChapterAsync?address=${address}&index=${index}`);

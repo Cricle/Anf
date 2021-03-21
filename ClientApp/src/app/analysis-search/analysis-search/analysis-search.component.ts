@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import {ComicApiService} from '../../comic-api/comic-api.service'
-import { ComicEntity } from '../../comic-api/model';
+import { ComicDetail, ComicEntity, ComicSnapshot } from '../../comic-api/model';
 import {ComicWsService} from '../../comic-ws/comic-ws.service'
 
 @Component({
@@ -12,10 +12,14 @@ import {ComicWsService} from '../../comic-ws/comic-ws.service'
 export class AnalysisSearchComponent implements OnInit {
 
   address:string='';
+  linkAddress:string='';
   searching:boolean;
-  comic:ComicEntity;
+  comic:ComicDetail;
+  suggest:ComicSnapshot[];
 
-  constructor(private comicApi:ComicApiService) { }
+  constructor(private comicApi:ComicApiService) {
+    this.suggest=[];
+  }
 
   ngOnInit() {
   }
@@ -24,14 +28,39 @@ export class AnalysisSearchComponent implements OnInit {
       this.search();
     }
   }
-
-  public search(){
-    this.comic=null;
-    this.searching=true;//TODO:减小传输大小
-    this.comicApi.addDownload(this.address).subscribe(res=>{
-      this.comic=res.Data;
-    },err=>{
-      console.log(err);
-    },()=>this.searching=false);
+  private isAddress(input:string):boolean{
+    return input.startsWith('http://')||input.startsWith('wwww');
+  }
+  private getActualAddress(input:string):string{
+    if (input.startsWith('www.')) {
+      return 'http://'+input;
+    }
+    return input;
+  }
+  public async search(){
+    if (this.searching) {
+      return;
+    }
+    this.searching=true;
+    const reqAddr=this.address;
+    this.linkAddress=this.address;
+    if (this.isAddress(reqAddr)) {
+      this.comic=null;
+      let addr=this.getActualAddress(reqAddr);
+      try {
+        const res=await this.comicApi.addDownload(addr).toPromise();
+        this.comic=res.data;
+      } catch (error) {
+        
+      }
+    }else{
+      this.suggest=[];
+      try {
+        const res=await this.comicApi.search(reqAddr).toPromise();
+        this.suggest=res.data;
+      } catch (error) {
+      }
+    }
+    this.searching=false;
   }
 }

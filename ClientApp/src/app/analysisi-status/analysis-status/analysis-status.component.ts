@@ -2,9 +2,11 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 
 import { ComicWsService } from '../../comic-ws/comic-ws.service'
 import { ComicApiService } from '../../comic-api/comic-api.service'
-import { ComicChapter, ComicEntity, ComicPage, Position } from '../../comic-api/model';
-import { NotifyTypes, ProcessInfo } from '../../comic-ws/models';
+import { ComicChapter, ComicDetail, ComicEntity, ComicPage, Position, ProcessInfo } from '../../comic-api/model';
 import { ComicManager } from '../../comic-api/comic-mgr';
+
+const ins:number=0.45;
+const minIns:number=280;
 
 @Component({
   selector: 'app-analysis-status',
@@ -13,7 +15,8 @@ import { ComicManager } from '../../comic-api/comic-mgr';
 })
 export class AnalysisStatusComponent implements OnInit {
   drawerVisible:boolean;
-  drawerComic:ComicEntity;
+  drawerComic:ProcessInfo;
+  drawerWith:string;
   constructor(private api: ComicApiService,
     protected mgr:ComicManager) {
       this.drawerVisible=false;
@@ -22,7 +25,12 @@ export class AnalysisStatusComponent implements OnInit {
   
   ngOnInit() {
   }
-  showInfo(target:ComicEntity){
+  showInfo(target:ProcessInfo){
+    let sceneWith=document.body.clientWidth;
+    let emit=sceneWith*ins;
+    emit=Math.max(minIns,emit);
+    this.drawerWith=emit+'px';
+
     this.drawerComic=target;
     this.drawerVisible=true;
     console.log(target);

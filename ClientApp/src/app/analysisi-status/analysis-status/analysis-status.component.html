@@ -1,39 +1,26 @@
 <div style="padding:2% 4% 0 4%">
     <div>
-        <article nz-typography *ngIf='this.mgr.entity!=null'>
-            <h1 nz-typography class="center-text">
-                {{this.mgr.entity.name}}
-            </h1>
-            <h3 nz-typography class="center-text">
-                {{this.mgr.currentInfo?.chapter?.name}} [{{this.mgr.position?.current}}/{{this.mgr.position?.total}}]
-                <nz-spin nzSimple [nzIndicator]="indicatorTemplate" class="inline-icon"> </nz-spin>
-            </h3>
-        </article>
-        <nz-progress [nzPercent]="this.mgr.chapterPos" [nzSuccessPercent]="this.mgr.comicPos"
-            [nzStrokeColor]="{ '0%': '#ABCDEFEE', '100%': '#12345699' }" [nzShowInfo]='false'></nz-progress>
+        <nz-progress [nzPercent]="this.mgr.allTotal==0?100:(((this.mgr.allCurrent+1)/this.mgr.allTotal)*100).toFixed(2)" 
+            nz-tooltip [nzTooltipTitle]='this.mgr.allTotal==0?100:(((this.mgr.allCurrent+1)/this.mgr.allTotal)*100).toFixed(2)+"%"'
+            [nzStrokeColor]="{ '0%': '#ABCDEFEE', '100%': '#12345699' }"
+            [nzShowInfo]='false'></nz-progress>
     </div>
-    <div *ngIf='this.mgr.entity!=null' style="margin-top:20px;">
-        <article nz-typography>
-            <p nz-typography nzEllipsis nzExpandable [nzEllipsisRows]='3'>
-                {{this.mgr.entity.descript}}
-            </p>
-        </article>
-    </div>
-    <div *ngIf='this.mgr.unComplatedTasks&&this.mgr.unComplatedTasks.length!=0'>
+    <div *ngIf='this.mgr.processInfos'>
         <div>
             <h3 [ngStyle]="{ margin: '16px 0' }" nz-tooltip
                 nzTooltipTitle="I'm sure I won't tell you it's single threaded">Task Quene
-                ({{this.mgr.unComplatedTasks.length}})</h3>
+                ({{this.mgr.processInfos.length}})</h3>
             <nz-list nzSize="small" nzSplit="false">
-                <nz-list-item *ngFor='let i of this.mgr.unComplatedTasks;' style="display: block;">
+                <nz-list-item *ngFor='let i of this.mgr.processInfos;' style="display: block;">
                     <div>
                         <div>
-                            <nz-progress nzPercent="100" [nzStrokeColor]="{ '0%': '#654321', '100%': '#123456' }"
-                                nzStatus="active" [nzShowInfo]='false'></nz-progress>
+                            <nz-progress [nzPercent]="(((i.current+1)/i.total)*100).toFixed(2)"
+                                [nzStrokeColor]="{ '0%': '#654321', '100%': '#123456' }" nzStatus="active"
+                                [nzShowInfo]='false'></nz-progress>
                         </div>
                         <div>
-                            <a [href]="i.comicUrl" style="margin-right:10px;">{{i.name}}</a>
-                            <nz-spin nzSimple [nzIndicator]="indicatorTemplate" style="display: inline-block;">
+                            <a [href]="i.detail.entity.comicUrl" style="margin-right:10px;">{{i.detail.entity.name}}</a>
+                            <nz-spin  *ngIf='i.current+1!=i.total' nzSimple [nzIndicator]="indicatorTemplate" style="display: inline-block;">
                             </nz-spin>
                             <button nz-button nzType="text" nzDanger (click)='this.showInfo(i)'>
                                 <i nz-icon nzType="check" nzTheme="outline"></i>
@@ -48,31 +35,42 @@
         </div>
     </div>
 </div>
-<nz-drawer *ngIf='this.drawerVisible' [(nzVisible)]='this.drawerVisible' [nzTitle]='this.drawerComic&&this.drawerComic.name' [nzClosable]="true"
-    (nzOnClose)='this.drawerVisible=false'>
+<nz-drawer *ngIf='this.drawerVisible' [(nzVisible)]='this.drawerVisible'
+    [nzTitle]='this.drawerComic&&this.drawerComic.detail.entity.name' [nzClosable]="true"
+    (nzOnClose)='this.drawerVisible=false'
+    [nzWidth]='drawerWith'>
     <ng-container>
         <div *ngIf='this.drawerComic!=null'>
             <p nz-typography>
                 <nz-tag nzColor="#EEE">
-                    <a [href]="this.drawerComic.comicUrl" target="_blank">Origin link</a>
+                    <a [href]="this.drawerComic.detail.entity.comicUrl" target="_blank">Origin link</a>
                 </nz-tag>
                 <nz-tag nzColor="#ABC">
-                    <a [href]='this.drawerComic.imageUrl' target="_blank">Logo Image Link</a>
+                    <a [href]='this.drawerComic.detail.entity.imageUrl' target="_blank">Logo Image Link</a>
                 </nz-tag>
             </p>
             <h4 nz-typography>Description</h4>
             <p nz-typography nzEllipsis nzExpandable [nzEllipsisRows]="3">
-                {{this.drawerComic.descript}}
+                {{this.drawerComic.detail.entity.descript}}
             </p>
-            <h4 nz-typography>Chapters (<strong>{{this.drawerComic.chapters.length}}</strong>)</h4>
+            <h4 nz-typography>Chapters (<strong>{{this.drawerComic.detail.chapters.length}}</strong>)</h4>
             <p nz-typography>
-                <nz-list nzSize="small" nzSplit="false">
-                    <nz-list-item *ngFor='let i of this.drawerComic.chapters;'>
-                        <div>
-                            <a [href]='i.targetUrl' target="_blank">{{i.title}}</a>
-                        </div>
-                    </nz-list-item>
-                </nz-list>
+                <nz-collapse nzGhost  >
+                    <nz-collapse-panel *ngFor='let i of this.drawerComic.detail.chapters;'
+                     [nzHeader]="i.chapter.title"
+                     [nzExtra]='extraTpl'>
+                        <ng-template #extraTpl>
+                            <a [href]='i.chapter.targetUrl' target="_blank">
+                                <i nz-icon nzType="check"></i>
+                            </a>
+                        </ng-template>
+                        <nz-list  nzSize="small" nzSplit="false">
+                            <nz-list-item *ngFor="let page of i.pages;let ix=index;" >
+                                <a [href]='page.targetUrl' target="_blank" nz-tooltip [nzTooltipTitle]='page.targetUrl'>Page: {{ix+1}}</a>
+                            </nz-list-item>
+                        </nz-list>
+                    </nz-collapse-panel>
+                </nz-collapse>
             </p>
         </div>
     </ng-container>

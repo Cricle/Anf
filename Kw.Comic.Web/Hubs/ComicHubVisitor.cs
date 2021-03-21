@@ -29,7 +29,7 @@ namespace Kw.Comic.Web.Hubs
         }
         public Task SendRemovedAsync(string sign,bool done)
         {
-            return hubContext.Clients.All.SendAsync(OnReceivedProcessChanged, sign, done);
+            return hubContext.Clients.All.SendAsync(OnReceivedRemoved, sign, done);
         }
         public Task SendClearedAsync()
         {

@@ -8,17 +8,28 @@
                 <i nz-icon nzType="search" (onclick)='search()' [class.disabled]='searching?"disabled":""'></i>
             </ng-template>
             <nz-autocomplete #auto>
+                <nz-auto-option *ngFor="let option of this.suggest" [nzValue]="option.sources[0].targetUrl">
+                    <div>
+                        <a [href]="option.sources[0].targetUrl" target="_blank" nz-tooltip [nzTooltipTitle]="option.descript">
+                            {{option.name}}
+                        </a>
+                    </div>
+                </nz-auto-option>
             </nz-autocomplete>
         </div>
     </div>
-    <div style="margin-top: 20px;">
+    <div style="margin-top: 20px;" *ngIf='!searching'>
         <article nz-typography>
             <h5 nz-typography style="text-align: center;">
                 You can try input keyword to visit.
             </h5>
-            <h6 nz-typography style="text-align: center;">
-                I've worked hard
-            </h6>
+        </article>
+    </div>
+    <div *ngIf='searching'>
+        <article nz-typography style="text-align: center;">
+            <h5 nz-typography>
+                I've worked hard If you do't want to wait me, you can go <a [href]='this.linkAddress'>link</a> to see it.
+            </h5>
         </article>
     </div>
     <!-- <div>

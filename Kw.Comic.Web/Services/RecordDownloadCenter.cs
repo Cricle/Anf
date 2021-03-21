@@ -77,13 +77,13 @@ namespace Kw.Comic.Web.Services
 
         private void OnRemoved(DownloadCenter arg1, DownloadBox arg2)
         {
-            records.Remove(arg2.Link.Request.Entity.ComicUrl, out var proc);
-            taskToRecords.Remove(arg2.Task, out var proc2);
-            var sign = (proc ?? proc2)?.Sign;
-            if (sign != null)
-            {
-                _ = comicHubVisitor.SendRemovedAsync(sign, false);
-            }
+            //records.Remove(arg2.Link.Request.Entity.ComicUrl, out var proc);
+            //taskToRecords.Remove(arg2.Task, out var proc2);
+            //var sign = (proc ?? proc2)?.Sign;
+            //if (sign != null)
+            //{
+            //    _ = comicHubVisitor.SendRemovedAsync(sign, false);
+            //}
         }
 
         private void OnCleared(DownloadCenter obj)
@@ -95,13 +95,13 @@ namespace Kw.Comic.Web.Services
 
         private void OnDone(DownloadCenter arg1, DownloadBox arg2)
         {
-            records.Remove(arg2.Link.Request.Entity.ComicUrl, out var proc);
-            taskToRecords.Remove(arg2.Task, out var proc2);
-            var sign = (proc ?? proc2)?.Sign;
-            if (sign != null)
-            {
-                _ = comicHubVisitor.SendRemovedAsync(sign, false);
-            }
+            //records.Remove(arg2.Link.Request.Entity.ComicUrl, out var proc);
+            //taskToRecords.Remove(arg2.Task, out var proc2);
+            //var sign = (proc ?? proc2)?.Sign;
+            //if (sign != null)
+            //{
+            //    _ = comicHubVisitor.SendRemovedAsync(sign, false);
+            //}
         }
 
         private void OnAdded(DownloadCenter arg1, DownloadBox arg2)

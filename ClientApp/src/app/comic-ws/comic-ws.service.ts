@@ -1,11 +1,14 @@
 import { Inject, Injectable } from '@angular/core';
-import { Observable, Subscriber } from 'rxjs'
 
 import { HubConnectionBuilder, HubConnection, HubConnectionState, LogLevel } from '@microsoft/signalr'
-import { ProcessInfo } from './models';
-import { ComicEntity, Position } from '../comic-api/model';
-
+import { ProcessInfo } from '../comic-api/model';
+import {WsComicEntityInfo,WsRemoveInfo, WsProcessChangedInfo} from './models'
 const hubPath: string = '/api/hubs/comic';
+
+const onReceivedProcessChanged:string='OnReceivedProcessChanged';
+const onReceivedEntity:string='OnReceivedEntity';
+const onReceivedRemoved:string='OnReceivedRemoved';
+const onReceivedCleared:string='OnReceivedCleared';
 
 @Injectable({
   providedIn: 'root'
@@ -13,24 +16,28 @@ const hubPath: string = '/api/hubs/comic';
 export class ComicWsService {
   private hubConnection: HubConnection;
 
-  private infoObser: SubscribeMap<ProcessInfo>;
-  private positionObser: SubscribeMap<Position>;
-  private comicObser: SubscribeMap<ComicEntity>;
+  private _wsProcessChanged: SubscribeMap<WsProcessChangedInfo>;
+  private _wsRemoved: SubscribeMap<WsRemoveInfo>;
+  private _wsCleared: SubscribeMap<void>;
+  private _wsComicEntity: SubscribeMap<ProcessInfo>;
   constructor() {
-    this.infoObser = new SubscribeMap<ProcessInfo>();
-    this.positionObser = new SubscribeMap<Position>();
-    this.comicObser = new SubscribeMap<ComicEntity>();
+    this._wsProcessChanged=new SubscribeMap<WsProcessChangedInfo>();
+    this._wsRemoved=new SubscribeMap<WsRemoveInfo>();
+    this._wsCleared=new SubscribeMap<void>();
+    this._wsComicEntity=new SubscribeMap<ProcessInfo>();
   }
-  public get infoObservable(): SubscribeMap<ProcessInfo> {
-    return this.infoObser;
+  public get wsProcessChanged(): SubscribeMap<WsProcessChangedInfo> {
+    return this._wsProcessChanged;
   }
-  public get prositionObservable(): SubscribeMap<Position> {
-    return this.positionObser;
+  public get wsRemoved(): SubscribeMap<WsRemoveInfo> {
+    return this._wsRemoved;
   }
-
-  public get comicObservalble(): SubscribeMap<ComicEntity> {
-    return this.comicObser;
-  }  
+  public get wsCleared(): SubscribeMap<void> {
+    return this._wsCleared;
+  }
+  public get wsComicEntity(): SubscribeMap<ProcessInfo> {
+    return this._wsComicEntity;
+  }
 
   public get status(): HubConnectionState {
     if (this.hubConnection) {
@@ -45,9 +52,10 @@ export class ComicWsService {
       .withUrl(hubPath)
       .configureLogging(LogLevel.Debug)
       .build();
-    this.hubConnection.on('OnReceivedProcessChanged', (x,y)=>this.positionObser.run({current:x,total:y}));
-    this.hubConnection.on('OnReceivedProcessInfo', (x)=>this.infoObser.run(x));
-    this.hubConnection.on('OnReceivedEntity', (x)=>this.comicObser.run(x));
+    this.hubConnection.on(onReceivedProcessChanged, (x,y,z)=>this._wsProcessChanged.run({sign:x,current:y,total:z}));
+    this.hubConnection.on(onReceivedEntity, (x)=>this._wsComicEntity.run(x));
+    this.hubConnection.on(onReceivedRemoved, (x,y)=>this._wsRemoved.run({sign:x,done:y}));
+    this.hubConnection.on(onReceivedCleared, ()=>this._wsCleared.run());
     return this.hubConnection.start().catch(x => console.log(x));
   }
   public close() {
