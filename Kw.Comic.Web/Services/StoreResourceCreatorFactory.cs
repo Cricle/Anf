@@ -1,4 +1,5 @@
-﻿using Kw.Comic.Engine.Easy.Visiting;
+﻿using Kw.Comic.Engine.Easy.Store;
+using Kw.Comic.Engine.Easy.Visiting;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
 using System.Threading.Tasks;

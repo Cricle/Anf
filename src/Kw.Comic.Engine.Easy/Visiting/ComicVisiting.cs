@@ -53,7 +53,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
         {
             this.address = address;
             sourceProvider = Host.GetComicProvider(address);
-            entity = await Host.GetComicAsync(address);
+            entity = await MakeEntityAsync(address);
             chapterWithPages = new ChapterWithPage[entity.Chapters.Length];
             var ctx = new ResourceFactoryCreateContext<TResource>
             {
@@ -64,6 +64,14 @@ namespace Kw.Comic.Engine.Easy.Visiting
             resourceFactory = await ResourceFactoryCreator.CreateAsync(ctx);
         }
 
+        protected virtual Task<ComicEntity> MakeEntityAsync(string address)
+        {
+            return Host.GetComicAsync(address);
+        }
+        protected virtual Task<ComicPage[]> GetPagesAsync(ComicChapter chapter)
+        {
+            return sourceProvider.GetPagesAsync(chapter.TargetUrl);
+        }
         public async Task LoadChapterAsync(int index)
         {
             var entity = Entity;
@@ -85,7 +93,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                     };
                     await visitor.LoadingChapterAsync(context);
                 }
-                var cwp = await sourceProvider.GetPagesAsync(chapter.TargetUrl);
+                var cwp = await GetPagesAsync(chapter);
                 chapterWithPages[index] = new ChapterWithPage(chapter, cwp);
                 if (visitor != null)
                 {

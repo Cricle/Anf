@@ -1,5 +1,7 @@
 ﻿using Kw.Comic.Engine;
+using Kw.Comic.Engine.Easy.Downloading;
 using Kw.Comic.Results;
+using Kw.Comic.Web.Services;
 using KwC.Services;
 using Microsoft.AspNetCore.Mvc;
 using MimeMapping;
@@ -13,63 +15,37 @@ namespace KwC.Controllers
     [Route(ComicConst.RouteWithControllerName)]
     public class VisitingController : ControllerBase
     {
-        private readonly VisitService visitService;
+        private readonly VisitingManager visitingManager;
+        private readonly IRecordDownloadCenter downloadCenter;
 
-        public VisitingController(VisitService visitService)
+        public VisitingController(IRecordDownloadCenter downloadCenter,
+            VisitingManager visitingManager)
         {
-            this.visitService = visitService;
-        }
-        /// <summary>
-        /// 获取状态
-        /// </summary>
-        /// <returns></returns>
-        [HttpGet("[action]")]
-        [ProducesResponseType(typeof(EntityResult<Position>), 200)]
-        public IActionResult GetStatus()
-        {
-            var tsk = Startup.DownloadManager.Position;
-            var pos = new Position { Current = tsk.CurrentCount, Total = tsk.TaskCount };
-            var res = new EntityResult<Position>
-            {
-                Data = pos
-            };
-            return Ok(res);
+            this.visitingManager = visitingManager;
+            this.downloadCenter = downloadCenter;
         }
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(EntityResult<ComicEntity>), 200)]
+        [ProducesResponseType(typeof(EntityResult<ComicDetail>), 200)]
         public async Task<IActionResult> AddDownload([FromQuery]string address)
         {
             if (string.IsNullOrEmpty(address))
             {
                 return BadRequest(address);
             }
-            var task = await Startup.DownloadManager.AddAsync(address);
-            var res = new EntityResult<ComicEntity>
+            await downloadCenter.AddOrFromCacheAsync(address);
+            downloadCenter.TryGetValue(address, out var box);
+            var res = new EntityResult<ComicDetail>
             {
-                Data = task?.Link.Request.Entity
-            };
-            return Ok(res);
-        }
-
-        [HttpGet("[action]")]
-        [ProducesResponseType(typeof(EntityResult<ComicEntity>), 200)]
-        public IActionResult GetCurrentComic()
-        {
-            var entity = Startup.DownloadManager.TaskDispatch.Current?.Link.Request?.Entity;
-            var res = new EntityResult<ComicEntity>
-            {
-                Data = entity
+                Data = box?.Link.Request.Detail
             };
             return Ok(res);
         }
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(EntityResult<ComicEntity[]>), 200)]
-        public IActionResult GetUnComplatedTask()
+        [ProducesResponseType(typeof(EntityResult<ProcessInfo[]>), 200)]
+        public IActionResult GetAll()
         {
-            var entities = Startup.DownloadManager.Tasks
-                .Select(x=>x.Link.Request.Entity)
-                .ToArray();
-            var res = new EntityResult<ComicEntity[]>
+            var entities = downloadCenter.ProcessInfos.ToArray();
+            var res = new EntityResult<ProcessInfo[]>
             {
                 Data = entities
             };
@@ -77,17 +53,17 @@ namespace KwC.Controllers
         }
 
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(EntityResult<ComicEntity>), 200)]
-        public async Task<IActionResult> GetComic(string address)
+        [ProducesResponseType(typeof(EntityResult<ComicDetail>), 200)]
+        public IActionResult GetComic(string address)
         {
             if (string.IsNullOrEmpty(address))
             {
                 return BadRequest();
             }
-            var visit = await visitService.GetVisitingAsync(address);
-            var res = new EntityResult<ComicEntity>
+            downloadCenter.TryGetValue(address, out var box);
+            var res = new EntityResult<ComicDetail>
             {
-                Data = visit?.Visiting?.Entity
+                Data = box?.Link.Request.Detail
             };
             return Ok(res);
         }
@@ -100,11 +76,11 @@ namespace KwC.Controllers
             {
                 return BadRequest();
             }
-            var visit = await visitService.GetVisitingAsync(address);
+            var visit = await visitingManager.GetVisitingAsync(address);
             var res = new EntityResult<ChapterWithPage>();
             if (visit != null)
             {
-                var mgr = await visit.Visiting.GetChapterManagerAsync(index);
+                var mgr = await visit.GetChapterManagerAsync(index);
                 res.Data = mgr.ChapterWithPage;
             }
             return Ok(res);
@@ -116,10 +92,10 @@ namespace KwC.Controllers
             {
                 return BadRequest();
             }
-            var visit = await visitService.GetVisitingAsync(address);
+            var visit = await visitingManager.GetVisitingAsync(address);
             if (visit != null)
             {
-                var mgr = await visit.Visiting.GetChapterManagerAsync(chapterIndex);
+                var mgr = await visit.GetChapterManagerAsync(chapterIndex);
                 var page=await mgr.GetVisitPageAsync(pageIndex);
                 var uri = new Uri(page.Resource);
                 if (uri.IsFile)

@@ -30,6 +30,8 @@ namespace Kw.Comic.Engine.Easy.Store
 
         public IReadOnlyDictionary<TKey, TValue> Datas => linkedList.ToDictionary(x => x.Key, x => x.Value);
 
+        public event Action<TKey, TValue> Removed;
+
         public LruCacher(int max)
         {
             if (max <= 0)
@@ -66,7 +68,12 @@ namespace Kw.Comic.Engine.Easy.Store
                     var val = caches[key];
                     linkedList.Remove(val);
                     value = val.Value.Value;
-                    return caches.Remove(key);
+                    var ok= caches.Remove(key);
+                    if (ok)
+                    {
+                        Removed?.Invoke(key, value);
+                    }
+                    return ok;
                 }
             }
             value = default;
@@ -89,6 +96,11 @@ namespace Kw.Comic.Engine.Easy.Store
                 return GetValue(key, ref value);
             }
             return default(TValue);
+        }
+        public virtual bool TryGetValue(TKey key,out TValue value)
+        {
+            value = Get(key);
+            return value != null;
         }
         public virtual TValue GetOrAdd(TKey key, Func<TValue> creator)
         {

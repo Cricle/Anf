@@ -9,7 +9,7 @@ namespace KwC
     {
         public const string RouteName = "/api/v1/";
 
-        public const string RouteWithControllerName = RouteName+"[controller]";
+        public const string RouteWithControllerName = RouteName + "[controller]";
 
     }
 }

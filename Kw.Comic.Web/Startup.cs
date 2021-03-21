@@ -1,5 +1,4 @@
 ﻿using Kw.Comic.Engine.Easy;
-using KwC.Hubs;
 using KwC.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,7 +10,11 @@ using System;
 using System.IO;
 using System.Reflection;
 using CompressedStaticFiles;
-using Microsoft.AspNetCore.Http.Connections;
+using Kw.Comic.Engine.Easy.Store;
+using Kw.Comic.Engine.Easy.Downloading;
+using Kw.Comic.Web.Services;
+using Kw.Comic.Web.Hubs;
+using Kw.Comic.Engine.Easy.Visiting;
 #if !MiniService
 using Microsoft.OpenApi.Models;
 #endif
@@ -20,12 +23,6 @@ namespace KwC
 {
     public class Startup
     {
-        private static DownloadManager downloadManager;
-
-        public static DownloadManager DownloadManager => downloadManager;
-
-        public static event Action InitDone;
-
         public Startup(IConfiguration configuration)
         {
             Configuration = configuration;
@@ -41,12 +38,26 @@ namespace KwC
 
             services.AddSingleton<StoreResourceCreatorFactory>();
 
-            services.AddSingleton<ComicHubVisitor>();
             services.AddControllersWithViews();
-            services.AddSingleton<IStoreService>(PhysicalStoreService.FromDefault());
-            services.AddSingleton(x => new VisitService(x));
+            services.AddSingleton<ComicHubVisitor>();
+            services.AddSingleton<ComicDetailCacher>();
+            services.AddSingleton<IResourceFactoryCreator<string>,StoreResourceCreatorFactory>();
+            services.AddSingleton<VisitingManager>(x=>new VisitingManager(x));
+            //services.AddSingleton<NotifyListener>();
+            var fs = FileStoreSaver.FromMd5Default(AppDomain.CurrentDomain.BaseDirectory);
+            services.AddSingleton<IStoreService>(fs);
+            services.AddSingleton<IComicSaver>(fs);
+            services.AddSingleton(fs);
+            services.AddSingleton<IRecordDownloadCenter>(x => 
+            {
+                var store = x.GetRequiredService<FileStoreSaver>();
+                var visi = x.GetRequiredService<ComicHubVisitor>();
+                var cacher = x.GetRequiredService<ComicDetailCacher>();
+                var center = new RecordDownloadCenter(x, new QueneDownloadManager(), store,visi, cacher);
+                return center;
+            });
             services.AddCompressedStaticFiles();
-            services.AddResponseCompression(x=>
+            services.AddResponseCompression(x =>
             {
                 x.Providers.Add<GzipCompressionProvider>();
                 x.Providers.Add<BrotliCompressionProvider>();
@@ -60,7 +71,7 @@ namespace KwC
                 .AddJsonProtocol();
 
 #if !MiniService
-            services.AddMiniProfiler(options => 
+            services.AddMiniProfiler(options =>
             {
                 options.RouteBasePath = "/profiler";
             });
@@ -89,8 +100,6 @@ namespace KwC
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-
-            downloadManager = new DownloadManager(app.ApplicationServices);
 
             app.UseResponseCompression();
 #if !MiniService
@@ -129,7 +138,6 @@ namespace KwC
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200/");
                 }
             });
-            InitDone?.Invoke();
         }
     }
 }

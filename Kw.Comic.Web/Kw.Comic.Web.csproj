@@ -27,7 +27,6 @@
   
   <ItemGroup>
     <PackageReference Include="CompressedStaticFiles" Version="2.0.0" />
-    <PackageReference Include="Kw.Comic.Engine.Easy" Version="1.0.7" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR.Protocols.MessagePack" Version="5.0.4" />
     <PackageReference Include="MimeMapping" Version="1.0.1.37" />
@@ -41,6 +40,9 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Results\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\src\Kw.Comic.Engine.Easy\Kw.Comic.Engine.Easy.csproj" />
   </ItemGroup>
 
 </Project>

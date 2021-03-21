@@ -74,18 +74,21 @@ namespace Kw.Comic.Engine.Easy.Downloading
             await RemoveAsync(obj.Address, false);
             obj.Canceled -= Box_Canceled;
         }
-
-        public async Task AddAsync(DownloadLink link)
+        protected virtual bool NeedToAdd(string address)
+        {
+            return !downloadMap.ContainsKey(address);
+        }
+        public virtual async Task AddAsync(DownloadLink link)
         {
             var url = link.Request.Entity.ComicUrl;
-            if (downloadMap.ContainsKey(url))
+            if (!NeedToAdd(url))
             {
                 return;
             }
             await semaphoreSlim.WaitAsync();
             try
             {
-                if (downloadMap.ContainsKey(url))
+                if (!NeedToAdd(url))
                 {
                     return;
                 }
@@ -96,7 +99,7 @@ namespace Kw.Comic.Engine.Easy.Downloading
                 semaphoreSlim.Release();
             }
         }
-        public async Task ClearAsync(bool cancel = true)
+        public virtual async Task ClearAsync(bool cancel = true)
         {
             await semaphoreSlim.WaitAsync();
             try
@@ -116,7 +119,8 @@ namespace Kw.Comic.Engine.Easy.Downloading
                 semaphoreSlim.Release();
             }
         }
-        public async Task<bool> RemoveAsync(string address, bool cancel = true)
+        
+        public virtual async Task<bool> RemoveAsync(string address, bool cancel = true)
         {
             await semaphoreSlim.WaitAsync();
             try
@@ -139,7 +143,7 @@ namespace Kw.Comic.Engine.Easy.Downloading
             }
         }
 
-        public async Task AddAsync(string address, IDownloadListener downloadListener = null)
+        public virtual async Task AddAsync(string address, IDownloadListener downloadListener = null)
         {
             if (downloadMap.ContainsKey(address))
             {
@@ -182,17 +186,17 @@ namespace Kw.Comic.Engine.Easy.Downloading
             return GetEnumerator();
         }
 
-        public void Start()
+        public virtual void Start()
         {
             downloadManager.Start();
         }
 
-        public void Stop()
+        public virtual void Stop()
         {
             downloadManager.Stop();
         }
 
-        public async void Dispose()
+        public virtual async void Dispose()
         {
             await semaphoreSlim.WaitAsync();
             Stop();

@@ -1,4 +1,5 @@
 ﻿using Kw.Comic.Engine;
+using Kw.Comic.Engine.Easy.Store;
 using Kw.Comic.Engine.Easy.Visiting;
 using Microsoft.IO;
 using System;

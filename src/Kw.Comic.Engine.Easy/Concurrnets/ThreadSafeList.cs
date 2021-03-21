@@ -13,6 +13,8 @@ namespace Kw.Comic.Engine.Easy.Concurrnets
 
         public ThreadSafeList()
         {
+            locker = new object();
+            list = new List<T>();
         }
 
         public T this[int index]
