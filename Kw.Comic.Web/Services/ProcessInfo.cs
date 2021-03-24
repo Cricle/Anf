@@ -23,5 +23,7 @@ namespace Kw.Comic.Web.Services
     public class ProcessInfo : ProcessChangedInfo
     {
         public ComicDetail Detail { get; set; }
+
+        public string EngineName { get; set; }
     }
 }

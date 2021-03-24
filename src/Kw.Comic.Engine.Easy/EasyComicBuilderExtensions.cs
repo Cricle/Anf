@@ -43,7 +43,6 @@ namespace Microsoft.Extensions.DependencyInjection
                 return eng;
             });
             services.AddSingleton<IComicDownloader, ComicDownloader>();
-            services.AddScoped<IComicVisiting<Stream>>(x => new ComicVisiting<Stream>(x, StreamResourceFactory.Default));
 
             services.AddScoped<JisuComicOperator>();
             services.AddScoped<Dm5ComicOperator>();

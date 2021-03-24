@@ -18,7 +18,7 @@ export class AnalysisStatusComponent implements OnInit {
   drawerComic:ProcessInfo;
   drawerWith:string;
   constructor(private api: ComicApiService,
-    protected mgr:ComicManager) {
+    public mgr:ComicManager) {
       this.drawerVisible=false;
       this.mgr=mgr;
   }

@@ -72,6 +72,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
         {
             return sourceProvider.GetPagesAsync(chapter.TargetUrl);
         }
+        
         public async Task LoadChapterAsync(int index)
         {
             var entity = Entity;

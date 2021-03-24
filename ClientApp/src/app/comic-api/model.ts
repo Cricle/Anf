@@ -53,6 +53,7 @@ export interface ProcessChangedInfo{
 }
 export interface ProcessInfo extends ProcessChangedInfo{
     detail:ComicDetail;
+    engineName:string;
 }
 export interface ComicSource extends ComicRef{
     name:string;

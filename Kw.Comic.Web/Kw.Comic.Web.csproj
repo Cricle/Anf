@@ -16,12 +16,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="ClientApp\**" />
+    <Compile Remove="ComicCache\**" />
     <Compile Remove="Protos\**" />
     <Content Remove="ClientApp\**" />
+    <Content Remove="ComicCache\**" />
     <Content Remove="Protos\**" />
     <EmbeddedResource Remove="ClientApp\**" />
+    <EmbeddedResource Remove="ComicCache\**" />
     <EmbeddedResource Remove="Protos\**" />
     <None Remove="ClientApp\**" />
+    <None Remove="ComicCache\**" />
     <None Remove="Protos\**" />
   </ItemGroup>
   

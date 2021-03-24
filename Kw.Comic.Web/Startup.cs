@@ -41,6 +41,7 @@ namespace KwC
             services.AddControllersWithViews();
             services.AddSingleton<ComicHubVisitor>();
             services.AddSingleton<ComicDetailCacher>();
+            services.AddSingleton<EnginePicker>();
             services.AddSingleton<IResourceFactoryCreator<string>,StoreResourceCreatorFactory>();
             services.AddSingleton<VisitingManager>(x=>new VisitingManager(x));
             //services.AddSingleton<NotifyListener>();
@@ -53,7 +54,8 @@ namespace KwC
                 var store = x.GetRequiredService<FileStoreSaver>();
                 var visi = x.GetRequiredService<ComicHubVisitor>();
                 var cacher = x.GetRequiredService<ComicDetailCacher>();
-                var center = new RecordDownloadCenter(x, new QueneDownloadManager(), store,visi, cacher);
+                var picker = x.GetRequiredService<EnginePicker>();
+                var center = new RecordDownloadCenter(x, new QueneDownloadManager(), store,visi, cacher, picker);
                 center.Start();
                 return center;
             });

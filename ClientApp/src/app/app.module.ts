@@ -21,7 +21,7 @@ import { AnalysisSearchComponent } from './analysis-search/analysis-search/analy
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-import { IconDefinition } from '@ant-design/icons-angular';
+import { WatchingComponent } from './watching/watching/watching.component'
 
 @NgModule({
   declarations: [
@@ -33,7 +33,8 @@ import { IconDefinition } from '@ant-design/icons-angular';
     ReferenceComponent,
     GiantScreenComponent,
     AnalysisStatusComponent,
-    AnalysisSearchComponent
+    AnalysisSearchComponent,
+    WatchingComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -45,7 +46,8 @@ import { IconDefinition } from '@ant-design/icons-angular';
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'download', component: DownloadComponent },
       { path: 'about', component: AboutComponent },
-      { path: 'ref', component: ReferenceComponent }
+      { path: 'ref', component: ReferenceComponent },
+      { path: 'w/:ref', component:WatchingComponent}
     ]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],

@@ -13,6 +13,7 @@ namespace Kw.Comic.Web.Services
 {
     internal class RecordDownloadCenter : DownloadCenter, IRecordDownloadCenter, IDisposable
     {
+        private readonly EnginePicker enginePicker;
         private readonly ConcurrentDictionary<string, ProcessInfo> records;
         private readonly ConcurrentDictionary<DownloadTask, ProcessInfo> taskToRecords;
         private readonly ComicHubVisitor comicHubVisitor;
@@ -26,9 +27,11 @@ namespace Kw.Comic.Web.Services
             IDownloadManager downloadTasks,
             IComicSaver saver,
             ComicHubVisitor comicHubVisitor,
-            ComicDetailCacher comicDetailCacher)
+            ComicDetailCacher comicDetailCacher,
+            EnginePicker enginePicker)
             : base(serviceProvider, downloadTasks, saver)
         {
+            this.enginePicker = enginePicker;
             this.comicDetailCacher = comicDetailCacher;
             this.serviceProvider = serviceProvider;
             this.comicHubVisitor = comicHubVisitor;
@@ -111,7 +114,8 @@ namespace Kw.Comic.Web.Services
                 Total = arg2.Task.Max,
                 Current = 0,
                 Sign = Md5Helper.MakeMd5(arg2.Link.Request.Entity.ComicUrl),
-                Detail = arg2.Link.Request.Detail
+                Detail = arg2.Link.Request.Detail,
+                EngineName = enginePicker.GetProviderIdentity(arg2.Address)
             };
             records.TryAdd(arg2.Address, procInfo);
             taskToRecords.TryAdd(arg2.Task, procInfo);

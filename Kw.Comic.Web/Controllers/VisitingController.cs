@@ -15,16 +15,16 @@ namespace KwC.Controllers
     [Route(ComicConst.RouteWithControllerName)]
     public class VisitingController : ControllerBase
     {
+        private readonly EnginePicker enginePicker;
         private readonly SearchEngine searchEngine;
-        private readonly VisitingManager visitingManager;
         private readonly IRecordDownloadCenter downloadCenter;
 
         public VisitingController(IRecordDownloadCenter downloadCenter,
-            VisitingManager visitingManager,
-            SearchEngine searchEngine)
+            SearchEngine searchEngine,
+            EnginePicker enginePicker)
         {
+            this.enginePicker = enginePicker;
             this.searchEngine = searchEngine;
-            this.visitingManager = visitingManager;
             this.downloadCenter = downloadCenter;
         }
 
@@ -82,49 +82,19 @@ namespace KwC.Controllers
             };
             return Ok(res);
         }
-
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(EntityResult<ChapterWithPage>), 200)]
-        public async Task<IActionResult> GetChapter([FromQuery] string address, [FromQuery] int index)
+        public async Task<IActionResult> GetPage([FromQuery]string engineName,[FromQuery] string address)
         {
             if (string.IsNullOrEmpty(address))
             {
                 return BadRequest();
             }
-            var visit = await visitingManager.GetVisitingAsync(address);
-            var res = new EntityResult<ChapterWithPage>();
-            if (visit != null)
+            var url=await enginePicker.GetImageStreamAsync(engineName, address);
+            if (url != null)
             {
-                var mgr = await visit.GetChapterManagerAsync(index);
-                res.Data = mgr.ChapterWithPage;
+                return PhysicalFile(url, "application/octet-stream");
             }
-            return Ok(res);
-        }
-        [HttpGet("[action]")]
-        public async Task<IActionResult> GetPage([FromQuery] string address, [FromQuery] int chapterIndex, [FromQuery] int pageIndex)
-        {
-            if (string.IsNullOrEmpty(address))
-            {
-                return BadRequest();
-            }
-            var visit = await visitingManager.GetVisitingAsync(address);
-            if (visit != null)
-            {
-                var mgr = await visit.GetChapterManagerAsync(chapterIndex);
-                var page=await mgr.GetVisitPageAsync(pageIndex);
-                var uri = new Uri(page.Resource);
-                if (uri.IsFile)
-                {
-                    return PhysicalFile(page.Resource, KnownMimeTypes.Img);
-                }
-                return Redirect(page.Resource);
-            }
-            return NotFound(new
-            {
-                Address = address,
-                Chapter = chapterIndex,
-                Page = pageIndex
-            });
+            return NotFound(address);
         }
     }
 }

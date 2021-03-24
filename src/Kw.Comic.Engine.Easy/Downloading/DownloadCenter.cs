@@ -43,6 +43,7 @@ namespace Kw.Comic.Engine.Easy.Downloading
         public event Action<DownloadCenter, DownloadTask, int> MovedNext;
         public event Action<DownloadCenter, DownloadTask, int> Seeked;
         public event Action<DownloadCenter> Cleared;
+        
 
         private void AddCore(DownloadLink link)
         {
@@ -78,7 +79,17 @@ namespace Kw.Comic.Engine.Easy.Downloading
         {
             return !downloadMap.ContainsKey(address);
         }
-        public virtual async Task AddAsync(DownloadLink link)
+
+        protected virtual Task OnAddAsync(DownloadLink link)
+        {
+            AddCore(link);
+#if NETSTANDARD2_0
+            return Task.CompletedTask;
+#else
+            return Task.FromResult(true);
+#endif
+        }
+        public async Task AddAsync(DownloadLink link)
         {
             var url = link.Request.Entity.ComicUrl;
             if (!NeedToAdd(url))
@@ -92,12 +103,22 @@ namespace Kw.Comic.Engine.Easy.Downloading
                 {
                     return;
                 }
-                AddCore(link);
+                await OnAddAsync(link);
             }
             finally
             {
                 semaphoreSlim.Release();
             }
+        }
+        protected virtual Task OnClearAsync(bool cancel = true)
+        {
+            downloadMap.Clear();
+            Cleared?.Invoke(this);
+#if NETSTANDARD2_0
+            return Task.CompletedTask;
+#else
+            return Task.FromResult(true);
+#endif
         }
         public virtual async Task ClearAsync(bool cancel = true)
         {
@@ -111,16 +132,20 @@ namespace Kw.Comic.Engine.Easy.Downloading
                         item.Cancel();
                     }
                 }
-                downloadMap.Clear();
-                Cleared?.Invoke(this);
+                await OnClearAsync(cancel);
             }
             finally
             {
                 semaphoreSlim.Release();
             }
         }
-        
-        public virtual async Task<bool> RemoveAsync(string address, bool cancel = true)
+        protected virtual Task<bool> OnRemoveAsync(DownloadBox box,string address, bool cancel = true)
+        {
+            downloadMap.Remove(address);
+            Removed?.Invoke(this, box);
+            return Task.FromResult(true);
+        }
+        public async Task<bool> RemoveAsync(string address, bool cancel = true)
         {
             await semaphoreSlim.WaitAsync();
             try
@@ -133,17 +158,21 @@ namespace Kw.Comic.Engine.Easy.Downloading
                 {
                     downloadMap[address].Cancel();
                 }
-                downloadMap.Remove(address);
-                Removed?.Invoke(this, box);
-                return true;
+                return await OnRemoveAsync(box,address, cancel);
             }
             finally
             {
                 semaphoreSlim.Release();
             }
         }
-
-        public virtual async Task AddAsync(string address, IDownloadListener downloadListener = null)
+        protected virtual async Task OnAddAsync(string address, IDownloadListener downloadListener = null)
+        {
+            var link = await serviceProvider.MakeDownloadAsync(address, Saver);
+            link.Request.Listener = downloadListener;
+            AddCore(link);
+            
+        }
+        public async Task AddAsync(string address, IDownloadListener downloadListener = null)
         {
             if (downloadMap.ContainsKey(address))
             {
@@ -156,9 +185,7 @@ namespace Kw.Comic.Engine.Easy.Downloading
                 {
                     return;
                 }
-                var link = await serviceProvider.MakeDownloadAsync(address, Saver);
-                link.Request.Listener = downloadListener;
-                AddCore(link);
+                await OnAddAsync(address,downloadListener);
             }
             finally
             {

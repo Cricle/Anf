@@ -26,10 +26,7 @@ export class ComicApiService {
   public getComic(address:string):Observable<EntityResult<ComicDetail>>{
     return this.http.get<EntityResult<ComicDetail>>(`${comivPart}/GetComic?address=${address}`);
   }
-  public getChapter(address:string,index:number):Observable<EntityResult<ChapterWithPage>>{
-    return this.http.get<EntityResult<ChapterWithPage>>(`${comivPart}/GetChapterAsync?address=${address}&index=${index}`);
-  }
-  public getPage(address:string,chapterIndex:number,page:number):string{
-    return `${comivPart}/GetPage?address=${address}&chapterIndex=${chapterIndex}&pageIndex=${page}`;
+  public getPage(address:string,engineName:string):string{
+    return `${comivPart}/GetPage?address=${address}&engineName=${engineName}`;
   }
 }
