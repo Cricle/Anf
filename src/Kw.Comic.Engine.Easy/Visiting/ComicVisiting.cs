@@ -49,10 +49,14 @@ namespace Kw.Comic.Engine.Easy.Visiting
             this.resourceFactoryCreator = resourceFactoryCreator;
         }
 
-        public async Task LoadAsync(string address)
+        public async Task<bool> LoadAsync(string address)
         {
             this.address = address;
             sourceProvider = Host.GetComicProvider(address);
+            if (sourceProvider==null)
+            {
+                return false;
+            }
             entity = await MakeEntityAsync(address);
             chapterWithPages = new ChapterWithPage[entity.Chapters.Length];
             var ctx = new ResourceFactoryCreateContext<TResource>
@@ -62,6 +66,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                 Visiting = this
             };
             resourceFactory = await ResourceFactoryCreator.CreateAsync(ctx);
+            return true;
         }
 
         protected virtual Task<ComicEntity> MakeEntityAsync(string address)

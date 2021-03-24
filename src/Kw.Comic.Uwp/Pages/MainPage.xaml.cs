@@ -36,7 +36,7 @@ namespace Kw.Comic.Uwp.Pages
         {
             this.InitializeComponent();
             vm = DataContext as MainViewModel;
-            fullSceneManager = UwpAppEngine.Instance.GetService<FullSceneManager>();
+            fullSceneManager = AppEngine.GetRequiredService<FullSceneManager>();
             fullSceneManager.Poped += FullSceneManager_Poped;
             fullSceneManager.Pushed += FullSceneManager_Pushed;
             Unloaded += (_, __) =>

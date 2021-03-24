@@ -1,5 +1,4 @@
-﻿using Kw.Core.Annotations;
-using Microsoft.Extensions.DependencyInjection;
+﻿using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +8,6 @@ using Windows.UI.Xaml;
 
 namespace Kw.Comic.Uwp.Managers
 {
-    [EnableService(ServiceLifetime = ServiceLifetime.Singleton)]
     public class FullSceneManager
     {
         private readonly Stack<UIElement> elements = new Stack<UIElement>();

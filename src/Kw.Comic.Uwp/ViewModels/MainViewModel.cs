@@ -24,7 +24,6 @@ namespace Kw.Comic.Uwp.ViewModels
                 //new ComicMenuItem(new PathIconJamIcons{Kind= PackIconJamIconsKind.Download},"Download",typeof(DownloadPage)),
             };
             MenuVisitStack = new Stack<ComicMenuItem>();
-            ComicViewManager = UwpAppEngine.Instance.GetRequiredService<ComicViewManager>();
         }
         private ComicMenuItem currentMenuItem;
 
@@ -41,7 +40,6 @@ namespace Kw.Comic.Uwp.ViewModels
                 MenuItemChanged?.Invoke(value);
             }
         }
-        public ComicViewManager ComicViewManager { get; }
 
         public Stack<ComicMenuItem> MenuVisitStack { get; }
 

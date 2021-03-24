@@ -46,7 +46,7 @@ namespace Kw.Comic.Wpf.Views.Pages
 
         private void ViewPage_Unloaded(object sender, RoutedEventArgs e)
         {
-            var val = WpfAppEngine.Instance.GetRequiredService<CommandBarManager>();
+            var val = AppEngine.GetRequiredService<CommandBarManager>();
             foreach (var item in controls)
             {
                 val.RightCommands.Remove(item);
@@ -59,9 +59,8 @@ namespace Kw.Comic.Wpf.Views.Pages
             {
                 vm = await ViewViewModel.FromUriAsync(Uri);
                 DataContext = vm;
-                vm.CurrentComicVisitor = vm.ComicVisitors.FirstOrDefault();
             }
-            var val = WpfAppEngine.Instance.GetRequiredService<CommandBarManager>();
+            var val = AppEngine.GetRequiredService<CommandBarManager>();
             var leftChapter = new Button
             {
                 Content = new PackIconMaterialLight { Kind = PackIconMaterialLightKind.ArrowLeft },
@@ -103,23 +102,23 @@ namespace Kw.Comic.Wpf.Views.Pages
             }
         }
 
-        private async void Fv_PreviewKeyUp(object sender, KeyEventArgs e)
+        private void Fv_PreviewKeyUp(object sender, KeyEventArgs e)
         {
             if (e.Key== Key.Left)
             {
-                await vm.Watcher.PrevPageAsync();
+                vm.PrevPage();
             }
             else if (e.Key== Key.Right)
             {
-                await vm.Watcher.NextPageAsync();
+                vm.NextPage();
             }
             else if (e.Key== Key.Up)
             {
-                await vm.Watcher.PrevChapterAsync();
+                vm.PrevChapter();
             }
             else if (e.Key== Key.Down)
             {
-                await vm.Watcher.NextChapterAsync();
+                vm.NextChapter();
             }
         }
     }

@@ -41,7 +41,7 @@ namespace Kw.Comic.Wpf.Models
         {
             if (CanParse)
             {
-                var navSer = WpfAppEngine.Instance.GetRequiredService<MainNavigationService>();
+                var navSer = AppEngine.GetRequiredService<MainNavigationService>();
                 var viewPage = new ViewPage(Source.TargetUrl);
                 navSer.Frame.Navigate(viewPage);
                 navSer.SetTitle($"正在阅读{ComicName} - {Source.Name}");

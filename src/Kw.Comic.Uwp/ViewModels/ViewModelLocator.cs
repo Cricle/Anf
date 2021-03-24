@@ -13,6 +13,6 @@ namespace Kw.Comic.Uwp.ViewModels
 
         public MainViewModel MainViewModel => mainViewModel.Value;
 
-        public HomeViewModel HomeViewModel => UwpAppEngine.Instance.GetService<HomeViewModel>();
+        public HomeViewModel HomeViewModel => AppEngine.GetRequiredService<HomeViewModel>();
     }
 }

@@ -1,18 +1,17 @@
 ﻿using GalaSoft.MvvmLight;
 using Kw.Comic.Engine;
-using Kw.Comic.Wpf.Managers;
-using Kw.Comic.Wpf.Models;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
 using Kw.Comic.Wpf.Views.Pages;
 using GalaSoft.MvvmLight.Command;
+using Kw.Comic.Wpf.Managers;
+using Kw.Comic.Wpf.Models;
 
 namespace Kw.Comic.Wpf.ViewModels
 {
@@ -20,26 +19,19 @@ namespace Kw.Comic.Wpf.ViewModels
     {
         public HomeViewModel()
         {
-            searchEngine = WpfAppEngine.Instance.GetRequiredService<SearchEngine>();
-            comicEngine = WpfAppEngine.Instance.GetRequiredService<ComicEngine>();
-            mainNavigationService = WpfAppEngine.Instance.GetRequiredService<MainNavigationService>();
-            historyManager = WpfAppEngine.Instance.GetRequiredService<DownloadManager>();
-            historys = historyManager.EnumerableComic();
+            searchEngine = AppEngine.GetRequiredService<SearchEngine>();
+            comicEngine = AppEngine.GetRequiredService<ComicEngine>();
+            mainNavigationService = AppEngine.GetRequiredService<MainNavigationService>();
 
             SearchCommand = new RelayCommand(Search);
             GoCommand = new RelayCommand(Go);
             NextCommand = new RelayCommand(Next);
 
             Snapshots = new ObservableCollection<ComicSnapshotInfo>();
-            HistoryInfos = new ObservableCollection<PhysicalComicInfo>();
-
-            UpdateHistory();
         }
-        private readonly DownloadManager historyManager;
         private readonly MainNavigationService mainNavigationService;
         private readonly SearchEngine searchEngine;
         private readonly ComicEngine comicEngine;
-        private readonly IEnumerable<PhysicalComicInfo> historys;
 
         private string keyword;
         private Visibility loadingVisibility = Visibility.Collapsed;
@@ -125,8 +117,6 @@ namespace Kw.Comic.Wpf.ViewModels
             }
         }
 
-        public ObservableCollection<PhysicalComicInfo> HistoryInfos { get; }
-
         public ObservableCollection<ComicSnapshotInfo> Snapshots { get; }
 
         public ICommand SearchCommand { get; }
@@ -135,15 +125,6 @@ namespace Kw.Comic.Wpf.ViewModels
         public ICommand ClearHistoryCommand { get; }
         public ICommand NextCommand { get; }
 
-        public void UpdateHistory()
-        {
-            foreach (var item in historys.Take(20))
-            {
-                HistoryInfos.Add(item);
-            }
-            HistoryHasData = HistoryInfos.Count != 0;
-        }
-
         public void ClearHistory()
         {
 
@@ -151,13 +132,13 @@ namespace Kw.Comic.Wpf.ViewModels
 
         public void Go()
         {
-            var navSer = WpfAppEngine.GetNavigationService();
+            var navSer = AppEngine.GetRequiredService<MainNavigationService>();
             var vp = new ViewPage(Keyword);
             navSer.Frame.Navigate(vp);
         }
         public void GoComicDetail(ComicSnapshotInfo info)
         {
-            var navSer = WpfAppEngine.GetNavigationService();
+            var navSer = AppEngine.GetRequiredService<MainNavigationService>();
             var vp = new Views.Pages.ComicPage(info);
             navSer.Frame.Navigate(vp);
             mainNavigationService.SetTitle(info.Snapshot.Name);

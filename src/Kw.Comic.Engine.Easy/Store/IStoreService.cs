@@ -12,6 +12,8 @@ namespace Kw.Comic.Engine.Easy.Store
 
         Task<string> GetPathAsync(string address);
 
+        Task<Stream> GetStreamAsync(string address);
+
         Task<string> SaveAsync(string address, Stream stream);
     }
 }

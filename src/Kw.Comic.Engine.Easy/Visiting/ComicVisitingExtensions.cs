@@ -11,6 +11,10 @@ namespace Kw.Comic.Engine.Easy.Visiting
 {
     public static class ComicVisitingExtensions
     {
+        public static bool IsLoad<TResource>(this IComicVisiting<TResource> visiting)
+        {
+            return !string.IsNullOrEmpty(visiting.Address);
+        }
         public static async Task<IComicVisitPage<TResource>> GoToPageAsync<TResource>(this IComicVisiting<TResource> visiting, ComicPos pos)
         {
             var mgr = await visiting.GetChapterManagerAsync(pos.ChapterIndex);

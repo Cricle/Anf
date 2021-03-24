@@ -1,4 +1,11 @@
-﻿using Kw.Comic.Uwp.Pages;
+﻿using Kw.Comic.Engine.Easy;
+using Kw.Comic.Engine.Easy.Store;
+using Kw.Comic.Engine.Easy.Visiting;
+using Kw.Comic.Uwp.Managers;
+using Kw.Comic.Uwp.Pages;
+using Kw.Comic.Uwp.ViewModels;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,8 +42,15 @@ namespace Kw.Comic.Uwp
         {
             this.InitializeComponent();
             this.Suspending += OnSuspending;
-            UwpAppEngine.Instance.Load();
-            UwpAppEngine.Instance.ReadyAsync().GetAwaiter().GetResult();
+            AppEngine.AddDefaultsServices(Windows.Storage.ApplicationData.Current.LocalCacheFolder.Path);
+            AppEngine.Services.AddSingleton(new RecyclableMemoryStreamManager());
+            AppEngine.Services.AddScoped<IComicVisiting<ImageSource>, UwpComicVisiting>();
+            AppEngine.Services.AddSingleton<IResourceFactoryCreator<ImageSource>, UwpResourceFactoryCreator>();
+            var storeageSer = UwpStoreService.FromMd5DefaultAsync(FileStoreService.DefaultFolderName).GetAwaiter().GetResult();
+            AppEngine.Services.AddSingleton<IStoreService>(storeageSer);
+            AppEngine.Services.AddSingleton<IComicSaver>(storeageSer);
+            AppEngine.Services.AddSingleton<FullSceneManager>();
+            AppEngine.Services.AddScoped<HomeViewModel>();
         }
 
         /// <summary>

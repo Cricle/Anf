@@ -1,9 +1,12 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
+using Kw.Comic.Engine.Easy;
+using Kw.Comic.Engine.Easy.Visiting;
+using Kw.Comic.Render;
 using Kw.Comic.Uwp.Managers;
-using Kw.Comic.Visit;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IO;
 using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
@@ -19,58 +22,37 @@ using Windows.Storage.Streams;
 using Windows.System;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 using Windows.Web.Http;
 
 namespace Kw.Comic.Uwp.ViewModels
 {
-    public class ViewViewModel : ViewModelBase, IDisposable
+    public class ViewViewModel : ViewViewModelBase<ImageSource, ImageSource>, IDisposable
     {
         public static async Task<ViewViewModel> FromUriAsync(string uri)
         {
-            var scope = UwpAppEngine.Instance.CreateScope();
-            var eng = scope.ServiceProvider.GetRequiredService<ComicEngine>();
-            var condtion = eng.GetComicSourceProviderType(uri);
-            if (condtion == null)
+            var scope = AppEngine.CreateScope();
+            var eng = scope.ServiceProvider.GetRequiredService<IComicVisiting<ImageSource>>();
+            var condtion = await eng.LoadAsync(uri);
+            if (!condtion)
             {
                 return null;
             }
-            var provider = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(condtion.ProviderType);
-            var entity = await provider.GetChaptersAsync(uri);
-            if (entity == null)
-            {
-                return null;
-            }
-            return new ViewViewModel(scope, entity, condtion, provider);
+            return new ViewViewModel(scope, eng);
         }
 
         public ViewViewModel(
-            IServiceScope scope,
-            ComicEntity entity,
-            IComicSourceCondition condition,
-            IComicSourceProvider provider)
+            IServiceScope scope,IComicVisiting<ImageSource> visiting)
+            :base(scope,visiting)
         {
-            this.scope = scope;
-            httpClientFactory = scope.ServiceProvider.GetRequiredService<IHttpClientFactory>();
-            ComicEntity = entity;
-
-            Watcher = new UwpComicWatcher(scope,
-                entity,
-                httpClientFactory,
-                condition, provider);
-            ComicVisitors = Watcher.ChapterCursor.Datas;
             InitConverImage();
 
-            NextChapterCommand = new RelayCommand(NextChapter);
-            PrevChapterCommand = new RelayCommand(PrevChapter);
             GoBackCommand = new RelayCommand(GoBack);
             ExportCommand = new RelayCommand(ExportComicImage);
             OpenComicCommand = new RelayCommand(OpenComic);
         }
-        private readonly IHttpClientFactory httpClientFactory;
-        private readonly IServiceScope scope;
         private InMemoryRandomAccessStream convertStream;
-
         private Visibility controlVisibility= Visibility.Collapsed;
 
         public Visibility ControlVisibility
@@ -78,35 +60,6 @@ namespace Kw.Comic.Uwp.ViewModels
             get { return controlVisibility; }
             set => Set(ref controlVisibility, value);
         }
-        private BitmapImage converImage;
-        private ComicVisitor currentComicVisitor;
-
-        public ComicVisitor CurrentComicVisitor
-        {
-            get { return currentComicVisitor; }
-            set
-            {
-                Set(ref currentComicVisitor, value);
-                _=Watcher.ToChapterAsync(ChapterIndex);
-            }
-        }
-
-        public BitmapImage ConverImage
-        {
-            get { return converImage; }
-            private set => Set(ref converImage, value);
-        }
-
-        public int ChapterIndex => ComicVisitors.IndexOf(CurrentComicVisitor);
-
-        public UwpComicWatcher Watcher { get; }
-
-        public ComicEntity ComicEntity { get; }
-
-        public ImmutableArray<ComicVisitor> ComicVisitors { get; }
-
-        public ICommand NextChapterCommand { get; }
-        public ICommand PrevChapterCommand { get; }
         public ICommand GoBackCommand { get; }
         public ICommand ExportCommand { get; }
         public ICommand OpenComicCommand { get; }
@@ -118,22 +71,6 @@ namespace Kw.Comic.Uwp.ViewModels
             await Launcher.LaunchUriAsync(uri);
         }
 
-        public void NextChapter()
-        {
-            var index = ChapterIndex;
-            if (index < ComicVisitors.Length)
-            {
-                CurrentComicVisitor = ComicVisitors[index + 1];
-            }
-        }
-        public void PrevChapter()
-        {
-            var index = ChapterIndex;
-            if (index>0)
-            {
-                CurrentComicVisitor = ComicVisitors[index - 1];
-            }
-        }
         public void GoBack()
         {
             if (Window.Current.Content is Frame frame&&frame.CanGoBack)
@@ -141,7 +78,6 @@ namespace Kw.Comic.Uwp.ViewModels
                 frame.GoBack();
             }
         }
-        private readonly HashSet<char> unsuoop = new HashSet<char>(Path.GetInvalidFileNameChars());
         public async void ExportComicImage()
         {
             if (convertStream==null)
@@ -152,7 +88,8 @@ namespace Kw.Comic.Uwp.ViewModels
             picker.DefaultFileExtension = ".png";
             picker.SuggestedStartLocation = PickerLocationId.PicturesLibrary;
             picker.FileTypeChoices.Add("Images", new string[] { ".png" });
-            var name = new string(Watcher.Comic.Name.Select(x => unsuoop.Contains(x) ? '_' : x).ToArray());
+
+            var name = PathHelper.EnsureName(ComicEntity.Name);
             picker.SuggestedFileName = $"{name}.png";
             var file =await picker.PickSaveFileAsync();
             if (file!=null)
@@ -172,7 +109,7 @@ namespace Kw.Comic.Uwp.ViewModels
             try
             {
                 using (var client = new Windows.Web.Http.HttpClient())
-                using (var str = await client.GetAsync(new Uri(Watcher.Comic.ImageUrl)))
+                using (var str = await client.GetAsync(new Uri(ComicEntity.ImageUrl)))
                 {
                     convertStream = new InMemoryRandomAccessStream();
                     var buffer=await str.Content.ReadAsBufferAsync();
@@ -183,15 +120,14 @@ namespace Kw.Comic.Uwp.ViewModels
                     ConverImage = bm;
                 }
             }
-            catch(Exception ex)
+            catch (Exception)
             {
 
             }
         }
 
-        public void Dispose()
+        public override void Dispose()
         {
-            scope.Dispose();
             convertStream.Dispose();
             convertStream = null;
         }

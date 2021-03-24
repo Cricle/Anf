@@ -1,16 +1,11 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
-using Kw.Comic.Uwp.Managers;
 using Kw.Comic.Uwp.Models;
 using Kw.Comic.Uwp.Pages;
-using Kw.Core.Annotations;
-using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.ApplicationModel.DataTransfer;
@@ -21,7 +16,6 @@ using Windows.UI.Xaml.Controls;
 
 namespace Kw.Comic.Uwp.ViewModels
 {
-    [EnableService(ServiceLifetime = ServiceLifetime.Singleton)]
     public class HomeViewModel : ViewModelBase
     {
         public const int PageSize = 40;
@@ -29,16 +23,13 @@ namespace Kw.Comic.Uwp.ViewModels
         private readonly CoreDispatcher dispatcher;
         private readonly SearchEngine searchEngine;
         private readonly ComicEngine comicEngine;
-        private readonly BriefRemarkManager briefRemarkManager;
 
 
         public HomeViewModel(SearchEngine searchEngine,
-            ComicEngine comicEngine,
-            BriefRemarkManager briefRemarkManager)
+            ComicEngine comicEngine)
         {
             dispatcher = Window.Current.Dispatcher;
             this.comicEngine = comicEngine;
-            this.briefRemarkManager = briefRemarkManager;
             this.searchEngine = searchEngine;
             ComicSnapshots = new ObservableCollection<ComicSnapshotInfo>();
             CopySourceCommand = new RelayCommand(CopySource);
@@ -133,23 +124,6 @@ namespace Kw.Comic.Uwp.ViewModels
                 await Launcher.LaunchUriAsync(new Uri(CurrentSource.Source.TargetUrl));
             }
         }
-
-        public async void LoopUpdateHitokoto()
-        {
-            while (!CanSearch)
-            {
-                try
-                {
-                    var entity = await briefRemarkManager.GetBriefRemarkAsync();
-                    await dispatcher.RunAsync(CoreDispatcherPriority.Normal, () => Hitokoto = entity.Hitokoto);
-                    await Task.Delay(3000);
-                }
-                catch (Exception ex)
-                {
-                }
-            }
-        }
-
         public async Task SearchAsync()
         {
             CanSearch = false;

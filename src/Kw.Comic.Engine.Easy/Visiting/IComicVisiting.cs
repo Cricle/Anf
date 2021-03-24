@@ -14,7 +14,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
 
 
         Task LoadChapterAsync(int index);
-        Task LoadAsync(string address);
+        Task<bool> LoadAsync(string address);
         Task<IComicChapterManager<TResource>> GetChapterManagerAsync(int index);
     }
 }

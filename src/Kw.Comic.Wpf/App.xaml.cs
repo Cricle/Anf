@@ -1,12 +1,12 @@
-﻿using Kw.Comic.Wpf.Views;
-using MahApps.Metro.Controls;
+﻿using Kw.Comic.Engine.Easy.Visiting;
+using Kw.Comic.Wpf.Managers;
+using Kw.Core.Commands;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IO;
 using System;
-using System.Collections.Generic;
-using System.Configuration;
-using System.Data;
-using System.Linq;
 using System.Threading.Tasks;
 using System.Windows;
+using System.Windows.Media;
 
 namespace Kw.Comic.Wpf
 {
@@ -15,13 +15,20 @@ namespace Kw.Comic.Wpf
     /// </summary>
     public partial class App : Application
     {
-        protected override async void OnStartup(StartupEventArgs e)
+        protected override void OnStartup(StartupEventArgs e)
         {
             DispatcherUnhandledException += App_DispatcherUnhandledException;
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            WpfAppEngine.Instance.Load();
-            await WpfAppEngine.Instance.ReadyAsync();
+            AppEngine.AddDefaultsServices(AppDomain.CurrentDomain.BaseDirectory);
+            AppEngine.Services.AddEasyComic();
+            AppEngine.Services.AddSingleton<ICommandManager, CommandManager>();
+            AppEngine.Services.AddSingleton<CommandBarManager>();
+            AppEngine.Services.AddSingleton(new MainNavigationService());
+            AppEngine.Services.AddSingleton(new RecyclableMemoryStreamManager());
+            AppEngine.Services.AddScoped<IComicVisiting<ImageSource>, WpfComicVisiting>();
+            AppEngine.Services.AddSingleton<IResourceFactoryCreator<ImageSource>, WpfResourceFactoryCreator>();
+
             base.OnStartup(e);
         }
 

@@ -148,7 +148,7 @@
                                       VerticalScrollBarVisibility="Hidden"
                                       Background="Transparent">
                             <ListView ItemsSource="{Binding ComicVisitors}"
-                                      SelectedItem="{Binding CurrentComicVisitor,Mode=TwoWay}"
+                                      SelectedItem="{Binding CurrentComicVisitor,Mode=OneWay}"
                                       VerticalAlignment="Center">
                                 <ListView.ItemsPanel>
                                     <ItemsPanelTemplate>

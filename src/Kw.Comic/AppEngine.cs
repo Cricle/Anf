@@ -1,63 +1,69 @@
-﻿using Kw.Core;
+﻿using Kw.Comic.Engine.Easy;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Kw.Comic
 {
-    public abstract class AppEngine : IServiceProvider
+    public static class AppEngine
     {
-        private readonly IServiceCollection services;
-        private readonly ModuleCollection modules = new ModuleCollection();
-        private bool loaded;
+        private static readonly object locker = new object();
+        private static IServiceProvider provider;
+        private static EasyComicBuilder easyComicBuilder;
 
-        private IServiceProvider serviceProvider;
+        public static IServiceCollection Services => easyComicBuilder?.Services;
 
-        protected AppEngine(IServiceCollection services)
+        public static IServiceProvider Provider
         {
-            this.services = services;
-        }
-
-        public bool Loaded => loaded;
-
-        public IServiceProvider ServiceProvider => serviceProvider;
-
-        public IServiceCollection Services => services;
-
-        public ModuleCollection Modules => modules;
-
-        public void Load()
-        {
-            if (loaded)
+            get
             {
-                return;
+                if (provider == null)
+                {
+                    lock (locker)
+                    {
+                        if (provider == null)
+                        {
+                            provider = easyComicBuilder.Services.BuildServiceProvider();
+                        }
+                    }
+                }
+                return provider;
             }
-            loaded = true;
-            modules.Add(new ComicModuleEntry());
-            var ctx = new RegisteContext(services);
-            modules.ReadyRegister(ctx);
-            modules.Register(ctx);
-            serviceProvider = BuildProvider();
         }
-        protected abstract IServiceProvider BuildProvider();
-        public async Task ReadyAsync()
+        public static void AddDefaultsServices(string storePath)
         {
-            var ctx = new ReadyContext(ServiceProvider);
-            await modules.BeforeReadyAsync(ctx);
-            await modules.ReadyAsync(ctx);
-            await modules.AfterReadyAsync(ctx);
-        }
+            if (Services==null)
+            {
+                Reset();
+            }
+            Debug.Assert(Services != null);
+            Services.AddCoreServices(storePath);
 
-        public object GetService(Type serviceType)
-        {
-            return serviceProvider.GetRequiredService(serviceType);
         }
-        public IServiceScope GetScope()
+        public static void Reset(IServiceCollection services = null)
         {
-            var serviceScopeFactory = serviceProvider.GetRequiredService<IServiceScopeFactory>();
-            return serviceScopeFactory.CreateScope();
+            easyComicBuilder = new EasyComicBuilder(services);
+            provider = null;
+        }
+        public static object GetService(Type type)
+        {
+            return Provider.GetService(type);
+        }
+        public static T GetService<T>()
+        {
+            return Provider.GetService<T>();
+        }
+        public static T GetRequiredService<T>()
+        {
+            return Provider.GetRequiredService<T>();
+        }
+        public static object GetRequiredService(Type type)
+        {
+            return Provider.GetRequiredService(type);
+        }
+        public static IServiceScope CreateScope()
+        {
+            return Provider.GetRequiredService<IServiceScopeFactory>().CreateScope();
         }
     }
 }

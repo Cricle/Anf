@@ -22,8 +22,8 @@ namespace Kw.Comic.Wpf.Views
         public MainWindow()
         {
             InitializeComponent();
-            var navSer = WpfAppEngine.Instance.GetRequiredService<MainNavigationService>();
-            var barSer = WpfAppEngine.Instance.GetRequiredService<CommandBarManager>();
+            var navSer = AppEngine.GetRequiredService<MainNavigationService>();
+            var barSer = AppEngine.GetRequiredService<CommandBarManager>();
             LeftCommands.ShowSeparators =
                 RightCommands.ShowSeparators = false;
             LeftCommands.ShowLastSeparator =

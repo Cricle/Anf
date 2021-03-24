@@ -4,9 +4,6 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
-    <EnableSkia>false</EnableSkia>
-    <EnableGdi>false</EnableGdi>
-    <EnableWin10>false</EnableWin10>
     <EnableRecyclableStream>true</EnableRecyclableStream>
     <EnableFody>false</EnableFody>
     <NotEnableNavite>false</NotEnableNavite>
@@ -43,28 +40,18 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
   </ItemGroup>
-  <PropertyGroup Condition="'$(EnableWin10)'">
-    <DefineConstants>DEBUG;TRACE;EnableWin10;</DefineConstants>
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-  </PropertyGroup>
-  <ItemGroup Condition="'$(EnableWin10)'">
-    <PackageReference Include="Microsoft.Windows.SDK.Contracts" Version="10.0.19041.1" />
-  </ItemGroup>
-  <ItemGroup Condition="'$(EnableSkia)'=='false'">
-    <Compile Remove="Managers\Skia\*.cs"></Compile>
-  </ItemGroup>
-  <ItemGroup Condition="'$(EnableGdi)'=='false'">
-    <Compile Remove="Managers\Gdi\*.cs"></Compile>
-  </ItemGroup>
-  <ItemGroup Condition="'$(EnableSkia)'">
-    <PackageReference Include="SkiaSharp" Version="2.80.2" />
+  <ItemGroup>
+    <ProjectReference Include="..\Kw.Comic.Engine.Easy\Kw.Comic.Engine.Easy.csproj" />
+    <ProjectReference Include="..\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
+    <ProjectReference Include="..\ZoomControl\ZoomControl\ZoomControl.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
-    <ProjectReference Include="..\Kw.Comic\Kw.Comic.csproj" />
-    <ProjectReference Include="..\ZoomControl\ZoomControl\ZoomControl.csproj" />
+    <Compile Include="..\Kw.Comic\AppEngine.cs"></Compile>
+    <Compile Include="..\Kw.Comic\ServiceCollectionExtensions.cs"></Compile>
+    <Compile Include="..\Kw.Comic\Render\ViewViewModelBase.cs" Link="ViewModels\ViewViewModelBase.cs"></Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>
