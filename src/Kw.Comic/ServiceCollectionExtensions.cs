@@ -18,7 +18,7 @@ namespace Kw.Comic
             services.AddSingleton(fs);
             services.AddSingleton<IDownloadCenter>(x =>
             {
-                var store = x.GetRequiredService<IStoreService>();
+                var store = x.GetRequiredService<IComicSaver>();
                 var center = new DownloadCenter(x, new QueneDownloadManager(), store);
                 center.Start();
                 return center;

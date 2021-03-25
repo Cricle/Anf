@@ -47,8 +47,8 @@ namespace Kw.Comic.Wpf.Views
             };
             
             barSer.LeftCommands.Add(BackBtn);
-            //navSer.Frame.Navigate(new HomePage());
-            navSer.Frame.Navigate(new ViewPage("http://www.dm5.com/manhua-monvzhilv/"));
+            navSer.Frame.Navigate(new HomePage());
+            //navSer.Frame.Navigate(new ViewPage("http://www.dm5.com/manhua-monvzhilv/"));
         }
     }
 }

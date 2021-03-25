@@ -1,6 +1,7 @@
 ﻿using Kw.Comic.Engine;
 using Kw.Comic.Engine.Easy;
 using Kw.Comic.Engine.Easy.Downloading;
+using Kw.Comic.Engine.Easy.Store;
 using Kw.Comic.Web.Hubs;
 using System;
 using System.Collections.Concurrent;

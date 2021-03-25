@@ -2,12 +2,16 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+#if NETSTANDARD2_0
+using System.Buffers;
+#endif
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
     public abstract class BlockSlots<TValue> : IDisposable
+	where TValue:class
     {
-        private readonly SemaphoreSlim[] slims;
+        private readonly Task<TValue>[] valueTasks;
         private readonly TValue[] values;
 
         public int Size { get; }
@@ -15,38 +19,21 @@ namespace Kw.Comic.Engine.Easy.Visiting
         protected BlockSlots(int size)
         {
             Size = size;
-            slims = new SemaphoreSlim[size];
-            for (int i = 0; i < slims.Length; i++)
-            {
-                slims[i] = new SemaphoreSlim(1);
-            }
+#if NETSTANDARD2_0
+            valueTasks = ArrayPool<Task<TValue>>.Shared.Rent(size);
+            values = ArrayPool<TValue>.Shared.Rent(size);
+#else
+            valueTasks = new Task<TValue>[size];
             values = new TValue[size];
+#endif
         }
 
         public event Action<BlockSlots<TValue>, int, TValue> PageLoaded;
 
         public virtual void Dispose()
         {
-#if NETSTANDARD1_4
-            for (int i = 0; i < slims.Length; i++)
-			{
-                var s=slims[i];
-                s.Wait();
-                s.Dispose();
-			}
-#else
-            slims.AsParallel().ForAll(x =>
-            {
-                x.Wait();
-                x.Dispose();
-            });
-#endif
-            DisposeValues();
-        }
-        protected virtual void DisposeValues()
-        {
 
-            for (int i = 0; i < values.Length; i++)
+            for (int i = 0; i < Size; i++)
             {
                 var page = values[i];
                 if (page is IDisposable disposable)
@@ -54,37 +41,39 @@ namespace Kw.Comic.Engine.Easy.Visiting
                     disposable.Dispose();
                 }
             }
+#if NETSTANDARD2_0
+            ArrayPool<Task<TValue>>.Shared.Return(valueTasks, true);
+            ArrayPool<TValue>.Shared.Return(values, true);
+#endif
+            GC.SuppressFinalize(this);
         }
-
         public async Task<TValue> GetAsync(int index)
         {
-            if (index < 0 || index >= slims.Length)
+            if (index < 0 || index >= Size)
             {
                 return default;
             }
-            var sem = slims[index];
             var page = values[index];
-            if (page != null)
+            if (!(page is null))
             {
                 return page;
             }
-            await sem.WaitAsync();
-            try
+            if (Interlocked.CompareExchange(ref valueTasks[index], null, null) is null)
             {
-                page = values[index];
-                if (page != null)
-                {
-                    return page;
-                }
-                page = values[index] = await OnLoadAsync(index);
-                PageLoaded?.Invoke(this, index, page);
-                return page;
+                var task = valueTasks[index] = OnLoadAsync(index);
+                var v = values[index] = await task;
+                PageLoaded?.Invoke(this, index, v);
+                return v;
             }
-            finally
+
+            var tsk = valueTasks[index];
+            if (tsk.IsCompleted)
             {
-                sem.Release();
+                return tsk.Result;
             }
+            return await tsk;
         }
         protected abstract Task<TValue> OnLoadAsync(int index);
+
     }
 }

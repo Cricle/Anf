@@ -18,6 +18,16 @@ namespace Microsoft.Extensions.DependencyInjection
 {
     public static class EasyComicBuilderExtensions
     {
+        public static void AddStreamVisitor(this IServiceCollection services)
+        {
+            services.AddSingleton<IResourceFactoryCreator<Stream>>(StreamResourceFactory.Default);
+            services.AddSingleton<IComicVisiting<Stream>, ComicVisiting<Stream>>();
+        }
+        public static void AddDefaultEasyComic(this IServiceCollection services, NetworkAdapterTypes networkAdapterType = NetworkAdapterTypes.HttpClient)
+        {
+            services.AddEasyComic(networkAdapterType);
+            services.AddStreamVisitor();
+        }
         public static void AddEasyComic(this IServiceCollection services, NetworkAdapterTypes networkAdapterType = NetworkAdapterTypes.HttpClient)
         {
             if (services is null)

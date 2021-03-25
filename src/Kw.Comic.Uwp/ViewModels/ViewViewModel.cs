@@ -1,19 +1,13 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
 using Kw.Comic.Engine.Easy;
 using Kw.Comic.Engine.Easy.Visiting;
 using Kw.Comic.Render;
-using Kw.Comic.Uwp.Managers;
+using Kw.Comic.Uwp.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IO;
 using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
+using System.Collections.ObjectModel;
 using System.IO;
-using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Windows.Storage;
@@ -24,7 +18,6 @@ using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
-using Windows.Web.Http;
 
 namespace Kw.Comic.Uwp.ViewModels
 {
@@ -64,6 +57,22 @@ namespace Kw.Comic.Uwp.ViewModels
         public ICommand ExportCommand { get; }
         public ICommand OpenComicCommand { get; }
 
+
+        public ObservableCollection<ComicPageInfo> PageInfos { get; }
+
+        protected override void OnGoChapter(int index, IComicChapterManager<ImageSource> chapterManager)
+        {
+            PageInfos.Clear();
+            if (chapterManager.ChapterWithPage != null)
+            {
+                var count = chapterManager.ChapterWithPage.Pages.Length;
+                for (int i = 0; i < count; i++)
+                {
+                    var info = new ComicPageInfo(PageSlots, i);
+                    PageInfos.Add(info);
+                }
+            }
+        }
         public async void OpenComic()
         {
             var uri = new Uri(ComicEntity.ComicUrl);

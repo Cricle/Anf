@@ -4,9 +4,11 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using JavaScriptEngineSwitcher.Core;
 using HtmlAgilityPack;
-using Newtonsoft.Json.Linq;
-#if NETSTANDARD2_0
+#if StandardLib
 using System.Web;
+using System.Text.Json;
+#else
+using Newtonsoft.Json.Linq;
 #endif
 using System.IO;
 using Kw.Comic.Engine.Networks;
@@ -121,26 +123,50 @@ namespace Kw.Comic.Engine.Dmzj
                 var sc = match.Groups[0].Value + ";pages;";
                 var strx = v8.Evaluate(sc)?.ToString();
                 string[] inn = null;
-                if (strx.StartsWith("{"))
+#if StandardLib
+                var doc = JsonDocument.Parse(strx);
+                try
                 {
-                    var doc = JObject.Parse(strx);
-                    inn = doc["page_url"].ToString().Split('\n');
-                }
-                else
-                {
-                    var doc = JArray.Parse(strx);
-                    inn = doc.Select(x => x.ToString()).ToArray();
-                }
-                foreach (var item in inn)
-                {
-                    var val = item.ToString().Trim();
-                    var name = HttpUtility.UrlDecode(val.Split('/').Last());
-                    blocks.Add(new ComicPage
+
+                    var visitor = new JsonVisitor(doc.RootElement);
+#else
+                    JToken token = null;
+                    if (strx.StartsWith("{"))
                     {
-                        Name = name,
-                        TargetUrl = "https://images.dmzj.com/" + val
-                    });
+                        token = JObject.Parse(strx);
+                    }
+                    else
+                    {
+                        token = JArray.Parse(strx);
+                    }
+                    var visitor = new JsonVisitor(token);
+#endif
+                    if (strx.StartsWith("{"))
+                    {
+                        inn = visitor["page_url"].ToString().Split('\n');
+                    }
+                    else
+                    {
+                        inn = visitor.ToArray().Select(x => x.ToString()).ToArray();
+                    }
+                    foreach (var item in inn)
+                    {
+                        var val = item.ToString().Trim();
+                        var name = HttpUtility.UrlDecode(val.Split('/').Last());
+                        blocks.Add(new ComicPage
+                        {
+                            Name = name,
+                            TargetUrl = "https://images.dmzj.com/" + val
+                        });
+                    }
+#if StandardLib
                 }
+                finally
+                {
+
+                    doc.Dispose();
+                }
+#endif
             }
             return blocks.ToArray();
         }

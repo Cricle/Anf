@@ -9,7 +9,6 @@
     xmlns:m="using:Kw.Comic.Uwp.Models"
     xmlns:conv="using:Kw.Comic.Uwp.Converters"
     xmlns:mgr="using:Kw.Comic.Uwp.Managers"
-    xmlns:v="using:Kw.Comic.Visit"
     xmlns:icon="using:MahApps.Metro.IconPacks"
     mc:Ignorable="d"
     d:DataContext="vm:ViewViewModel"
@@ -18,7 +17,7 @@
         <conv:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
     </Page.Resources>
     <Grid>
-        <FlipView ItemsSource="{Binding Watcher.PageInfos}"
+        <FlipView ItemsSource="{Binding PageInfos}"
                   SelectedItem="{Binding Watcher.CurrentPageInfo,Mode=TwoWay}"
                   PointerPressed="FlipView_PointerPressed">
             <FlipView.ItemTemplate>
@@ -44,22 +43,6 @@
                                 </TextBlock>
                                 <ProgressBar IsIndeterminate="True"/>
                             </StackPanel>
-                        </Grid>
-                        <!--错误页-->
-                        <Grid Visibility="{Binding Error,Converter={StaticResource BoolVisibilityConverter}}">
-                            <StackPanel Orientation="Vertical"
-                                        HorizontalAlignment="Center"
-                                        VerticalAlignment="Center">
-                                <TextBlock HorizontalAlignment="Center">
-                                    <Run Text="加载时错误 - "/>
-                                    <Run Text="{Binding ErrorMsg}"
-                                         FontWeight="Bold"/>
-                                </TextBlock>
-                                <TextBlock >
-                                    <Run Text="{Binding Visitor.Page.TargetUrl}"/>
-                                </TextBlock>
-                            </StackPanel>
-                            <Button Command="{Binding LoadCommand}">重新加载</Button>
                         </Grid>
                     </Grid>
                 </DataTemplate>

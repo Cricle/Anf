@@ -1,120 +1,313 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Reflection;
 using System.Text;
 using System.Threading;
 
 namespace Kw.Comic.Engine.Easy.Concurrnets
 {
-    public class ThreadSafeList<T> : IList<T>
+    public class KwSynchronizedCollection<T> : IList<T>, IList
     {
-        private readonly List<T> list;
-        private readonly object locker;
+        private readonly object _sync;
 
-        public ThreadSafeList()
+        public KwSynchronizedCollection()
         {
-            locker = new object();
-            list = new List<T>();
+            Items = new List<T>();
+            _sync = new object();
+        }
+
+        public KwSynchronizedCollection(object syncRoot)
+        {
+            Items = new List<T>();
+            _sync = syncRoot ?? throw new ArgumentNullException(nameof(syncRoot));
+        }
+
+        public KwSynchronizedCollection(object syncRoot, IEnumerable<T> list)
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+
+            Items = new List<T>(list);
+            _sync = syncRoot ?? throw new ArgumentNullException(nameof(syncRoot));
+        }
+
+        public KwSynchronizedCollection(object syncRoot, params T[] list)
+        {
+            if (list == null)
+            {
+                throw new ArgumentNullException(nameof(list));
+            }
+
+            Items = new List<T>(list.Length);
+            for (int i = 0; i < list.Length; i++)
+            {
+                Items.Add(list[i]);
+            }
+
+            _sync = syncRoot ?? throw new ArgumentNullException(nameof(syncRoot));
+        }
+
+        public int Count
+        {
+            get { lock (_sync) { return Items.Count; } }
+        }
+
+        protected List<T> Items { get; }
+
+        public object SyncRoot
+        {
+            get { return _sync; }
         }
 
         public T this[int index]
         {
-            get => list[index];
+            get
+            {
+                lock (_sync)
+                {
+                    return Items[index];
+                }
+            }
             set
             {
-                lock (locker)
+                lock (_sync)
                 {
-                    list[index] = value;
+                    if (index < 0 || index >= Items.Count)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(index));
+                    }
+
+                    SetItem(index, value);
                 }
             }
         }
 
-        public int Count => list.Count;
-
-        public bool IsReadOnly => false;
-
         public void Add(T item)
         {
-            lock (locker)
+            lock (_sync)
             {
-                list.Add(item);
-            }
-        }
-        public void AddRange(T[] items)
-        {
-            lock (locker)
-            {
-                list.AddRange(items);
+                int index = Items.Count;
+                InsertItem(index, item);
             }
         }
 
         public void Clear()
         {
-            lock (locker)
+            lock (_sync)
             {
-                list.Clear();
+                ClearItems();
+            }
+        }
+
+        public void CopyTo(T[] array, int index)
+        {
+            lock (_sync)
+            {
+                Items.CopyTo(array, index);
             }
         }
 
         public bool Contains(T item)
         {
-            lock (locker)
+            lock (_sync)
             {
-                return list.Contains(item);
-            }
-        }
-
-        public void CopyTo(T[] array, int arrayIndex)
-        {
-            lock (locker)
-            {
-                list.CopyTo(array, arrayIndex);
+                return Items.Contains(item);
             }
         }
 
         public IEnumerator<T> GetEnumerator()
         {
-            lock (locker)
+            lock (_sync)
             {
-                return list.GetEnumerator();
+                return Items.GetEnumerator();
             }
         }
 
         public int IndexOf(T item)
         {
-            lock (locker)
+            lock (_sync)
             {
-                return list.IndexOf(item);
+                return InternalIndexOf(item);
             }
         }
 
         public void Insert(int index, T item)
         {
-            lock (locker)
+            lock (_sync)
             {
-                list.Add(item);
+                if (index < 0 || index > Items.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                InsertItem(index, item);
             }
+        }
+
+        private int InternalIndexOf(T item)
+        {
+            int count = Items.Count;
+
+            for (int i = 0; i < count; i++)
+            {
+                if (object.Equals(Items[i], item))
+                {
+                    return i;
+                }
+            }
+            return -1;
         }
 
         public bool Remove(T item)
         {
-            lock (locker)
+            lock (_sync)
             {
-                return list.Remove(item);
+                int index = InternalIndexOf(item);
+                if (index < 0)
+                {
+                    return false;
+                }
+
+                RemoveItem(index);
+                return true;
             }
         }
 
         public void RemoveAt(int index)
         {
-            lock (locker)
+            lock (_sync)
             {
-                list.RemoveAt(index);
+                if (index < 0 || index >= Items.Count)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+
+                RemoveItem(index);
             }
+        }
+
+        protected virtual void ClearItems()
+        {
+            Items.Clear();
+        }
+
+        protected virtual void InsertItem(int index, T item)
+        {
+            Items.Insert(index, item);
+        }
+
+        protected virtual void RemoveItem(int index)
+        {
+            Items.RemoveAt(index);
+        }
+
+        protected virtual void SetItem(int index, T item)
+        {
+            Items[index] = item;
+        }
+
+        bool ICollection<T>.IsReadOnly
+        {
+            get { return false; }
         }
 
         IEnumerator IEnumerable.GetEnumerator()
         {
-            return GetEnumerator();
+            return ((IList)Items).GetEnumerator();
+        }
+
+        bool ICollection.IsSynchronized
+        {
+            get { return true; }
+        }
+
+        object ICollection.SyncRoot
+        {
+            get { return _sync; }
+        }
+
+        void ICollection.CopyTo(Array array, int index)
+        {
+            lock (_sync)
+            {
+                ((IList)Items).CopyTo(array, index);
+            }
+        }
+
+        object IList.this[int index]
+        {
+            get
+            {
+                return this[index];
+            }
+            set
+            {
+                VerifyValueType(value);
+                this[index] = (T)value;
+            }
+        }
+
+        bool IList.IsReadOnly
+        {
+            get { return false; }
+        }
+
+        bool IList.IsFixedSize
+        {
+            get { return false; }
+        }
+
+        int IList.Add(object value)
+        {
+            VerifyValueType(value);
+
+            lock (_sync)
+            {
+                Add((T)value);
+                return Count - 1;
+            }
+        }
+
+        bool IList.Contains(object value)
+        {
+            VerifyValueType(value);
+            return Contains((T)value);
+        }
+
+        int IList.IndexOf(object value)
+        {
+            VerifyValueType(value);
+            return IndexOf((T)value);
+        }
+
+        void IList.Insert(int index, object value)
+        {
+            VerifyValueType(value);
+            Insert(index, (T)value);
+        }
+
+        void IList.Remove(object value)
+        {
+            VerifyValueType(value);
+            Remove((T)value);
+        }
+
+        private static void VerifyValueType(object value)
+        {
+            if (value == null)
+            {
+                if (typeof(T).GetTypeInfo().IsValueType)
+                {
+                    throw new InvalidOperationException(typeof(T).FullName);
+                }
+            }
+            else if (!(value is T))
+            {
+                throw new ArgumentException(value.GetType().FullName);
+            }
         }
     }
 }

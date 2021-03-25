@@ -167,7 +167,12 @@ namespace Kw.Comic.Render
                 PageSlots = CurrentComicVisitor.CreatePageSlots();
                 ChapterIndex = index;
                 CurrentComicVisitor = visitor;
+                OnGoChapter(index, visitor);
             }
+        }
+        protected virtual void OnGoChapter(int index,IComicChapterManager<TResource> chapterManager)
+        {
+
         }
         public void NextChapter()
         {

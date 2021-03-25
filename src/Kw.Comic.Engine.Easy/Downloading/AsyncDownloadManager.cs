@@ -1,17 +1,15 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Linq;
 using Kw.Comic.Engine.Easy.Concurrnets;
 
 namespace Kw.Comic.Engine.Easy.Downloading
 {
-    public abstract class AsyncDownloadManager : ThreadSafeList<DownloadTask>, IDownloadManager
+    public abstract class AsyncDownloadManager : KwSynchronizedCollection<DownloadTask>, IDownloadManager
     {
 
         public static readonly TimeSpan DefaultWaitTime = TimeSpan.FromMilliseconds(500);
+
         protected AsyncDownloadManager()
         {
         }

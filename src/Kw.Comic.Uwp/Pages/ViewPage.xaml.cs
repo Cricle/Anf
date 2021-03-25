@@ -40,8 +40,7 @@ namespace Kw.Comic.Uwp.Pages
                 try
                 {
                     vm = await ViewViewModel.FromUriAsync(str);
-                    vm.CurrentComicVisitor = vm.ComicVisitors.FirstOrDefault();
-
+                    vm.GoChapter(0);
                     DataContext = vm;
                 }
                 catch (Exception ex)

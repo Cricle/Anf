@@ -135,6 +135,7 @@
     <Compile Include="Managers\UwpResourceFactoryCreator.cs" />
     <Compile Include="Managers\UwpStoreService.cs" />
     <Compile Include="Models\ComicMenuItem.cs" />
+    <Compile Include="Models\ComicPageInfo.cs" />
     <Compile Include="Models\ComicSourceInfo.cs" />
     <Compile Include="Models\ComicStorage.cs" />
     <Compile Include="Pages\BookshelfPage.xaml.cs">

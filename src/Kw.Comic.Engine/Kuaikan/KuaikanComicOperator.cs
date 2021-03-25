@@ -1,7 +1,6 @@
 ﻿using HtmlAgilityPack;
 using JavaScriptEngineSwitcher.Core;
 using Kw.Comic.Engine.Networks;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -10,6 +9,11 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+#if StandardLib
+using System.Text.Json;
+#else
+using Newtonsoft.Json.Linq;
+#endif
 
 namespace Kw.Comic.Engine.Kuaikan
 {
@@ -87,22 +91,38 @@ namespace Kw.Comic.Engine.Kuaikan
             var jsCodesRgx = regex.Match(str);
             var jsCode = jsCodesRgx.Groups[1].Value;
             var val = jsEngine.Evaluate<string>("var a=JSON.stringify(" + jsCode+");a");
-            var jobj = JObject.Parse(val);
-            var info = jobj["data"][0]["res"]["data"]["comic_info"];
-            var comics = (JArray)info["comic_images"];
-            var pages = new List<ComicPage>();
-            var title = info["title"].ToString();
-            foreach (var item in comics)
+#if StandardLib
+            var doc = JsonDocument.Parse(val);
+            var visitor = new JsonVisitor(doc.RootElement);
+            try
             {
-                var uri = item["url"].ToString();
-                var page = new ComicPage
+#else
+                var obj = JObject.Parse(val);
+                var visitor = new JsonVisitor(obj);
+#endif
+                var info = visitor["data"]
+                    .ToArray().First()["res"]["data"]["comic_info"];
+                var comics = info["comic_images"].ToArray();
+                var pages = new List<ComicPage>();
+                var title = info["title"].ToString();
+                foreach (var item in comics)
                 {
-                    Name = title,
-                    TargetUrl = uri
-                };
-                pages.Add(page);
+                    var uri = item["url"].ToString();
+                    var page = new ComicPage
+                    {
+                        Name = title,
+                        TargetUrl = uri
+                    };
+                    pages.Add(page);
+                }
+                return pages.ToArray();
+#if StandardLib
             }
-            return pages.ToArray();
+            finally
+            {
+
+            }
+#endif
         }
 
         public Task<Stream> GetImageStreamAsync(string targetUrl)

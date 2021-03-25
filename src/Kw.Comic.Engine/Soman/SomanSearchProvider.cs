@@ -1,9 +1,14 @@
 ﻿using Kw.Comic.Engine.Networks;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
+using System.Linq;
+#if NETSTANDARD2_0||NET461
+using System.Text.Json;
+#else
+using Newtonsoft.Json.Linq;
+#endif
 
 namespace Kw.Comic.Engine.Soman
 {
@@ -27,51 +32,67 @@ namespace Kw.Comic.Engine.Soman
             }
             var targetUrl = string.Format(SeachUrl, page, take, keywork);
             string str = string.Empty;
-            using (var rep = await networkAdapter.GetStreamAsync(new RequestSettings { Address=targetUrl}))
-            using(var sr=new StreamReader(rep))
+            using (var rep = await networkAdapter.GetStreamAsync(new RequestSettings { Address = targetUrl }))
+            using (var sr = new StreamReader(rep))
             {
                 str = sr.ReadToEnd();
             }
-            var jobj = JObject.Parse(str);
-            var total = jobj["Total"].Value<int>();
-            var items = (JArray)jobj["Items"];
-            var snaps = new List<ComicSnapshot>(items.Count);
-            foreach (var item in items)
+#if StandardLib
+            var doc = JsonDocument.Parse(str);
+            var visitor = new JsonVisitor(doc.RootElement);
+            try
             {
-                var comic = (JArray)item["Comics"];
-                if (comic.Count == 0)
+#else
+                var jobj = JObject.Parse(str);
+                var visitor = new JsonVisitor(jobj);
+#endif
+                var total = int.Parse(visitor["Total"].ToString());
+                var items = visitor["Items"].ToArray();
+                var snaps = new List<ComicSnapshot>();
+                foreach (var item in items)
                 {
-                    continue;
-                }
-                var sn = new ComicSnapshot();
-                var sources = new List<ComicSource>();
-                foreach (var c in comic)
-                {
-                    var host = c["Host"];
-                    var part = c["Url"];
-                    var name = c["Source"];
-                    var source = new ComicSource
+                    var comic = item["Comics"].ToArray();
+                    if (!comic.Any())
                     {
-                        Name = name.ToString(),
-                        TargetUrl = host.ToString() + part.ToString()
-                    };
-                    sources.Add(source);
+                        continue;
+                    }
+                    var sn = new ComicSnapshot();
+                    var sources = new List<ComicSource>();
+                    foreach (var c in comic)
+                    {
+                        var host = c["Host"];
+                        var part = c["Url"];
+                        var name = c["Source"];
+                        var source = new ComicSource
+                        {
+                            Name = name.ToString(),
+                            TargetUrl = host.ToString() + part.ToString()
+                        };
+                        sources.Add(source);
+                    }
+                    var first = comic.ToArray().First();
+                    sn.Name = first["SomanId"].ToString();
+                    sn.ImageUri = first["PicUrl"].ToString();
+                    sn.Author = first["Author"].ToString();
+                    sn.Descript = first["Content"].ToString();
+                    sn.TargetUrl = targetUrl;
+                    sn.Sources = sources.ToArray();
+                    snaps.Add(sn);
                 }
-                var first = comic[0];
-                sn.Name = first["SomanId"].ToString();
-                sn.ImageUri = first["PicUrl"].ToString();
-                sn.Author = first["Author"].ToString();
-                sn.Descript = first["Content"].ToString();
-                sn.TargetUrl = targetUrl;
-                sn.Sources = sources.ToArray();
-                snaps.Add(sn);
+                return new SearchComicResult
+                {
+                    Snapshots = snaps.ToArray(),
+                    Support = true,
+                    Total = total
+                };
+#if StandardLib
+
             }
-            return new SearchComicResult
+            finally
             {
-                Snapshots = snaps.ToArray(),
-                Support = true,
-                Total = total
-            };
+                doc.Dispose();
+            }
+#endif
         }
     }
 }

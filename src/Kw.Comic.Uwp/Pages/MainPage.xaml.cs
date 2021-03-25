@@ -83,10 +83,10 @@ namespace Kw.Comic.Uwp.Pages
         {
             try
             {
-                if (vm.ComicViewManager.SourceCondition!=null&&Window.Current.Content is Frame frame)
-                {
-                    frame.Navigate(typeof(ViewPage), vm.ComicViewManager.TargetUrl);
-                }
+                //if (vm.ComicViewManager.SourceCondition!=null&&Window.Current.Content is Frame frame)
+                //{
+                //    frame.Navigate(typeof(ViewPage), vm.ComicViewManager.TargetUrl);
+                //}
             }
             catch (Exception)
             {
