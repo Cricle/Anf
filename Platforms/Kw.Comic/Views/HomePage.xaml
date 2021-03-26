@@ -1,0 +1,24 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<ContentPage xmlns="http://xamarin.com/schemas/2014/forms" 
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:eng="clr-namespace:Kw.Comic.Engine;assembly=Kw.Comic.Engine"
+             xmlns:viewmodels="clr-namespace:Kw.Comic.ViewModels"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             d:DataContext="{d:DesignInstance Type=viewmodels:HomeViewModel}"
+             x:Class="Kw.Comic.Views.HomePage">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <SearchBar Text="{Binding Keyword}"
+                   SearchCommand="{Binding SearchCommand}"/>
+        <CollectionView ItemsSource="{Binding Snapshots}">
+            <CollectionView.ItemTemplate>
+                <DataTemplate x:DataType="{x:Type eng:ComicSnapshot}">
+                    
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
+    </Grid>
+</ContentPage>

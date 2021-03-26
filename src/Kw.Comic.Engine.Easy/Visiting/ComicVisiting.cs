@@ -80,11 +80,19 @@ namespace Kw.Comic.Engine.Easy.Visiting
         
         public async Task LoadChapterAsync(int index)
         {
+            if (chapterWithPages[index] != null)
+            {
+                return;
+            }
             var entity = Entity;
             await semaphoreSlim.WaitAsync();
             try
             {
                 if (Entity != entity)//并发控制
+                {
+                    return;
+                }
+                if (chapterWithPages[index] != null)
                 {
                     return;
                 }

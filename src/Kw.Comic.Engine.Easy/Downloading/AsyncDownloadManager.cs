@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using Kw.Comic.Engine.Easy.Concurrnets;
@@ -65,11 +66,12 @@ namespace Kw.Comic.Engine.Easy.Downloading
             var tk = (CancellationToken)token;
             while (!tk.IsCancellationRequested)
             {
+                var begin = Stopwatch.GetTimestamp();
                 var ok = GetDownloadTask();
-                if (ok!=null)
+                if (ok != null)
                 {
                     bool? res = true;
-                    while (res==true&&!tk.IsCancellationRequested)
+                    while (res == true && !tk.IsCancellationRequested)
                     {
                         try
                         {
@@ -83,10 +85,15 @@ namespace Kw.Comic.Engine.Easy.Downloading
                     OnComplated(ok);
                     Remove(ok);
                 }
-                await Task.Delay(WaitTime);
+                var end = Stopwatch.GetTimestamp();
+                var waitTime = (int)(end - begin - (long)WaitTime.TotalMilliseconds);
+                if (waitTime > 0)
+                {
+                    await Task.Delay(waitTime);
+                }
             }
         }
-        protected virtual void OnException(DownloadTask task,Exception exception)
+        protected virtual void OnException(DownloadTask task, Exception exception)
         {
 
         }

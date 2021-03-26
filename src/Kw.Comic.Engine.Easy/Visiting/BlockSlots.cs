@@ -9,7 +9,7 @@ using System.Buffers;
 namespace Kw.Comic.Engine.Easy.Visiting
 {
     public abstract class BlockSlots<TValue> : IDisposable
-	where TValue:class
+	    where TValue:class
     {
         private readonly Task<TValue>[] valueTasks;
         private readonly TValue[] values;

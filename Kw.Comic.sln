@@ -3,8 +3,6 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 16
 VisualStudioVersion = 16.0.30907.101
 MinimumVisualStudioVersion = 15.0.26124.0
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kw.Comic", "src\Kw.Comic\Kw.Comic.csproj", "{273A4B17-273C-4476-9B72-BE48EFDB83AD}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Kw.Comic.Wpf", "src\Kw.Comic.Wpf\Kw.Comic.Wpf.csproj", "{19603416-F7CE-4DBB-A575-25D148498E28}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Web", "Web", "{A2F4C80F-BC80-4837-8164-C608B72E1A45}"
@@ -47,26 +45,6 @@ Global
 		Release|x86 = Release|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|ARM.ActiveCfg = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|ARM.Build.0 = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|ARM64.ActiveCfg = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|ARM64.Build.0 = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|x64.Build.0 = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Debug|x86.Build.0 = Debug|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|Any CPU.Build.0 = Release|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|ARM.ActiveCfg = Release|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|ARM.Build.0 = Release|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|ARM64.ActiveCfg = Release|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|ARM64.Build.0 = Release|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|x64.ActiveCfg = Release|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|x64.Build.0 = Release|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|x86.ActiveCfg = Release|Any CPU
-		{273A4B17-273C-4476-9B72-BE48EFDB83AD}.Release|x86.Build.0 = Release|Any CPU
 		{19603416-F7CE-4DBB-A575-25D148498E28}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{19603416-F7CE-4DBB-A575-25D148498E28}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{19603416-F7CE-4DBB-A575-25D148498E28}.Debug|ARM.ActiveCfg = Debug|Any CPU

@@ -7,7 +7,7 @@
     <Authors>Kw</Authors>
     <Company>Kw</Company>
     <Product>Kw</Product>
-    <Version>1.1.0</Version>
+    <Version>1.2.1</Version>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net461'">
     <StandardLib>true</StandardLib>

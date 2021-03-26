@@ -64,3 +64,14 @@ export interface ComicSnapshot extends ComicSource{
     sources:ComicSource[];
     descript:string;
 }
+export interface ComicEntityRef {
+    entity:ComicEntity;
+    engineName:string; 
+}
+export interface Bookshelf{
+    comicUrl:string
+    readChapter:number;
+    readPage:number;
+    createTime:number;
+    entity:ComicEntity;
+}

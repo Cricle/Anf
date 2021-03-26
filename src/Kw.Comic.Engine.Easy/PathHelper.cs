@@ -25,10 +25,56 @@ namespace Kw.Comic.Engine.Easy
                 Directory.CreateDirectory(name);
             }
         }
-        public static string EnsureName(string name, char invalidRelpaceChar = DefaultInvalidReplaceChar)
+#if NETSTANDARD2_1
+        public unsafe static string EnsureName(string name,char invalidChar=DefaultInvalidReplaceChar)
         {
-            var n = new string(name.Select(x => InvalidChars.Contains(x) ? invalidRelpaceChar : x).ToArray());
-            return n;
+            int i = 0;
+            return string.Create(name.Length, name, (x, y) =>
+            {
+                var c = y[i];
+                if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z')
+                {
+                    x[i] = c;
+                }
+                else if (InvalidChars.Contains(c))
+                {
+                    x[i] = invalidChar;
+                }
+                else
+                {
+                    x[i] = c;
+                }
+                i++;
+            });
         }
+#else
+        public unsafe static string EnsureName(string name,char invalidChar=DefaultInvalidReplaceChar)
+        {
+            char* arr = stackalloc char[name.Length];
+            var len = name.Length;
+            fixed (char* ptr = name)
+            {
+                char c;
+                for (int i = 0; i < len; i++)
+                {
+                    c = ptr[i];
+                    if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c < 'Z')
+                    {
+                        *(arr + i) = c;
+                    }
+                    else if (InvalidChars.Contains(c))
+                    {
+                        *(arr + i) = invalidChar;
+                    }
+                    else
+                    {
+                        *(arr + i) = c;
+                    }
+                }
+            }
+            return new string(arr);
+        }
+
+#endif
     }
 }

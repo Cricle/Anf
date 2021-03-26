@@ -23,7 +23,6 @@ namespace Kw.Comic.Render
                 throw new InvalidOperationException("Does't accept not loaded visiting!");
             }
             this.scope = scope;
-            recyclableMemoryStreamManager = scope.ServiceProvider.GetRequiredService<RecyclableMemoryStreamManager>();
             ComicEntity = visiting.Entity;
             chapterSlots = visiting.CreateChapterSlots();
 
@@ -36,7 +35,6 @@ namespace Kw.Comic.Render
 
         }
         private IComicChapterManager<TResource> currentComicVisitor;
-        protected readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         protected readonly ChapterSlots<TResource> chapterSlots;
         protected readonly IServiceScope scope;
         private TImage converImage;
@@ -96,14 +94,6 @@ namespace Kw.Comic.Render
         public ICommand NextChapterCommand { get; }
         public ICommand PrevChapterCommand { get; }
 
-        public bool CheckChapterIndex(int index)
-        {
-            if (chapterSlots.Size == 0)
-            {
-                return false;
-            }
-            return index >= 0 && index < chapterSlots.Size;
-        }
         public bool CheckPageIndex(int index)
         {
             var slot = PageSlots;
@@ -111,7 +101,7 @@ namespace Kw.Comic.Render
             {
                 return false;
             }
-            return index >= 0 && index < slot.Size;
+            return slot.IsInRange(index);
         }
         public void GoPage(ComicPage page)
         {
@@ -155,7 +145,7 @@ namespace Kw.Comic.Render
         }
         public async void GoChapter(int index)
         {
-            if (!CheckChapterIndex(index))
+            if (!chapterSlots.IsInRange(index))
             {
                 return;
             }

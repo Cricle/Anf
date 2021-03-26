@@ -12,6 +12,16 @@ namespace Kw.Comic.Engine.Easy
 {
     public static class ComicHostExtensions
     {
+        public static async Task<IComicVisiting<T>> GetVisitingAndLoadAsync<T>(this IServiceProvider host, string address)
+        {
+            var visi = host.GetRequiredService<IComicVisiting<T>>();
+            var r = await visi.LoadAsync(address);
+            if (r)
+            {
+                return visi;
+            }
+            return null;
+        }
         public static IComicVisiting<TResource> CreateVisiting<TResource>(this IServiceProvider host,
             IResourceFactoryCreator<TResource> resourceFactoryCreator)
         {

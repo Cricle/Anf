@@ -7,8 +7,6 @@ import { RouterModule } from '@angular/router';
 import { NgZorroAntdModule, NzDrawerModule, NzIconModule} from 'ng-zorro-antd'
 
 import { ComicApiService } from './comic-api/comic-api.service';
-import { ComicManager } from './comic-api/comic-mgr'
-import { ComicWsService } from './comic-ws/comic-ws.service';
 import { AppComponent } from './app.component';
 import { NavMenuComponent } from './nav-menu/nav-menu.component';
 import { HomeComponent } from './home/home.component';
@@ -47,14 +45,12 @@ import { WatchingComponent } from './watching/watching/watching.component'
       { path: 'download', component: DownloadComponent },
       { path: 'about', component: AboutComponent },
       { path: 'ref', component: ReferenceComponent },
-      { path: 'w/:ref', component:WatchingComponent}
+      { path: 'w/:ref/:chp', component:WatchingComponent}
     ]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
-    ComicApiService,
-    ComicWsService,
-    ComicManager
+    ComicApiService
   ],
   bootstrap: [AppComponent]
 })

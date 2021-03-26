@@ -1,20 +1,15 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Win32;
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
 using Kw.Comic.Engine.Easy.Visiting;
-using Microsoft.IO;
 using System.Windows.Media;
 using Kw.Comic.Engine.Easy;
 using Kw.Comic.Render;
@@ -94,7 +89,7 @@ namespace Kw.Comic.Wpf.ViewModels
                 var client = AppEngine.Provider.GetRequiredService<HttpClient>();
                 using (var str = await client.GetAsync(new Uri(ComicEntity.ImageUrl)))
                 {
-                    convertStream = recyclableMemoryStreamManager.GetStream();
+                    convertStream = new MemoryStream();
                     var buffer = await str.Content.ReadAsStreamAsync();
                     await buffer.CopyToAsync(convertStream);
                     ConverImage = convertStream.AsBitmapImage(true);

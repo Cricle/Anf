@@ -15,8 +15,8 @@ namespace Kw.Comic.Engine
         }
         public static async Task<Task[]> RunVoidAsync(Func<Task>[] maxBlocks, int concurrent = 5)
         {
-            var tasks = new List<Task>();
-            var runningQuene = new List<Task>();
+            var tasks = new List<Task>(concurrent);
+            var runningQuene = new List<Task>(concurrent);
             var pos = 0;
             while (tasks.Count < maxBlocks.Length && pos < maxBlocks.Length)
             {

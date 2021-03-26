@@ -17,7 +17,7 @@ namespace Kw.Comic.Engine.Easy.Store
 
         private readonly IAddressToFileNameProvider addressToFileNameProvider;
         private readonly LruCacher<string, FileInfo> addressToFileMap;
-        private readonly ConcurrentDictionary<string, DirectoryInfo> domainFolders;
+        private readonly LruCacher<string, DirectoryInfo> domainFolders;
 
         public FileStoreService(DirectoryInfo folder,
             IAddressToFileNameProvider addressToFileNameProvider,
@@ -26,7 +26,7 @@ namespace Kw.Comic.Engine.Easy.Store
             Folder = folder;
             PathHelper.EnsureCreated(folder.FullName);
             addressToFileMap = new LruCacher<string, FileInfo>(cacheSize);
-            domainFolders = new ConcurrentDictionary<string, DirectoryInfo>();
+            domainFolders = new LruCacher<string, DirectoryInfo>(cacheSize);
             this.addressToFileNameProvider = addressToFileNameProvider ?? throw new ArgumentNullException(nameof(addressToFileNameProvider));
         }
 
@@ -43,9 +43,9 @@ namespace Kw.Comic.Engine.Easy.Store
         {
             var host = GetHost(address);
             host = PathHelper.EnsureName(host);
-            var folder = domainFolders.GetOrAdd(host, x =>
+            var folder = domainFolders.GetOrAdd(host, () =>
             {
-                var path = Path.Combine(Folder.FullName, x);
+                var path = Path.Combine(Folder.FullName, host);
                 var dirInfo = new DirectoryInfo(path);
                 if (!dirInfo.Exists)
                 {
