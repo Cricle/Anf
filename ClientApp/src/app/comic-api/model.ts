@@ -8,12 +8,13 @@ export interface EntityResult<T> extends Result {
     data: T;
 }
 export interface EntitySetResult<T> extends Result {
-    data: T;
+    datas: T;
     total: number;
     skip: number | null;
     take: number | null;
 }
 export interface SetResult<T> extends EntitySetResult<T[]> {
+
 }
 
 export interface ComicInfo {
@@ -74,4 +75,8 @@ export interface Bookshelf{
     readPage:number;
     createTime:number;
     entity:ComicEntity;
+}
+export interface BookshelfInfo{
+    bookshelf:Bookshelf;
+    append:boolean;
 }

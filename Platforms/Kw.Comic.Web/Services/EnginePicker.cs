@@ -29,16 +29,16 @@ namespace Kw.Comic.Web.Services
         public string GetProviderIdentity(string address)
         {
             var type = comicEngine.GetComicSourceProviderType(address);
-            return type?.ProviderType.Name;
+            return type?.EnginName;
         }
         public async Task<string> GetImageStreamAsync(string provider, string address)
         {
             var url=await storeService.GetPathAsync(address);
-            if (url!=null)
+            if (File.Exists(url))
             {
                 return url;
             }
-            var type = comicEngine.FirstOrDefault(x => x.ProviderType.Name == provider);
+            var type = comicEngine.FirstOrDefault(x => x.EnginName== provider);
             if (type == null)
             {
                 return null;

@@ -90,7 +90,7 @@ namespace Kw.Comic.ViewModels
                 {
                     Bookshelves.Clear();
                 }
-                var datas = await bookshelfService.FindBookShelfAsync(Keyword, CurrentPage * PageSize, PageSize);
+                var datas = await bookshelfService.FindBookShelfAsync(CurrentPage * PageSize, PageSize);
                 Total = datas.Total;
                 foreach (var item in datas.Datas)
                 {

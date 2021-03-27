@@ -10,7 +10,7 @@ export interface IComicApiService {
     getEngine(address: string): Observable<EntityResult<string>>;
     makePageUrl(address: string, engineName: string): string;
 
-    findBookShelf(key?: string, skip?: number, take?: number): Observable<SetResult<Bookshelf>>;
+    findBookShelf(skip?: number, take?: number): Observable<SetResult<Bookshelf>>;
     removeBookShelf(address: string): Observable<Result>;
     clearBookShelf(): Observable<Result>;
     addBookShelf(address: string): Observable<Result>;

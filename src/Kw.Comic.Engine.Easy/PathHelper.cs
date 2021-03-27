@@ -28,23 +28,25 @@ namespace Kw.Comic.Engine.Easy
 #if NETSTANDARD2_1
         public unsafe static string EnsureName(string name,char invalidChar=DefaultInvalidReplaceChar)
         {
-            int i = 0;
             return string.Create(name.Length, name, (x, y) =>
             {
-                var c = y[i];
-                if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z')
+                for (int i = 0; i < x.Length; i++)
                 {
-                    x[i] = c;
+                    var c = y[i];
+
+                    if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z')
+                    {
+                        x[i] = c;
+                    }
+                    else if (InvalidChars.Contains(c))
+                    {
+                        x[i] = invalidChar;
+                    }
+                    else
+                    {
+                        x[i] = c;
+                    }
                 }
-                else if (InvalidChars.Contains(c))
-                {
-                    x[i] = invalidChar;
-                }
-                else
-                {
-                    x[i] = c;
-                }
-                i++;
             });
         }
 #else

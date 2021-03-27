@@ -4,7 +4,7 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
-import { NgZorroAntdModule, NzDrawerModule, NzIconModule} from 'ng-zorro-antd'
+import { NgZorroAntdModule} from 'ng-zorro-antd';
 
 import { ComicApiService } from './comic-api/comic-api.service';
 import { AppComponent } from './app.component';
@@ -20,6 +20,7 @@ import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { WatchingComponent } from './watching/watching/watching.component'
+import { ComicManager } from './comic-api/comic-mgr';
 
 @NgModule({
   declarations: [
@@ -45,12 +46,13 @@ import { WatchingComponent } from './watching/watching/watching.component'
       { path: 'download', component: DownloadComponent },
       { path: 'about', component: AboutComponent },
       { path: 'ref', component: ReferenceComponent },
-      { path: 'w/:ref/:chp', component:WatchingComponent}
+      { path: 'w', component:WatchingComponent}
     ]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
   providers: [
-    ComicApiService
+    ComicApiService,
+    ComicManager
   ],
   bootstrap: [AppComponent]
 })

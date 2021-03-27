@@ -29,13 +29,17 @@ namespace Kw.Comic.Engine.Dm5
             this.networkAdapter = networkAdapter;
             this.v8 = v8;
         }
-
+        private static readonly Dictionary<string, string> headers = new Dictionary<string, string>
+        {
+            ["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4437.0 Safari/537.36 Edg/91.0.831.1",
+        };
         protected virtual Task<Stream> GetStreamAsync(string address)
         {
             return networkAdapter.GetStreamAsync(new RequestSettings
             {
                 Address = address,
-                Referrer = GetBaseAddress()
+                Host= new Uri(address).Host,
+                Headers= headers
             });
         }
 

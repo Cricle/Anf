@@ -2,13 +2,13 @@
     <div class="container" style="display: flex;justify-content: center;">
         <div style="width: 600px;">
             <nz-input-group nzSize="default" [nzSuffix]="suffixIcon">
-                <input placeholder="Search or search!" nz-input [nzAutocomplete]="auto" [(ngModel)]='address' (keyup)='onSearchEmit($event)'/>
+                <input placeholder="Search or search!" nz-input [nzAutocomplete]="auto" [(ngModel)]='mgr.keyword' (keyup)='onSearchEmit($event)'/>
             </nz-input-group>
             <ng-template #suffixIcon>
-                <i nz-icon nzType="search" (onclick)='search()' [class.disabled]='searching?"disabled":""'></i>
+                <i nz-icon nzType="search" (onclick)='mgr.searchComic()' [class.disabled]='mgr.searching?"disabled":""'></i>
             </ng-template>
             <nz-autocomplete #auto>
-                <nz-auto-option *ngFor="let option of this.suggest" [nzValue]="option.sources[0].targetUrl">
+                <nz-auto-option *ngFor="let option of mgr.snapshots" [nzValue]="option.sources[0].targetUrl">
                     <div>
                         <a [href]="option.sources[0].targetUrl" target="_blank" nz-tooltip [nzTooltipTitle]="option.descript">
                             {{option.name}}
@@ -18,17 +18,17 @@
             </nz-autocomplete>
         </div>
     </div>
-    <div style="margin-top: 20px;" *ngIf='!searching'>
+    <div style="margin-top: 20px;" *ngIf='!mgr.searching'>
         <article nz-typography>
             <h5 nz-typography style="text-align: center;">
                 You can try input keyword to visit.
             </h5>
         </article>
     </div>
-    <div *ngIf='searching'>
+    <div *ngIf='mgr.searching'>
         <article nz-typography style="text-align: center;">
             <h5 nz-typography>
-                I've worked hard If you do't want to wait me, you can go <a [href]='this.linkAddress'>link</a> to see it.
+                I've worked hard If you do't want to wait me, you can go <a [href]='mgr.keyword'>link</a> to see it.
             </h5>
         </article>
     </div>

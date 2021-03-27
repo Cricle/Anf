@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Kw.Comic.Views;
+using System;
 using Xamarin.Forms;
 using Xamarin.Forms.Xaml;
 
@@ -11,7 +12,7 @@ namespace Kw.Comic
             InitializeComponent();
             AppEngine.Reset();
             AppEngine.AddServices();
-            MainPage = new MainPage();
+            MainPage = new HomePage();
         }
 
         protected override void OnStart()

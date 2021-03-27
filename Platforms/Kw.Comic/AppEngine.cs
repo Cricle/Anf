@@ -9,6 +9,7 @@ using Microsoft.Data.Sqlite;
 using Kw.Comic.Engine.Easy.Visiting;
 using Xamarin.Forms;
 using Kw.Comic.Engine.Easy.Store;
+using Kw.Comic.ViewModels;
 
 namespace Kw.Comic
 {
@@ -44,6 +45,9 @@ namespace Kw.Comic
             var store = FileStoreService.FromMd5Default(XComicConst.CacheFolderPath);
 
             Services.AddSingleton<IBookshelfService, BookshelfService>();
+            Services.AddScoped<HomeViewModel>();
+            Services.AddScoped<BookshelfViewModel>();
+            Services.AddScoped<VisitingViewModel>();
             Services.AddLogging();
             Services.AddSingleton<IComicVisiting<ImageSource>, ComicVisiting<ImageSource>>();
             Services.AddEasyComic(type);

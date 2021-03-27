@@ -24,11 +24,10 @@ namespace Kw.Comic.Web.Controllers
         }
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(SetResult<Bookshelf[]>),200)]
-        public async Task<IActionResult> Find([FromQuery]string key,
-            [FromQuery]int? skip,
+        public async Task<IActionResult> Find([FromQuery]int? skip,
             [FromQuery]int? take)
         {
-            var val = await bookshelfService.FindBookShelfAsync(key, skip, take);
+            var val = await bookshelfService.FindBookShelfAsync(skip, take);
             if (val.Datas!=null)
             {
                 foreach (var item in val.Datas)
@@ -65,18 +64,10 @@ namespace Kw.Comic.Web.Controllers
             {
                 return BadRequest();
             }
-            var r = await visitingManager.GetVisitingAsync(address);
-            if (r is null)
-            {
-                return Ok(new EntityResult<Bookshelf> { Code = 1 });
-            }
             var book = new Bookshelf
             {
-                ComicUrl = r.Entity.ComicUrl,
-                CreateTime = DateTime.Now.Ticks,
-                Descript = r.Entity.Descript,
-                ImageUrl = r.Entity.ImageUrl,
-                Name = r.Entity.Name
+                ComicUrl = address,
+                CreateTime = DateTime.Now.Ticks
             };
             await bookshelfService.AddAsync(book);
             return Ok(new EntityResult<Bookshelf> { Data = book });

@@ -34,13 +34,9 @@ namespace Kw.Comic.Services
             return dbContext.Bookshelfs.DeleteFromQueryAsync();
         }
 
-        public async Task<SetResult<Bookshelf>> FindBookShelfAsync(string key, int? skip, int? take)
+        public async Task<SetResult<Bookshelf>> FindBookShelfAsync(int? skip, int? take)
         {
             var query = dbContext.Bookshelfs.AsNoTracking();
-            if (!string.IsNullOrEmpty(key))
-            {
-                query = query.Where(x => EF.Functions.Like(x.Name, $"%{key}%") || EF.Functions.Like(x.Descript, $"%{key}%"));
-            }
             var count = await query.LongCountAsync();
             if (skip != null)
             {

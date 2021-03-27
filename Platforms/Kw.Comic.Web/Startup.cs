@@ -17,6 +17,7 @@ using Kw.Comic.Engine.Easy.Visiting;
 using Kw.Comic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
+using Kw.Comic.Services;
 #if !MiniService
 using Microsoft.OpenApi.Models;
 #endif
@@ -49,15 +50,16 @@ namespace KwC
             services.AddSingleton<IStoreService>(fs);
             services.AddSingleton<IComicSaver>(fs);
             services.AddSingleton(fs);
+            services.AddScoped<IBookshelfService, BookshelfService>();
             services.AddScoped<IComicVisiting<string>, StoreVisiting>();
             services.AddCompressedStaticFiles();
             services.AddDbContext<ComicDbContext>(x =>
             {
                 var builder = new SqliteConnectionStringBuilder();
-                builder.DataSource = XComicConst.DbFilePath;
+                builder.DataSource = XComicConst.DbFileName;
                 x.UseSqlite(builder.ConnectionString);
 
-            }, ServiceLifetime.Singleton);
+            }, ServiceLifetime.Scoped);
             services.AddResponseCompression(x =>
             {
                 x.Providers.Add<GzipCompressionProvider>();
@@ -139,6 +141,12 @@ namespace KwC
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200/");
                 }
             });
+            using (var scope=app.ApplicationServices.GetServiceScope())
+            {
+
+                scope.ServiceProvider.GetRequiredService<ComicDbContext>()
+                .Database.EnsureCreated();
+            }
         }
     }
 }

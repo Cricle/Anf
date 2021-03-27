@@ -14,10 +14,13 @@
   <PropertyGroup Condition="'$(MiniService)'!='false'">
     <DefineConstants>$(DefineConstants);MiniService</DefineConstants>
   </PropertyGroup>
+  <ItemGroup>
+    <None Remove="comic.db3" />
+  </ItemGroup>
   
   <ItemGroup>
     <PackageReference Include="CompressedStaticFiles" Version="2.0.0" />
-    <PackageReference Include="Kw.Comic.Engine.Easy" Version="1.2.1" />
+    <!--<PackageReference Include="Kw.Comic.Engine.Easy" Version="1.2.1" />-->
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
     <PackageReference Include="MimeMapping" Version="1.0.1.37" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.4" />
@@ -40,5 +43,9 @@
     <Compile Include="..\Kw.Comic\Services\BookshelfService.cs" Link="Services\BookshelfService.cs" />
     <Compile Include="..\Kw.Comic\Models\Bookshelf.cs" Link="Models\Bookshelf.cs" />
     <Compile Include="..\Kw.Comic\Services\IBookshelfService.cs" Link="Services\IBookshelfService.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Kw.Comic.Engine.Easy\Kw.Comic.Engine.Easy.csproj" />
+    <ProjectReference Include="..\..\src\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
   </ItemGroup>
 </Project>
