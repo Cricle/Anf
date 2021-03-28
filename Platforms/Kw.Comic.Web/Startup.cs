@@ -11,7 +11,6 @@ using System.IO;
 using System.Reflection;
 using CompressedStaticFiles;
 using Kw.Comic.Engine.Easy.Store;
-using Kw.Comic.Engine.Easy.Downloading;
 using Kw.Comic.Web.Services;
 using Kw.Comic.Engine.Easy.Visiting;
 using Kw.Comic;
@@ -70,8 +69,6 @@ namespace KwC
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            services.AddSignalR()
-                .AddJsonProtocol();
 
 #if !MiniService
             services.AddMiniProfiler(options =>

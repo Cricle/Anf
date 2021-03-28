@@ -1,7 +1,18 @@
-<div style="padding:2% 4% 0 4%">
-    <div *ngIf='this.currentChapter'>
-        <div *ngFor="let item of this.currentChapter.pages;let i=index" [id]='i'>
-            <img class="center-obj" nz-image [src]="this.getPageUrl(item.targetUrl)"/>
+<div class="m-container" style="margin:44px 0 12px 0!important;">
+    <div style="padding:2% 4% 0 4%" *ngIf='entityRef&&entityRef.entity&&currentChapter'>
+        <nz-page-header class="site-page-header" (nzBack)="goBack()" nzBackIcon [nzTitle]="entityRef.entity.name"
+            [nzSubtitle]="currentChapter.chapter.title">
+        </nz-page-header>
+        <nz-pagination [nzPageIndex]="chapterIndef" [nzTotal]="entityRef.entity.chapters.length"
+            (nzPageIndexChange)="goChapter($event)" class="center-txt">
+        </nz-pagination>
+        <div *ngIf='this.currentChapter'>
+            <div *ngFor="let item of this.currentChapter.pages;let i=index" [id]='i'>
+                <img class="center-obj" nz-image [src]="this.getPageUrl(item.targetUrl)" />
+            </div>
         </div>
+        <nz-pagination [nzPageIndex]="chapterIndef" [nzTotal]="entityRef.entity.chapters.length"
+            (nzPageIndexChange)="goChapter($event)" class="center-txt">
+        </nz-pagination>
     </div>
 </div>

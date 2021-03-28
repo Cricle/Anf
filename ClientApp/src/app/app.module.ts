@@ -21,6 +21,7 @@ import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
 import { WatchingComponent } from './watching/watching/watching.component'
 import { ComicManager } from './comic-api/comic-mgr';
+import { RelayComicComponent } from './relay-comic/relay-comic/relay-comic.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +34,8 @@ import { ComicManager } from './comic-api/comic-mgr';
     GiantScreenComponent,
     AnalysisStatusComponent,
     AnalysisSearchComponent,
-    WatchingComponent
+    WatchingComponent,
+    RelayComicComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

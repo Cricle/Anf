@@ -4,6 +4,7 @@ import { ComicApiService } from '../../comic-api/comic-api.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 import { ChapterWithPage, ComicEntity, ComicEntityRef, ComicInfo, ComicRef } from '../../comic-api/model';
+import { Title } from '_@angular_platform-browser@8.2.12@@angular/platform-browser';
 @Component({
   selector: 'app-watching',
   templateUrl: './watching.component.html',
@@ -13,6 +14,7 @@ export class WatchingComponent implements OnInit {
   private _nav: ActivatedRoute;
   private _apiSer:ComicApiService;
   private _notify:NzNotificationService;
+  private _title:Title;
   private ref:string;
   
   chapterIndef:number;
@@ -21,7 +23,8 @@ export class WatchingComponent implements OnInit {
 
   constructor(nav: ActivatedRoute,
     apiSer:ComicApiService,
-    notify:NzNotificationService) {
+    notify:NzNotificationService,
+    title:Title) {
     this._notify=notify;
     this._apiSer=apiSer;
     this._nav = nav;
@@ -34,16 +37,27 @@ export class WatchingComponent implements OnInit {
       this.initReadyModel();
     });
   }
+  private updateTitle(){
+    this._title.setTitle(this.entityRef.entity.name+' - '+this.currentChapter.chapter.title);
+  }
 
   ngOnInit(): void {
   }
   private loadChapter(){
     this._apiSer.getChapter(this.entityRef.entity.comicUrl,this.chapterIndef).subscribe(x=>{
       this.currentChapter=x.data;
+      this.updateTitle();
     });
   }
   getPageUrl(url:string):string{
     return this._apiSer.makePageUrl(url,this.entityRef.engineName);
+  }
+  goChapter(index:number){
+    this.chapterIndef=index;
+    this.loadChapter();
+  }
+  goBack(){
+    history.back();
   }
   private initReadyModel(){
     if (this.ref&&(this.ref.startsWith('http://')||this.ref.startsWith('https://')||this.ref.startsWith('www'))) {

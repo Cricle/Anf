@@ -22,18 +22,18 @@
                                 [nzShowInfo]='false'></nz-progress>
                         </div>
                         <div>
-                            <a [href]="i.bookshelf.entity.comicUrl" style="margin-right:10px;">{{i.bookshelf.entity.name}}</a>
+                            <a [routerLink]="['/w']" [queryParams]="{ref:i.bookshelf.entity.comicUrl}" style="margin-right:10px;">{{i.bookshelf.entity.name}}</a>
                             <nz-spin *ngIf='i.bookshelf.readChapter+1!=i.bookshelf.entity.chapters.length' nzSimple
                                 [nzIndicator]="indicatorTemplate" style="display: inline-block;">
                             </nz-spin>
-                            <button nz-button nzType="text" nzDanger (click)='this.showInfo(i.bookshelf)'>
+                            <button nz-button nzType="text" nzDanger (click)='relay.showInfo(i.bookshelf)'>
                                 <i nz-icon nzType="check" nzTheme="outline"></i>
                             </button>
                             <button nz-button nzType="text" nzDanger 
                             nz-popconfirm
                             nzPopconfirmTitle="Are you sure remove this bookshelf?"
                             nzPopconfirmPlacement="bottom"
-                            (nzOnConfirm)="this.remove(i.bookshelf)">
+                            (nzOnConfirm)="relay.remove(i.bookshelf)">
                                 <i nz-icon nzType="close" nzTheme="outline"></i>
                             </button>
                         </div>
@@ -43,43 +43,8 @@
         </div>
     </div>
 </div>
-<nz-drawer *ngIf='this.drawerVisible' [(nzVisible)]='this.drawerVisible'
-    [nzTitle]='this.drawerBookshelf&&this.drawerBookshelf.entity.name' [nzClosable]="true" (nzOnClose)='this.drawerVisible=false'
-    [nzWidth]='drawerWith'>
-    <ng-container>
-        <div *ngIf='this.drawerBookshelf.entity!=null'>
-            
-        <div style="float: right">
-            <button nz-button style="margin-right: 8px;" *ngIf='drawerIsInBookshelf' (click)="remove(this.drawerBookshelf)">
-                Remove
-            </button>
-            <button nz-button nzType="primary" *ngIf='!drawerIsInBookshelf' (click)="add(this.drawerBookshelf.entity.comicUrl)">
-                Add
-            </button>
-        </div>
-            <p nz-typography>
-                <nz-tag nzColor="#EEE">
-                    <a [href]="this.drawerBookshelf.entity.comicUrl" target="_blank">Origin link</a>
-                </nz-tag>
-                <nz-tag nzColor="#ABC">
-                    <a [href]='this.drawerBookshelf.entity.imageUrl' target="_blank">Logo Image Link</a>
-                </nz-tag>
-            </p>
-            <h4 nz-typography>Description</h4>
-            <p nz-typography nzEllipsis nzExpandable [nzEllipsisRows]="3">
-                {{this.drawerBookshelf.entity.descript}}
-            </p>
-            <h4 nz-typography>Chapters (<strong>{{this.drawerBookshelf.entity.chapters.length}}</strong>)</h4>
-            <div>
-                <ul nz-list [nzDataSource]="this.drawerBookshelf.entity.chapters" nzBordered nzSize="large">
-                    <nz-list-item *ngFor="let item of this.drawerBookshelf.entity.chapters">
-                        <span nz-typography>{{ item.title }}</span>
-                        <a [href]="item.targetUrl">Go</a>                      
-                    </nz-list-item>
-                </ul>
-            </div>
-        </div>
-    </ng-container>
-</nz-drawer>
+<app-relay-comic #relay [(drawerIsInBookshelf)]='drawerIsInBookshelf'>
+
+</app-relay-comic>
 
 <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
