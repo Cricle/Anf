@@ -8,6 +8,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
         IComicVisitingInterceptor<TResource> VisitingInterceptor { get; set; }
         IResourceFactoryCreator<TResource> ResourceFactoryCreator { get; set; }
         IResourceFactory<TResource> ResourceFactory { get; }
+        IComicSourceProvider SourceProvider { get; }
         string Address { get; }
         IServiceProvider Host { get; }
         ComicEntity Entity { get; }

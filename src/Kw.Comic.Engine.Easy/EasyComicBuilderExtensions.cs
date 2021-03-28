@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static void AddStreamVisitor(this IServiceCollection services)
         {
-            services.AddSingleton<IResourceFactoryCreator<Stream>>(StreamResourceFactory.Default);
+            services.AddSingleton<IResourceFactoryCreator<Stream>>(StreamResourceFactoryCreator.Default);
             services.AddSingleton<IComicVisiting<Stream>, ComicVisiting<Stream>>();
         }
         public static void AddDefaultEasyComic(this IServiceCollection services, NetworkAdapterTypes networkAdapterType = NetworkAdapterTypes.HttpClient)

@@ -17,65 +17,7 @@ namespace Kw.Comic.Engine.Networks
     {
         Task<Stream> GetStreamAsync(RequestSettings settings);
     }
-    public class HttpClientAdapter : INetworkAdapter
-    {
-        private readonly HttpClient httpClient;
-
-        public HttpClientAdapter(HttpClient httpClient)
-        {
-            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-        }
-
-        public async Task<Stream> GetStreamAsync(RequestSettings settings)
-        {
-            var req = new HttpRequestMessage();
-            req.RequestUri = new Uri(settings.Address);
-            if (settings.Method!=null)
-            {
-                if (string.Equals("POST",settings.Method, StringComparison.OrdinalIgnoreCase))
-                {
-                    req.Method = HttpMethod.Post;
-                }
-                else if (string.Equals("PUT", settings.Method, StringComparison.OrdinalIgnoreCase))
-                {
-                    req.Method = HttpMethod.Put;
-                }
-                else
-                {
-                    req.Method = HttpMethod.Post;
-                }
-            }
-            if (!string.IsNullOrEmpty(settings.ContentType))
-            {
-                req.Headers.Add("Content-Type", settings.ContentType);
-            }
-            if (!string.IsNullOrEmpty(settings.Host))
-            {
-                req.Headers.Host=settings.Host;
-            }
-            if (!string.IsNullOrEmpty(settings.Referrer))
-            {
-                req.Headers.Referrer = new Uri(settings.Referrer);
-            }
-            if (settings.Headers!=null)
-            {
-                foreach (var item in settings.Headers)
-                {
-                    req.Headers.Add(item.Key, item.Value);
-                }
-            }
-            if (settings.Data != null)
-            {
-                req.Content = new StreamContent(settings.Data);
-                req.Content.Headers.ContentType = new MediaTypeHeaderValue(settings.ContentType);
-            }
-            var rep = await httpClient.SendAsync(req);
-            return await rep.Content.ReadAsStreamAsync();
-        }
-    }
 #if !NETSTANDARD1_3
-
-
     public class WebRequestAdapter : INetworkAdapter
     {
         public async Task<Stream> GetStreamAsync(RequestSettings settings)
@@ -105,25 +47,25 @@ namespace Kw.Comic.Engine.Networks
             {
                 req.Headers.Add("Referrer", "https://www.dmzj.com/");
             }
-            if (settings.Timeout>0)
+            if (settings.Timeout > 0)
             {
                 req.Timeout = settings.Timeout;
             }
-            if (settings.Data!=null)
+            if (settings.Data != null)
             {
-                using (var s=await req.GetRequestStreamAsync())
+                using (var s = await req.GetRequestStreamAsync())
                 {
                     await settings.Data.CopyToAsync(s);
                 }
             }
-            if (settings.Headers!=null)
+            if (settings.Headers != null)
             {
                 foreach (var item in settings.Headers)
                 {
                     req.Headers.Add(item.Key, item.Value);
                 }
             }
-            var rep=await req.GetResponseAsync();
+            var rep = await req.GetResponseAsync();
             return rep.GetResponseStream();
         }
     }

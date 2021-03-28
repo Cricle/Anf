@@ -1,17 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using HtmlAgilityPack;
+using JavaScriptEngineSwitcher.Core;
+using Kw.Comic.Engine.Networks;
+using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using JavaScriptEngineSwitcher.Core;
-using HtmlAgilityPack;
-#if StandardLib
+#if NETSTANDARD2_0
 using System.Web;
-using System.Text.Json;
-#else
-using Newtonsoft.Json.Linq;
 #endif
-using System.IO;
-using Kw.Comic.Engine.Networks;
 
 namespace Kw.Comic.Engine.Dmzj
 {
@@ -123,24 +120,10 @@ namespace Kw.Comic.Engine.Dmzj
                 var sc = match.Groups[0].Value + ";pages;";
                 var strx = v8.Evaluate(sc)?.ToString();
                 string[] inn = null;
-#if StandardLib
-                var doc = JsonDocument.Parse(strx);
+                var visitor = JsonVisitor.FromString(strx);
                 try
                 {
 
-                    var visitor = new JsonVisitor(doc.RootElement);
-#else
-                    JToken token = null;
-                    if (strx.StartsWith("{"))
-                    {
-                        token = JObject.Parse(strx);
-                    }
-                    else
-                    {
-                        token = JArray.Parse(strx);
-                    }
-                    var visitor = new JsonVisitor(token);
-#endif
                     if (strx.StartsWith("{"))
                     {
                         inn = visitor["page_url"].ToString().Split('\n');
@@ -159,14 +142,11 @@ namespace Kw.Comic.Engine.Dmzj
                             TargetUrl = "https://images.dmzj.com/" + val
                         });
                     }
-#if StandardLib
                 }
                 finally
                 {
-
-                    doc.Dispose();
+                    visitor.Dispose();
                 }
-#endif
             }
             return blocks.ToArray();
         }

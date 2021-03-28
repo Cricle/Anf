@@ -9,11 +9,6 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-#if StandardLib
-using System.Text.Json;
-#else
-using Newtonsoft.Json.Linq;
-#endif
 
 namespace Kw.Comic.Engine.Kuaikan
 {
@@ -90,16 +85,11 @@ namespace Kw.Comic.Engine.Kuaikan
             }
             var jsCodesRgx = regex.Match(str);
             var jsCode = jsCodesRgx.Groups[1].Value;
-            var val = jsEngine.Evaluate<string>("var a=JSON.stringify(" + jsCode+");a");
-#if StandardLib
-            var doc = JsonDocument.Parse(val);
-            var visitor = new JsonVisitor(doc.RootElement);
+            var val = jsEngine.Evaluate<string>("var a=JSON.stringify(" + jsCode + ");a");
+            var visitor = JsonVisitor.FromString(val);
             try
             {
-#else
-                var obj = JObject.Parse(val);
-                var visitor = new JsonVisitor(obj);
-#endif
+
                 var info = visitor["data"]
                     .ToArray().First()["res"]["data"]["comic_info"];
                 var comics = info["comic_images"].ToArray();
@@ -116,13 +106,11 @@ namespace Kw.Comic.Engine.Kuaikan
                     pages.Add(page);
                 }
                 return pages.ToArray();
-#if StandardLib
             }
             finally
             {
-
+                visitor.Dispose();
             }
-#endif
         }
 
         public Task<Stream> GetImageStreamAsync(string targetUrl)

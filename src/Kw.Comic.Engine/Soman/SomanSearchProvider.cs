@@ -4,11 +4,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
-#if NETSTANDARD2_0||NET461
-using System.Text.Json;
-#else
-using Newtonsoft.Json.Linq;
-#endif
 
 namespace Kw.Comic.Engine.Soman
 {
@@ -37,15 +32,10 @@ namespace Kw.Comic.Engine.Soman
             {
                 str = sr.ReadToEnd();
             }
-#if StandardLib
-            var doc = JsonDocument.Parse(str);
-            var visitor = new JsonVisitor(doc.RootElement);
+            var visitor = JsonVisitor.FromString(str);
             try
             {
-#else
-                var jobj = JObject.Parse(str);
-                var visitor = new JsonVisitor(jobj);
-#endif
+
                 var total = int.Parse(visitor["Total"].ToString());
                 var items = visitor["Items"].ToArray();
                 var snaps = new List<ComicSnapshot>();
@@ -85,14 +75,11 @@ namespace Kw.Comic.Engine.Soman
                     Support = true,
                     Total = total
                 };
-#if StandardLib
-
             }
             finally
             {
-                doc.Dispose();
+                visitor.Dispose();
             }
-#endif
         }
     }
 }

@@ -1,0 +1,17 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFrameworks>net461;net6.0</TargetFrameworks>
+  </PropertyGroup>
+  <ItemGroup>
+    <!--<PackageReference Include="Kw.Comic.Engine.Easy" Version="1.2.1" />-->
+    <PackageReference Include="Spectre.Cli" Version="0.49.0" />
+    <PackageReference Include="Spectre.Console" Version="0.38.0" />
+    <PackageReference Include="Spectre.Console.ImageSharp" Version="0.38.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\Kw.Comic.Engine.Easy\Kw.Comic.Engine.Easy.csproj" />
+    <ProjectReference Include="..\..\src\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
+  </ItemGroup>
+</Project>

@@ -32,7 +32,7 @@ namespace Kw.Comic.Engine.Easy
         {
             if (resourceFactoryCreator==null)
             {
-                resourceFactoryCreator = StreamResourceFactory.Default;
+                resourceFactoryCreator = StreamResourceFactoryCreator.Default;
             }
             return new ComicVisiting<Stream>(host, resourceFactoryCreator);
         }

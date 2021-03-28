@@ -20,7 +20,14 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "src/tsconfig.app.json",
-            "assets": ["src/assets", "src/manifest.webmanifest"],
+            "assets": [
+              "src/assets", 
+              "src/manifest.webmanifest",{
+                "glob": "**/*",
+                "input": "./node_modules/@ant-design/icons-angular/src/inline-svg/",
+                "output": "/assets/"
+              }
+            ],
             "styles": [
               "src/assets/css/ng-zorro-antd.dark.min.css",
               "node_modules/ng-zorro-antd/ng-zorro-antd.min.css",

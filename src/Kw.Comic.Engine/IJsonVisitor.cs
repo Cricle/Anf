@@ -1,8 +1,9 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Kw.Comic.Engine
 {
-    public interface IJsonVisitor
+    public interface IJsonVisitor : IDisposable
     {
         IJsonVisitor this[string key] { get; }
 
