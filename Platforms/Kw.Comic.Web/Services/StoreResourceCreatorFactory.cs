@@ -4,7 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
 using System.Threading.Tasks;
 
-namespace KwC.Services
+namespace Kw.Comic.Web.Services
 {
     public class StoreResourceCreatorFactory : IResourceFactoryCreator<string>
     {

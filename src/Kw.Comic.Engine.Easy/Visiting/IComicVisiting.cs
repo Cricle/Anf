@@ -13,7 +13,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
         IServiceProvider Host { get; }
         ComicEntity Entity { get; }
 
-
+        void EraseChapter(int index);
         Task LoadChapterAsync(int index);
         Task<bool> LoadAsync(string address);
         Task<IComicChapterManager<TResource>> GetChapterManagerAsync(int index);

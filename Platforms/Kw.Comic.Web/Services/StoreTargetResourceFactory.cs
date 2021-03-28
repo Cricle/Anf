@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Channels;
 using System.Threading.Tasks;
 
-namespace KwC.Services
+namespace Kw.Comic.Web.Services
 {
     public class StoreTargetResourceFactory : IResourceFactory<string>
     {

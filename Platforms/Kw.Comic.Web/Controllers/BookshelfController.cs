@@ -40,6 +40,18 @@ namespace Kw.Comic.Web.Controllers
         }
         [HttpPost("[action]")]
         [ProducesResponseType(typeof(Result), 200)]
+        public async Task<IActionResult> UpdateIndex([FromForm]string address,
+            [FromForm]int chapterIndex,[FromForm]int? pageIndex)
+        {
+            if (address is null || !address.IsWebsite())
+            {
+                return BadRequest();
+            }
+            var res = await bookshelfService.SetChapterAsync(address, chapterIndex, pageIndex);
+            return Ok(new Result { Code = res == 0 ? 1 : 0 });
+        }
+        [HttpPost("[action]")]
+        [ProducesResponseType(typeof(Result), 200)]
         public async Task<IActionResult> Remove([FromForm]string address)
         {
             if (address is null || !address.IsWebsite())

@@ -11,6 +11,7 @@ export interface IComicApiService {
     makePageUrl(address: string, engineName: string): string;
 
     findBookShelf(skip?: number, take?: number): Observable<SetResult<Bookshelf>>;
+    updateIndex(address:string,chapterIndex:number,pageIndex?:number):Observable<Result>;
     removeBookShelf(address: string): Observable<Result>;
     clearBookShelf(): Observable<Result>;
     addBookShelf(address: string): Observable<Result>;

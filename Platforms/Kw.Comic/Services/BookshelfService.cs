@@ -28,7 +28,15 @@ namespace Kw.Comic.Services
                 .Take(1)
                 .DeleteFromQueryAsync();
         }
-
+        public Task<int> SetChapterAsync(string address,int chapterIndex,int? pageIndex)
+        {
+            return dbContext.Bookshelfs.Where(x => x.ComicUrl == address)
+                .UpdateFromQueryAsync(x => new Bookshelf
+                {
+                    ReadChapter = chapterIndex,
+                    ReadPage = pageIndex ?? x.ReadPage
+                });
+        }
         public Task<int> ClearAsync()
         {
             return dbContext.Bookshelfs.DeleteFromQueryAsync();

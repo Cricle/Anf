@@ -11,7 +11,7 @@ namespace Kw.Comic
     {
         public static void AddCoreServices(this IServiceCollection services,string storePath)
         {
-            services.AddSingleton<IResourceFactoryCreator<Stream>>(StreamResourceFactory.Default);
+            services.AddSingleton<IResourceFactoryCreator<Stream>>(StreamResourceFactoryCreator.Default);
             var fs = FileStoreService.FromMd5Default(storePath);
             services.AddSingleton<IStoreService>(fs);
             services.AddSingleton<IComicSaver>(fs);

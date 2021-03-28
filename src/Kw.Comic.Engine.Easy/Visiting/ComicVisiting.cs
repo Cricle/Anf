@@ -77,7 +77,10 @@ namespace Kw.Comic.Engine.Easy.Visiting
         {
             return sourceProvider.GetPagesAsync(chapter.TargetUrl);
         }
-        
+        public void EraseChapter(int index)
+        {
+            Interlocked.CompareExchange(ref chapterWithPages[index], null, chapterWithPages[index]);
+        }
         public async Task LoadChapterAsync(int index)
         {
             if (chapterWithPages[index] != null)

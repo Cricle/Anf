@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "KwC": {
+    "Kw.Comic.Web: {
       "commandName": "Project",
       "launchBrowser": false,
       "environmentVariables": {

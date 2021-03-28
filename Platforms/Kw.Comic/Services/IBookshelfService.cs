@@ -9,6 +9,7 @@ namespace Kw.Comic.Services
         Task AddAsync(Bookshelf bookshelf);
         Task<int> ClearAsync();
         Task<SetResult<Bookshelf>> FindBookShelfAsync(int? skip, int? take);
+        Task<int> SetChapterAsync(string address, int chapterIndex, int? pageIndex);
         Task<int> RemoveAsync(string address);
     }
 }

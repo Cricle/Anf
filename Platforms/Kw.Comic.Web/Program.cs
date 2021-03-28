@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Hosting;
 using System.Threading.Tasks;
 
-namespace KwC
+namespace Kw.Comic.Web
 {
 
     public class Program

@@ -47,6 +47,13 @@ export class ComicApiService implements IComicApiService{
     }
     return this.http.get<SetResult<Bookshelf>>(`${bookPart}/Find?`+queryStr);
   }
+  public updateIndex(address:string,chapterIndex:number,pageIndex?:number):Observable<Result>{
+    let queryStr='chapterIndex='+chapterIndex;
+    if (pageIndex) {
+      queryStr=queryStr+'&pageIndex='+pageIndex;
+    }
+    return this.http.get<Result>(`${bookPart}/UpdateIndex?address=${encodeURIComponent(address)}?${queryStr}`);
+  }
   public removeBookShelf(address:string):Observable<Result>{
     const form=new FormData();
     form.append('address',address);

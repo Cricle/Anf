@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <PropertyGroup>
-    <DocumentationFile>C:\Users\HuaJi\Desktop\cs\KwC\KwC.xml</DocumentationFile>
+    <DocumentationFile>C:\Users\HuaJi\Desktop\cs\Kw.Comic.WebKwC.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MiniService)'!='false'">
     <DefineConstants>$(DefineConstants);MiniService</DefineConstants>
@@ -34,7 +34,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Results\" />
-    <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Kw.Comic\ComicDbContext.cs" Link="ComicDbContext.cs" />

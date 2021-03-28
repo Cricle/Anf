@@ -30,8 +30,7 @@ namespace Kw.Comic.Web.Services
         private IComicVisiting<string> MakeVisiting()
         {
             var factory = serviceProvider.GetRequiredService<IResourceFactoryCreator<string>>();
-            var cacher = serviceProvider.GetRequiredService<ComicDetailCacher>();
-            return new StoreVisiting(serviceProvider, factory, cacher);
+            return new ComicVisiting<string>(serviceProvider, factory);
         }
 
         public async Task<IComicVisiting<string>> GetVisitingAsync(string address)

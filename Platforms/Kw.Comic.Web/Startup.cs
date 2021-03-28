@@ -1,5 +1,4 @@
 ﻿using Kw.Comic.Engine.Easy;
-using KwC.Services;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.ResponseCompression;
@@ -21,7 +20,7 @@ using Kw.Comic.Services;
 using Microsoft.OpenApi.Models;
 #endif
 
-namespace KwC
+namespace Kw.Comic.Web
 {
     public class Startup
     {
@@ -41,7 +40,6 @@ namespace KwC
             services.AddSingleton<StoreResourceCreatorFactory>();
 
             services.AddControllersWithViews();
-            services.AddSingleton<ComicDetailCacher>();
             services.AddSingleton<EnginePicker>();
             services.AddSingleton<IResourceFactoryCreator<string>,StoreResourceCreatorFactory>();
             services.AddSingleton(x=>new VisitingManager(x));
@@ -50,7 +48,7 @@ namespace KwC
             services.AddSingleton<IComicSaver>(fs);
             services.AddSingleton(fs);
             services.AddScoped<IBookshelfService, BookshelfService>();
-            services.AddScoped<IComicVisiting<string>, StoreVisiting>();
+            services.AddScoped<IComicVisiting<string>, ComicVisiting<string>>();
             services.AddCompressedStaticFiles();
             services.AddDbContext<ComicDbContext>(x =>
             {
