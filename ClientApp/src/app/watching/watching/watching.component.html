@@ -1,7 +1,7 @@
 <div style="padding:2% 4% 0 4%">
     <div *ngIf='this.currentChapter'>
         <div *ngFor="let item of this.currentChapter.pages;let i=index" [id]='i'>
-            <img nz-image [src]="this.getPageUrl(item.targetUrl)"/>
+            <img class="center-obj" nz-image [src]="this.getPageUrl(item.targetUrl)"/>
         </div>
     </div>
 </div>
