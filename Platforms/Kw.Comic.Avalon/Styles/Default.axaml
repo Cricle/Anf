@@ -1,0 +1,13 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <Design.PreviewWith>
+    <TextBox MinWidth="200">
+      <!-- Add Controls for Previewer Here -->
+    </TextBox>
+  </Design.PreviewWith>
+
+  <!-- Add Styles Here -->
+  <Style Selector="TextBox">
+    
+  </Style>
+</Styles>

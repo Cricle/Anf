@@ -2,11 +2,12 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Kw.Comic.Avalon"
              x:Class="Kw.Comic.Avalon.App">
-    <Application.DataTemplates>
-        <local:ViewLocator/>
-    </Application.DataTemplates>
+  <Application.DataTemplates>
+    <local:ViewLocator/>
+  </Application.DataTemplates>
 
-    <Application.Styles>
-        <FluentTheme Mode="Light"/>
-    </Application.Styles>
+  <Application.Styles>
+    <FluentTheme Mode="Dark"/>
+    <StyleInclude Source="/Styles/Default.axaml"></StyleInclude>
+  </Application.Styles>
 </Application>

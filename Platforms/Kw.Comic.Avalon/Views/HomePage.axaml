@@ -2,17 +2,29 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:Kw.Comic.Avalon.ViewModels"
+             xmlns:vm="using:Kw.Comic.ViewModels"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             Background="Transparent"
              x:Class="Kw.Comic.Avalon.Views.HomePage">
-  <UserControl.DataContext>
-    <vm:HomeViewModel/>
-  </UserControl.DataContext>
+  <Design.DataContext>
+    <vm:HomeViewModel></vm:HomeViewModel>
+  </Design.DataContext>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    <TextBox Text="aaa" Margin="10"/>
+    <AutoCompleteBox HorizontalAlignment="Stretch" Margin="20" Watermark="Search" Text="{Binding Keyword,Mode=TwoWay}">
+      <AutoCompleteBox.KeyBindings>
+        <KeyBinding Command="{Binding SearchCommand}" Gesture="Enter"/>
+      </AutoCompleteBox.KeyBindings>
+    </AutoCompleteBox>
+    <ProgressBar Grid.Row="1" IsIndeterminate="False">
+      
+    </ProgressBar>
+    <ItemsControl Grid.Row="2">
+      
+    </ItemsControl>
   </Grid>
 </UserControl>

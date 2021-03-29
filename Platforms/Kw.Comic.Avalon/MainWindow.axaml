@@ -3,7 +3,22 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+        Background="Transparent"
         x:Class="Kw.Comic.Avalon.MainWindow"
         Title="MainWindow">
-  
+  <NativeMenu.Menu>
+    <NativeMenuItem Header="Edit">
+      <NativeMenuItem.Menu>
+        <NativeMenu>
+          <NativeMenuItem Header="Copy"/>
+          <NativeMenuItem Header="Paste"/>
+        </NativeMenu>
+      </NativeMenuItem.Menu>
+    </NativeMenuItem>
+  </NativeMenu.Menu>
+  <Panel>
+    <Border Name="MainBorder" Margin="0 40 0 20">
+
+    </Border>
+  </Panel>
 </Window>

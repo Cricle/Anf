@@ -12,15 +12,17 @@ namespace Kw.Comic.Engine.Easy.Visiting
 {
     public class ComicVisiting<TResource> : IComicVisiting<TResource>, IDisposable
     {
+        private readonly SemaphoreSlim semaphoreSlim;
+
         private string address;
         private ComicEntity entity;
         private IResourceFactoryCreator<TResource> resourceFactoryCreator;
         private IComicSourceProvider sourceProvider;
         private IResourceFactory<TResource> resourceFactory;
+        private ChapterWithPage[] chapterWithPages;
 
         public IServiceProvider Host { get; }
         public IComicSourceProvider SourceProvider => sourceProvider;
-
         public string Address => address;
         public ComicEntity Entity => entity;
 
@@ -34,8 +36,10 @@ namespace Kw.Comic.Engine.Easy.Visiting
             set => resourceFactoryCreator = value ?? throw new ArgumentNullException("ResourceFactoryCreator can't be null!");
         }
 
-        private readonly SemaphoreSlim semaphoreSlim;
-        private ChapterWithPage[] chapterWithPages;
+        public event Action<ComicVisiting<TResource>, string> Loading;
+        public event Action<ComicVisiting<TResource>, ComicEntity> Loaded;
+        public event Action<ComicVisiting<TResource>, int> LoadingChapter;
+        public event Action<ComicVisiting<TResource>, ChapterWithPage> LoadedChapter;
 
         public ComicVisiting(IServiceProvider host, IResourceFactoryCreator<TResource> resourceFactoryCreator)
         {
@@ -51,6 +55,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
 
         public async Task<bool> LoadAsync(string address)
         {
+            Loading?.Invoke(this, address);
             this.address = address;
             sourceProvider = Host.GetComicProvider(address);
             if (sourceProvider==null)
@@ -66,6 +71,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                 Visiting = this
             };
             resourceFactory = await ResourceFactoryCreator.CreateAsync(ctx);
+            Loaded?.Invoke(this, entity);
             return true;
         }
 
@@ -99,6 +105,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                 {
                     return;
                 }
+                LoadingChapter?.Invoke(this, index);
                 var visitor = VisitingInterceptor;
                 var chapter = entity.Chapters[index];
                 if (visitor != null)
@@ -117,6 +124,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                     var ctx = new ChapterVisitingInterceptorContext<TResource> { Chapter = chapterWithPages[index], Visiting = this };
                     await visitor.LoadedChapterAsync(ctx);
                 }
+                LoadedChapter?.Invoke(this, chapterWithPages[index]);
             }
             finally
             {

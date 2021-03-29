@@ -1,0 +1,34 @@
+﻿<mto:MetroWindow x:Class="Kw.Comic.Wpf.Views.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Kw.Comic.Wpf.Views"
+        xmlns:mto="http://metro.mahapps.com/winfx/xaml/controls"
+        xmlns:icon="http://metro.mahapps.com/winfx/xaml/iconpacks"
+        xmlns:vm="clr-namespace:Kw.Comic.Wpf.ViewModels"
+        xmlns:fw="clr-namespace:SourceChord.FluentWPF;assembly=FluentWPF"
+        mc:Ignorable="d"
+        Title="Anf" Height="800" Width="1100"
+        FontSize="16">
+    <mto:MetroWindow.Resources>
+        <Style x:Key="Kw.Comic.MetroIcon.Title"
+               TargetType="icon:PackIconMaterialLight">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="Margin" Value="6,0"/>
+        </Style>
+    </mto:MetroWindow.Resources>
+    <mto:MetroWindow.LeftWindowCommands>
+        <mto:WindowCommands x:Name="LeftCommands">
+            <mto:WindowCommands.ItemsPanel>
+                <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                </ItemsPanelTemplate>
+            </mto:WindowCommands.ItemsPanel>
+        </mto:WindowCommands>
+    </mto:MetroWindow.LeftWindowCommands>
+    <mto:MetroWindow.RightWindowCommands>
+        <mto:WindowCommands x:Name="RightCommands">
+        </mto:WindowCommands>
+    </mto:MetroWindow.RightWindowCommands>
+</mto:MetroWindow>
