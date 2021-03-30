@@ -1,12 +1,12 @@
 ﻿using JavaScriptEngineSwitcher.Core;
-using Kw.Comic.Engine.Dm5;
+using Kw.Comic.Dm5;
 using Kw.Comic.Engine.Networks;
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
 using System.Text;
 
-namespace Kw.Comic.Engine.Jisu
+namespace Kw.Comic.Jisu
 {
     public class JisuComicOperator : Dm5ComicOperator
     {

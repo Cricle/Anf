@@ -8,15 +8,21 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Skia" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net472' and '$(Configuration)'=='Release'">
     <PackageReference Include="Microsoft.DotNet.Framework.NativeImageCompiler" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Avalonia.Win32" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Direct2D1" Version="0.10.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'net472'">
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Kw.Comic.Engine.Easy\Kw.Comic.Engine.Easy.csproj" />

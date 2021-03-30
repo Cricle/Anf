@@ -1,6 +1,6 @@
 ﻿using Kw.Comic.Engine;
 
-namespace Kw.Comic.Engine.Dmzj
+namespace Kw.Comic.Dmzj
 {
     public class DmzjComicSourceCondition : ComicSourceConditionBase<DmzjComicOperator>
     {

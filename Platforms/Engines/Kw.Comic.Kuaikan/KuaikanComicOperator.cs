@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using JavaScriptEngineSwitcher.Core;
+using Kw.Comic.Engine;
 using Kw.Comic.Engine.Networks;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Kw.Comic.Engine.Kuaikan
+namespace Kw.Comic.Kuaikan
 {
     public class KuaikanComicOperator : IComicSourceProvider
     {

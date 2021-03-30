@@ -1,0 +1,17 @@
+<Project>
+  <PropertyGroup>
+    <ComicEngineFrameworks>netstandard2.0;netstandard1.3;net45;net461</ComicEngineFrameworks>
+    <Authors>Kw</Authors>
+    <Company>Kw</Company>
+    <Product>Kw</Product>
+    <Version>1.2.1</Version>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net461'">
+    <StandardLib>true</StandardLib>
+    <DefineConstants>$(DefineConstants);StandardLib</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Condition)'=='Release'">
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+
+  </PropertyGroup>
+</Project>

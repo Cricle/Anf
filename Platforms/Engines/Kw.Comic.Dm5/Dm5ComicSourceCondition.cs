@@ -1,4 +1,6 @@
-﻿namespace Kw.Comic.Engine.Dm5
+﻿using Kw.Comic.Engine;
+
+namespace Kw.Comic.Dm5
 {
     public class Dm5ComicSourceCondition : ComicSourceConditionBase<Dm5ComicOperator>
     {

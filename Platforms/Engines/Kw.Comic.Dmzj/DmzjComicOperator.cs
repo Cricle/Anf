@@ -1,5 +1,6 @@
 ﻿using HtmlAgilityPack;
 using JavaScriptEngineSwitcher.Core;
+using Kw.Comic.Engine;
 using Kw.Comic.Engine.Networks;
 using System.Collections.Generic;
 using System.IO;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 #endif
 
-namespace Kw.Comic.Engine.Dmzj
+namespace Kw.Comic.Dmzj
 {
     public class DmzjComicOperator : IComicSourceProvider
     {

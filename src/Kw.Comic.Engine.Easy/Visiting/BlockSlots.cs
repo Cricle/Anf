@@ -2,6 +2,8 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Collections.Generic;
+using System.Collections;
 #if NETSTANDARD2_0
 using System.Buffers;
 #endif
@@ -9,12 +11,24 @@ using System.Buffers;
 namespace Kw.Comic.Engine.Easy.Visiting
 {
     public abstract class BlockSlots<TValue> : IDisposable
-	    where TValue:class
+        where TValue : class
     {
         private readonly Task<TValue>[] valueTasks;
         private readonly TValue[] values;
 
         public int Size { get; }
+
+        public TValue this[int index]
+        {
+            get
+            {
+                if (index >= Size || index < 0)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(index));
+                }
+                return values[index];
+            }
+        }
 
         protected BlockSlots(int size)
         {
@@ -30,9 +44,13 @@ namespace Kw.Comic.Engine.Easy.Visiting
 
         public event Action<BlockSlots<TValue>, int, TValue> PageLoaded;
 
+        ~BlockSlots()
+        {
+            Dispose();
+        }
+
         public virtual void Dispose()
         {
-
             for (int i = 0; i < Size; i++)
             {
                 var page = values[i];
@@ -74,6 +92,5 @@ namespace Kw.Comic.Engine.Easy.Visiting
             return await tsk;
         }
         protected abstract Task<TValue> OnLoadAsync(int index);
-
     }
 }

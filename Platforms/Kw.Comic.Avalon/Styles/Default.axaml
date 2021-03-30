@@ -7,7 +7,7 @@
   </Design.PreviewWith>
 
   <!-- Add Styles Here -->
-  <Style Selector="TextBox">
-    
+  <Style Selector="TextBlock.segoblock">
+    <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
   </Style>
 </Styles>

@@ -2,12 +2,14 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-             xmlns:vm="using:Kw.Comic.ViewModels"
+             xmlns:vm="using:Kw.Comic.Avalon.ViewModels"
+             xmlns:m="using:Kw.Comic.Models"
+             xmlns:paz="using:Avalonia.Controls.PanAndZoom"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Background="Transparent"
              x:Class="Kw.Comic.Avalon.Views.HomePage">
   <Design.DataContext>
-    <vm:HomeViewModel></vm:HomeViewModel>
+    <vm:AvalonHomeViewModel></vm:AvalonHomeViewModel>
   </Design.DataContext>
   <Grid>
     <Grid.RowDefinitions>
@@ -15,16 +17,57 @@
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    <AutoCompleteBox HorizontalAlignment="Stretch" Margin="20" Watermark="Search" Text="{Binding Keyword,Mode=TwoWay}">
-      <AutoCompleteBox.KeyBindings>
-        <KeyBinding Command="{Binding SearchCommand}" Gesture="Enter"/>
-      </AutoCompleteBox.KeyBindings>
-    </AutoCompleteBox>
-    <ProgressBar Grid.Row="1" IsIndeterminate="False">
-      
+    <Grid Margin="20">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+      <AutoCompleteBox HorizontalAlignment="Stretch" Watermark="Search" Text="{Binding Keyword,Mode=TwoWay}">
+        <AutoCompleteBox.KeyBindings>
+          <KeyBinding Command="{Binding SearchCommand}" Gesture="Enter"/>
+        </AutoCompleteBox.KeyBindings>
+      </AutoCompleteBox>
+      <Button Grid.Column="1" VerticalAlignment="Stretch" Background="Transparent" Padding="16,8">
+        <TextBlock Text="&#xE71E;" Classes="segoblock" VerticalAlignment="Center"></TextBlock>
+      </Button>
+    </Grid>
+    <ProgressBar Grid.Row="1" IsVisible="{Binding Searhing}" IsIndeterminate="False">
+
     </ProgressBar>
-    <ItemsControl Grid.Row="2">
-      
+    <Border Grid.RowSpan="4"
+        Visibility="{Binding EmptySet}">
+      <StackPanel VerticalAlignment="Center"
+                  HorizontalAlignment="Stretch">
+        <TextBlock FontWeight="ExtraLight"
+                   FontSize="22"
+                   HorizontalAlignment="Center">
+          <Run>可以从上方输入框输入</Run>
+          <Run FontWeight="ExtraBlack" ToolTip="Good luck">关键字</Run>
+          <Run>搜索或直接输入</Run>
+          <Run FontWeight="ExtraBlack" ToolTip="如果可解析输入框下面会出现按钮的">可解析</Run>
+          <Run>漫画网址</Run>
+        </TextBlock>
+      </StackPanel>
+    </Border>
+
+    <ItemsControl Grid.Row="2" Items="{Binding Snapshots}" IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
+      <ItemsControl.ItemsPanel>
+        <WrapPanel Orientation="Horizontal"/>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
+        <DataTemplate DataType="{x:Type m:ComicSnapshotInfo">
+          <Grid>
+            <Image Source="{Binding Snapshot.ImageUri}"/>
+            <Border Background="#A1666666"
+                                VerticalAlignment="Bottom">
+              <TextBlock Text="{Binding Snapshot.Name}"
+                         FontSize="16"
+                         Margin="0,16"
+                         HorizontalAlignment="Center"/>
+            </Border>
+          </Grid>
+        </DataTemplate>
+      </ItemsControl.ItemTemplate>
     </ItemsControl>
   </Grid>
 </UserControl>

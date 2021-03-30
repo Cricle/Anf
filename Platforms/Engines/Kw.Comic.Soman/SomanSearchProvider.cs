@@ -4,8 +4,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
+using Kw.Comic.Engine;
 
-namespace Kw.Comic.Engine.Soman
+namespace Kw.Comic.Soman
 {
     public class SomanSearchProvider : ISearchProvider
     {

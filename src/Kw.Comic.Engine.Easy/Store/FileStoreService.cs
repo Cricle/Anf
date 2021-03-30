@@ -32,39 +32,6 @@ namespace Kw.Comic.Engine.Easy.Store
 
         public DirectoryInfo Folder { get; }
 
-        public static string GetHost(string address)
-        {
-#if NETSTANDARD1_4||NET45
-            var sp=address;
-#else
-            var sp = address.AsSpan();
-#endif
-            var len = sp.Length;
-            char c;
-            int start = 0;
-            int end = len;
-            for (int i = 0; i < len; i++)
-            {
-                c = sp[i];
-                if (c == '/' || c == '?')
-                {
-                    end = i;
-                    break;
-                }
-                else if (c == ':' && (len - i) > 3 && sp[i + 1] == '/' && sp[i + 2] == '/')
-                {
-                    start = i + 3;
-                    i += 3;
-                }
-            }
-#if !NETSTANDARD2_1
-            return address.Substring(start, end - start);
-#else
-            return new string(sp.Slice(start, end - start));
-#endif
-        }
-
-
         public virtual string GetFileName(string str)
         {
             return addressToFileNameProvider.Convert(str);
@@ -72,7 +39,7 @@ namespace Kw.Comic.Engine.Easy.Store
 
         private DirectoryInfo EnsureGetFolder(string address)
         {
-            var host = GetHost(address);
+            var host = UrlHelper.FastGetHost(address);
             host = PathHelper.EnsureName(host);
             var folder = domainFolders.GetOrAdd(host, () =>
             {

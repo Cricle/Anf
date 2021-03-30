@@ -25,7 +25,7 @@ namespace Kw.Comic.Avalon
             AppEngine.Services.AddScoped<BookshelfViewModel>();
             //AppEngine.Services.AddScoped<HomeViewModel>();
         }
-        
+
         public override void OnFrameworkInitializationCompleted()
         {
             if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)

@@ -6,16 +6,6 @@
         Background="Transparent"
         x:Class="Kw.Comic.Avalon.MainWindow"
         Title="MainWindow">
-  <NativeMenu.Menu>
-    <NativeMenuItem Header="Edit">
-      <NativeMenuItem.Menu>
-        <NativeMenu>
-          <NativeMenuItem Header="Copy"/>
-          <NativeMenuItem Header="Paste"/>
-        </NativeMenu>
-      </NativeMenuItem.Menu>
-    </NativeMenuItem>
-  </NativeMenu.Menu>
   <Panel>
     <Border Name="MainBorder" Margin="0 40 0 20">
 

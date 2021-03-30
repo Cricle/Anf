@@ -1,10 +1,37 @@
 ﻿using System;
 using System.Threading.Tasks;
+using System.Collections.Generic;
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
     public static class BlockSlotsExtensions
     {
+        public static IReadOnlyDictionary<int, T> GetCreatedValueMap<T>(this BlockSlots<T> blockSlots)
+            where T : class
+        {
+            var dic = new Dictionary<int, T>();
+            for (int i = 0; i < blockSlots.Size; i++)
+            {
+                var s = blockSlots[i];
+                if (!(s is null))
+                {
+                    dic.Add(i, s);
+                }
+            }
+            return dic;
+        }
+        public static IEnumerable<T> GetCreatedValues<T>(this BlockSlots<T> blockSlots)
+            where T:class
+        {
+            for (int i = 0; i < blockSlots.Size; i++)
+            {
+                var s = blockSlots[i];
+                if (!(s is null))
+                {
+                    yield return s;
+                }
+            }
+        }
         public static IDataCursor<T> ToDataCursor<T>(this BlockSlots<T> blockSlots)
             where T : class
         {

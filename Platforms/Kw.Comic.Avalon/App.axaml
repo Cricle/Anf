@@ -1,11 +1,16 @@
 <Application xmlns="https://github.com/avaloniaui"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="using:Kw.Comic.Avalon"
+             xmlns:conv="using:Kw.Comic.Avalon.Converters"
              x:Class="Kw.Comic.Avalon.App">
   <Application.DataTemplates>
     <local:ViewLocator/>
   </Application.DataTemplates>
-
+  <Application.Resources>
+    <ResourceDictionary>
+      <conv:RevBoolConverter x:Key="RevBoolConverter"/>
+    </ResourceDictionary>
+  </Application.Resources>
   <Application.Styles>
     <FluentTheme Mode="Dark"/>
     <StyleInclude Source="/Styles/Default.axaml"></StyleInclude>

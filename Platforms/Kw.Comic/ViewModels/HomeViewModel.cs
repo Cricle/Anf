@@ -5,6 +5,7 @@ using Kw.Comic.Models;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -25,7 +26,7 @@ namespace Kw.Comic.ViewModels
         public HomeViewModel(SearchEngine searchEngine)
         {
             SearchEngine = searchEngine;
-            Snapshots = new ObservableCollection<ComicSnapshotInfo>();
+            Snapshots = new  SilentObservableCollection<ComicSnapshotInfo>();
             MoveNextCommand = new RelayCommand(() => _ = MoveNextAsync());
             SearchCommand = new RelayCommand(() => _ = SearchAsync());
         }
@@ -109,7 +110,7 @@ namespace Kw.Comic.ViewModels
         /// <summary>
         /// 漫画快照
         /// </summary>
-        public ObservableCollection<ComicSnapshotInfo> Snapshots { get; }
+        public SilentObservableCollection<ComicSnapshotInfo> Snapshots { get; }
         /// <summary>
         /// 执行搜索
         /// </summary>
@@ -134,10 +135,7 @@ namespace Kw.Comic.ViewModels
             var sn = comicCursor?.Current?.Snapshots;
             if (sn != null)
             {
-                foreach (var item in sn)
-                {
-                    Snapshots.Add(new ComicSnapshotInfo(item));
-                }
+                Snapshots.AddRange(sn.Select(x => new ComicSnapshotInfo(x)));
                 SearchResult = comicCursor.Current;
                 AdditionCount = sn.Length;
             }

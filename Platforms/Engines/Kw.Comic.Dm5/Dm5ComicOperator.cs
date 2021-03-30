@@ -10,7 +10,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Kw.Comic.Engine.Dm5
+namespace Kw.Comic.Dm5
 {
     public class Dm5ComicOperator : IComicSourceProvider
     {
@@ -19,6 +19,7 @@ namespace Kw.Comic.Engine.Dm5
         private static readonly Regex midRegex = new Regex(@"var DM5_MID=(.*)?;", RegexOptions.Compiled);
         private static readonly Regex viewSignRegex = new Regex(@"var DM5_VIEWSIGN=(.*)?;", RegexOptions.Compiled);
         private static readonly Regex imageCountRegex = new Regex(@"var DM5_IMAGE_COUNT=(.*)?;", RegexOptions.Compiled);
+        private static readonly char[] targetUrlSplit = { '/' };
 
         protected readonly INetworkAdapter networkAdapter;
         protected readonly IJsEngine v8;
@@ -43,7 +44,6 @@ namespace Kw.Comic.Engine.Dm5
             });
         }
 
-
         public async Task<ComicEntity> GetChaptersAsync(string targetUrl)
         {
             var str = string.Empty;
@@ -58,7 +58,7 @@ namespace Kw.Comic.Engine.Dm5
             var titleBlock = html.DocumentNode.SelectSingleNode("//div[@class='banner_detail_form']/div[@class='info']/p[@class='title']")?.ChildNodes[0].InnerText;
             if (titleBlock == null)
             {
-                titleBlock = targetUrl.Split(new[] { '/' }, StringSplitOptions.RemoveEmptyEntries)
+                titleBlock = targetUrl.Split(targetUrlSplit, StringSplitOptions.RemoveEmptyEntries)
                     .Last();
             }
             var descBlock = html.DocumentNode.SelectSingleNode("//div[@class='banner_detail_form']/div[@class='info']/p[@class='content']");
@@ -110,7 +110,7 @@ namespace Kw.Comic.Engine.Dm5
             var imgCount = imgCountRgx.Substring(0, imgCountRgx.IndexOf(';')).Split('=').Last().Trim('\"');
             var val = int.Parse(imgCount);
 
-            var refAddr = targetUrl.Split(new char[] { '/' }, StringSplitOptions.RemoveEmptyEntries)
+            var refAddr = targetUrl.Split(targetUrlSplit, StringSplitOptions.RemoveEmptyEntries)
                 .Last();
             var part = $"http://www.dm5.com/{refAddr}/chapterfun.ashx?cid={cid}&page={{0}}&key=&language=1&gtk=6&_cid={cid}&_mid={mid}&_dt={dt}&_sign={viewSign}";
 

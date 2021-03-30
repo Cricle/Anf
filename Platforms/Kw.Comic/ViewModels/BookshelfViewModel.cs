@@ -28,6 +28,7 @@ namespace Kw.Comic.ViewModels
         public BookshelfViewModel(IBookshelfService bookshelfService)
         {
             this.bookshelfService = bookshelfService;
+            Bookshelves = new SilentObservableCollection<Bookshelf>();
         }
 
         public bool Searching
@@ -79,7 +80,7 @@ namespace Kw.Comic.ViewModels
         }
 
 
-        public ObservableCollection<Bookshelf> Bookshelves { get; }
+        public SilentObservableCollection<Bookshelf> Bookshelves { get; }
 
         public async Task LoadBookshelfAsync(bool clearPrev)
         {

@@ -31,7 +31,7 @@ namespace Kw.Comic.ViewModels
             this.streamImageConverter = streamImageConverter ?? throw new ArgumentNullException(nameof(streamImageConverter));
             this.recyclableMemoryStreamManager = recyclableMemoryStreamManager ?? throw new ArgumentNullException(nameof(recyclableMemoryStreamManager));
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
-            Visiting = visiting ?? throw new ArgumentNullException(nameof(visiting));
+            this.visiting = visiting ?? throw new ArgumentNullException(nameof(visiting));
             PrevChapterCommand = new RelayCommand(() => _ = PrevChapterAsync());
             NextChapterCommand = new RelayCommand(() => _ = NextChapterAsync());
             GoChapterCommand = new RelayCommand<ComicChapter>(x => _ = GoChapterAsync(x));
@@ -45,6 +45,7 @@ namespace Kw.Comic.ViewModels
                 Init();
             }
         }
+        private IComicVisiting<TResource> visiting;
         protected IServiceScope scope;
         protected IStreamImageConverter<TImage> streamImageConverter;
         protected RecyclableMemoryStreamManager recyclableMemoryStreamManager;
@@ -84,7 +85,7 @@ namespace Kw.Comic.ViewModels
             private set => Set(ref isLoading, value);
         }
 
-        public IComicVisiting<TResource> Visiting { get; }
+        public IComicVisiting<TResource> Visiting => visiting;
 
         public ComicEntity ComicEntity => Visiting.Entity;
 
@@ -98,7 +99,7 @@ namespace Kw.Comic.ViewModels
 
         protected void InitService(IServiceProvider provider, IComicVisiting<TResource> visiting=null)
         {
-            visiting = visiting ?? provider.GetRequiredService<IComicVisiting<TResource>>();
+            this.visiting = visiting ?? provider.GetRequiredService<IComicVisiting<TResource>>();
             httpClient = provider.GetRequiredService<HttpClient>();
             recyclableMemoryStreamManager = provider.GetRequiredService<RecyclableMemoryStreamManager>();
             streamImageConverter = provider.GetRequiredService<IStreamImageConverter<TImage>>();
