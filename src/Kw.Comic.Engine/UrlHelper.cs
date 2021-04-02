@@ -29,12 +29,12 @@ namespace Kw.Comic.Engine
             for (int i = 0; i < len; i++)
             {
                 c = address[i];
-                if ((c & '/') != 0 || (c & '?') != 0)
+                if ((c == '/') || (c == '?'))
                 {
                     end = i;
                     break;
                 }
-                else if ((c & ':') != 0 && (len - i) > 3 && (address[i + 1] & '/') != 0 && (address[i + 2] & '/') != 0)
+                else if ((c == ':') && (len - i) > 3 && (address[i + 1] == '/') && (address[i + 2] == '/'))
                 {
                     start = i + 3;
                     i = start;

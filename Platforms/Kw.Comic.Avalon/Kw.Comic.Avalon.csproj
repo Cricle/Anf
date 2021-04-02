@@ -2,7 +2,7 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
-    <!--<PlatformTarget>AnyCPU</PlatformTarget>-->
+    <PlatformTarget>AnyCpu</PlatformTarget>
     <NgenR2R>false</NgenR2R>
   </PropertyGroup>
   <ItemGroup>
@@ -11,6 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0" />
     <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
     <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />

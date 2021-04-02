@@ -6,6 +6,6 @@
         Background="Transparent"
         x:Class="Kw.Comic.Avalon.MainWindow"
         Title="MainWindow">
-  <Panel Name="MainPlan" Margin="0 40 0 20">
+  <Panel Name="MainPlan" Margin="{Binding #MainWindow.OffScreenMargin}">
   </Panel>
 </Window>

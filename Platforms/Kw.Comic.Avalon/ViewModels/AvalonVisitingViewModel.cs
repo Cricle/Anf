@@ -39,11 +39,11 @@ namespace Kw.Comic.Avalon.ViewModels
         }
         protected override async void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<Bitmap>> cursor)
         {
-            try
-            {
-                await LoadAllAsync();
-            }
-            catch (Exception) { }
+            //try
+            //{
+            //    await LoadAllAsync();
+            //}
+            //catch (Exception) { }
         }
     }
 }

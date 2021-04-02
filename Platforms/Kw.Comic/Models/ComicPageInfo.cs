@@ -19,6 +19,13 @@ namespace Kw.Comic.Models
         private IComicVisitPage<TResource> visitPage;
         private bool loading;
         private Exception exception;
+        private TResource resource;
+
+        public TResource Resource
+        {
+            get { return resource; }
+            private set => Set(ref resource, value);
+        }
 
         public Exception Exception
         {
@@ -74,6 +81,7 @@ namespace Kw.Comic.Models
                 {
                     task = PageSlots.GetAsync(Index);
                     VisitPage = await task;
+                    Resource = VisitPage.Resource;
                 }
                 catch (Exception ex)
                 {

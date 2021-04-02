@@ -310,7 +310,6 @@ namespace Kw.Comic.ViewModels
         {
             return new ComicPageInfo<TResource>(slots, index);
         }
-
         public async Task LoadAsync(string address)
         {
             IsLoading = true;

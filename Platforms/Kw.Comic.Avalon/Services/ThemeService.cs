@@ -33,7 +33,10 @@ namespace Kw.Comic.Avalon.Services
         public FluentThemeMode Mode
         {
             get => FluentTheme.Mode;
-            set => FluentTheme.Mode = value;
+            set
+            {
+                FluentTheme.Mode = value;
+            }
         }
         public FluentTheme FluentTheme { get; }
 

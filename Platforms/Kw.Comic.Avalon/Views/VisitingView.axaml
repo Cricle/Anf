@@ -20,15 +20,17 @@
       </ExperimentalAcrylicBorder.Material>
       <TextBlock>dsadsads</TextBlock>
     </ExperimentalAcrylicBorder>
-    <ListBox Items="{Binding Resources}" Grid.Row="1" VirtualizationMode="Simple" SelectionMode="Toggle">
-      <ListBox.ItemTemplate>
-        <DataTemplate>
-          <Image Source="{Binding VisitPage.Resource}"/>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
+    <ScrollViewer Grid.Row="1">
+      <ItemsRepeater Name="Rep" Background="{x:Null}" Items="{Binding Resources}">
+        <ItemsRepeater.ItemTemplate>
+          <DataTemplate>
+            <Image Source="{Binding Resource}" MinHeight="200"/>
+          </DataTemplate>
+        </ItemsRepeater.ItemTemplate>
+      </ItemsRepeater>
+    </ScrollViewer>
     <StackPanel Grid.Row="2" Orientation="Horizontal">
-      
+
     </StackPanel>
   </Grid>
 </UserControl>
