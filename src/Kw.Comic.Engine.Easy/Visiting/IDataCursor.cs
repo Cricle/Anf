@@ -20,5 +20,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
         T Current { get; }
 
         Task<bool> MoveAsync(int index);
+
+        event Action<DataCursorBase<T>, int> Moved;
     }
 }

@@ -5,12 +5,14 @@
         <div *ngIf='this.drawerBookshelf.entity!=null'>
             
         <div style="float: right">
-            <button nz-button style="margin-right: 8px;" *ngIf='drawerIsInBookshelf' (click)="remove(this.drawerBookshelf)">
-                Remove
-            </button>
-            <button nz-button nzType="primary" *ngIf='!drawerIsInBookshelf' (click)="add(this.drawerBookshelf.entity.comicUrl)">
-                Add
-            </button>
+            <nz-spin [nzSpinning]="isWorking">
+                <button nz-button style="margin-right: 8px;" *ngIf='drawerIsInBookshelf' (click)="remove(this.drawerBookshelf)">
+                    Remove
+                </button>
+                <button nz-button nzType="primary" *ngIf='!drawerIsInBookshelf' (click)="add(this.drawerBookshelf.entity.comicUrl)">
+                    Add
+                </button>
+            </nz-spin>
         </div>
             <p nz-typography>
                 <nz-tag nzColor="#EEE">

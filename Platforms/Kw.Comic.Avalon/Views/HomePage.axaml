@@ -3,7 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Kw.Comic.Avalon.ViewModels"
-             xmlns:m="using:Kw.Comic.Models"
+             xmlns:m="using:Kw.Comic.Avalon.Models"
              xmlns:paz="using:Avalonia.Controls.PanAndZoom"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Background="Transparent"
@@ -22,52 +22,59 @@
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
-      <AutoCompleteBox HorizontalAlignment="Stretch" Watermark="Search" Text="{Binding Keyword,Mode=TwoWay}">
+      <AutoCompleteBox HorizontalAlignment="Stretch" Watermark="Search" IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}" Text="{Binding Keyword,Mode=TwoWay}">
         <AutoCompleteBox.KeyBindings>
           <KeyBinding Command="{Binding SearchCommand}" Gesture="Enter"/>
         </AutoCompleteBox.KeyBindings>
       </AutoCompleteBox>
-      <Button Grid.Column="1" VerticalAlignment="Stretch" Background="Transparent" Padding="16,8">
+      <Button Grid.Column="1" VerticalAlignment="Stretch" Background="Transparent" Padding="16,8" Command="{Binding SearchCommand}" IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}" >
         <TextBlock Text="&#xE71E;" Classes="segoblock" VerticalAlignment="Center"></TextBlock>
       </Button>
     </Grid>
-    <ProgressBar Grid.Row="1" IsVisible="{Binding Searhing}" IsIndeterminate="False">
+    <ProgressBar Grid.Row="1" IsVisible="{Binding Searching}" IsIndeterminate="True">
 
     </ProgressBar>
-    <Border Grid.RowSpan="4"
-        Visibility="{Binding EmptySet}">
-      <StackPanel VerticalAlignment="Center"
-                  HorizontalAlignment="Stretch">
-        <TextBlock FontWeight="ExtraLight"
-                   FontSize="22"
-                   HorizontalAlignment="Center">
-          <Run>可以从上方输入框输入</Run>
-          <Run FontWeight="ExtraBlack" ToolTip="Good luck">关键字</Run>
-          <Run>搜索或直接输入</Run>
-          <Run FontWeight="ExtraBlack" ToolTip="如果可解析输入框下面会出现按钮的">可解析</Run>
-          <Run>漫画网址</Run>
-        </TextBlock>
+    <Border Grid.RowSpan="4" IsVisible="{Binding EmptySet}">
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                  HorizontalAlignment="Center">
+        <TextBlock FontSize="22" Text="可以从上方输入框输入"/>
+        <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="关键字"/>
+        <TextBlock FontSize="22" Text="搜索或直接输入"/>
+        <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="关键字"/>
+        <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="可解析"/>
+        <TextBlock FontSize="22" Text="漫画网址"/>
       </StackPanel>
     </Border>
 
-    <ItemsControl Grid.Row="2" Items="{Binding Snapshots}" IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
-      <ItemsControl.ItemsPanel>
-        <WrapPanel Orientation="Horizontal"/>
-      </ItemsControl.ItemsPanel>
-      <ItemsControl.ItemTemplate>
-        <DataTemplate DataType="{x:Type m:ComicSnapshotInfo">
-          <Grid>
-            <Image Source="{Binding Snapshot.ImageUri}"/>
+    <ListBox Grid.Row="2" Background="{x:Null}" Items="{Binding Snapshots}" SelectionMode="Single" VirtualizationMode="Simple" SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}" IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Horizontal"/>
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate DataType="{x:Type m:AvalonComicSnapshotInfo}">
+          <Grid ToolTip.Tip="{Binding Snapshot.Descript,Mode=OneTime}">
+            <Grid.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="打开">
+                  <MenuItem Header="从浏览器"/>
+                  <MenuItem Header="从文件夹"/>
+                </MenuItem>
+                <MenuItem Header="复制"></MenuItem>
+              </ContextMenu>
+            </Grid.ContextMenu>
+            <Image Source="{Binding LogoImage,Mode=OneWay}" Width="300"/>
             <Border Background="#A1666666"
                                 VerticalAlignment="Bottom">
-              <TextBlock Text="{Binding Snapshot.Name}"
+              <TextBlock Text="{Binding Snapshot.Name,Mode=OneTime}"
                          FontSize="16"
                          Margin="0,16"
                          HorizontalAlignment="Center"/>
             </Border>
           </Grid>
         </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+      </ListBox.ItemTemplate>
+    </ListBox>
   </Grid>
 </UserControl>

@@ -14,6 +14,8 @@ const minIns:number=280;
   styleUrls: ['./relay-comic.component.css']
 })
 export class RelayComicComponent {
+  @Output()
+  public isWorking:boolean;
   @Input()
   @Output()
   public drawerVisible:boolean;
@@ -48,6 +50,7 @@ export class RelayComicComponent {
   }
 
   public add(target:string){
+    this.isWorking=true;
     this.api.addBookShelf(target).subscribe(x=>{
       if (x.succeed) {
         this.notify.success('Add result','Succeed!');
@@ -56,10 +59,11 @@ export class RelayComicComponent {
         this.notify.error('Add result','Fail!');
       }
       this.mgr.refreshBookShelf();
-    });
+    },null,()=>this.isWorking=false);
   }
 
   public remove(target:Bookshelf){
+    this.isWorking=true;
     this.api.removeBookShelf(target.comicUrl).subscribe(x=>{
       if (x.succeed) {
         this.notify.success('Remove result','Succeed!');
@@ -68,6 +72,6 @@ export class RelayComicComponent {
         this.notify.error('Remove result','Fail!');
       }
       this.mgr.refreshBookShelf();
-    });
+    },null,()=>this.isWorking=false);
   }
 }

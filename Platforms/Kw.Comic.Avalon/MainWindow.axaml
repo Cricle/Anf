@@ -6,9 +6,6 @@
         Background="Transparent"
         x:Class="Kw.Comic.Avalon.MainWindow"
         Title="MainWindow">
-  <Panel>
-    <Border Name="MainBorder" Margin="0 40 0 20">
-
-    </Border>
+  <Panel Name="MainPlan" Margin="0 40 0 20">
   </Panel>
 </Window>

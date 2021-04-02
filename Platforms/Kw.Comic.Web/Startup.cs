@@ -16,6 +16,9 @@ using Kw.Comic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Kw.Comic.Services;
+using Kw.Comic.KnowEngines;
+using JavaScriptEngineSwitcher.Jint;
+using JavaScriptEngineSwitcher.Core;
 #if !MiniService
 using Microsoft.OpenApi.Models;
 #endif
@@ -47,9 +50,11 @@ namespace Kw.Comic.Web
             services.AddSingleton<IStoreService>(fs);
             services.AddSingleton<IComicSaver>(fs);
             services.AddSingleton(fs);
+            services.AddKnowEngines();
             services.AddScoped<IBookshelfService, BookshelfService>();
             services.AddScoped<IComicVisiting<string>, ComicVisiting<string>>();
             services.AddCompressedStaticFiles();
+            services.AddScoped<IJsEngine, JintJsEngine>();
             services.AddDbContext<ComicDbContext>(x =>
             {
                 var builder = new SqliteConnectionStringBuilder();
@@ -142,6 +147,7 @@ namespace Kw.Comic.Web
                 scope.ServiceProvider.GetRequiredService<ComicDbContext>()
                 .Database.EnsureCreated();
             }
+            app.ApplicationServices.UseKnowEngines();
         }
     }
 }

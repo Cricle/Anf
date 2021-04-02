@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kw.Comic.Engine
 {
-    internal static class HexConverter
+    public static class HexConverter
     {
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static int FromChar(int c)
@@ -34,7 +34,7 @@ namespace Kw.Comic.Engine
             0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF  // 255
         };
     }
-    internal class HttpUtility
+    public class HttpUtility
     {
 
         public static byte[] UrlDecodeToBytes(string str) => UrlDecodeToBytes(str, Encoding.UTF8);

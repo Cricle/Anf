@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
-    <TargetFrameworks>net6.0</TargetFrameworks>
+    <TargetFramework>net6.0</TargetFramework>
     <LangVersion>8.0</LangVersion>
     <NoWarn>$(NoWarn);CS1591</NoWarn>
     <MiniService>false</MiniService>
@@ -45,5 +45,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\src\Kw.Comic.Engine.Easy\Kw.Comic.Engine.Easy.csproj" />
     <ProjectReference Include="..\..\src\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Dm5\Kw.Comic.Dm5.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Dmzj\Kw.Comic.Dmzj.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Jisu\Kw.Comic.Jisu.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.KnowEngines\Kw.Comic.KnowEngines.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Kuaikan\Kw.Comic.Kuaikan.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Soman\Kw.Comic.Soman.csproj" />
   </ItemGroup>
 </Project>

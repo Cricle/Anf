@@ -2,20 +2,18 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
+    <!--<PlatformTarget>AnyCPU</PlatformTarget>-->
+    <NgenR2R>false</NgenR2R>
   </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
     <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'net472' and '$(Configuration)'=='Release'">
-    <PackageReference Include="Microsoft.DotNet.Framework.NativeImageCompiler" Version="1.0.0">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
     <PackageReference Include="Avalonia.Win32" Version="0.10.0" />
@@ -30,7 +28,15 @@
     <ProjectReference Include="..\Kw.Comic\Kw.Comic.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Models\" />
     <Folder Include="Styles\" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <Compile Remove="Designings\*.*"></Compile>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' == 'net472'">
+    <PackageReference Include="Microsoft.DotNet.Framework.NativeImageCompiler" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
 </Project>

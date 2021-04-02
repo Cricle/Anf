@@ -32,6 +32,26 @@ namespace Kw.Comic.Engine.Easy.Visiting
                 }
             }
         }
+        public static IEnumerable<Func<Task<T>>> ToLoadEnumerable<T>(this BlockSlots<T> blockSlots)
+            where T : class
+        {
+            return ToLoadEnumerable(blockSlots, 0, null);
+        }
+        public static IEnumerable<Func<Task<T>>> ToLoadEnumerable<T>(this BlockSlots<T> blockSlots, int start)
+            where T:class
+        {
+            return ToLoadEnumerable(blockSlots, start, null);
+        }
+        public static IEnumerable<Func<Task<T>>> ToLoadEnumerable<T>(this BlockSlots<T> blockSlots, int start, int? end)
+            where T : class
+        {
+            while (start < blockSlots.Size && (end == null || start < end))
+            {
+                var i = start;
+                yield return ()=>blockSlots.GetAsync(i);
+                start++;
+            }
+        }
         public static IDataCursor<T> ToDataCursor<T>(this BlockSlots<T> blockSlots)
             where T : class
         {

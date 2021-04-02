@@ -51,19 +51,25 @@ namespace Kw.Comic.Engine.Easy.Visiting
 
         public virtual void Dispose()
         {
-            for (int i = 0; i < Size; i++)
+            try
             {
-                var page = values[i];
-                if (page is IDisposable disposable)
+                for (int i = 0; i < Size; i++)
                 {
-                    disposable.Dispose();
+                    var page = values[i];
+                    if (page is IDisposable disposable)
+                    {
+                        disposable.Dispose();
+                    }
                 }
             }
+            finally
+            {
 #if NETSTANDARD2_0
-            ArrayPool<Task<TValue>>.Shared.Return(valueTasks, true);
-            ArrayPool<TValue>.Shared.Return(values, true);
+                ArrayPool<Task<TValue>>.Shared.Return(valueTasks, true);
+                ArrayPool<TValue>.Shared.Return(values, true);
 #endif
-            GC.SuppressFinalize(this);
+                GC.SuppressFinalize(this);
+            }
         }
         public async Task<TValue> GetAsync(int index)
         {

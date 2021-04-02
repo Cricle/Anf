@@ -4,7 +4,6 @@
     <OutputType>WinExe</OutputType>
     <TargetFramework>net472</TargetFramework>
     <UseWPF>true</UseWPF>
-    <EnableRecyclableStream>true</EnableRecyclableStream>
     <EnableFody>false</EnableFody>
     <NotEnableNavite>false</NotEnableNavite>
   </PropertyGroup>
@@ -14,9 +13,6 @@
   <PropertyGroup Condition="'$(EnableRecyclableStream)' == 'true'">
     <DefineConstants>$(DefineConstants);EnableRecyclableStream</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="'$(EnableRecyclableStream)' == 'true'">
-    <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="1.4.0" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Kw.Core" Version="1.0.0" />
     <PackageReference Include="Kw.Notification" Version="1.0.0" />

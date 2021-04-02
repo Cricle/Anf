@@ -4,4 +4,12 @@
   <PropertyGroup>
     <TargetFrameworks>$(ComicEngineFrameworks)</TargetFrameworks>
   </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\src\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
+    <ProjectReference Include="..\Kw.Comic.Dm5\Kw.Comic.Dm5.csproj" />
+    <ProjectReference Include="..\Kw.Comic.Dmzj\Kw.Comic.Dmzj.csproj" />
+    <ProjectReference Include="..\Kw.Comic.Jisu\Kw.Comic.Jisu.csproj" />
+    <ProjectReference Include="..\Kw.Comic.Kuaikan\Kw.Comic.Kuaikan.csproj" />
+    <ProjectReference Include="..\Kw.Comic.Soman\Kw.Comic.Soman.csproj" />
+  </ItemGroup>
 </Project>

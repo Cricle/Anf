@@ -15,9 +15,9 @@ using System.Windows.Input;
 
 namespace Kw.Comic.ViewModels
 {
-    public class VisitingViewModel<TResource,TImage> : ViewModelBase, IDisposable
+    public class VisitingViewModel<TResource, TImage> : ViewModelBase, IDisposable
     {
-        public VisitingViewModel(IComicVisiting<TResource> visiting=null)
+        public VisitingViewModel(IComicVisiting<TResource> visiting = null)
         {
             scope = AppEngine.CreateScope();
             InitService(scope.ServiceProvider, visiting);
@@ -45,11 +45,11 @@ namespace Kw.Comic.ViewModels
                 Init();
             }
         }
-        private IComicVisiting<TResource> visiting;
         protected IServiceScope scope;
         protected IStreamImageConverter<TImage> streamImageConverter;
         protected RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         protected HttpClient httpClient;
+        private IComicVisiting<TResource> visiting;
         private MemoryStream logoStream;
         private bool isLoading;
         private ChapterSlots<TResource> chapterSlots;
@@ -59,30 +59,51 @@ namespace Kw.Comic.ViewModels
         private TImage logoImage;
 
         public MemoryStream LogoStream => logoStream;
+        public ChapterSlots<TResource> ChapterSlots => chapterSlots;
+        public PageSlots<TResource> PageSlots
+        {
+            get => pageSlots;
+            private set => Set(ref pageSlots, value);
+        }
 
         public TImage LogoImage
         {
             get { return logoImage; }
-            private set => Set(ref logoImage, value);
+            private set
+            {
+                Set(ref logoImage, value);
+            }
         }
 
 
         public IDataCursor<IComicVisitPage<TResource>> CurrentPageCursor
         {
             get { return currentPageCursor; }
-            private set => Set(ref currentPageCursor, value);
+            private set
+            {
+                Set(ref currentPageCursor, value);
+                OnCurrentPageCursorChanged(value);
+            }
         }
 
         public IDataCursor<IComicChapterManager<TResource>> CurrentChaterCursor
         {
             get { return currentChaterCursor; }
-            private set => Set(ref currentChaterCursor, value);
+            private set
+            {
+                Set(ref currentChaterCursor, value);
+                OnCurrentChaterCursorChanged(value);
+            }
         }
 
         public bool IsLoading
         {
             get { return isLoading; }
-            private set => Set(ref isLoading, value);
+            private set
+            {
+                Set(ref isLoading, value);
+                OnLoadingChanged(value);
+            }
         }
 
         public IComicVisiting<TResource> Visiting => visiting;
@@ -97,14 +118,36 @@ namespace Kw.Comic.ViewModels
         public RelayCommand NextPageCommand { get; }
         public RelayCommand<ComicPage> GoPageCommand { get; }
 
-        protected void InitService(IServiceProvider provider, IComicVisiting<TResource> visiting=null)
+        protected void InitService(IServiceProvider provider, IComicVisiting<TResource> visiting = null)
         {
             this.visiting = visiting ?? provider.GetRequiredService<IComicVisiting<TResource>>();
             httpClient = provider.GetRequiredService<HttpClient>();
             recyclableMemoryStreamManager = provider.GetRequiredService<RecyclableMemoryStreamManager>();
             streamImageConverter = provider.GetRequiredService<IStreamImageConverter<TImage>>();
         }
+        protected virtual void OnLoadingChanged(bool loading)
+        {
 
+        }
+        protected virtual void OnCurrentPageCursorChanged(IDataCursor<IComicVisitPage<TResource>> cursor)
+        {
+
+        }
+        protected virtual void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<TResource>> cursor)
+        {
+
+        }
+        public async Task LoadAllAsync()
+        {
+            var cur = pageSlots;
+            if (cur != null)
+            {
+                for (int i = 0; i < cur.Size && cur == pageSlots; i++)
+                {
+                    _ = await cur.GetAsync(i);
+                }
+            }
+        }
         public Task<bool> NextPageAsync()
         {
             var cur = CurrentPageCursor;
@@ -162,12 +205,20 @@ namespace Kw.Comic.ViewModels
             }
             return Task.FromResult(false);
         }
-        private void Init()
+        protected void Init()
         {
             chapterSlots = Visiting.CreateChapterSlots();
             CurrentChaterCursor = chapterSlots.ToDataCursor();
+            CurrentChaterCursor.Moved += CurrentChaterCursor_Moved;
             _ = LoadLogoAsync(Visiting.Entity.ImageUrl);
         }
+
+        private void CurrentChaterCursor_Moved(DataCursorBase<IComicChapterManager<TResource>> arg1, int arg2)
+        {
+            pageSlots = chapterSlots[arg2].CreatePageSlots();
+            CurrentPageCursor = pageSlots.ToDataCursor();
+        }
+
         public async Task LoadAsync(string address)
         {
             IsLoading = true;
@@ -180,6 +231,7 @@ namespace Kw.Comic.ViewModels
                 if (ok)
                 {
                     Init();
+                    await OnLoadedAsync(address);
                 }
             }
             finally
@@ -187,23 +239,31 @@ namespace Kw.Comic.ViewModels
                 IsLoading = false;
             }
         }
+        protected virtual Task OnLoadedAsync(string address)
+        {
+            return Task.CompletedTask;
+        }
 
         public async Task SelectChapterAsync(int index)
         {
             pageSlots?.Dispose();
-            pageSlots = null;
+            PageSlots = null;
             var cur = CurrentChaterCursor;
             if (cur != null && cur.CurrentIndex != index)
             {
                 var ok = await cur.MoveAsync(index);
                 if (ok)
                 {
-                    pageSlots = cur.Current.CreatePageSlots();
+                    PageSlots = cur.Current.CreatePageSlots();
                     CurrentPageCursor = pageSlots.ToDataCursor();
+                    await OnSelectedChapterAsync(index);
                 }
             }
         }
-
+        protected virtual Task OnSelectedChapterAsync(int index)
+        {
+            return Task.CompletedTask;
+        }
         public virtual void Dispose()
         {
             chapterSlots?.Dispose();
@@ -215,14 +275,29 @@ namespace Kw.Comic.ViewModels
 
         private async Task LoadLogoAsync(string address)
         {
+            var r = await OnLoadingLogoAsync(address);
+            if (r)
+            {
+                await OnLoadedLogoAsync(address, false);
+                return;
+            }
             logoStream?.Dispose();
-            using (var rep = await httpClient.GetAsync(address)) 
+            using (var rep = await httpClient.GetAsync(address))
             {
                 logoStream = recyclableMemoryStreamManager.GetStream();
                 await rep.Content.CopyToAsync(logoStream);
                 logoStream.Seek(0, SeekOrigin.Begin);
-                LogoImage=await streamImageConverter.ToImageAsync(logoStream);
+                LogoImage = await streamImageConverter.ToImageAsync(logoStream);
             }
+            await OnLoadedLogoAsync(address, true);
+        }
+        protected virtual Task<bool> OnLoadingLogoAsync(string address)
+        {
+            return Task.FromResult(false);
+        }
+        protected virtual Task OnLoadedLogoAsync(string address, bool isDefault)
+        {
+            return Task.CompletedTask;
         }
     }
 }

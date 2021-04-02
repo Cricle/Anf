@@ -22,5 +22,12 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\src\Kw.Comic.Engine.Easy\Kw.Comic.Engine.Easy.csproj" />
+    <ProjectReference Include="..\..\src\Kw.Comic.Engine\Kw.Comic.Engine.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Dm5\Kw.Comic.Dm5.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Dmzj\Kw.Comic.Dmzj.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Jisu\Kw.Comic.Jisu.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.KnowEngines\Kw.Comic.KnowEngines.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Kuaikan\Kw.Comic.Kuaikan.csproj" />
+    <ProjectReference Include="..\Engines\Kw.Comic.Soman\Kw.Comic.Soman.csproj" />
   </ItemGroup>
 </Project>

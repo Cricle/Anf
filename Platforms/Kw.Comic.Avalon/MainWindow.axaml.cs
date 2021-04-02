@@ -6,37 +6,26 @@ using Avalonia.Styling;
 using Kw.Comic.Avalon.Views;
 using System;
 using Avalonia.Platform;
-using System.IO;
+using Avalonia.Media;
+using Kw.Comic.Avalon.Services;
+using Kw.Comic.Services;
+using Avalonia.LogicalTree;
 
 namespace Kw.Comic.Avalon
 {
     public class MainWindow : Window, IStyleable
     {
+        internal void SetPseudoClasses(string name,bool value)
+        {
+            PseudoClasses.Set(name, value);
+        }
+        internal void RemovePseudoClasses(string name)
+        {
+            PseudoClasses.Remove(name);
+        }
         public MainWindow()
         {
             InitializeComponent();
-            //https://github.com/AvaloniaUI/XamlControlsGallery/tree/master/XamlControlsGallery/Views
-            ExtendClientAreaToDecorationsHint = true;
-            ExtendClientAreaTitleBarHeightHint = -1;
-
-            TransparencyLevelHint = WindowTransparencyLevel.AcrylicBlur;
-
-            this.GetObservable(WindowStateProperty)
-                .Subscribe(x =>
-                {
-                    PseudoClasses.Set(":maximized", x == WindowState.Maximized);
-                    PseudoClasses.Set(":fullscreen", x == WindowState.FullScreen);
-                });
-
-            this.GetObservable(IsExtendedIntoWindowDecorationsProperty)
-                .Subscribe(x =>
-                {
-                    if (!x)
-                    {
-                        SystemDecorations = SystemDecorations.Full;
-                        TransparencyLevelHint = WindowTransparencyLevel.AcrylicBlur;
-                    }
-                });
 #if DEBUG
             this.AttachDevTools();
 #endif
@@ -45,8 +34,10 @@ namespace Kw.Comic.Avalon
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            this.Get<Border>("MainBorder")
-                .Child= new HomePage();
+            var navSer = (MainNavigationService)AppEngine.GetRequiredService<INavigationService>();
+            navSer.Navigate(new VisitingView());
+
+            this.Get<Panel>("MainPlan").Children.Add(navSer.border);
         }
         Type IStyleable.StyleKey => typeof(Window);
 
@@ -54,9 +45,7 @@ namespace Kw.Comic.Avalon
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)
         {
             base.OnApplyTemplate(e);
-            ExtendClientAreaChromeHints =
-                ExtendClientAreaChromeHints.PreferSystemChrome |
-                ExtendClientAreaChromeHints.OSXThickTitleBar;
+            ExtendClientAreaChromeHints = ExtendClientAreaChromeHints.PreferSystemChrome | ExtendClientAreaChromeHints.OSXThickTitleBar;
         }
     }
 }

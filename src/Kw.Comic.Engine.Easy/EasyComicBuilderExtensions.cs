@@ -1,14 +1,7 @@
-﻿using JavaScriptEngineSwitcher.Core;
-using JavaScriptEngineSwitcher.Jint;
-using Kw.Comic.Engine;
-using Kw.Comic.Engine.Dm5;
-using Kw.Comic.Engine.Dmzj;
+﻿using Kw.Comic.Engine;
 using Kw.Comic.Engine.Easy;
 using Kw.Comic.Engine.Easy.Visiting;
-using Kw.Comic.Engine.Jisu;
-using Kw.Comic.Engine.Kuaikan;
 using Kw.Comic.Engine.Networks;
-using Kw.Comic.Engine.Soman;
 using Microsoft.IO;
 using System;
 using System.IO;
@@ -39,28 +32,17 @@ namespace Microsoft.Extensions.DependencyInjection
             {
                 var eng = new ComicEngine
                 {
-                    new DmzjComicSourceCondition(),
-                    new Dm5ComicSourceCondition(),
-                    new JisuComicSourceCondition(),
-                    new KuaikanComicSourceCondition()
                 };
                 return eng;
             });
             services.AddSingleton(x =>
             {
                 var factory = x.GetRequiredService<IServiceScopeFactory>();
-                var eng = new SearchEngine(factory) { typeof(SomanSearchProvider) };
+                var eng = new SearchEngine(factory);
                 return eng;
             });
             services.AddSingleton<IComicDownloader, ComicDownloader>();
 
-            services.AddScoped<JisuComicOperator>();
-            services.AddScoped<Dm5ComicOperator>();
-            services.AddScoped<DmzjComicOperator>();
-            services.AddScoped<KuaikanComicOperator>();
-            services.AddScoped<SomanSearchProvider>();
-
-            services.AddScoped<IJsEngine, JintJsEngine>();
             services.AddSingleton<RecyclableMemoryStreamManager>();
 #if NET45 || NETSTANDARD1_4
             services.AddSingleton<HttpClient>();

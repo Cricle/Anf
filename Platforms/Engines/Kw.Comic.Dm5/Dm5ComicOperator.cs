@@ -1,6 +1,7 @@
 ﻿using HtmlAgilityPack;
 using JavaScriptEngineSwitcher.Core;
 using Jint.Native.Array;
+using Kw.Comic.Engine;
 using Kw.Comic.Engine.Networks;
 using System;
 using System.Collections.Generic;

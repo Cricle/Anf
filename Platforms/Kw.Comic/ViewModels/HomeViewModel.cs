@@ -33,7 +33,7 @@ namespace Kw.Comic.ViewModels
         private IComicCursor comicCursor;
         private string keyword;
         private bool emptySet=true;
-        private bool seaching;
+        private bool searching;
         private int additionCount;
         private SearchComicResult searchResult;
         private ComicSnapshotInfo currentComicSnapshot;
@@ -69,12 +69,12 @@ namespace Kw.Comic.ViewModels
         /// <summary>
         /// 是否正在搜索
         /// </summary>
-        public bool Seaching
+        public bool Searching
         {
-            get { return seaching; }
+            get { return searching; }
             private set
             {
-                Set(ref seaching, value);
+                Set(ref searching, value);
                 OnSearchingChanged(value);
             }
         }
@@ -117,25 +117,36 @@ namespace Kw.Comic.ViewModels
         /// <returns></returns>
         public async Task SearchAsync()
         {
-            Seaching = true;
+            Searching = true;
             try
             {
+                OnBeginSearch();
                 comicCursor?.Dispose();
                 Snapshots.Clear();
                 comicCursor = await SearchEngine.GetSearchCursorAsync(Keyword, 0, PageSize);
+                await MoveNextAsync();
                 InsertDatas();
+                OnEndSearch();
             }
             finally
             {
-                Seaching = false;
+                Searching = false;
             }
+        }
+        protected virtual void OnBeginSearch()
+        {
+
+        }
+        protected virtual void OnEndSearch()
+        {
+
         }
         private void InsertDatas()
         {
             var sn = comicCursor?.Current?.Snapshots;
             if (sn != null)
             {
-                Snapshots.AddRange(sn.Select(x => new ComicSnapshotInfo(x)));
+                Snapshots.AddRange(sn.Select(x => CreateSnapshotInfo(x)));
                 SearchResult = comicCursor.Current;
                 AdditionCount = sn.Length;
             }
@@ -144,6 +155,11 @@ namespace Kw.Comic.ViewModels
                 SearchResult = null;
                 AdditionCount = 0;
             }
+            EmptySet = Snapshots.Count == 0;
+        }
+        protected virtual ComicSnapshotInfo CreateSnapshotInfo(ComicSnapshot info)
+        {
+            return new ComicSnapshotInfo(info);
         }
         protected virtual void OnSearchingChanged(bool res)
         {
@@ -166,7 +182,7 @@ namespace Kw.Comic.ViewModels
             }
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             comicCursor?.Dispose();
         }

@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
@@ -32,6 +33,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
             private set => RaisePropertyChanged(ref current, value);
         }
 
+        public event Action<DataCursorBase<T>,int> Moved;
         public virtual void Dispose()
         {
         }
@@ -49,6 +51,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
                 CurrentIndex = index;
                 Current = value;
                 OnMoved(index, value);
+                Moved?.Invoke(this, index);
             }
             else
             {

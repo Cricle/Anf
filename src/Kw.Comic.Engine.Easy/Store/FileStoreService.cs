@@ -57,18 +57,17 @@ namespace Kw.Comic.Engine.Easy.Store
         {
             var key = GetFileName(address);
             var fp = addressToFileMap.Get(key);
-            if (fp != null)
+            if (fp is null)
             {
-                return fp;
-            }
-            var folder = EnsureGetFolder(address);
-            fp = folder.EnumerateFiles(key).FirstOrDefault();
-            if (fp != null)
-            {
+                var folder = EnsureGetFolder(address);
+                fp = folder.EnumerateFiles(key).FirstOrDefault();
+                if (fp is null)
+                {
+                    fp = new FileInfo(Path.Combine(folder.FullName, key));
+                }
                 addressToFileMap.Add(key, fp);
-                return fp;
             }
-            return new FileInfo(Path.Combine(folder.FullName, key));
+            return fp;
         }
         public virtual Task<bool> ExistsAsync(string address)
         {
@@ -128,6 +127,11 @@ namespace Kw.Comic.Engine.Easy.Store
                 return Task.FromResult<Stream>(null);
             }
             return Task.FromResult<Stream>(fileInfo.OpenRead());
+        }
+
+        protected virtual FileInfo DecorateFileInfo(FileInfo file)
+        {
+            return file;
         }
     }
 }

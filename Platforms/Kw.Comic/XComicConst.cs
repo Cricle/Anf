@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Kw.Comic
 {
-    internal static class XComicConst
+    public static class XComicConst
     {
         public static string DataFolderName = "Datas";
 

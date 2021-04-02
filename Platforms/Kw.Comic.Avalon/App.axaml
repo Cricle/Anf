@@ -12,7 +12,7 @@
     </ResourceDictionary>
   </Application.Resources>
   <Application.Styles>
-    <FluentTheme Mode="Dark"/>
+    <FluentTheme/>
     <StyleInclude Source="/Styles/Default.axaml"></StyleInclude>
   </Application.Styles>
 </Application>

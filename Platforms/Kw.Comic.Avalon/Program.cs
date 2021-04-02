@@ -1,6 +1,7 @@
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using System;
+using Avalonia.OpenGL;
 
 namespace Kw.Comic.Avalon
 {

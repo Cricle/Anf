@@ -8,6 +8,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
 using Kw.Comic.Engine.Easy.Visiting;
 using Kw.Comic.Engine.Easy.Store;
+using Kw.Comic.KnowEngines;
+using JavaScriptEngineSwitcher.Core;
+using JavaScriptEngineSwitcher.Jint;
 
 namespace Kw.Comic
 {
@@ -18,6 +21,7 @@ namespace Kw.Comic
         private static EasyComicBuilder easyComicBuilder;
 
         public static IServiceCollection Services => easyComicBuilder?.Services;
+        public static bool IsLoaded => !(provider is null);
 
         public static IServiceProvider Provider
         {
@@ -30,6 +34,7 @@ namespace Kw.Comic
                         if (provider == null)
                         {
                             provider = easyComicBuilder.Build();
+                            provider.UseKnowEngines();
                         }
                     }
                 }
@@ -45,6 +50,8 @@ namespace Kw.Comic
             Services.AddSingleton<IBookshelfService, BookshelfService>();
             Services.AddLogging();
             Services.AddEasyComic(type);
+            Services.AddKnowEngines();
+            Services.AddScoped<IJsEngine, JintJsEngine>();
             Services.AddDbContext<ComicDbContext>(x =>
             {
                 var builder = new SqliteConnectionStringBuilder();
