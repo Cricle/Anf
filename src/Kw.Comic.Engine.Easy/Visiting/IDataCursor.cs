@@ -12,6 +12,9 @@ namespace Kw.Comic.Engine.Easy.Visiting
     /// </summary>
     /// <typeparam name="T">数据类型</typeparam>
     public interface IDataCursor<T> : INotifyPropertyChanged, IDisposable
+#if NET461_OR_GREATER||NETSTANDARD2_0
+        ,IAsyncEnumerable<T>
+#endif
     {
         int Count { get; }
 
@@ -21,6 +24,6 @@ namespace Kw.Comic.Engine.Easy.Visiting
 
         Task<bool> MoveAsync(int index);
 
-        event Action<DataCursorBase<T>, int> Moved;
+        event Action<IDataCursor<T>, int> Moved;
     }
 }

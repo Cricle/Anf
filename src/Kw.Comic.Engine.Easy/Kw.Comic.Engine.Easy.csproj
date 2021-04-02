@@ -8,8 +8,8 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Version>1.2.1</Version>
+    <LangVersion>8.0</LangVersion>
   </PropertyGroup>
-
   <PropertyGroup Condition="'$(Configuration)'!='Debug'">
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>

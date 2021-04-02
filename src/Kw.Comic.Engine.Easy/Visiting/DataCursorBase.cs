@@ -1,9 +1,14 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Kw.Comic.Engine.Easy.Visiting
 {
     public abstract class DataCursorBase<T> : ObserableObject, IDataCursor<T>
+#if NET461_OR_GREATER || NETSTANDARD2_0
+        , IAsyncEnumerable<T>
+#endif
     {
         private int currentIndex = -1;
         private T current;
@@ -33,7 +38,7 @@ namespace Kw.Comic.Engine.Easy.Visiting
             private set => RaisePropertyChanged(ref current, value);
         }
 
-        public event Action<DataCursorBase<T>,int> Moved;
+        public event Action<IDataCursor<T>,int> Moved;
         public virtual void Dispose()
         {
         }
@@ -68,5 +73,17 @@ namespace Kw.Comic.Engine.Easy.Visiting
 
         }
         protected abstract Task<T> LoadAsync(int index);
+
+#if NET461_OR_GREATER||NETSTANDARD2_0
+        public async IAsyncEnumerator<T> GetAsyncEnumerator(CancellationToken cancellationToken = default)
+        {
+            var index = 0;
+            while (!cancellationToken.IsCancellationRequested && index < Count)
+            {
+                yield return await LoadAsync(index);
+                index++;
+            }
+        }
+#endif
     }
 }

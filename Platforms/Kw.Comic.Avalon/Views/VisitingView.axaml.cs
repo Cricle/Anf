@@ -12,13 +12,28 @@ namespace Kw.Comic.Avalon.Views
             InitializeComponent();
             LoadVm();
         }
+        private AvalonVisitingViewModel vm;
         private async void LoadVm()
         {
-            var vm = await AvalonVisitingViewModel.CreateAsync("https://manhua.dmzj.com/waixingmonv");
+            vm = await AvalonVisitingViewModel.CreateAsync("https://manhua.dmzj.com/waixingmonv");
             await vm.NextChapterAsync();
             await vm.NextPageAsync();
+            this.KeyDown += VisitingView_KeyDown;
             DataContext = vm;
         }
+
+        private async void VisitingView_KeyDown(object sender, Avalonia.Input.KeyEventArgs e)
+        {
+            if (e.Key == Avalonia.Input.Key.Left)
+            {
+                await vm.PrevChapterAsync();
+            }
+            else if (e.Key== Avalonia.Input.Key.Right)
+            {
+                await vm.NextChapterAsync();
+            }
+        }
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);

@@ -20,13 +20,13 @@
       </ExperimentalAcrylicBorder.Material>
       <TextBlock>dsadsads</TextBlock>
     </ExperimentalAcrylicBorder>
-    <Carousel Items="{Binding Bitmaps}" Grid.Row="1" IsVirtualized="True" AutoScrollToSelectedItem="True">
-      <Carousel.ItemTemplate>
+    <ListBox Items="{Binding Resources}" Grid.Row="1" VirtualizationMode="Simple" SelectionMode="Toggle">
+      <ListBox.ItemTemplate>
         <DataTemplate>
-          <Image Source="{Binding Resource}"/>
+          <Image Source="{Binding VisitPage.Resource}"/>
         </DataTemplate>
-      </Carousel.ItemTemplate>
-    </Carousel>
+      </ListBox.ItemTemplate>
+    </ListBox>
     <StackPanel Grid.Row="2" Orientation="Horizontal">
       
     </StackPanel>

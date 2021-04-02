@@ -2,11 +2,15 @@
 using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
 using Kw.Comic.Engine.Easy.Visiting;
+using Kw.Comic.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -19,8 +23,8 @@ namespace Kw.Comic.ViewModels
     {
         public VisitingViewModel(IComicVisiting<TResource> visiting = null)
         {
-            scope = AppEngine.CreateScope();
             InitService(scope.ServiceProvider, visiting);
+            InitVisiting();
         }
         public VisitingViewModel(
             IComicVisiting<TResource> visiting,
@@ -32,20 +36,10 @@ namespace Kw.Comic.ViewModels
             this.recyclableMemoryStreamManager = recyclableMemoryStreamManager ?? throw new ArgumentNullException(nameof(recyclableMemoryStreamManager));
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.visiting = visiting ?? throw new ArgumentNullException(nameof(visiting));
-            PrevChapterCommand = new RelayCommand(() => _ = PrevChapterAsync());
-            NextChapterCommand = new RelayCommand(() => _ = NextChapterAsync());
-            GoChapterCommand = new RelayCommand<ComicChapter>(x => _ = GoChapterAsync(x));
-
-            PrevPageCommand = new RelayCommand(() => _ = PrevPageAsync());
-            NextPageCommand = new RelayCommand(() => _ = NextPageAsync());
-            GoPageCommand = new RelayCommand<ComicPage>(x => _ = GoPageAsync(x));
-
-            if (Visiting.IsLoad())
-            {
-                Init();
-            }
+            InitVisiting();
         }
-        protected IServiceScope scope;
+        private CancellationTokenSource loadCancellationTokenSource;
+        protected readonly IServiceScope scope= AppEngine.CreateScope();
         protected IStreamImageConverter<TImage> streamImageConverter;
         protected RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         protected HttpClient httpClient;
@@ -60,6 +54,7 @@ namespace Kw.Comic.ViewModels
 
         public MemoryStream LogoStream => logoStream;
         public ChapterSlots<TResource> ChapterSlots => chapterSlots;
+        public CancellationTokenSource LoadCancellationTokenSource=> loadCancellationTokenSource;
         public PageSlots<TResource> PageSlots
         {
             get => pageSlots;
@@ -92,7 +87,6 @@ namespace Kw.Comic.ViewModels
             private set
             {
                 Set(ref currentChaterCursor, value);
-                OnCurrentChaterCursorChanged(value);
             }
         }
 
@@ -110,13 +104,20 @@ namespace Kw.Comic.ViewModels
 
         public ComicEntity ComicEntity => Visiting.Entity;
 
-        public RelayCommand PrevChapterCommand { get; }
-        public RelayCommand NextChapterCommand { get; }
-        public RelayCommand<ComicChapter> GoChapterCommand { get; }
+        public RelayCommand FirstChapterCommand { get; protected set; }
+        public RelayCommand LastChapterCommand { get; protected set; }
+        public RelayCommand PrevChapterCommand { get; protected set; }
+        public RelayCommand NextChapterCommand { get; protected set; }
+        public RelayCommand<ComicChapter> GoChapterCommand { get; protected set; }
+        public RelayCommand<int> GoChapterIndexCommand { get; protected set; }
 
-        public RelayCommand PrevPageCommand { get; }
-        public RelayCommand NextPageCommand { get; }
-        public RelayCommand<ComicPage> GoPageCommand { get; }
+        public RelayCommand FirstPageCommand { get; protected set; }
+        public RelayCommand LastPageCommand { get; protected set; }
+        public RelayCommand PrevPageCommand { get; protected set; }
+        public RelayCommand NextPageCommand { get; protected set; }
+        public RelayCommand<ComicPage> GoPageCommand { get; protected set; }
+        public RelayCommand<int> GoPageIndexCommand { get; protected set; }
+        public SilentObservableCollection<ComicPageInfo<TResource>> Resources { get; protected set; }
 
         protected void InitService(IServiceProvider provider, IComicVisiting<TResource> visiting = null)
         {
@@ -137,16 +138,34 @@ namespace Kw.Comic.ViewModels
         {
 
         }
-        public async Task LoadAllAsync()
+        public async Task<int> LoadAllAsync()
         {
-            var cur = pageSlots;
+            var count = Resources.Count;
+            var enu = Resources.GetEnumerator();
+            while (enu.MoveNext()&& !loadCancellationTokenSource.IsCancellationRequested)
+            {
+                await enu.Current.LoadAsync();
+            }
+            return count;
+        }
+        #region CursorMove
+        public Task<bool> FirstPageAsync()
+        {
+            var cur = CurrentPageCursor;
             if (cur != null)
             {
-                for (int i = 0; i < cur.Size && cur == pageSlots; i++)
-                {
-                    _ = await cur.GetAsync(i);
-                }
+                return cur.MoveFirstAsync();
             }
+            return Task.FromResult(false);
+        }
+        public Task<bool> LastPageAsync()
+        {
+            var cur = CurrentPageCursor;
+            if (cur != null)
+            {
+                return cur.MoveLastAsync();
+            }
+            return Task.FromResult(false);
         }
         public Task<bool> NextPageAsync()
         {
@@ -166,24 +185,54 @@ namespace Kw.Comic.ViewModels
             }
             return Task.FromResult(false);
         }
+        public Task<bool> GoPageIndexAsync(int index)
+        {
+            var cur = CurrentPageCursor;
+            if (cur != null)
+            {
+                return cur.MoveAsync(index);
+            }
+            return Task.FromResult(false);
+        }
         public Task<bool> GoPageAsync(ComicPage page)
         {
             var chCur = CurrentChaterCursor?.Current;
-            var cur = CurrentPageCursor;
-            if (cur != null && chCur != null)
+            if (chCur != null)
             {
                 var index = Array.FindIndex(chCur.ChapterWithPage.Pages, x => x == page);
+                return GoPageIndexAsync(index);
+            }
+            return Task.FromResult(false);
+        }
+        public Task<bool> GoChapterIndexAsync(int index)
+        {
+            var cur = CurrentChaterCursor;
+            if (cur != null)
+            {
                 return cur.MoveAsync(index);
             }
             return Task.FromResult(false);
         }
         public Task<bool> GoChapterAsync(ComicChapter chapter)
         {
+            var index = Array.FindIndex(Visiting.Entity.Chapters, x => x == chapter);
+            return GoChapterIndexAsync(index);
+        }
+        public Task<bool> FirstChapterAsync()
+        {
             var cur = CurrentChaterCursor;
             if (cur != null)
             {
-                var index = Array.FindIndex(Visiting.Entity.Chapters, x => x == chapter);
-                return cur.MoveAsync(index);
+                return cur.MoveFirstAsync();
+            }
+            return Task.FromResult(false);
+        }
+        public Task<bool> LastChapterAsync()
+        {
+            var cur = CurrentChaterCursor;
+            if (cur != null)
+            {
+                return cur.MoveLastAsync();
             }
             return Task.FromResult(false);
         }
@@ -205,18 +254,61 @@ namespace Kw.Comic.ViewModels
             }
             return Task.FromResult(false);
         }
+        #endregion
+        private void InitVisiting()
+        {
+            FirstChapterCommand = new RelayCommand(() => _ = FirstChapterAsync());
+            LastChapterCommand = new RelayCommand(() => _ = LastChapterAsync());
+            PrevChapterCommand = new RelayCommand(() => _ = PrevChapterAsync());
+            NextChapterCommand = new RelayCommand(() => _ = NextChapterAsync());
+            GoChapterCommand = new RelayCommand<ComicChapter>(x => _ = GoChapterAsync(x));
+            GoChapterIndexCommand = new RelayCommand<int>(x => _ = GoChapterIndexAsync(x));
+
+            FirstPageCommand = new RelayCommand(() => _ = FirstPageAsync());
+            LastPageCommand = new RelayCommand(() => _ = LastPageAsync());
+            PrevPageCommand = new RelayCommand(() => _ = PrevPageAsync());
+            NextPageCommand = new RelayCommand(() => _ = NextPageAsync());
+            GoPageCommand = new RelayCommand<ComicPage>(x => _ = GoPageAsync(x));
+            GoPageIndexCommand = new RelayCommand<int>(x => _ = GoPageIndexAsync(x));
+
+            Resources = new SilentObservableCollection<ComicPageInfo<TResource>>();
+            if (Visiting.IsLoad())
+            {
+                Init();
+            }
+        }
         protected void Init()
         {
             chapterSlots = Visiting.CreateChapterSlots();
             CurrentChaterCursor = chapterSlots.ToDataCursor();
-            CurrentChaterCursor.Moved += CurrentChaterCursor_Moved;
+            CurrentChaterCursor.Moved += OnCurrentChaterCursorMoved;
             _ = LoadLogoAsync(Visiting.Entity.ImageUrl);
         }
 
-        private void CurrentChaterCursor_Moved(DataCursorBase<IComicChapterManager<TResource>> arg1, int arg2)
+        private void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
         {
-            pageSlots = chapterSlots[arg2].CreatePageSlots();
-            CurrentPageCursor = pageSlots.ToDataCursor();
+            loadCancellationTokenSource?.Cancel();
+            loadCancellationTokenSource?.Dispose();
+            Resources.Clear();
+
+            var ps = PageSlots;
+            if (ps != null)
+            {
+                ps.Dispose();
+                PageSlots = null;
+            }
+            ps= ChapterSlots[arg2].CreatePageSlots();
+            PageSlots = ps;
+            var datas = Enumerable.Range(0, PageSlots.Size)
+                .Select(x => CreatePageInfo(ps, x));
+            Resources.AddRange(datas);
+            CurrentPageCursor = PageSlots.ToDataCursor();
+            loadCancellationTokenSource = new CancellationTokenSource();
+            OnCurrentChaterCursorChanged(arg1);
+        }
+        protected virtual ComicPageInfo<TResource> CreatePageInfo(PageSlots<TResource> slots,int index)
+        {
+            return new ComicPageInfo<TResource>(slots, index);
         }
 
         public async Task LoadAsync(string address)
@@ -244,21 +336,14 @@ namespace Kw.Comic.ViewModels
             return Task.CompletedTask;
         }
 
-        public async Task SelectChapterAsync(int index)
+        public Task<bool> SelectChapterAsync(int index)
         {
-            pageSlots?.Dispose();
-            PageSlots = null;
             var cur = CurrentChaterCursor;
-            if (cur != null && cur.CurrentIndex != index)
+            if (cur != null)
             {
-                var ok = await cur.MoveAsync(index);
-                if (ok)
-                {
-                    PageSlots = cur.Current.CreatePageSlots();
-                    CurrentPageCursor = pageSlots.ToDataCursor();
-                    await OnSelectedChapterAsync(index);
-                }
+                return cur.MoveAsync(index);
             }
+            return Task.FromResult(false);
         }
         protected virtual Task OnSelectedChapterAsync(int index)
         {
@@ -271,6 +356,7 @@ namespace Kw.Comic.ViewModels
             logoStream?.Dispose();
             Visiting.Dispose();
             scope?.Dispose();
+            loadCancellationTokenSource?.Dispose();
         }
 
         private async Task LoadLogoAsync(string address)

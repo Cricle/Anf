@@ -37,24 +37,13 @@ namespace Kw.Comic.Avalon.ViewModels
             : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter)
         {
         }
-        public SilentObservableCollection<IComicVisitPage<Bitmap>> Bitmaps { get; } = new SilentObservableCollection<IComicVisitPage<Bitmap>>();
-
-        protected override void OnCurrentPageCursorChanged(IDataCursor<IComicVisitPage<Bitmap>> cursor)
+        protected override async void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<Bitmap>> cursor)
         {
-            Bitmaps.Clear();
-            LoadPage(cursor, PageSlots.ToLoadEnumerable().ToArray());
-        }
-
-        private async void LoadPage(IDataCursor<IComicVisitPage<Bitmap>> cursor,Func<Task<IComicVisitPage<Bitmap>>>[] tasks)
-        {
-            for (int i = 0; i < tasks.Length && cursor == CurrentPageCursor; i++)
+            try
             {
-                var ds = await tasks[i]();
-                if (ds!=null&&cursor == CurrentPageCursor)
-                {
-                    Bitmaps.Add(ds);
-                }
+                await LoadAllAsync();
             }
+            catch (Exception) { }
         }
     }
 }
