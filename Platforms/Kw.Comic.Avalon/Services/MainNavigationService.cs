@@ -63,19 +63,25 @@ namespace Kw.Comic.Avalon.Services
             }
             return border.Child;
         }
-        public void Navigate(object dest)
+        public IControl Navigate(object dest)
         {
             var c = NavigateCore(dest);
             types.Push(c.GetType());
+            return c;
         }
-        public void Navigate(Type type)
+        public IControl Navigate(Type type)
         {
             var control = viewActiver[type]();
-            Navigate(control);
+            return Navigate(control);
         }
-        public void Navigate<T>()
+        public IControl Navigate<T>()
         {
-            Navigate(typeof(T));
+            return Navigate(typeof(T));
+        }
+
+        void INavigationService.Navigate(object dest)
+        {
+            this.Navigate(dest);
         }
     }
 }

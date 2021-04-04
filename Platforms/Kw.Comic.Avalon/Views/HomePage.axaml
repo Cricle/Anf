@@ -4,6 +4,7 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Kw.Comic.Avalon.ViewModels"
              xmlns:m="using:Kw.Comic.Avalon.Models"
+             xmlns:kwce="using:Kw.Comic.Engine"
              xmlns:paz="using:Avalonia.Controls.PanAndZoom"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Background="Transparent"
@@ -17,7 +18,7 @@
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    <Grid Margin="20">
+    <Grid Margin="20,0,20,6">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
@@ -54,7 +55,7 @@
       </ListBox.ItemsPanel>
       <ListBox.ItemTemplate>
         <DataTemplate DataType="{x:Type m:AvalonComicSnapshotInfo}">
-          <Grid ToolTip.Tip="{Binding Snapshot.Descript,Mode=OneTime}">
+          <Grid>
             <Grid.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="打开">
@@ -64,6 +65,23 @@
                 <MenuItem Header="复制"></MenuItem>
               </ContextMenu>
             </Grid.ContextMenu>
+            <ToolTip.Tip>
+              <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding Snapshot.Descript,Mode=OneTime}"/>
+                <ItemsRepeater Items="{Binding SourceInfos}" Margin="0,4,0,0">
+                  <ItemsRepeater.Layout>
+                    <StackLayout Orientation="Horizontal"/>
+                  </ItemsRepeater.Layout>
+                  <ItemsRepeater.ItemTemplate>
+                    <DataTemplate DataType="{x:Type kwce:ComicSource}">
+                      <Border Padding="4,2" CornerRadius="3" Background="Gray" Margin="0,0,2,0">
+                        <TextBlock Text="{Binding Source.Name}"/>
+                      </Border>
+                    </DataTemplate>
+                  </ItemsRepeater.ItemTemplate>
+                </ItemsRepeater>
+              </StackPanel>
+            </ToolTip.Tip>
             <Image Source="{Binding LogoImage,Mode=OneWay}" Width="300"/>
             <Border Background="#A1666666"
                                 VerticalAlignment="Bottom">

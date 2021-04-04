@@ -30,7 +30,7 @@ namespace Kw.Comic.Avalon.Services
                     Text = "\xE72B"
                 }
             };
-            GoBackButton.IsVisible = false;
+            GoBackButton.IsVisible = true;
             GoBackButton.Click += GoBackButton_Click;
             var tbx = new TextBlock();
             TitleControl = tbx;
@@ -40,7 +40,20 @@ namespace Kw.Comic.Avalon.Services
 
         private void GoBackButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
-            AppEngine.GetRequiredService<MainNavigationService>().Navigate<HomePage>();
+            var navSer = AppEngine.GetRequiredService<MainNavigationService>();
+            var innerType = navSer.border.Child?.GetType();
+            if (innerType !=null&& !innerType.IsEquivalentTo(typeof(HomePage)))
+            {
+
+            if (innerType.IsEquivalentTo(typeof(VisitingView)))
+            {
+                navSer.Navigate<ComicView>();
+            }
+            else
+            {
+                navSer.Navigate<HomePage>();
+            }
+            }
         }
 
         private void BackButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)

@@ -18,7 +18,6 @@ namespace Kw.Comic.Avalon.Views
         {
             InitializeComponent();
             titleService = AppEngine.GetRequiredService<TitleService>();
-            titleService.GoBackButton.IsVisible = true;
         }
         private void InitializeComponent()
         {
@@ -45,7 +44,6 @@ namespace Kw.Comic.Avalon.Views
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
             base.OnDetachedFromLogicalTree(e);
-            titleService.GoBackButton.IsVisible = false;
         }
         private void GoChapterClick(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {

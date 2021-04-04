@@ -15,21 +15,21 @@
     <Thickness x:Key="ItemMargin">0,4</Thickness>
     <sys:Double x:Key="DescFontSize">16</sys:Double>
   </UserControl.Resources>
-  <Grid>
+  <Grid Margin="6,0">
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
-    <Grid Grid.Row="0" Margin="25,20">
+    <Grid Grid.Row="0">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
       <Border>
-        <Image Source="{Binding Snapshot.ImageUri}"
+        <Image Source="{Binding LogoImage}"
                Stretch="UniformToFill"
-               Width="300"/>
+               Width="280"/>
       </Border>
       <StackPanel Grid.Column="1"
             Orientation="Vertical"
@@ -84,7 +84,7 @@
             HorizontalAlignment="Center">
       <TextBlock FontSize="22">引用源</TextBlock>
     </Border>
-    <Border Grid.Row="2">
+    <ScrollViewer Grid.Row="2">
       <ItemsControl Items="{Binding SourceInfos}"
                 FontSize="14">
         <ItemsControl.ItemTemplate>
@@ -117,7 +117,7 @@
                 <StackPanel.Resources>
                   <Thickness x:Key="BlockMargin">6,0</Thickness>
                 </StackPanel.Resources>
-                <Button Command="{Binding WatchCommand}">
+                <Button Command="{Binding WatchCommand}" IsVisible="{Binding CanParse}">
                   <StackPanel Orientation="Horizontal">
                     <TextBlock Classes="segoblock" FontSize="{StaticResource DescFontSize}" Text="&#xE768;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
                     <TextBlock VerticalAlignment="Center">进入</TextBlock>
@@ -142,6 +142,6 @@
           </DataTemplate>
         </ItemsControl.ItemTemplate>
       </ItemsControl>
-    </Border>
+    </ScrollViewer>
   </Grid>
 </UserControl>

@@ -26,6 +26,8 @@ namespace Kw.Comic.Avalon
         public MainWindow()
         {
             InitializeComponent();
+            MinWidth = 850;
+            MinHeight = 400;
 #if DEBUG
             this.AttachDevTools();
 #endif

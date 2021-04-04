@@ -1,4 +1,5 @@
 ﻿using Kw.Comic.Avalon.Models;
+using Kw.Comic.Avalon.Services;
 using Kw.Comic.Avalon.Views;
 using Kw.Comic.Engine;
 using Kw.Comic.Models;
@@ -49,9 +50,11 @@ namespace Kw.Comic.Avalon.ViewModels
             if (info is AvalonComicSnapshotInfo sn)
             {
                 var vm = new AvalonComicViewModel(info.Snapshot, sn.LogoImage);
-                var page = new ComicView { DataContext = vm };
-                var navSer = AppEngine.GetRequiredService<INavigationService>();
-                navSer.Navigate(page);
+                var navSer = AppEngine.GetRequiredService<MainNavigationService>();
+                AppEngine.GetRequiredService<TitleService>().GoBackButton.IsVisible = true;
+
+                var c =navSer.Navigate<ComicView>();
+                c.DataContext = vm;
             }
         }
         protected override ComicSnapshotInfo CreateSnapshotInfo(ComicSnapshot info)

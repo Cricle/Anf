@@ -15,13 +15,11 @@ namespace Kw.Comic.Avalon.Views
         {
             InitializeComponent();
             titleService = AppEngine.GetRequiredService<TitleService>();
-            titleService.GoBackButton.IsVisible = true;
             binder = AppEngine.GetRequiredService<MainWindow>().BindDecorationMargin(this);
         }
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
             binder.Dispose();
-            titleService.GoBackButton.IsVisible = false;
             base.OnDetachedFromLogicalTree(e);
         }
 
