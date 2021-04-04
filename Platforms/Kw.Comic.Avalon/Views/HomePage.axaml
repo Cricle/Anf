@@ -41,7 +41,6 @@
         <TextBlock FontSize="22" Text="可以从上方输入框输入"/>
         <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="关键字"/>
         <TextBlock FontSize="22" Text="搜索或直接输入"/>
-        <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="关键字"/>
         <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="可解析"/>
         <TextBlock FontSize="22" Text="漫画网址"/>
       </StackPanel>

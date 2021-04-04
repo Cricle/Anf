@@ -10,6 +10,7 @@ using Avalonia.Media;
 using Kw.Comic.Avalon.Services;
 using Kw.Comic.Services;
 using Avalonia.LogicalTree;
+using Avalonia.Data;
 
 namespace Kw.Comic.Avalon
 {
@@ -40,7 +41,10 @@ namespace Kw.Comic.Avalon
             navSer = (MainNavigationService)AppEngine.GetRequiredService<INavigationService>();
             mainPlan = this.Get<Panel>("MainPlan");
             mainPlan.Children.Add(navSer.border);
-            this.Get<Border>("TitleBar").DataContext = AppEngine.GetRequiredService<TitleService>();
+            var titleBar = this.Get<Border>("TitleBar");
+            var titleSer = AppEngine.GetRequiredService<TitleService>();
+            titleBar.DataContext =titleSer;
+            titleBar.Bind(HeightProperty, new Binding(nameof(TitleService.OffsceneHeight)) { Source = titleSer });
         }
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {

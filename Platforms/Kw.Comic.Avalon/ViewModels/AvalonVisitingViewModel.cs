@@ -1,12 +1,16 @@
-﻿using Avalonia.Media.Imaging;
+﻿using Avalonia.Controls;
+using Avalonia.Media.Imaging;
+using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
 using Kw.Comic.Engine.Easy.Visiting;
+using Kw.Comic.Models;
 using Kw.Comic.ViewModels;
 using Microsoft.IO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -29,31 +33,55 @@ namespace Kw.Comic.Avalon.ViewModels
         public AvalonVisitingViewModel()
             :base(null)
         {
+            SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
         }
         public AvalonVisitingViewModel(IComicVisiting<Bitmap> visiting = null) 
             : base(visiting)
         {
+            SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
         }
 
         public AvalonVisitingViewModel(IComicVisiting<Bitmap> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<Bitmap> streamImageConverter)
             : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter)
         {
+            SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
         }
         private bool chapterSelectorOpen;
-        private ComicChapter trulyCurrentComicChapter;
         public ComicChapter TrulyCurrentComicChapter
         {
             get => this.CurrentChapter;
             set
             {
-                trulyCurrentComicChapter = value;
                 _ = GoChapterAsync(value);
+                RaisePropertyChanged();
             }
         }
         public bool ChapterSelectorOpen
         {
             get { return chapterSelectorOpen; }
             set => Set(ref chapterSelectorOpen, value);
+        }
+        public RelayCommand<ComicPageInfo<Bitmap>> SaveImageCommand { get; }
+
+        public async void SaveImage(ComicPageInfo<Bitmap> info)
+        {
+            var win = AppEngine.GetRequiredService<MainWindow>();
+            var dig = new SaveFileDialog();
+            dig.InitialFileName = $"{Name}-{CurrentChapter.Title}-{info.Index}.jpg";
+            var res=await dig.ShowAsync(win);
+            if (res != null && res != null)
+            {
+                using (var stream = recyclableMemoryStreamManager.GetStream())
+                {
+                    info.Resource.Save(stream);
+                    stream.Seek(0, SeekOrigin.Begin);
+
+                    using (var fs=File.Open(res, FileMode.Create))
+                    {
+                        await stream.CopyToAsync(fs);
+                    }
+                }
+            }
         }
     }
 }

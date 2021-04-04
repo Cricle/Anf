@@ -2,6 +2,8 @@ using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using System;
 using Avalonia.OpenGL;
+using System.Threading.Tasks;
+using System.Diagnostics;
 
 namespace Kw.Comic.Avalon
 {
@@ -12,7 +14,14 @@ namespace Kw.Comic.Avalon
         // yet and stuff might break.
         public static void Main(string[] args)
         {
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
             BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+        }
+
+        private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            Debug.WriteLine(e.Exception);
+            e.SetObserved();
         }
 
         // Avalonia configuration, don't remove; also used by visual designer.

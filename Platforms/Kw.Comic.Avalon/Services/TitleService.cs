@@ -31,6 +31,7 @@ namespace Kw.Comic.Avalon.Services
                 }
             };
             GoBackButton.IsVisible = true;
+            GoBackButton.Bind(Button.FontSizeProperty, new Binding(nameof(AdviseFontSize)) { Source = this });
             GoBackButton.Click += GoBackButton_Click;
             var tbx = new TextBlock();
             TitleControl = tbx;

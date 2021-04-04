@@ -9,17 +9,26 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Models
 {
-    public enum ComicPageInfoTypes
-    {
-        FromLoad,
-        FromValue
-    }
     public class ComicPageInfo<TResource> : ObservableObject
     {
         private IComicVisitPage<TResource> visitPage;
         private bool loading;
         private Exception exception;
         private TResource resource;
+        private bool loadSucceed;
+        private bool hasException;
+
+        public bool HasException
+        {
+            get { return hasException; }
+            private set => Set(ref hasException, value);
+        }
+
+        public bool LoadSucceed
+        {
+            get { return loadSucceed; }
+            private set => Set(ref loadSucceed, value);
+        }
 
         public TResource Resource
         {
@@ -52,12 +61,15 @@ namespace Kw.Comic.Models
             PageSlots = pageSlots ?? throw new ArgumentNullException(nameof(pageSlots));
             Index = index;
             LoadCommand = new RelayCommand(() => _ = LoadAsync());
+            ReLoadCommand = new RelayCommand(() => _ = ReloadAsync());
             PageInfoType = ComicPageInfoTypes.FromLoad;
         }
         public ComicPageInfo(IComicVisitPage<TResource> visitPage)
         {
             VisitPage = visitPage;
             PageInfoType = ComicPageInfoTypes.FromValue;
+            LoadCommand = new RelayCommand(() => _ = LoadAsync());
+            ReLoadCommand = new RelayCommand(() => _ = ReloadAsync());
         }
 
         public ComicPageInfoTypes PageInfoType { get; }
@@ -67,7 +79,12 @@ namespace Kw.Comic.Models
         public int Index { get; }
 
         public RelayCommand LoadCommand { get; }
-
+        public RelayCommand ReLoadCommand { get; }
+        public Task ReloadAsync()
+        {
+            Interlocked.Exchange(ref locker, new object());
+            return LoadAsync();
+        }
         public async Task LoadAsync()
         {
             if (PageSlots is null)
@@ -76,17 +93,21 @@ namespace Kw.Comic.Models
             }
             if (Interlocked.CompareExchange(ref locker, null, locker) != null)
             {
+                HasException = false;
+                LoadSucceed = false;
                 Loading = true;
                 try
                 {
                     task = PageSlots.GetAsync(Index);
                     VisitPage = await task;
                     Resource = VisitPage.Resource;
+                    LoadSucceed = true;
                 }
                 catch (Exception ex)
                 {
                     Exception = ex;
                     task = null;
+                    HasException = true;
                     Interlocked.CompareExchange(ref locker, new object(), null);
                 }
                 finally

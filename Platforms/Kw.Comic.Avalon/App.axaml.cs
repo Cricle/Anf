@@ -38,9 +38,10 @@ namespace Kw.Comic.Avalon
             AppEngine.Services.AddSingleton<ThemeService>();
             AppEngine.Services.AddSingleton<TitleService>();
             AppEngine.Services.AddSingleton<INavigationService>(nav);
-            AppEngine.Services.AddSingleton<MainNavigationService>(nav);
             AppEngine.Services.AddSingleton<IComicTurnPageService>(nav);
+            AppEngine.Services.AddSingleton(nav);
             AppEngine.Services.AddSingleton(store);
+            AppEngine.Services.AddSingleton<INotifyService, NotifyService>();
             AppEngine.Services.AddSingleton<IComicSaver>(store);
             AppEngine.Services.AddSingleton<IStoreService>(store);
             AppEngine.Services.AddSingleton<IPlatformService, PlatformService>();
@@ -62,7 +63,8 @@ namespace Kw.Comic.Avalon
                 var nav = AppEngine.GetRequiredService<MainNavigationService>();
                 var mainWin = AppEngine.GetRequiredService<MainWindow>();
                 desktop.MainWindow =mainWin;
-                nav.Navigate<HomePage>();
+                nav.Navigate(new VisitingView());
+                //nav.Navigate<HomePage>();
                 AppEngine.GetRequiredService<TitleService>().Bind(mainWin);
             }
 
