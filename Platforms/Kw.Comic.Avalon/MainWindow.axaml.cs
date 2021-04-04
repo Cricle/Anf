@@ -30,14 +30,20 @@ namespace Kw.Comic.Avalon
             this.AttachDevTools();
 #endif
         }
-
+        private Panel mainPlan;
+        private MainNavigationService navSer;
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            var navSer = (MainNavigationService)AppEngine.GetRequiredService<INavigationService>();
-            navSer.Navigate(new VisitingView());
-
-            this.Get<Panel>("MainPlan").Children.Add(navSer.border);
+            navSer = (MainNavigationService)AppEngine.GetRequiredService<INavigationService>();
+            mainPlan = this.Get<Panel>("MainPlan");
+            mainPlan.Children.Add(navSer.border);
+            this.Get<Border>("TitleBar").DataContext = AppEngine.GetRequiredService<TitleService>();
+        }
+        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
+        {
+            base.OnDetachedFromLogicalTree(e);
+            mainPlan.Children.Remove(navSer.border);   
         }
         Type IStyleable.StyleKey => typeof(Window);
 

@@ -1,5 +1,7 @@
 ﻿using Avalonia.Controls;
+using GalaSoft.MvvmLight;
 using Kw.Comic.Avalon.ViewModels;
+using Kw.Comic.Avalon.Views;
 using Kw.Comic.Models;
 using Kw.Comic.Services;
 using System;
@@ -11,35 +13,45 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Avalon.Services
 {
-    internal class MainNavigationService : INavigationService,IComicTurnPageService
+    internal class MainNavigationService : ObservableObject,INavigationService,IComicTurnPageService
     {
+        private readonly IViewActiver viewActiver;
+        private readonly Stack<Type> types;
         internal readonly Border border;
-
-        public MainNavigationService(Border border)
+        public MainNavigationService(Border border, IViewActiver viewActiver)
         {
             this.border = border;
+            this.viewActiver = viewActiver;
+            types = new Stack<Type>();
         }
 
-        public bool CanGoBack =>false;
+        public bool CanGoBack => types.Count != 0;
 
         public bool CanGoForward => false;
 
         public bool GoBack()
         {
+            if (CanGoBack)
+            {
+                var type = types.Pop();
+                var control=viewActiver.Active(type);
+                NavigateCore(control);
+            }
             return false;
         }
 
         public bool GoForward()
         {
-            return false;
+            throw new NotSupportedException();
         }
 
         public void GoSource(ComicSourceInfo info)
         {
             //Todo
+            var view = new VisitingView(info.Source.TargetUrl);
+            Navigate(view);
         }
-
-        public void Navigate(object dest)
+        private IControl NavigateCore(object dest)
         {
             if (dest is IControl control)
             {
@@ -49,6 +61,21 @@ namespace Kw.Comic.Avalon.Services
             {
                 border.Child = new TextBlock { Text = dest?.ToString() };
             }
+            return border.Child;
+        }
+        public void Navigate(object dest)
+        {
+            var c = NavigateCore(dest);
+            types.Push(c.GetType());
+        }
+        public void Navigate(Type type)
+        {
+            var control = viewActiver[type]();
+            Navigate(control);
+        }
+        public void Navigate<T>()
+        {
+            Navigate(typeof(T));
         }
     }
 }

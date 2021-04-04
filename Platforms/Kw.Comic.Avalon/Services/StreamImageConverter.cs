@@ -12,7 +12,13 @@ namespace Kw.Comic.Avalon.Services
     {
         public Task<Bitmap> ToImageAsync(Stream stream)
         {
-            return Task.FromResult(new Bitmap(stream));
+            Bitmap bit = null;
+            try
+            {
+                bit = new Bitmap(stream);
+            }
+            catch (Exception) { }
+            return Task.FromResult(bit);
         }
     }
 }

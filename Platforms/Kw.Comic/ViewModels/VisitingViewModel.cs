@@ -51,16 +51,52 @@ namespace Kw.Comic.ViewModels
         private IDataCursor<IComicChapterManager<TResource>> currentChaterCursor;
         private IDataCursor<IComicVisitPage<TResource>> currentPageCursor;
         private TImage logoImage;
+        private ComicEntity comicEntity;
+        private string name;
 
         public MemoryStream LogoStream => logoStream;
         public ChapterSlots<TResource> ChapterSlots => chapterSlots;
         public CancellationTokenSource LoadCancellationTokenSource=> loadCancellationTokenSource;
+        private ComicChapter currentChapter;
+        private ChapterWithPage currentChapterWithPage;
+
+        public ChapterWithPage CurrentChapterWithPage
+        {
+            get { return currentChapterWithPage; }
+            private set
+            {
+                Set(ref currentChapterWithPage, value);
+                CurrentChapter = value?.Chapter;
+            }
+        }
+
+        public ComicChapter CurrentChapter
+        {
+            get { return currentChapter; }
+            private set => Set(ref currentChapter, value);
+        }
+
+        public string Name
+        {
+            get { return name; }
+            private set => Set(ref name, value);
+        }
+
         public PageSlots<TResource> PageSlots
         {
             get => pageSlots;
             private set => Set(ref pageSlots, value);
         }
 
+        public ComicEntity ComicEntity
+        {
+            get => comicEntity;
+            private set
+            {
+                Set(ref comicEntity, value);
+                Name = value?.Name;
+            }
+        }
         public TImage LogoImage
         {
             get { return logoImage; }
@@ -99,10 +135,8 @@ namespace Kw.Comic.ViewModels
                 OnLoadingChanged(value);
             }
         }
-
         public IComicVisiting<TResource> Visiting => visiting;
 
-        public ComicEntity ComicEntity => Visiting.Entity;
 
         public RelayCommand FirstChapterCommand { get; protected set; }
         public RelayCommand LastChapterCommand { get; protected set; }
@@ -274,37 +308,65 @@ namespace Kw.Comic.ViewModels
             Resources = new SilentObservableCollection<ComicPageInfo<TResource>>();
             if (Visiting.IsLoad())
             {
-                Init();
+                _ = Init();
             }
+            Visiting.Loading += OnLoading;
+            Visiting.Loaded += OnLoaded;
         }
-        protected void Init()
+
+        private async void OnLoaded(ComicVisiting<TResource> arg1, ComicEntity arg2)
+        {
+            await Init();
+            IsLoading = false;
+        }
+
+        private void OnLoading(ComicVisiting<TResource> arg1, string arg2)
+        {
+            IsLoading = true;
+        }
+
+        protected async Task Init()
         {
             chapterSlots = Visiting.CreateChapterSlots();
             CurrentChaterCursor = chapterSlots.ToDataCursor();
             CurrentChaterCursor.Moved += OnCurrentChaterCursorMoved;
-            _ = LoadLogoAsync(Visiting.Entity.ImageUrl);
+            ComicEntity = Visiting.Entity;
+            if (!string.IsNullOrEmpty(ComicEntity.ImageUrl))
+            {
+                await LoadLogoAsync(ComicEntity.ImageUrl);
+            }
         }
 
         private void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
         {
-            loadCancellationTokenSource?.Cancel();
-            loadCancellationTokenSource?.Dispose();
-            Resources.Clear();
-
-            var ps = PageSlots;
-            if (ps != null)
+            IsLoading = true;
+            try
             {
-                ps.Dispose();
-                PageSlots = null;
+
+                loadCancellationTokenSource?.Cancel();
+                loadCancellationTokenSource?.Dispose();
+                Resources.Clear();
+
+                var ps = PageSlots;
+                if (ps != null)
+                {
+                    ps.Dispose();
+                    PageSlots = null;
+                }
+                ps = ChapterSlots[arg2].CreatePageSlots();
+                PageSlots = ps;
+                var datas = Enumerable.Range(0, PageSlots.Size)
+                    .Select(x => CreatePageInfo(ps, x));
+                Resources.AddRange(datas);
+                CurrentPageCursor = PageSlots.ToDataCursor();
+                CurrentChapterWithPage = PageSlots.ChapterManager.ChapterWithPage;
+                loadCancellationTokenSource = new CancellationTokenSource();
+                OnCurrentChaterCursorChanged(arg1);
             }
-            ps= ChapterSlots[arg2].CreatePageSlots();
-            PageSlots = ps;
-            var datas = Enumerable.Range(0, PageSlots.Size)
-                .Select(x => CreatePageInfo(ps, x));
-            Resources.AddRange(datas);
-            CurrentPageCursor = PageSlots.ToDataCursor();
-            loadCancellationTokenSource = new CancellationTokenSource();
-            OnCurrentChaterCursorChanged(arg1);
+            finally
+            {
+                IsLoading = false;
+            }
         }
         protected virtual ComicPageInfo<TResource> CreatePageInfo(PageSlots<TResource> slots,int index)
         {
@@ -321,7 +383,7 @@ namespace Kw.Comic.ViewModels
                 var ok = await Visiting.LoadAsync(address);
                 if (ok)
                 {
-                    Init();
+                    await Init();
                     await OnLoadedAsync(address);
                 }
             }
@@ -350,6 +412,9 @@ namespace Kw.Comic.ViewModels
         }
         public virtual void Dispose()
         {
+            Visiting.Loading -= OnLoading;
+            Visiting.Loaded -= OnLoaded;
+
             chapterSlots?.Dispose();
             pageSlots?.Dispose();
             logoStream?.Dispose();
@@ -367,6 +432,10 @@ namespace Kw.Comic.ViewModels
                 return;
             }
             logoStream?.Dispose();
+            if (LogoImage is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
             using (var rep = await httpClient.GetAsync(address))
             {
                 logoStream = recyclableMemoryStreamManager.GetStream();

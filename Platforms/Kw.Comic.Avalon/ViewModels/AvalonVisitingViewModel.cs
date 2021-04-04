@@ -1,10 +1,12 @@
 ﻿using Avalonia.Media.Imaging;
+using Kw.Comic.Engine;
 using Kw.Comic.Engine.Easy.Visiting;
 using Kw.Comic.ViewModels;
 using Microsoft.IO;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Diagnostics;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -20,7 +22,7 @@ namespace Kw.Comic.Avalon.ViewModels
             var ok=await vm.Visiting.LoadAsync(address);
             if (ok)
             {
-                vm.Init();
+                await vm.Init();
             }
             return vm;
         }
@@ -37,13 +39,21 @@ namespace Kw.Comic.Avalon.ViewModels
             : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter)
         {
         }
-        protected override async void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<Bitmap>> cursor)
+        private bool chapterSelectorOpen;
+        private ComicChapter trulyCurrentComicChapter;
+        public ComicChapter TrulyCurrentComicChapter
         {
-            //try
-            //{
-            //    await LoadAllAsync();
-            //}
-            //catch (Exception) { }
+            get => this.CurrentChapter;
+            set
+            {
+                trulyCurrentComicChapter = value;
+                _ = GoChapterAsync(value);
+            }
+        }
+        public bool ChapterSelectorOpen
+        {
+            get { return chapterSelectorOpen; }
+            set => Set(ref chapterSelectorOpen, value);
         }
     }
 }

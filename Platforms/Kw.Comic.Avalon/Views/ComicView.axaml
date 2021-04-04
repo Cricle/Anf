@@ -106,7 +106,8 @@
                 <TextBlock Classes="segoblock" IsVisible="{Binding CanParse,Converter={StaticResource RevBoolConverter}}" FontSize="{StaticResource DescFontSize}" Text="&#xE894;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
 
                 <TextBlock Text="{Binding Source.Name}"
-                           Margin="6,0"/>
+                           Margin="6,0"
+                           VerticalAlignment="Center"/>
                 <Button Content="{Binding Source.TargetUrl}"
                         Command="{Binding OpenCommand}"/>
               </StackPanel>
@@ -119,7 +120,7 @@
                 <Button Command="{Binding WatchCommand}">
                   <StackPanel Orientation="Horizontal">
                     <TextBlock Classes="segoblock" FontSize="{StaticResource DescFontSize}" Text="&#xE768;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
-                    <TextBlock VerticalAlignment="Center">观看</TextBlock>
+                    <TextBlock VerticalAlignment="Center">进入</TextBlock>
                   </StackPanel>
                 </Button>
                 <Button Command="{Binding OpenCommand}"

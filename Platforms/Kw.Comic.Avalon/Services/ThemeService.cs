@@ -1,6 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Layout;
 using Avalonia.Themes.Fluent;
 using System;
 using System.Collections.Generic;
@@ -12,6 +13,7 @@ namespace Kw.Comic.Avalon.Services
 {
     internal class ThemeService
     {
+
         public ThemeService(FluentTheme fluentTheme, IClassicDesktopStyleApplicationLifetime app,
             MainWindow window)
         {
@@ -75,6 +77,23 @@ namespace Kw.Comic.Avalon.Services
         public void EnableBlur()
         {
             MainWindow.TransparencyLevelHint = WindowTransparencyLevel.AcrylicBlur;
+        }
+        
+    }
+    public static class WindowExtensions
+    {
+        public static IDisposable BindDecorationMargin(this Window win,Action<Thickness> action)
+        {
+            return win.GetObservable(Window.WindowDecorationMarginProperty)
+                 .Subscribe(action);
+        }
+        public static IDisposable BindDecorationMargin(this Window win,Layoutable inst)
+        {
+            return win.GetObservable(Window.WindowDecorationMarginProperty)
+                 .Subscribe(x =>
+                 {
+                     inst.Margin = x;
+                 });
         }
     }
 }

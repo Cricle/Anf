@@ -50,7 +50,7 @@ namespace Kw.Comic.Avalon.ViewModels
 
         public void Dispose()
         {
-            if (!(httpClient is null))
+            if (httpClient !=null)
             {
                 LogoImage?.Dispose();
             }

@@ -3,34 +3,48 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Kw.Comic.Avalon.ViewModels"
+             xmlns:kwc="using:Kw.Comic"
+             x:Name="VisitingView"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Kw.Comic.Avalon.Views.VisitingView">
   <Design.DataContext>
     <vm:AvalonVisitingViewModel/>
   </Design.DataContext>
   <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="*"/>
-      <RowDefinition Height="Auto"/>
-    </Grid.RowDefinitions>
-    <ExperimentalAcrylicBorder Width="240">
-      <ExperimentalAcrylicBorder.Material>
-        <ExperimentalAcrylicMaterial TintColor="Black" MaterialOpacity="0.85" TintOpacity="1" />
-      </ExperimentalAcrylicBorder.Material>
-      <TextBlock>dsadsads</TextBlock>
-    </ExperimentalAcrylicBorder>
-    <ScrollViewer Grid.Row="1">
+    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
       <ItemsRepeater Name="Rep" Background="{x:Null}" Items="{Binding Resources}">
         <ItemsRepeater.ItemTemplate>
           <DataTemplate>
-            <Image Source="{Binding Resource}" MinHeight="200"/>
+            <Image Stretch="Fill" Source="{Binding Resource}" MinHeight="200"/>
           </DataTemplate>
         </ItemsRepeater.ItemTemplate>
       </ItemsRepeater>
     </ScrollViewer>
-    <StackPanel Grid.Row="2" Orientation="Horizontal">
+    <Border VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.RowSpan="2" Background="Gray" Padding="2" CornerRadius="2" Margin="2">
+      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+        <TextBlock Text="{Binding CurrentChapter.Title}"/>
+        <TextBlock>(</TextBlock>
+        <TextBlock Text="{Binding CurrentPageCursor.CurrentIndex}"></TextBlock>
+        <TextBlock>/</TextBlock>
+        <TextBlock Text="{Binding CurrentPageCursor.Count}"></TextBlock>
+        <TextBlock>)</TextBlock>
+      </StackPanel>
+    </Border>
 
-    </StackPanel>
+    <Border Grid.RowSpan="2" IsVisible="{Binding IsLoading}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+      <ExperimentalAcrylicBorder>
+        <ExperimentalAcrylicBorder.Material>
+          <ExperimentalAcrylicMaterial TintColor="Blue" MaterialOpacity="0.8" TintOpacity="0.87" />
+        </ExperimentalAcrylicBorder.Material>
+        <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="20,0">
+          <StackPanel.Resources>
+            <Thickness x:Key="ItemMargin">0,20,0,0</Thickness>
+          </StackPanel.Resources>
+          <Image Height="300" Source="{Binding LogoImage}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+          <TextBlock FontSize="22" Text="{Binding Name}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+          <ProgressBar IsIndeterminate="True" HorizontalAlignment="Stretch" Margin="{StaticResource ItemMargin}"/>
+        </StackPanel>
+      </ExperimentalAcrylicBorder>
+    </Border>
   </Grid>
 </UserControl>

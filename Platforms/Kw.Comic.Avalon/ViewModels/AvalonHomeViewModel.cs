@@ -46,11 +46,13 @@ namespace Kw.Comic.Avalon.ViewModels
         protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo info)
         {
             usingShapshot = info;
-            var sn = (AvalonComicSnapshotInfo)info;
-            var vm = new AvalonComicViewModel(info.Snapshot, sn.LogoImage);
-            var page = new ComicView { DataContext = vm };
-            var navSer = AppEngine.GetRequiredService<INavigationService>();
-            navSer.Navigate(page);
+            if (info is AvalonComicSnapshotInfo sn)
+            {
+                var vm = new AvalonComicViewModel(info.Snapshot, sn.LogoImage);
+                var page = new ComicView { DataContext = vm };
+                var navSer = AppEngine.GetRequiredService<INavigationService>();
+                navSer.Navigate(page);
+            }
         }
         protected override ComicSnapshotInfo CreateSnapshotInfo(ComicSnapshot info)
         {

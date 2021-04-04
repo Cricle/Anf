@@ -26,13 +26,24 @@ namespace Kw.Comic.Avalon
             AppEngine.Reset();
             AppEngine.AddServices(NetworkAdapterTypes.HttpClient);
             var store = FileStoreService.FromMd5Default(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName));
-            var nav = new MainNavigationService(new Border());
+            var hp = new Lazy<HomePage>();
+            var cv = new Lazy<ComicView>();
+            var va = new ViewActiver
+            {
+                [typeof(HomePage)] = () => hp.Value,
+                [typeof(ComicView)] = () => cv.Value
+            };
+            var nav = new MainNavigationService(new Border(),va);
+            AppEngine.Services.AddSingleton<IViewActiver>(va);
             AppEngine.Services.AddSingleton<ThemeService>();
             AppEngine.Services.AddSingleton<TitleService>();
             AppEngine.Services.AddSingleton<INavigationService>(nav);
+            AppEngine.Services.AddSingleton<MainNavigationService>(nav);
+            AppEngine.Services.AddSingleton<IComicTurnPageService>(nav);
             AppEngine.Services.AddSingleton(store);
             AppEngine.Services.AddSingleton<IComicSaver>(store);
             AppEngine.Services.AddSingleton<IStoreService>(store);
+            AppEngine.Services.AddSingleton<IPlatformService, PlatformService>();
             AppEngine.Services.AddSingleton<IStreamImageConverter<Bitmap>, StreamImageConverter>();
             AppEngine.Services.AddSingleton<IComicVisiting<Bitmap>, ComicVisiting<Bitmap>>();
             AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, AResourceCreatorFactory>();
@@ -47,7 +58,12 @@ namespace Kw.Comic.Avalon
             {
                 AppEngine.Services.AddSingleton(desktop);
                 AppEngine.Services.AddSingleton<MainWindow>();
-                desktop.MainWindow = AppEngine.GetRequiredService<MainWindow>();
+                AppEngine.GetRequiredService<ThemeService>();
+                var nav = AppEngine.GetRequiredService<MainNavigationService>();
+                var mainWin = AppEngine.GetRequiredService<MainWindow>();
+                desktop.MainWindow =mainWin;
+                nav.Navigate<HomePage>();
+                AppEngine.GetRequiredService<TitleService>().Bind(mainWin);
             }
 
             base.OnFrameworkInitializationCompleted();
