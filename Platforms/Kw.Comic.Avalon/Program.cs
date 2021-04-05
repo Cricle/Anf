@@ -27,7 +27,7 @@ namespace Kw.Comic.Avalon
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
-#if NET472
+#if RENDER_D2D
                 .UseWin32()
                 .UseDirect2D1()
 #else

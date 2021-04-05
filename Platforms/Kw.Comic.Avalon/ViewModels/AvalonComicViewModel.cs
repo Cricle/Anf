@@ -1,5 +1,6 @@
 ﻿using Avalonia.Media.Imaging;
 using Kw.Comic.Engine;
+using Kw.Comic.Engine.Easy;
 using Kw.Comic.Models;
 using System;
 using System.Collections.Generic;
@@ -32,6 +33,14 @@ namespace Kw.Comic.Avalon.ViewModels
             private set => Set(ref logoImage, value);
         }
 
+        public async void SaveLogoImage()
+        {
+            if (LogoImage != null)
+            {
+                var name = $"{PathHelper.EnsureName(Snapshot.Name)}.jpg";
+                await LogoImage.PickSaveAsync(name);
+            }
+        }
         private async void InitLogoImage()
         {
             try

@@ -24,7 +24,6 @@ namespace Kw.Comic.Avalon.Views
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-
         }
     }
 }

@@ -2,6 +2,7 @@
 using Avalonia.Media.Imaging;
 using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
+using Kw.Comic.Engine.Easy;
 using Kw.Comic.Engine.Easy.Visiting;
 using Kw.Comic.Models;
 using Kw.Comic.ViewModels;
@@ -23,7 +24,7 @@ namespace Kw.Comic.Avalon.ViewModels
         public static async Task<AvalonVisitingViewModel> CreateAsync(string address)
         {
             var vm = new AvalonVisitingViewModel();
-            var ok=await vm.Visiting.LoadAsync(address);
+            var ok = await vm.Visiting.LoadAsync(address);
             if (ok)
             {
                 await vm.Init();
@@ -31,11 +32,11 @@ namespace Kw.Comic.Avalon.ViewModels
             return vm;
         }
         public AvalonVisitingViewModel()
-            :base(null)
+            : base(null)
         {
             SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
         }
-        public AvalonVisitingViewModel(IComicVisiting<Bitmap> visiting = null) 
+        public AvalonVisitingViewModel(IComicVisiting<Bitmap> visiting = null)
             : base(visiting)
         {
             SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
@@ -65,23 +66,8 @@ namespace Kw.Comic.Avalon.ViewModels
 
         public async void SaveImage(ComicPageInfo<Bitmap> info)
         {
-            var win = AppEngine.GetRequiredService<MainWindow>();
-            var dig = new SaveFileDialog();
-            dig.InitialFileName = $"{Name}-{CurrentChapter.Title}-{info.Index}.jpg";
-            var res=await dig.ShowAsync(win);
-            if (res != null && res != null)
-            {
-                using (var stream = recyclableMemoryStreamManager.GetStream())
-                {
-                    info.Resource.Save(stream);
-                    stream.Seek(0, SeekOrigin.Begin);
-
-                    using (var fs=File.Open(res, FileMode.Create))
-                    {
-                        await stream.CopyToAsync(fs);
-                    }
-                }
-            }
+            var name = $"{PathHelper.EnsureName(Name)}-{PathHelper.EnsureName(CurrentChapter.Title)}-{info.Index}.jpg";
+            await info.Resource.PickSaveAsync(name);
         }
     }
 }

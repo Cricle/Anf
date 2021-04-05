@@ -26,8 +26,8 @@ namespace Kw.Comic.Avalon
             AppEngine.Reset();
             AppEngine.AddServices(NetworkAdapterTypes.HttpClient);
             var store = FileStoreService.FromMd5Default(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName));
-            var hp = new Lazy<HomePage>();
-            var cv = new Lazy<ComicView>();
+            var hp = new Lazy<HomePage>(()=>new HomePage());
+            var cv = new Lazy<ComicView>(() => new ComicView());
             var va = new ViewActiver
             {
                 [typeof(HomePage)] = () => hp.Value,
@@ -63,11 +63,10 @@ namespace Kw.Comic.Avalon
                 var nav = AppEngine.GetRequiredService<MainNavigationService>();
                 var mainWin = AppEngine.GetRequiredService<MainWindow>();
                 desktop.MainWindow =mainWin;
-                nav.Navigate(new VisitingView());
-                //nav.Navigate<HomePage>();
+                //nav.Navigate(new VisitingView());
+                nav.Navigate<HomePage>();
                 AppEngine.GetRequiredService<TitleService>().Bind(mainWin);
             }
-
             base.OnFrameworkInitializationCompleted();
         }
     }

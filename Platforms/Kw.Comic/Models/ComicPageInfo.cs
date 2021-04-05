@@ -11,6 +11,7 @@ namespace Kw.Comic.Models
 {
     public class ComicPageInfo<TResource> : ObservableObject
     {
+        private static readonly object SharedObject = new object();
         private IComicVisitPage<TResource> visitPage;
         private bool loading;
         private Exception exception;
@@ -53,7 +54,7 @@ namespace Kw.Comic.Models
             get => visitPage;
             private set => Set(ref visitPage, value);
         }
-        private object locker = new object();
+        private object locker = SharedObject;
         private Task<IComicVisitPage<TResource>> task;
 
         public ComicPageInfo(PageSlots<TResource> pageSlots, int index)
@@ -82,7 +83,7 @@ namespace Kw.Comic.Models
         public RelayCommand ReLoadCommand { get; }
         public Task ReloadAsync()
         {
-            Interlocked.Exchange(ref locker, new object());
+            Interlocked.Exchange(ref locker, SharedObject);
             return LoadAsync();
         }
         public async Task LoadAsync()
@@ -108,7 +109,7 @@ namespace Kw.Comic.Models
                     Exception = ex;
                     task = null;
                     HasException = true;
-                    Interlocked.CompareExchange(ref locker, new object(), null);
+                    Interlocked.CompareExchange(ref locker, SharedObject, null);
                 }
                 finally
                 {
