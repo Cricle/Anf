@@ -53,13 +53,13 @@ namespace Kw.Comic.ViewModels
         private TImage logoImage;
         private ComicEntity comicEntity;
         private string name;
+        private ComicChapter currentChapter;
+        private ChapterWithPage currentChapterWithPage;
 
         public MemoryStream LogoStream => logoStream;
         public ChapterSlots<TResource> ChapterSlots => chapterSlots;
         public CancellationTokenSource LoadCancellationTokenSource=> loadCancellationTokenSource;
-        private ComicChapter currentChapter;
-        private ChapterWithPage currentChapterWithPage;
-
+       
         public ChapterWithPage CurrentChapterWithPage
         {
             get { return currentChapterWithPage; }
@@ -353,6 +353,11 @@ namespace Kw.Comic.ViewModels
                     ps.Dispose();
                     PageSlots = null;
                 }
+                var cpc = CurrentPageCursor;
+                if (cpc!=null)
+                {
+                    cpc.Dispose();
+                }
                 ps = ChapterSlots[arg2].CreatePageSlots();
                 PageSlots = ps;
                 var datas = Enumerable.Range(0, PageSlots.Size)
@@ -362,12 +367,14 @@ namespace Kw.Comic.ViewModels
                 CurrentChapterWithPage = PageSlots.ChapterManager.ChapterWithPage;
                 loadCancellationTokenSource = new CancellationTokenSource();
                 OnCurrentChaterCursorChanged(arg1);
+                GC.Collect(0, GCCollectionMode.Optimized);
             }
             finally
             {
                 IsLoading = false;
             }
         }
+
         protected virtual ComicPageInfo<TResource> CreatePageInfo(PageSlots<TResource> slots,int index)
         {
             return new ComicPageInfo<TResource>(slots, index);

@@ -6,10 +6,14 @@
     <NgenR2R>false</NgenR2R>
     <UseFody>false</UseFody>
     <UseD2D>true</UseD2D>
+    <EnableCache>true</EnableCache>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework.Trim(`0123456789`))'=='net'">
     <DefineConstants>$(DefineConstants);NETFX;</DefineConstants>
     <UsingNetFramework>true</UsingNetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableCache)'=='true'">
+    <DefineConstants>$(DefineConstants);ENABLE_CACHE;</DefineConstants>
   </PropertyGroup>
   <PropertyGroup Condition="'$(UseD2D)' == 'true'">
     <DefineConstants>$(DefineConstants);RENDER_D2D</DefineConstants>
@@ -22,6 +26,7 @@
     <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
+    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseFody)'=='true'">
     <PackageReference Include="Costura.Fody" Version="5.1.0">

@@ -17,7 +17,7 @@ namespace Kw.Comic.Avalon.Views
         public VisitingView()
         {
             InitializeComponent();
-            LoadVm("https://www.dmzj.com/info/shizhisen.html");
+            LoadVm("https://ac.qq.com/Comic/comicInfo/id/530969");
         }
         public VisitingView(string address)
         {

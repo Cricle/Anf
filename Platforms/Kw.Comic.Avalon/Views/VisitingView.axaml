@@ -3,6 +3,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Kw.Comic.Avalon.ViewModels"
+             xmlns:s="using:Avalonia.Controls.PanAndZoom"
              xmlns:kwc="using:Kw.Comic"
              x:Name="VisitingView"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
@@ -16,7 +17,6 @@
         <ItemsRepeater.ItemTemplate>
           <DataTemplate>
             <Grid>
-
               <Border IsVisible="{Binding LoadSucceed}">
                 <Border.ContextMenu>
                   <ContextMenu>
@@ -58,7 +58,7 @@
         <TextBlock>)</TextBlock>
       </StackPanel>
     </Border>
-
+    
     <Border Grid.RowSpan="2" IsVisible="{Binding IsLoading}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
       <ExperimentalAcrylicBorder>
         <ExperimentalAcrylicBorder.Material>

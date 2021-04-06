@@ -31,6 +31,7 @@ namespace Kw.Comic.Avalon
 
         public async Task<Bitmap> GetAsync(string address)
         {
+#if ENABLE_CACHE
             var str = await storeService.GetPathAsync(address);
             Stream stream = null;
             try
@@ -56,8 +57,14 @@ namespace Kw.Comic.Avalon
             }
             finally
             {
-                stream.Dispose();
+                stream?.Dispose();
             }
+#else
+            using (var mem = await context.SourceProvider.GetImageStreamAsync(address))
+            {
+                return new Bitmap(mem);
+            }
+#endif
         }
     }
 }

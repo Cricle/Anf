@@ -14,6 +14,7 @@ namespace Kw.Comic.KnowEngines
             services.AddKuaikanEngine();
             services.AddJisuEngine();
             services.AddSomanEngine();
+            services.AddTencentEngine();
         }
         public static void UseKnowEngines(this IServiceProvider provider)
         {
@@ -22,6 +23,7 @@ namespace Kw.Comic.KnowEngines
             provider.UseJisuEngine();
             provider.UseKuaikanEngine();
             provider.UseSomanEngine();
+            provider.UseTencentEngine();
         }
     }
 }

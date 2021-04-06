@@ -41,7 +41,8 @@ namespace Kw.Comic.Dm5
             {
                 Address = address,
                 Host= new Uri(address).Host,
-                Headers= headers
+                Referrer= GetBaseAddress(),
+                Headers = headers
             });
         }
 
@@ -93,6 +94,7 @@ namespace Kw.Comic.Dm5
 
         public async Task<ComicPage[]> GetPagesAsync(string targetUrl)
         {
+            await Task.Delay(100);
             var str = string.Empty;
             using (var sr = new StreamReader(await GetStreamAsync(targetUrl)))
             {
@@ -140,16 +142,15 @@ namespace Kw.Comic.Dm5
                 }
                 return pgs.ToArray();
             }
-            var maxBlocks = new List<Func<Task<ComicPage[]>>>();
+            var datas = new List<ComicPage[]>();
             for (int i = 0; i < val; i++)
             {
                 var j = i;
-                maxBlocks.Add(() => RunBlockAsync(j));
+                datas.Add(await RunBlockAsync(j));
             }
-            var datas = await TaskQuene.RunAsync(maxBlocks.ToArray(), 1);
             var containPages = new HashSet<string>();
-            var pages =new List<ComicPage>(datas.Length);
-            for (int i = 0; i < datas.Length; i++)
+            var pages =new List<ComicPage>(datas.Count);
+            for (int i = 0; i < datas.Count; i++)
             {
                 var res = datas[i];
                 for (int q = 0; q < res.Length; q++)

@@ -11,5 +11,6 @@
     <ProjectReference Include="..\Kw.Comic.Jisu\Kw.Comic.Jisu.csproj" />
     <ProjectReference Include="..\Kw.Comic.Kuaikan\Kw.Comic.Kuaikan.csproj" />
     <ProjectReference Include="..\Kw.Comic.Soman\Kw.Comic.Soman.csproj" />
+    <ProjectReference Include="..\Kw.Comic.Tencent\Kw.Comic.Tencent.csproj" />
   </ItemGroup>
 </Project>
