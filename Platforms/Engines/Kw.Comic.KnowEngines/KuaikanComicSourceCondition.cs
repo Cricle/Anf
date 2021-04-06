@@ -1,6 +1,6 @@
 ﻿using Kw.Comic.Engine;
 
-namespace Kw.Comic.Kuaikan
+namespace Kw.Comic
 {
     public class KuaikanComicSourceCondition : ComicSourceConditionBase<KuaikanComicOperator>
     {

@@ -1,29 +1,32 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using Kw.Comic.Engine;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace Kw.Comic.KnowEngines
+namespace Kw.Comic
 {
     public static class KnowEnginesExtensions
     {
         public static void AddKnowEngines(this IServiceCollection services)
         {
-            services.AddDm5Engine();
-            services.AddDmzjEngine();
-            services.AddKuaikanEngine();
-            services.AddJisuEngine();
-            services.AddSomanEngine();
-            services.AddTencentEngine();
+            services.AddScoped<Dm5ComicOperator>();
+            services.AddScoped<DmzjComicOperator>();
+            services.AddScoped<KuaikanComicOperator>();
+            services.AddScoped<JisuComicOperator>();
+            services.AddScoped<SomanSearchProvider>();
+            services.AddScoped<TencentComicOperator>();
         }
         public static void UseKnowEngines(this IServiceProvider provider)
         {
-            provider.UseDm5Engine();
-            provider.UseDmzjEngine();
-            provider.UseJisuEngine();
-            provider.UseKuaikanEngine();
-            provider.UseSomanEngine();
-            provider.UseTencentEngine();
+            var eng = provider.GetRequiredService<ComicEngine>();
+            eng.Add(new Dm5ComicSourceCondition());
+            eng.Add(new DmzjComicSourceCondition());
+            eng.Add(new JisuComicSourceCondition());
+            eng.Add(new KuaikanComicSourceCondition());
+            eng.Add(new TencentComicSourceCondition());
+            var searchEng = provider.GetRequiredService<SearchEngine>();
+            searchEng.Add(typeof(SomanSearchProvider));
         }
     }
 }

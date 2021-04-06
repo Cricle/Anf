@@ -4,7 +4,6 @@ using System;
 using Avalonia.OpenGL;
 using System.Threading.Tasks;
 using System.Diagnostics;
-using Kw.Comic.Tencent;
 using Kw.Comic.Engine.Networks;
 using System.Net.Http;
 using JavaScriptEngineSwitcher.Jint;

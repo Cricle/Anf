@@ -12,11 +12,10 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Kw.Comic.Tencent
+namespace Kw.Comic
 {
     public class TencentComicOperator : IComicSourceProvider
     {
-        //private static readonly string noticJs= "window[\"nonce\"] = \"e6d5d\" + (+eval(\"2 + 2\")).toString() + (+eval(\"4 * 1 / 4\")).toString() + \"a4ece9202ee28beae3f6\" + (+eval(\"9 * 0\")).toString() + \"6cea\";";
         private static Regex dataRegex = new Regex(@"var ?DATA ?= ?'(.+)',", RegexOptions.Compiled);
         private static string varJs = "var window={};var W=window;var _v={};";
         private readonly INetworkAdapter networkAdapter;
@@ -53,7 +52,7 @@ namespace Kw.Comic.Tencent
             return networkAdapter.GetStreamAsync(new RequestSettings
             {
                 Address = address,
-                Headers = headers
+                Headers = imgHeaders
             });
         }
         private Task<Stream> GetStreamAsync(string address)
@@ -84,7 +83,6 @@ namespace Kw.Comic.Tencent
                 var ch = new ComicChapter { TargetUrl = link, Title = name };
                 chapters.Add(ch);
             }
-            chapters.Reverse();
             return new ComicEntity
             {
                 Name = nameBox?.InnerText,

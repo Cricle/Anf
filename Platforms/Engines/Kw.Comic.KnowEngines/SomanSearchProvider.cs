@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Kw.Comic.Engine;
 
-namespace Kw.Comic.Soman
+namespace Kw.Comic
 {
     public class SomanSearchProvider : ISearchProvider
     {

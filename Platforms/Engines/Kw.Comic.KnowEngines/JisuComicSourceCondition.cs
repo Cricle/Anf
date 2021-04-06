@@ -1,6 +1,6 @@
 ﻿using Kw.Comic.Engine;
 
-namespace Kw.Comic.Jisu
+namespace Kw.Comic
 {
     public class JisuComicSourceCondition : ComicSourceConditionBase<JisuComicOperator>
     {

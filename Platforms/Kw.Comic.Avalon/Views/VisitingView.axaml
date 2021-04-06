@@ -24,7 +24,7 @@
                     <MenuItem Header="重载" Command="{Binding ReLoadCommand}"/>
                   </ContextMenu>
                 </Border.ContextMenu>
-                <Image Stretch="Fill" Source="{Binding Resource}" MinHeight="200"></Image>
+                <Image Stretch="None" Source="{Binding Resource}" MinHeight="200"></Image>
               </Border>
               <StackPanel IsVisible="{Binding HasException}" Orientation="Vertical">
                 <TextBlock VerticalAlignment="Center" Text="{Binding Exception}" TextWrapping="Wrap" MaxHeight="400">

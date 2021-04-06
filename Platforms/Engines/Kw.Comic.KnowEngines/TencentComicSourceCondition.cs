@@ -5,7 +5,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kw.Comic.Tencent
+namespace Kw.Comic
 {
     public class TencentComicSourceCondition : ComicSourceConditionBase<TencentComicOperator>
     {

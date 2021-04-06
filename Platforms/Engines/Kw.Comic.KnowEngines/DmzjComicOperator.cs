@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 using System.Web;
 #endif
 
-namespace Kw.Comic.Dmzj
+namespace Kw.Comic
 {
     public class DmzjComicOperator : IComicSourceProvider
     {

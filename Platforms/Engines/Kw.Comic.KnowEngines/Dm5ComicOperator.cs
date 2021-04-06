@@ -11,7 +11,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace Kw.Comic.Dm5
+namespace Kw.Comic
 {
     public class Dm5ComicOperator : IComicSourceProvider
     {
