@@ -28,7 +28,6 @@ namespace Kw.Comic.Avalon
         public void Dispose()
         {
         }
-
         public async Task<Bitmap> GetAsync(string address)
         {
 #if ENABLE_CACHE

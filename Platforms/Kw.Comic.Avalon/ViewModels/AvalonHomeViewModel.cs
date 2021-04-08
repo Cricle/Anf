@@ -22,7 +22,8 @@ namespace Kw.Comic.Avalon.ViewModels
             httpClient = AppEngine.GetRequiredService<HttpClient>();
         }
 
-        public AvalonHomeViewModel(SearchEngine searchEngine) : base(searchEngine)
+        public AvalonHomeViewModel(SearchEngine searchEngine,ComicEngine comicEngine)
+            : base(searchEngine,comicEngine)
         {
             httpClient = AppEngine.GetRequiredService<HttpClient>();
         }

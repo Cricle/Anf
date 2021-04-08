@@ -8,6 +8,7 @@ namespace Kw.Comic.Services
     public interface IComicTurnPageService
     {
         void GoSource(ComicSourceInfo info);
+        void GoSource(string info);
     }
     public interface INavigationService
     {

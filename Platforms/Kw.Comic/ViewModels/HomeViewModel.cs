@@ -2,10 +2,12 @@
 using GalaSoft.MvvmLight.Command;
 using Kw.Comic.Engine;
 using Kw.Comic.Models;
+using Kw.Comic.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -18,15 +20,17 @@ namespace Kw.Comic.ViewModels
 
 
         public HomeViewModel()
-            :this(AppEngine.GetRequiredService<SearchEngine>())
+            :this(AppEngine.GetRequiredService<SearchEngine>(),
+                 AppEngine.GetRequiredService<ComicEngine>())
         {
 
         }
 
-        public HomeViewModel(SearchEngine searchEngine)
+        public HomeViewModel(SearchEngine searchEngine, ComicEngine comicEngine)
         {
+            ComicEngine = comicEngine;
             SearchEngine = searchEngine;
-            Snapshots = new  SilentObservableCollection<ComicSnapshotInfo>();
+            Snapshots = new SilentObservableCollection<ComicSnapshotInfo>();
             MoveNextCommand = new RelayCommand(() => _ = MoveNextAsync());
             SearchCommand = new RelayCommand(() => _ = SearchAsync());
         }
@@ -94,7 +98,10 @@ namespace Kw.Comic.ViewModels
             get { return keyword; }
             set => Set(ref keyword, value);
         }
-
+        /// <summary>
+        /// 漫画解析引擎
+        /// </summary>
+        public ComicEngine ComicEngine { get; }
         /// <summary>
         /// 搜索引擎
         /// </summary>
@@ -123,7 +130,15 @@ namespace Kw.Comic.ViewModels
                 OnBeginSearch();
                 comicCursor?.Dispose();
                 Snapshots.Clear();
-                comicCursor = await SearchEngine.GetSearchCursorAsync(Keyword, 0, PageSize);
+                var keyword = Keyword;
+                var type = ComicEngine.GetComicSourceProviderType(keyword);
+                if (type !=null)
+                {
+                    var nav = AppEngine.GetRequiredService<IComicTurnPageService>();
+                    nav.GoSource(keyword);
+                    return;
+                }
+                comicCursor = await SearchEngine.GetSearchCursorAsync(keyword, 0, PageSize);
                 await MoveNextAsync();
                 InsertDatas();
                 OnEndSearch();

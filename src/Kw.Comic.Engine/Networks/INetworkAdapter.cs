@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 #if !NETSTANDARD1_3
 using System.Net;
-using System.Net.Http;
-#else
-using System.Net.Http;
 #endif
+using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Threading.Tasks;
@@ -31,9 +29,9 @@ namespace Kw.Comic.Engine.Networks
             req.Method = "GET";
             req.AllowAutoRedirect = true;
             req.KeepAlive = false;
-            if (!string.IsNullOrEmpty(settings.ContentType))
+            if (!string.IsNullOrEmpty(settings.Accept))
             {
-                req.ContentType = settings.ContentType;
+                req.ContentType = settings.Accept;
             }
             if (!string.IsNullOrEmpty(settings.Host))
             {

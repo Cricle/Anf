@@ -2,7 +2,6 @@
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
     <TargetFrameworks>net472;net6.0</TargetFrameworks>
-    <PlatformTarget>AnyCpu</PlatformTarget>
     <NgenR2R>false</NgenR2R>
     <UseFody>false</UseFody>
     <UseD2D>true</UseD2D>
@@ -23,7 +22,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0" />
-    <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />
+    <!--<PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />-->
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />

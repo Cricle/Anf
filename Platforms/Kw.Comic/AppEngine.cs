@@ -4,8 +4,10 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Text;
+#if EnableBookshelfService
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Data.Sqlite;
+#endif
 using Kw.Comic.Engine.Easy.Visiting;
 using Kw.Comic.Engine.Easy.Store;
 using JavaScriptEngineSwitcher.Core;
@@ -45,18 +47,19 @@ namespace Kw.Comic
             XComicConst.EnsureDataFolderCreated();
 
             var store = FileStoreService.FromMd5Default(XComicConst.CacheFolderPath);
-
+#if EnableBookshelfService
             Services.AddSingleton<IBookshelfService, BookshelfService>();
-            Services.AddLogging();
-            Services.AddEasyComic(type);
-            Services.AddKnowEngines();
-            Services.AddScoped<IJsEngine, JintJsEngine>();
             Services.AddDbContext<ComicDbContext>(x =>
             {
                 var builder = new SqliteConnectionStringBuilder();
                 builder.DataSource = XComicConst.DbFilePath;
                 x.UseSqlite(builder.ConnectionString);
             },ServiceLifetime.Singleton);
+#endif
+            Services.AddLogging();
+            Services.AddEasyComic(type);
+            Services.AddKnowEngines();
+            Services.AddScoped<IJsEngine, JintJsEngine>();
         }
         public static void Reset(IServiceCollection services = null)
         {

@@ -11,7 +11,7 @@ namespace Kw.Comic.Engine.Networks
 
         public string Method { get; set; }
 
-        public string ContentType { get; set; }
+        public string Accept { get; set; }
 
         public string Referrer { get; set; }
 

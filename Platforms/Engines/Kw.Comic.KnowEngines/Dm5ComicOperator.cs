@@ -94,7 +94,6 @@ namespace Kw.Comic
 
         public async Task<ComicPage[]> GetPagesAsync(string targetUrl)
         {
-            await Task.Delay(100);
             var str = string.Empty;
             using (var sr = new StreamReader(await GetStreamAsync(targetUrl)))
             {

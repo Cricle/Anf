@@ -11,7 +11,7 @@ namespace Kw.Comic.Engine
 
         public SearchEngine(IServiceScopeFactory serviceScopeFactory)
         {
-            ServiceScopeFactory = serviceScopeFactory;
+            ServiceScopeFactory = serviceScopeFactory ?? throw new ArgumentNullException(nameof(serviceScopeFactory));
         }
     }
 }

@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 
 namespace Kw.Comic.Avalon.Services
 {
-    internal class MainNavigationService : ObservableObject,INavigationService,IComicTurnPageService
+    internal class MainNavigationService : ObservableObject, INavigationService, IComicTurnPageService
     {
         private readonly IViewActiver viewActiver;
         private readonly Stack<Type> types;
@@ -48,7 +48,12 @@ namespace Kw.Comic.Avalon.Services
         public void GoSource(ComicSourceInfo info)
         {
             //Todo
-            var view = new VisitingView(info.Source.TargetUrl);
+            GoSource(info.Source.TargetUrl);
+        }
+        public void GoSource(string address)
+        {
+            //Todo
+            var view = new VisitingView(address);
             Navigate(view);
         }
         private IControl NavigateCore(object dest)

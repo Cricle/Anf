@@ -57,7 +57,7 @@ namespace Kw.Comic.Engine
 
         public JsonVisitor(JToken @object)
         {
-            this.@object = @object;
+            this.@object = @object ?? throw new ArgumentNullException(nameof(@object));
         }
 
         public IJsonVisitor this[string key]
@@ -70,7 +70,7 @@ namespace Kw.Comic.Engine
         }
         public static IJsonVisitor FromString(string txt)
         {
-            JToken tk = null;
+            JToken tk;
             if (txt.StartsWith("{"))
             {
                 tk = JObject.Parse(txt);

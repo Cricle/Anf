@@ -1,10 +1,7 @@
 ﻿using System;
+using System.Diagnostics;
 using System.IO;
-#if !NETSTANDARD1_3
 using System.Net.Http;
-#else
-using System.Net.Http;
-#endif
 using System.Net.Http.Headers;
 using System.Threading.Tasks;
 
@@ -12,20 +9,26 @@ namespace Kw.Comic.Engine.Networks
 {
     public class HttpClientAdapter : INetworkAdapter
     {
-        private readonly HttpClient httpClient;
+        public HttpClient HttpClient { get; }
 
         public HttpClientAdapter(HttpClient httpClient)
         {
-            this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
+            HttpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
         }
-
-        public async Task<Stream> GetStreamAsync(RequestSettings settings)
+        public Task<HttpResponseMessage> GetMessageAsync(RequestSettings settings)
         {
+
+            if (settings is null)
+            {
+                throw new ArgumentNullException(nameof(settings));
+            }
+
+            Debug.Assert(HttpClient != null);
             var req = new HttpRequestMessage();
             req.RequestUri = new Uri(settings.Address);
-            if (settings.Method!=null)
+            if (settings.Method != null)
             {
-                if (string.Equals("POST",settings.Method, StringComparison.OrdinalIgnoreCase))
+                if (string.Equals("POST", settings.Method, StringComparison.OrdinalIgnoreCase))
                 {
                     req.Method = HttpMethod.Post;
                 }
@@ -38,19 +41,19 @@ namespace Kw.Comic.Engine.Networks
                     req.Method = HttpMethod.Post;
                 }
             }
-            if (!string.IsNullOrEmpty(settings.ContentType))
+            if (!string.IsNullOrEmpty(settings.Accept))
             {
-                req.Headers.Add("Content-Type", settings.ContentType);
+                req.Headers.Add("Accept", settings.Accept);
             }
             if (!string.IsNullOrEmpty(settings.Host))
             {
-                req.Headers.Host=settings.Host;
+                req.Headers.Host = settings.Host;
             }
             if (!string.IsNullOrEmpty(settings.Referrer))
             {
                 req.Headers.Referrer = new Uri(settings.Referrer);
             }
-            if (settings.Headers!=null)
+            if (settings.Headers != null)
             {
                 foreach (var item in settings.Headers)
                 {
@@ -60,9 +63,13 @@ namespace Kw.Comic.Engine.Networks
             if (settings.Data != null)
             {
                 req.Content = new StreamContent(settings.Data);
-                req.Content.Headers.ContentType = new MediaTypeHeaderValue(settings.ContentType);
+                req.Content.Headers.ContentType = new MediaTypeHeaderValue(settings.Accept);
             }
-            var rep = await httpClient.SendAsync(req);
+            return HttpClient.SendAsync(req);
+        }
+        public async Task<Stream> GetStreamAsync(RequestSettings settings)
+        {
+            var rep = await GetMessageAsync(settings);
             return await rep.Content.ReadAsStreamAsync();
         }
     }

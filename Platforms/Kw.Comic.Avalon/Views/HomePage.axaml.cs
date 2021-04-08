@@ -1,6 +1,5 @@
 using Avalonia;
 using Avalonia.Controls;
-using Avalonia.Controls.PanAndZoom;
 using Avalonia.Data;
 using Avalonia.Input;
 using Avalonia.LogicalTree;
