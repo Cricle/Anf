@@ -1,10 +1,10 @@
-﻿using Kw.Comic.Engine.Test.Providers;
+﻿using Anf.Test.Providers;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kw.Comic.Engine.Test
+namespace Anf.Test
 {
     [TestClass]
     public class ComicEngineTest

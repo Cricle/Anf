@@ -1,6 +1,6 @@
 ﻿using Microsoft.Extensions.DependencyInjection;
 
-namespace Kw.Comic.Engine.Test
+namespace Anf.Test
 {
     internal class NullServiceScopeFactory : IServiceScopeFactory
     {

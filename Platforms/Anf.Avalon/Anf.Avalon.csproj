@@ -1,0 +1,63 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
+    <NgenR2R>false</NgenR2R>
+    <UseFody>false</UseFody>
+    <UseD2D>true</UseD2D>
+    <EnableCache>true</EnableCache>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework.Trim(`0123456789`))'=='net'">
+    <DefineConstants>$(DefineConstants);NETFX;</DefineConstants>
+    <UsingNetFramework>true</UsingNetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableCache)'=='true'">
+    <DefineConstants>$(DefineConstants);ENABLE_CACHE;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(UseD2D)' == 'true'">
+    <DefineConstants>$(DefineConstants);RENDER_D2D</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="0.10.0" />
+    <!--<PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />-->
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
+    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
+    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseFody)'=='true'">
+    <PackageReference Include="Costura.Fody" Version="5.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseD2D)' == 'true'">
+    <PackageReference Include="Avalonia.Win32" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Direct2D1" Version="0.10.0" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(UseD2D)' != 'true'">
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Styles\" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Release'">
+    <Compile Remove="Designings\*.*"></Compile>
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsingNetFramework)' == 'true'">
+    <PackageReference Include="Microsoft.DotNet.Framework.NativeImageCompiler" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Anf.Platform\Anf.Platform.csproj" />
+    <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
+  </ItemGroup>
+</Project>

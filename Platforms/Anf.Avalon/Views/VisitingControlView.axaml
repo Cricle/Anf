@@ -1,0 +1,36 @@
+<StackPanel xmlns="https://github.com/avaloniaui"
+            xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+            xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+            xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+            mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+            xmlns:kwc="using:Anf"
+            x:Class="Anf.Avalon.Views.VisitingControlView"
+            Orientation="Horizontal">
+  <Button x:Name="ChapterSelector" Background="Transparent" VerticalContentAlignment="Center" HorizontalContentAlignment="Center">
+    <TextBlock Classes="segoblock" Text="&#xEA37;"/>
+    <ToolTip.Tip>
+      <StackPanel Orientation="Horizontal">
+        <TextBlock>展开章节列表</TextBlock>
+        <TextBlock>(</TextBlock>
+        <TextBlock Text="{Binding CurrentChaterCursor.CurrentIndex}"></TextBlock>
+        <TextBlock>/</TextBlock>
+        <TextBlock Text="{Binding CurrentChaterCursor.Count}"></TextBlock>
+        <TextBlock>)</TextBlock>
+      </StackPanel>
+    </ToolTip.Tip>
+  </Button>
+  <Popup x:Name="ChaterpPop"
+         PlacementTarget="{Binding ElementName=ChapterSelector}"
+         PlacementMode="Bottom"
+         PlacementAnchor="Bottom"
+         StaysOpen="False"
+         IsOpen="{Binding ChapterSelectorOpen,Mode=TwoWay}">
+    <ListBox x:Name="ChapterBoxs" SelectedItem="{Binding TrulyCurrentComicChapter,Mode=TwoWay}" MaxHeight="200" Items="{Binding ComicEntity.Chapters}">
+      <ListBox.ItemTemplate>
+        <DataTemplate DataType="{x:Type kwc:ComicChapter}">
+          <TextBlock ToolTip.Tip="{Binding TargetUrl}" Text="{Binding Title}"/>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </Popup>
+</StackPanel>

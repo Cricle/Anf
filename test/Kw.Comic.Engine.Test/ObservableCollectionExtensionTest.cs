@@ -5,7 +5,7 @@ using System.Collections.ObjectModel;
 using System.Diagnostics.CodeAnalysis;
 using System.Text;
 
-namespace Kw.Comic.Engine.Test
+namespace Anf.Test
 {
     [TestClass]
     public class ObservableCollectionExtensionTest

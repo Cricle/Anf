@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Kw.Comic.Engine.Test.Providers
+namespace Anf.Test.Providers
 {
     internal class DataCondition : IComicSourceCondition
     {

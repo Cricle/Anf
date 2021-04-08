@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Kw.Comic.Engine.Test
+namespace Anf.Test
 {
     [TestClass]
     public class SearchEngineTest

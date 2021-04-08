@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace Kw.Comic.Engine
+namespace System.Web
 {
     public static class HexConverter
     {

@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 
-namespace Kw.Comic.Engine.Test.Resource
+namespace Anf.Test.Resource
 {
     internal class EngineService : SimpleServiceRunner
     {

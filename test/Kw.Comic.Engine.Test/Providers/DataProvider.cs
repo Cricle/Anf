@@ -4,7 +4,7 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kw.Comic.Engine.Test.Providers
+namespace Anf.Test.Providers
 {
     internal class DataProvider : IComicSourceProvider
     {

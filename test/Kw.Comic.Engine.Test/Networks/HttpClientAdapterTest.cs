@@ -1,5 +1,5 @@
-﻿using Kw.Comic.Engine.Networks;
-using Kw.Comic.Engine.Test.Resource;
+﻿using Anf.Networks;
+using Anf.Test.Resource;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -8,7 +8,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kw.Comic.Engine.Test.Networks
+namespace Anf.Test.Networks
 {
     [TestClass]
     public class HttpClientAdapterTest
