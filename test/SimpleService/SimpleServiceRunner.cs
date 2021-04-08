@@ -60,7 +60,7 @@ namespace SimpleService
         }
         public void Listen()
         {
-            _=Task.Run(CoreListen);
+            _ = Task.Run(CoreListen);
         }
 
         public void Dispose()

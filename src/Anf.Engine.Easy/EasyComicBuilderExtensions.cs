@@ -28,13 +28,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 throw new ArgumentNullException(nameof(services));
             }
 
-            services.AddSingleton(x =>
-            {
-                var eng = new ComicEngine
-                {
-                };
-                return eng;
-            });
+            services.AddSingleton<ComicEngine>();
             services.AddSingleton(x =>
             {
                 var factory = x.GetRequiredService<IServiceScopeFactory>();

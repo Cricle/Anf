@@ -38,7 +38,7 @@ namespace Anf.Networks
                 }
                 else
                 {
-                    req.Method = HttpMethod.Post;
+                    req.Method = HttpMethod.Get;
                 }
             }
             if (!string.IsNullOrEmpty(settings.Accept))

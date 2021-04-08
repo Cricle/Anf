@@ -5,16 +5,11 @@ using System.Text;
 namespace Anf
 {
     public abstract class ComicSourceConditionBase<T> : IComicSourceCondition
+        where T: IComicSourceProvider
     {
         protected ComicSourceConditionBase()
         {
             ProviderType = typeof(T);
-#if !NETSTANDARD1_3
-            if (ProviderType.GetInterface(typeof(IComicSourceProvider).FullName)==null)
-            {
-                throw new InvalidOperationException($"Type {ProviderType} does not implement IComicSourceProvider");
-            }
-#endif
             Descript = new EngineDescript();
         }
 

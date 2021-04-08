@@ -65,8 +65,9 @@ namespace Anf
                 {
                     var prov = (ISearchProvider)scope.ServiceProvider.GetRequiredService(item);
                     var dt = await prov.SearchAsync(keyword, skip, take);
-                    if (dt.Support && dt.Snapshots != null)
+                    if (dt!=null&&dt.Support && dt.Snapshots != null)
                     {
+                        result.Support = dt.Support;
                         datas.AddRange(dt.Snapshots);
                         result.Total += dt.Total;
                     }

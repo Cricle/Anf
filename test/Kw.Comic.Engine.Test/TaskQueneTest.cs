@@ -14,6 +14,15 @@ namespace Anf.Test
         {
             return () => Task.Run(does);
         }
+        [TestMethod]
+        public async Task AddSomeTaskWithValue_RuntIt_AllValueReturn()
+        {
+            var tasks = Enumerable.Range(0, 10)
+                .Select(x => new Func<Task<int>>(() => Task.FromResult(x)))
+                .ToArray();
+            var res = await TaskQuene.RunAsync(tasks);
+            Assert.AreEqual(res.Length, tasks.Length);
+        }
 
         [TestMethod]
         public async Task AddSomeTaskFunc_RunIt_AllDone()

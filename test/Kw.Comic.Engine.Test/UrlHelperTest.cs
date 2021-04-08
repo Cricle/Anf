@@ -68,5 +68,19 @@ namespace Anf.Test
             var res = url.IsWebsite();
             Assert.IsFalse(res);
         }
+        [TestMethod]
+        public void GivenNoHttpUrl_ReturnMustStartWithHttp()
+        {
+            var addr = "www.bing.com";
+            var act = addr.GetUrl();
+            Assert.IsTrue(act.StartsWith("http://"));
+        }
+        [TestMethod]
+        public void GivenHasHttpUrl_ReturnMustNoModify()
+        {
+            var addr = "http://www.bing.com";
+            var act = addr.GetUrl();
+            Assert.AreEqual(act,addr);
+        }
     }
 }

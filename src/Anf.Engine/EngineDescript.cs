@@ -11,7 +11,7 @@ namespace Anf
             get { return GetOrDefault(key); }
             set
             {
-                this[key] = value;
+                base[key] = value;
             }
         }
         public string GetOrDefault(string key)
@@ -20,7 +20,7 @@ namespace Anf
             {
                 return val;
             }
-            return string.Empty;
+            return null;
         }
     }
 }

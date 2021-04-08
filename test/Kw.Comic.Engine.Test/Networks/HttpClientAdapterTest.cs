@@ -31,12 +31,14 @@ namespace Anf.Test.Networks
             Assert.ThrowsExceptionAsync<ArgumentNullException>(async() =>await new HttpClientAdapter(new HttpClient()).GetStreamAsync(null));
         }
         [TestMethod]
-        public async Task SendWithHeaders_MustWithHeadersSend()
+        [DataRow("POST")]
+        [DataRow("GET")]
+        [DataRow("PUT")]
+        public async Task SendWithHeaders_MustWithHeadersSend(string method)
         {
             var ada = new HttpClientAdapter(new HttpClient());
             using (var ser = new EngineService())
             {
-
                 var url = "http://localhost:8765/";
                 ser.Listener.Prefixes.Add(url);
                 ser.Listen();
@@ -50,7 +52,7 @@ namespace Anf.Test.Networks
                         ["B"] = "b"
                     },
                     Host = "www.localhost.com",
-                    Method = "POST",
+                    Method = method,
                     Referrer = "http://www.referrer.com",
                     Timeout = 1000
                 };

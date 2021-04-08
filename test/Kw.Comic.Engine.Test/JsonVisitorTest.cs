@@ -58,5 +58,16 @@ namespace Anf.Test
             var visitor = new JsonVisitor(obj);
             visitor.Dispose();
         }
+        [TestMethod]
+        public void GivenStringToCreate_MustParsedToObjectOrArray()
+        {
+            var obj = @"{""A"":1,""B"":2}";
+            var arr = @"[1,2,3,4]";
+            var visit1 = JsonVisitor.FromString(obj);
+            var val = visit1["A"];
+            Assert.AreEqual("1", val.ToString());
+            var visit2 = JsonVisitor.FromString(arr);
+            Assert.AreEqual(4, visit2.ToArray().Count());
+        }
     }
 }

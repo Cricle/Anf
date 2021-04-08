@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFrameworks>netcoreapp3.1;net461;net45</TargetFrameworks>
@@ -13,12 +13,4 @@
     <PackageReference Include="coverlet.collector" Version="1.3.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\Anf.Engine\Anf.Engine.csproj" />
-    <ProjectReference Include="..\SimpleService\SimpleService.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\src\Anf.Engine\ObservableCollectionExtension.cs"></Compile>
-  </ItemGroup>
 </Project>
