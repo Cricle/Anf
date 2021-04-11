@@ -36,7 +36,7 @@ namespace Anf.Easy.Store
         {
             if (max <= 0)
             {
-                throw new RankException("最大值只能大于0");
+                throw new ArgumentException("最大值只能大于0");
             }
             locker = new object();
             Max = max;
@@ -139,6 +139,7 @@ namespace Anf.Easy.Store
             if (caches.ContainsKey(key))
             {
                 var cacheEntity = caches[key];
+                cacheEntity.Value = new KeyValuePair<TKey, TValue>(cacheEntity.Value.Key,value);
                 linkedList.Remove(cacheEntity);
                 linkedList.AddLast(cacheEntity);
                 return;

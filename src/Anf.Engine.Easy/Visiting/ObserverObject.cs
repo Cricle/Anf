@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace Anf.Easy.Visiting
 {
-    public abstract class ObserableObject : INotifyPropertyChanged
+    public abstract class ObserverObject : INotifyPropertyChanged
     {
         protected void RaisePropertyChanged(PropertyChangedEventArgs e)
         {

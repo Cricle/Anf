@@ -9,7 +9,7 @@ namespace Anf.Easy.Downloading
     public abstract class AsyncDownloadManager : KwSynchronizedCollection<DownloadTask>, IDownloadManager
     {
 
-        public static readonly TimeSpan DefaultWaitTime = TimeSpan.FromMilliseconds(500);
+        public static readonly TimeSpan DefaultWaitTime = TimeSpan.FromMilliseconds(200);
 
         protected AsyncDownloadManager()
         {
@@ -85,11 +85,14 @@ namespace Anf.Easy.Downloading
                     OnComplated(ok);
                     Remove(ok);
                 }
-                var end = Stopwatch.GetTimestamp();
-                var waitTime = (int)(end - begin - (long)WaitTime.TotalMilliseconds);
-                if (waitTime > 0)
+                if (Count == 0)
                 {
-                    await Task.Delay(waitTime);
+                    var end = Stopwatch.GetTimestamp();
+                    var waitTime = (int)(end - begin - (long)WaitTime.TotalMilliseconds);
+                    if (waitTime > 0)
+                    {
+                        await Task.Delay(waitTime);
+                    }
                 }
             }
         }

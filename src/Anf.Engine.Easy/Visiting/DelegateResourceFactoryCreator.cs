@@ -7,7 +7,7 @@ namespace Anf.Easy.Visiting
     {
         public DelegateResourceFactoryCreator(Func<ResourceFactoryCreateContext<TResource>, Task<IResourceFactory<TResource>>> @delegate)
         {
-            Delegate = @delegate;
+            Delegate = @delegate ?? throw new ArgumentNullException(nameof(@delegate));
         }
 
         public Func<ResourceFactoryCreateContext<TResource>, Task<IResourceFactory<TResource>>> Delegate { get; }

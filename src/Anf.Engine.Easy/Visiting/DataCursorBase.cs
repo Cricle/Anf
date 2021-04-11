@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace Anf.Easy.Visiting
 {
-    public abstract class DataCursorBase<T> : ObserableObject, IDataCursor<T>
+    public abstract class DataCursorBase<T> : ObserverObject, IDataCursor<T>
 #if NET461_OR_GREATER || NETSTANDARD2_0
         , IAsyncEnumerable<T>
 #endif
@@ -47,6 +47,7 @@ namespace Anf.Easy.Visiting
         {
             if (!this.IsInRange(index))
             {
+                OnSkipSet(index, default(T));
                 return false;
             }
             var origin = CurrentIndex;
@@ -64,11 +65,11 @@ namespace Anf.Easy.Visiting
             }
             return true;
         }
-        protected void OnSkipSet(int index,T value)
+        protected virtual void OnSkipSet(int index,T value)
         {
 
         }
-        protected void OnMoved(int index,T value)
+        protected virtual void OnMoved(int index,T value)
         {
 
         }

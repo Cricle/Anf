@@ -22,14 +22,29 @@ namespace Anf.Easy.Visiting
         }
         public static bool IsEnd<T>(this IDataCursor<T> cursor)
         {
-            return cursor.Count == 0 || cursor.CurrentIndex == cursor.Count - 1;
+            if (cursor is null)
+            {
+                throw new ArgumentNullException(nameof(cursor));
+            }
+
+            return cursor.Count != 0 && cursor.CurrentIndex == cursor.Count - 1;
         }
         public static bool IsFirst<T>(this IDataCursor<T> cursor)
         {
-            return cursor.Count == 0;
+            if (cursor is null)
+            {
+                throw new ArgumentNullException(nameof(cursor));
+            }
+
+            return cursor.Count != 0 && cursor.CurrentIndex == 0;
         }
         public static int RightCount<T>(this IDataCursor<T> cursor)
         {
+            if (cursor is null)
+            {
+                throw new ArgumentNullException(nameof(cursor));
+            }
+
             return cursor.Count - cursor.CurrentIndex - 1;
         }
         public static Task<bool> MoveFirstAsync<T>(this IDataCursor<T> cursor)

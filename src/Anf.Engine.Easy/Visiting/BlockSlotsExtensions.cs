@@ -9,6 +9,11 @@ namespace Anf.Easy.Visiting
         public static IReadOnlyDictionary<int, T> GetCreatedValueMap<T>(this BlockSlots<T> blockSlots)
             where T : class
         {
+            if (blockSlots is null)
+            {
+                throw new ArgumentNullException(nameof(blockSlots));
+            }
+
             var dic = new Dictionary<int, T>();
             for (int i = 0; i < blockSlots.Size; i++)
             {
@@ -21,8 +26,13 @@ namespace Anf.Easy.Visiting
             return dic;
         }
         public static IEnumerable<T> GetCreatedValues<T>(this BlockSlots<T> blockSlots)
-            where T:class
+            where T : class
         {
+            if (blockSlots is null)
+            {
+                throw new ArgumentNullException(nameof(blockSlots));
+            }
+
             for (int i = 0; i < blockSlots.Size; i++)
             {
                 var s = blockSlots[i];
@@ -32,23 +42,21 @@ namespace Anf.Easy.Visiting
                 }
             }
         }
-        public static IEnumerable<Func<Task<T>>> ToLoadEnumerable<T>(this BlockSlots<T> blockSlots)
+        public static IEnumerable<Func<Task<T>>> ToLoadEnumerable<T>(this BlockSlots<T> blockSlots, int start = 0, int? end = null)
             where T : class
         {
-            return ToLoadEnumerable(blockSlots, 0, null);
-        }
-        public static IEnumerable<Func<Task<T>>> ToLoadEnumerable<T>(this BlockSlots<T> blockSlots, int start)
-            where T:class
-        {
-            return ToLoadEnumerable(blockSlots, start, null);
-        }
-        public static IEnumerable<Func<Task<T>>> ToLoadEnumerable<T>(this BlockSlots<T> blockSlots, int start, int? end)
-            where T : class
-        {
+            if (blockSlots is null)
+            {
+                throw new ArgumentNullException(nameof(blockSlots));
+            }
+            if (start < 0 || end > blockSlots.Size || end < 0 || start > blockSlots.Size || start > end || blockSlots.Size == 0)
+            {
+                throw new ArgumentOutOfRangeException($"Must [{0},{blockSlots.Size}]");
+            }
             while (start < blockSlots.Size && (end == null || start < end))
             {
                 var i = start;
-                yield return ()=>blockSlots.GetAsync(i);
+                yield return () => blockSlots.GetAsync(i);
                 start++;
             }
         }
@@ -62,15 +70,25 @@ namespace Anf.Easy.Visiting
 
             return new BlockSlotsDataCursor<T>(blockSlots);
         }
-        public static bool IsInRange<T>(this BlockSlots<T> blockSlots,int index)
-            where T:class
+        public static bool IsInRange<T>(this BlockSlots<T> blockSlots, int index)
+            where T : class
         {
+            if (blockSlots is null)
+            {
+                throw new ArgumentNullException(nameof(blockSlots));
+            }
+
             return index >= 0 && blockSlots.Size != 0 && index < blockSlots.Size;
         }
         public static Task<T[]> GetAllAsync<T>(this BlockSlots<T> blockSlots)
             where T : class
         {
-            return GetRangeAsync<T>(blockSlots, 0, blockSlots.Size);
+            if (blockSlots is null)
+            {
+                throw new ArgumentNullException(nameof(blockSlots));
+            }
+
+            return GetRangeAsync(blockSlots, 0, blockSlots.Size - 1);
         }
         public static async Task<T[]> GetRangeAsync<T>(this BlockSlots<T> blockSlots, int from, int? to)
             where T : class
@@ -79,11 +97,11 @@ namespace Anf.Easy.Visiting
             {
                 throw new ArgumentNullException(nameof(blockSlots));
             }
-            if (to>=blockSlots.Size)
+            if (from < 0 || to < 0 || to > blockSlots.Size || from > blockSlots.Size || from > to || blockSlots.Size == 0)
             {
                 throw new ArgumentOutOfRangeException($"to must less {blockSlots.Size}");
             }
-            var t = to ?? blockSlots.Size;
+            var t = to ?? (blockSlots.Size - 1);
             if (from >= t)
             {
 #if NET461 || NETSTANDARD2_0
@@ -92,8 +110,8 @@ namespace Anf.Easy.Visiting
                 return new T[0];
 #endif
             }
-            var rets = new T[t - from];
-            for (int i = from; i < t; i++)
+            var rets = new T[t - from + 1];
+            for (int i = from; i <= t; i++)
             {
                 rets[i] = await blockSlots.GetAsync(i);
             }

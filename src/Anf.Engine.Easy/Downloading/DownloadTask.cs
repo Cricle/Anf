@@ -22,6 +22,7 @@ namespace Anf.Easy.Downloading
             this.tasks = tasks ?? throw new ArgumentNullException(nameof(tasks));
             CancellationToken = cancellationToken;
             Max = tasks.Length;
+            Seek(-1);
         }
 
         public int Position => position;
@@ -40,12 +41,12 @@ namespace Anf.Easy.Downloading
 
         public void Seek(int pos)
         {
-            if (pos >= Max || pos < 0)
+            if (pos >= Max || pos < -1)
             {
                 throw new ArgumentOutOfRangeException(pos.ToString());
             }
-            var r = Interlocked.Exchange(ref position, pos);
-            Seeked?.Invoke(this, r);
+            Volatile.Write(ref position, pos);
+            Seeked?.Invoke(this, pos);
         }
 
         public async Task<bool?> MoveNextAsync()

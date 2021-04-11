@@ -14,7 +14,7 @@ namespace Anf.Easy.Downloading
 
         public event Action<DownloadBox> Canceled;
 
-        public string Address => Link.Request.Entity.ComicUrl;
+        public string Address => Link.Request?.Entity?.ComicUrl;
 
         public DownloadTask Task { get; }
 
@@ -22,9 +22,10 @@ namespace Anf.Easy.Downloading
 
         public void Cancel()
         {
-            if (TokenSource != null && !TokenSource.IsCancellationRequested)
+            var tsk = TokenSource;
+            if (tsk != null && !tsk.IsCancellationRequested)
             {
-                TokenSource.Cancel();
+                tsk.Cancel();
                 Canceled?.Invoke(this);
             }
         }

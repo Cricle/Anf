@@ -122,7 +122,7 @@ namespace Anf.Easy.Store
         public Task<Stream> GetStreamAsync(string address)
         {
             var fileInfo = GetFile(address);
-            if (fileInfo==null)
+            if (fileInfo is null)
             {
                 return Task.FromResult<Stream>(null);
             }

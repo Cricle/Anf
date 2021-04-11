@@ -6,33 +6,32 @@ namespace Anf.Easy
 {
     internal class ComicSourceProviderHost : IComicSourceProviderHost
     {
-        private readonly IComicSourceProvider comicSourceProvider;
-        private readonly IServiceScope scope;
-
-        public ComicSourceProviderHost(IComicSourceProvider comicSourceProvider, IServiceScope scope)
+        public IComicSourceProvider ComicSourceProvider { get; }
+        public IServiceScope Scope { get; }
+        public ComicSourceProviderHost(IComicSourceProvider comicSourceProvider,IServiceScope scope)
         {
-            this.comicSourceProvider = comicSourceProvider;
-            this.scope = scope;
+            ComicSourceProvider = comicSourceProvider;
+            Scope = scope;
         }
 
         public void Dispose()
         {
-            scope.Dispose();
+            Scope?.Dispose();
         }
 
         public Task<ComicEntity> GetChaptersAsync(string targetUrl)
         {
-            return comicSourceProvider.GetChaptersAsync(targetUrl);
+            return ComicSourceProvider.GetChaptersAsync(targetUrl);
         }
 
         public Task<Stream> GetImageStreamAsync(string targetUrl)
         {
-            return comicSourceProvider.GetImageStreamAsync(targetUrl);
+            return ComicSourceProvider.GetImageStreamAsync(targetUrl);
         }
 
         public Task<ComicPage[]> GetPagesAsync(string targetUrl)
         {
-            return comicSourceProvider.GetPagesAsync(targetUrl);
+            return ComicSourceProvider.GetPagesAsync(targetUrl);
         }
     }
 }

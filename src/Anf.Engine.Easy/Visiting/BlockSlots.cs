@@ -24,7 +24,7 @@ namespace Anf.Easy.Visiting
             {
                 if (index >= Size || index < 0)
                 {
-                    throw new ArgumentOutOfRangeException(nameof(index));
+                    throw new IndexOutOfRangeException(nameof(index));
                 }
                 return values[index];
             }
@@ -32,6 +32,10 @@ namespace Anf.Easy.Visiting
 
         protected BlockSlots(int size)
         {
+            if (size<0)
+            {
+                throw new ArgumentException("Size must more or equal than zero");
+            }
             Size = size;
 #if NETSTANDARD2_0
             valueTasks = ArrayPool<Task<TValue>>.Shared.Rent(size);

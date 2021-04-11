@@ -43,12 +43,12 @@ namespace Anf.Easy
         {
             var listener = request.Listener;
             DownloadListenerContext listenerContext = null;
-            if (listener!=null)
+            if (listener != null)
             {
                 listenerContext = new DownloadListenerContext(request, chapter, page, token);
                 await listener.ReadyFetchAsync(listenerContext);
             }
-            if (listener!=null&&token.IsCancellationRequested)
+            if (listener != null && token.IsCancellationRequested)
             {
                 await listener.CanceledAsync(listenerContext);
             }
@@ -89,7 +89,7 @@ namespace Anf.Easy
             }
             catch (Exception ex)
             {
-                if (listener!=null)
+                if (listener != null)
                 {
                     var errCtx = new DownloadExceptionListenerContext(request, chapter, page, token, ex);
                     await listener.FetchPageExceptionAsync(errCtx);

@@ -7,8 +7,8 @@ namespace Anf.Easy.Visiting
         public ComicChapterManager(ChapterWithPage chapterWithPage,
             ComicVisiting<TResource> comicVisiting)
         {
-            ComicVisiting = comicVisiting;
-            ChapterWithPage = chapterWithPage;
+            ComicVisiting = comicVisiting ?? throw new System.ArgumentNullException(nameof(comicVisiting));
+            ChapterWithPage = chapterWithPage ?? throw new System.ArgumentNullException(nameof(chapterWithPage));
         }
 
         public ComicVisiting<TResource> ComicVisiting { get; }
