@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System;
+using System.Threading.Tasks;
 
 namespace Anf.Easy.Visiting
 {
@@ -17,6 +18,10 @@ namespace Anf.Easy.Visiting
 
         public async Task<IComicVisitPage<TResource>> GetVisitPageAsync(int index)
         {
+            if (ComicVisiting.ResourceFactory is null)
+            {
+                throw new InvalidOperationException("The ComicVisiting.ResourceFactory is null, can't do that");
+            }
             var page = ChapterWithPage.Pages[index];
             var inter = ComicVisiting.VisitingInterceptor;
             GettingPageInterceptorContext<TResource> context = null;

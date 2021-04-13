@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace Anf.Easy.Test.Downloading
 {
     [TestClass]
-    public class RandomDownloadManagerTest
+    public class DownloadManagersTest
     {
         private async Task<int> Run(AsyncDownloadManager mgr,int taskCount,int preCount)
         {
@@ -56,6 +56,18 @@ namespace Anf.Easy.Test.Downloading
         public async Task GivenSomeTasks_QueneRunIt_AllTaskMustBeRun(int taskCount, int preCount)
         {
             var mgr = new QueneDownloadManager();
+            var val = await Run(mgr, taskCount, preCount);
+            Assert.AreEqual(taskCount * preCount, val);
+        }
+        [TestMethod]
+        [DataRow(0, 0)]
+        [DataRow(10, 10)]
+        [DataRow(10, 0)]
+        [DataRow(10, 1)]
+        [DataRow(1, 1)]
+        public async Task GivenSomeTasks_QueneWithEndRunIt_AllTaskMustBeRun(int taskCount, int preCount)
+        {
+            var mgr = new QueneDownloadManager { PeekType = QuenePeekTypes.End };
             var val = await Run(mgr, taskCount, preCount);
             Assert.AreEqual(taskCount * preCount, val);
         }

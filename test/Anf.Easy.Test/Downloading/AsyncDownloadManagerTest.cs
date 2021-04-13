@@ -22,7 +22,7 @@ namespace Anf.Easy.Test.Downloading
             Assert.AreNotEqual(TaskStatus.WaitingForActivation, mgr.Task.Status);
             mgr.Stop();
             Assert.IsFalse(mgr.IsStart);
-            Assert.IsNull(mgr.CancellationToken.IsCancellationRequested);
+            Assert.IsTrue(mgr.CancellationToken.IsCancellationRequested);
         }
         [TestMethod]
         public async Task Start_Stop_Start_CancellationTokenMustBeReInit()
@@ -46,7 +46,7 @@ namespace Anf.Easy.Test.Downloading
             Func<Task> setTask = () => throw new Exception();
             mgr.Add(new DownloadTask(new Func<Task>[] { setTask }));
             mgr.Start();
-            await Task.Delay(100);
+            await Task.Delay(500);
             mgr.Stop();
             await mgr.Task;
             Assert.IsTrue(mgr.IsOnException);

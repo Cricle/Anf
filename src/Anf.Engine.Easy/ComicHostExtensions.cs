@@ -14,35 +14,42 @@ namespace Anf.Easy
     {
         public static async Task<IComicVisiting<T>> GetVisitingAndLoadAsync<T>(this IServiceProvider host, string address)
         {
+            if (host is null)
+            {
+                throw new ArgumentNullException(nameof(host));
+            }
+
+            if (string.IsNullOrEmpty(address))
+            {
+                throw new ArgumentException($"“{nameof(address)}”不能为 Null 或空。", nameof(address));
+            }
+
             var visi = host.GetRequiredService<IComicVisiting<T>>();
             var r = await visi.LoadAsync(address);
             if (r)
             {
                 return visi;
             }
+            visi.Dispose();
             return null;
-        }
-        public static IComicVisiting<TResource> CreateVisiting<TResource>(this IServiceProvider host,
-            IResourceFactoryCreator<TResource> resourceFactoryCreator)
-        {
-            return new ComicVisiting<TResource>(host, resourceFactoryCreator);
-        }
-        public static IComicVisiting<Stream> CreateVisiting(this IServiceProvider host,
-            IResourceFactoryCreator<Stream> resourceFactoryCreator=null)
-        {
-            if (resourceFactoryCreator==null)
-            {
-                resourceFactoryCreator = StreamResourceFactoryCreator.Default;
-            }
-            return new ComicVisiting<Stream>(host, resourceFactoryCreator);
         }
         public static IServiceScope GetServiceScope(this IServiceProvider host)
         {
+            if (host is null)
+            {
+                throw new ArgumentNullException(nameof(host));
+            }
+
             var factory = host.GetRequiredService<IServiceScopeFactory>();
             return factory.CreateScope();
         }
         public static ComicEngine GetComicEngine(this IServiceProvider host)
         {
+            if (host is null)
+            {
+                throw new ArgumentNullException(nameof(host));
+            }
+
             return host.GetRequiredService<ComicEngine>();
         }
         public static DownloadLink LoadDownloadAsync(this IServiceProvider host,
@@ -147,11 +154,21 @@ namespace Anf.Easy
         }
         public static Task<SearchComicResult> SearchAsync(this IServiceProvider host, string keywork, int skip, int take)
         {
+            if (host is null)
+            {
+                throw new ArgumentNullException(nameof(host));
+            }
+
             var eng = host.GetSearchEngine();
             return eng.SearchAsync(keywork, skip, take);
         }
         public static SearchEngine GetSearchEngine(this IServiceProvider host)
         {
+            if (host is null)
+            {
+                throw new ArgumentNullException(nameof(host));
+            }
+
             return host.GetRequiredService<SearchEngine>();
         }
     }

@@ -16,17 +16,17 @@ namespace Anf.Easy.Test.Resources
             var str = File.ReadAllText(path);
             return JsonConvert.DeserializeObject<ComicEntity>(str);
         }
-        public static ComicChapter GetMonvzhilvChatper(int index)
+        public static ChapterWithPage GetMonvzhilvChatper(int index)
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ResourceFolder, ChapterFolder, $"monvzhilv-{index}.txt");
             var str = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<ComicChapter>(str);
+            return JsonConvert.DeserializeObject<ChapterWithPage>(str);
         }
-        public static ComicChapter GetMonvzhilvChatper0()
+        public static ChapterWithPage GetMonvzhilvChatper0()
         {
             return GetMonvzhilvChatper(0);
         }
-        public static ComicChapter GetMonvzhilvChatper1()
+        public static ChapterWithPage GetMonvzhilvChatper1()
         {
             return GetMonvzhilvChatper(1);
         }

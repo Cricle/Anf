@@ -131,13 +131,17 @@ namespace Anf.ViewModels
                 comicCursor?.Dispose();
                 Snapshots.Clear();
                 var keyword = Keyword;
-                var type = ComicEngine.GetComicSourceProviderType(keyword);
-                if (type !=null)
+                try
                 {
-                    var nav = AppEngine.GetRequiredService<IComicTurnPageService>();
-                    nav.GoSource(keyword);
-                    return;
+                    var type = ComicEngine.GetComicSourceProviderType(keyword);
+                    if (type != null)
+                    {
+                        var nav = AppEngine.GetRequiredService<IComicTurnPageService>();
+                        nav.GoSource(keyword);
+                        return;
+                    }
                 }
+                catch (Exception) { }
                 comicCursor = await SearchEngine.GetSearchCursorAsync(keyword, 0, PageSize);
                 await MoveNextAsync();
                 InsertDatas();

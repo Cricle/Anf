@@ -10,7 +10,7 @@ namespace Anf.Easy.Visiting
         public IComicChapterManager<TResource> ChapterManager { get; }
 
         public PageSlots(IComicChapterManager<TResource> chapterManager)
-            :base(chapterManager.ChapterWithPage.Pages.Length)
+            : base(chapterManager?.ChapterWithPage?.Pages?.Length ?? 0)
         {
             ChapterManager = chapterManager ?? throw new ArgumentNullException(nameof(chapterManager));
         }

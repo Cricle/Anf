@@ -23,6 +23,9 @@ namespace Anf.Easy.Test.Visiting
 
         public ComicEntity Entity { get; set; }
 
+
+        public bool LoadSucceed { get; set; }
+
         public event Action<ComicVisiting<T>, string> Loading;
         public event Action<ComicVisiting<T>, ComicEntity> Loaded;
         public event Action<ComicVisiting<T>, int> LoadingChapter;
@@ -43,7 +46,7 @@ namespace Anf.Easy.Test.Visiting
 
         public Task<bool> LoadAsync(string address)
         {
-            return Task.FromResult(true);
+            return Task.FromResult(LoadSucceed);
         }
 
         public Task LoadChapterAsync(int index)
@@ -74,6 +77,7 @@ namespace Anf.Easy.Test.Visiting
             var c = await factor.CreateAsync(ctx);
             Assert.IsNotNull(c);
             c.Dispose();
+            factor.Dispose();
         }
         [TestMethod]
         public void GetDefault_TwiceMustEqual()

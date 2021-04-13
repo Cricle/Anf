@@ -8,15 +8,6 @@ using System.Threading.Tasks;
 
 namespace Anf.Easy.Test
 {
-    internal class NullServiceScope : IServiceScope
-    {
-        public IServiceProvider ServiceProvider => null;
-
-        public void Dispose()
-        {
-        }
-
-    }
     [TestClass]
     public class ComicSourceProviderHostTest
     {

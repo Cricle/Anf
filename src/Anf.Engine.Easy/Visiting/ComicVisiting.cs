@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,6 +22,7 @@ namespace Anf.Easy.Visiting
         private IResourceFactory<TResource> resourceFactory;
         private ChapterWithPage[] chapterWithPages;
 
+        public IReadOnlyList<ChapterWithPage> ChapterWithPages => chapterWithPages;
         public IServiceProvider Host { get; }
         public IComicSourceProvider SourceProvider => sourceProvider;
         public string Address => address;
@@ -48,17 +50,21 @@ namespace Anf.Easy.Visiting
                 throw new ArgumentNullException(nameof(resourceFactoryCreator));
             }
 
-            Host = host;
+            Host = host ?? throw new ArgumentNullException(nameof(host));
             semaphoreSlim = new SemaphoreSlim(1);
             this.resourceFactoryCreator = resourceFactoryCreator;
         }
-
         public async Task<bool> LoadAsync(string address)
         {
+            if (string.IsNullOrEmpty(address))
+            {
+                throw new ArgumentException($"“{nameof(address)}”不能为 Null 或空。", nameof(address));
+            }
+
             Loading?.Invoke(this, address);
             this.address = address;
             sourceProvider = Host.GetComicProvider(address);
-            if (sourceProvider==null)
+            if (sourceProvider is null)
             {
                 return false;
             }
@@ -87,8 +93,21 @@ namespace Anf.Easy.Visiting
         {
             Interlocked.CompareExchange(ref chapterWithPages[index], null, chapterWithPages[index]);
         }
+        protected void ThrowIfEntityIsNull()
+        {
+            if (entity is null)
+            {
+                throw new InvalidOperationException("The entity is null, you shoule call LoadAsync to init");
+            }
+        }
         public async Task LoadChapterAsync(int index)
         {
+            ThrowIfEntityIsNull();
+            Debug.Assert(chapterWithPages != null);
+            if (index < 0 || index >= chapterWithPages.Length)
+            {
+                throw new ArgumentOutOfRangeException($"Must [{0},{chapterWithPages.Length}]");
+            }
             if (chapterWithPages[index] != null)
             {
                 return;
@@ -134,6 +153,11 @@ namespace Anf.Easy.Visiting
 
         public async Task<IComicChapterManager<TResource>> GetChapterManagerAsync(int index)
         {
+            ThrowIfEntityIsNull();
+            if (index<0||index>=chapterWithPages.Length)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
             await LoadChapterAsync(index);
             var mgr = new ComicChapterManager<TResource>(chapterWithPages[index], this);
             var inter = VisitingInterceptor;

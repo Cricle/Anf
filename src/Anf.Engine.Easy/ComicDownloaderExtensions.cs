@@ -11,6 +11,16 @@ namespace Anf.Easy
             ComicDownloadRequest request,
             CancellationToken token = default)
         {
+            if (downloader is null)
+            {
+                throw new ArgumentNullException(nameof(downloader));
+            }
+
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+
             var tasks = downloader.EmitTasks(request, token);
             foreach (var item in tasks)
             {
@@ -22,6 +32,20 @@ namespace Anf.Easy
            int concurrent = 5,
            CancellationToken token = default)
         {
+            if (downloader is null)
+            {
+                throw new ArgumentNullException(nameof(downloader));
+            }
+
+            if (request is null)
+            {
+                throw new ArgumentNullException(nameof(request));
+            }
+            if (concurrent <= 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(concurrent));
+            }
+
             var tasks = downloader.EmitTasks(request, token);
             return TaskQuene.RunVoidAsync(tasks, concurrent);
         }

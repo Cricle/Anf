@@ -12,7 +12,7 @@ namespace Anf.Easy.Test.Visiting
     public class BlockSlotsExtensionsTest
     {
         [TestMethod]
-        public void GivenNullValueToCreateMap_MustThrowException()
+        public async Task GivenNullValueToCreateMap_MustThrowException()
         {
             Assert.ThrowsException<ArgumentNullException>(() => BlockSlotsExtensions.GetCreatedValues<object>(null).ToArray());
             Assert.ThrowsException<ArgumentNullException>(() => BlockSlotsExtensions.GetCreatedValueMap<object>(null));
@@ -21,8 +21,8 @@ namespace Anf.Easy.Test.Visiting
             Assert.ThrowsException<ArgumentNullException>(() => BlockSlotsExtensions.ToLoadEnumerable<object>(null).ToArray());
             Assert.ThrowsException<ArgumentNullException>(() => BlockSlotsExtensions.ToLoadEnumerable<object>(null, 0).ToArray());
             Assert.ThrowsException<ArgumentNullException>(() => BlockSlotsExtensions.ToLoadEnumerable<object>(null, 0, 0).ToArray());
-            Assert.ThrowsExceptionAsync<ArgumentNullException>(() => BlockSlotsExtensions.GetRangeAsync<object>(null, 0, 0));
-            Assert.ThrowsExceptionAsync<ArgumentNullException>(() => BlockSlotsExtensions.GetAllAsync<object>(null));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => BlockSlotsExtensions.GetRangeAsync<object>(null, 0, 0));
+            await Assert.ThrowsExceptionAsync<ArgumentNullException>(() => BlockSlotsExtensions.GetAllAsync<object>(null));
         }
         [TestMethod]
         public async Task GotValueMap_ReturnMustDataToMap()

@@ -8,42 +8,42 @@ namespace Anf.Easy
     {
         public Task BeginFetchPageAsync(DownloadListenerContext context)
         {
-            return Task.WhenAll(this.Select(x => x.BeginFetchPageAsync(context)));
+            return Task.WhenAll(this.Where(x=>x!=null).Select(x => x.BeginFetchPageAsync(context)));
         }
 
         public Task CanceledAsync(DownloadListenerContext context)
         {
-            return Task.WhenAll(this.Select(x => x.CanceledAsync(context)));
+            return Task.WhenAll(this.Where(x => x != null).Select(x => x.CanceledAsync(context)));
         }
 
         public Task ComplatedSaveAsync(DownloadListenerContext context)
         {
-            return Task.WhenAll(this.Select(x => x.ComplatedSaveAsync(context)));
+            return Task.WhenAll(this.Where(x => x != null).Select(x => x.ComplatedSaveAsync(context)));
         }
 
         public Task EndFetchPageAsync(DownloadListenerContext context)
         {
-            return Task.WhenAll(this.Select(x => x.EndFetchPageAsync(context)));
+            return Task.WhenAll(this.Where(x => x != null).Select(x => x.EndFetchPageAsync(context)));
         }
 
         public Task FetchPageExceptionAsync(DownloadExceptionListenerContext context)
         {
-            return Task.WhenAll(this.Select(x => x.FetchPageExceptionAsync(context)));
+            return Task.WhenAll(this.Where(x => x != null).Select(x => x.FetchPageExceptionAsync(context)));
         }
 
         public Task NotNeedToSaveAsync(DownloadListenerContext context)
         {
-            return Task.WhenAll(this.Select(x => x.NotNeedToSaveAsync(context)));
+            return Task.WhenAll(this.Where(x => x != null).Select(x => x.NotNeedToSaveAsync(context)));
         }
 
         public Task ReadyFetchAsync(DownloadListenerContext context)
         {
-            return Task.WhenAll(this.Select(x => x.ReadyFetchAsync(context)));
+            return Task.WhenAll(this.Where(x => x != null).Select(x => x.ReadyFetchAsync(context)));
         }
-
+        
         public Task ReadySaveAsync(DownloadSaveListenerContext context)
         {
-            return Task.WhenAll(this.Select(x => x.ReadySaveAsync(context)));
+            return Task.WhenAll(this.Where(x => x != null).Select(x => x.ReadySaveAsync(context)));
         }
     }
 }

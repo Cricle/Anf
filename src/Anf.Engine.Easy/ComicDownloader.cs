@@ -15,7 +15,7 @@ namespace Anf.Easy
 
         public ComicDownloader(RecyclableMemoryStreamManager streamManager)
         {
-            this.streamManager = streamManager;
+            this.streamManager = streamManager ?? throw new ArgumentNullException(nameof(streamManager));
         }
 
         public Func<Task>[] EmitTasks(ComicDownloadRequest request, CancellationToken token = default)
@@ -51,8 +51,8 @@ namespace Anf.Easy
             if (listener != null && token.IsCancellationRequested)
             {
                 await listener.CanceledAsync(listenerContext);
+                return;
             }
-            token.ThrowIfCancellationRequested();
             var ctx = new ComicDownloadContext(request.Entity, chapter, page, null, token);
             if (!request.Saver.NeedToSave(ctx))
             {

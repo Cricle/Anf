@@ -20,7 +20,7 @@ namespace Anf.Easy.Downloading
         private Task task;
         private CancellationTokenSource tokenSource;
 
-        public bool IsStart => isStart != 1;
+        public bool IsStart => isStart != 0;
 
         public Task Task => task;
 

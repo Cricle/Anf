@@ -5,7 +5,7 @@ namespace Anf.Easy.Visiting
 {
     public struct PageBox<TResource> : IComicVisitPage<TResource>,IDisposable
     {
-        public bool DoNotDisposable { get; set; }
+        public bool DoNotDispose { get; set; }
 
         public ComicPage Page { get; set; }
 
@@ -13,7 +13,7 @@ namespace Anf.Easy.Visiting
 
         public void Dispose()
         {
-            if (!DoNotDisposable&& Resource is IDisposable disposable)
+            if (!DoNotDispose&& Resource is IDisposable disposable)
             {
                 disposable.Dispose();
             }

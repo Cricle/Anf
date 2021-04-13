@@ -10,10 +10,11 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
+using GalaSoft.MvvmLight;
 
 namespace Anf.Models
 {
-    public class ComicSourceInfo : ObserableObject
+    public class ComicSourceInfo : ObservableObject
     {
         public ComicSourceInfo(ComicSnapshot snapshot,
             ComicSource source,
