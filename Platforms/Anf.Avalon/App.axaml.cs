@@ -16,6 +16,7 @@ using System;
 using System.IO;
 using System.Linq;
 using Avalonia.Input;
+using System.Threading.Tasks;
 
 namespace Anf.Avalon
 {
@@ -26,11 +27,20 @@ namespace Anf.Avalon
             AvaloniaXamlLoader.Load(this);
             InitServices();
         }
+        private void HandleException()
+        {
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+        }
+
+        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            
+        }
 
         private void InitServices()
         {
             AppEngine.Reset();
-            AppEngine.AddServices(NetworkAdapterTypes.HttpClient);
+            AppEngine.AddServices(NetworkAdapterTypes.WebRequest);
             var store = FileStoreService.FromMd5Default(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName));
             var hp = new Lazy<HomePage>(() => new HomePage());
             var cv = new Lazy<ComicView>(() => new ComicView());

@@ -53,17 +53,23 @@ namespace Anf.Networks
             {
                 req.Headers.Referrer = new Uri(settings.Referrer);
             }
+            var contentType = "application/x-www-form-urlencoded";
             if (settings.Headers != null)
             {
                 foreach (var item in settings.Headers)
                 {
+                    if (string.Equals("Content-Type",item.Key, StringComparison.OrdinalIgnoreCase))
+                    {
+                        contentType = item.Value;
+                        continue;
+                    }
                     req.Headers.Add(item.Key, item.Value);
                 }
             }
             if (settings.Data != null)
             {
                 req.Content = new StreamContent(settings.Data);
-                req.Content.Headers.ContentType = new MediaTypeHeaderValue(settings.Accept);
+                req.Content.Headers.ContentType = new MediaTypeHeaderValue(contentType);
             }
             return HttpClient.SendAsync(req);
         }

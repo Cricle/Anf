@@ -16,6 +16,7 @@ namespace Anf.KnowEngines
             services.AddScoped<JisuComicOperator>();
             services.AddScoped<SomanSearchProvider>();
             services.AddScoped<TencentComicOperator>();
+            services.AddScoped<BilibiliOperator>();
         }
         public static void UseKnowEngines(this IServiceProvider provider)
         {
@@ -25,6 +26,7 @@ namespace Anf.KnowEngines
             eng.Add(new JisuComicSourceCondition());
             eng.Add(new KuaikanComicSourceCondition());
             eng.Add(new TencentComicSourceCondition());
+            eng.Add(new BilibiliComicSourceCondition());
             var searchEng = provider.GetRequiredService<SearchEngine>();
             searchEng.Add(typeof(SomanSearchProvider));
         }

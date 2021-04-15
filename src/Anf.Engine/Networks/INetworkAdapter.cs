@@ -43,7 +43,7 @@ namespace Anf.Networks
             }
             if (!string.IsNullOrEmpty(settings.Referrer))
             {
-                req.Headers.Add("Referrer", "https://www.dmzj.com/");
+                req.Referer=settings.Referrer;
             }
             if (settings.Timeout > 0)
             {
@@ -60,7 +60,19 @@ namespace Anf.Networks
             {
                 foreach (var item in settings.Headers)
                 {
-                    req.Headers.Add(item.Key, item.Value);
+                    if (string.Equals("User-Agent", item.Key, StringComparison.OrdinalIgnoreCase))
+                    {
+                        req.UserAgent = item.Value;
+                    }
+                    else if (string.Equals("Accept",item.Key, StringComparison.OrdinalIgnoreCase))
+                    {
+                        req.Accept = item.Value;
+                    }
+                    else
+                    {
+
+                        req.Headers.Add(item.Key, item.Value);
+                    }
                 }
             }
             var rep = await req.GetResponseAsync();
