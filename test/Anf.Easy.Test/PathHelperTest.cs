@@ -12,10 +12,11 @@ namespace Anf.Easy.Test
         [TestMethod]
         public void GivenString_EnsureName_MustCanCreateFile()
         {
-            var name = "f[]:\"3u2b4k..+57*()(@#$";
+            var name = "dagiefgwi!@#%^";
             var act=PathHelper.EnsureName(name);
-            File.Create(act).Dispose();
-            File.Delete(act);
+            var path = Path.Combine(Environment.CurrentDirectory,act);
+            File.Create(path).Dispose();
+            File.Delete(path);
         }
         [TestMethod]
         [DataRow('/')]

@@ -11,6 +11,7 @@ namespace Anf.Easy
     {
         public const char DefaultInvalidReplaceChar = '_';
 
+        private static readonly HashSet<char> AvaliableChars = new HashSet<char>("._[]".ToCharArray());
         private static readonly HashSet<char> InvalidChars = new HashSet<char>(Path.GetInvalidFileNameChars().Concat(Path.GetInvalidPathChars()));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -34,17 +35,13 @@ namespace Anf.Easy
                 {
                     var c = y[i];
 
-                    if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z')
+                    if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z'|| AvaliableChars.Contains(c))
                     {
                         x[i] = c;
-                    }
-                    else if (InvalidChars.Contains(c))
-                    {
-                        x[i] = invalidChar;
                     }
                     else
                     {
-                        x[i] = c;
+                        x[i] = invalidChar;
                     }
                 }
             });
@@ -52,26 +49,19 @@ namespace Anf.Easy
 #else
         public unsafe static string EnsureName(string name,char invalidChar=DefaultInvalidReplaceChar)
         {
-            char* arr = stackalloc char[name.Length];
             var len = name.Length;
-            fixed (char* ptr = name)
+            var arr = new char[len];
+            char c;
+            for (int i = 0; i < len; i++)
             {
-                char c;
-                for (int i = 0; i < len; i++)
+                c = name[i];
+                if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c < 'Z' || AvaliableChars.Contains(c))
                 {
-                    c = ptr[i];
-                    if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c < 'Z')
-                    {
-                        *(arr + i) = c;
-                    }
-                    else if (InvalidChars.Contains(c))
-                    {
-                        *(arr + i) = invalidChar;
-                    }
-                    else
-                    {
-                        *(arr + i) = c;
-                    }
+                    arr[i] = c;
+                }
+                else
+                {
+                    arr[i] = invalidChar;
                 }
             }
             return new string(arr);

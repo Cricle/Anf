@@ -43,13 +43,14 @@ namespace Anf.Avalon.Views
 
         private async void OnElementPrepared(object sender, ItemsRepeaterElementPreparedEventArgs e)
         {
-            Debug.WriteLine(e.Index,"Prepared");
-            var res = vm.Resources;
-            if (e.Index < res.Count)
-            {
-                await vm.GoPageIndexAsync(e.Index);
-                await res[e.Index].LoadAsync();
-            }
+            await vm.GoPageIndexAsync(e.Index);
+            //Debug.WriteLine(e.Index,"Prepared");
+            //var res = vm.Resources;
+            //if (e.Index < res.Count)
+            //{
+            //    await vm.GoPageIndexAsync(e.Index);
+            //    await res[e.Index].LoadAsync();
+            //}
         }
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {

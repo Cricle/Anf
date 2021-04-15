@@ -6,11 +6,20 @@
     <UseFody>false</UseFody>
     <UseD2D>true</UseD2D>
     <EnableCache>true</EnableCache>
+    <EnableBookshelfService>false</EnableBookshelfService>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework.Trim(`0123456789`))'=='net'">
     <DefineConstants>$(DefineConstants);NETFX;</DefineConstants>
     <UsingNetFramework>true</UsingNetFramework>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableBookshelfService)'=='true'">
+    <DefineConstants>$(DefineConstants);EnableBookshelfService;</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(EnableBookshelfService)'!='true'">
+    <Compile Remove="ViewModels\BookShelfViewModel.cs"></Compile>
+    <AvaloniaXaml Remove="Views\BookshelfView.axaml"></AvaloniaXaml>
+    <Compile Remove="Views\BookshelfView.axaml.cs"></Compile>
+  </ItemGroup>
   <PropertyGroup Condition="'$(EnableCache)'=='true'">
     <DefineConstants>$(DefineConstants);ENABLE_CACHE;</DefineConstants>
   </PropertyGroup>

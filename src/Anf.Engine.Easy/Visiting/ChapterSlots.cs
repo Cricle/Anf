@@ -7,9 +7,9 @@ namespace Anf.Easy.Visiting
         public IComicVisiting<TResource> Visiting { get; }
 
         public ChapterSlots(IComicVisiting<TResource> visiting)
-            : base(visiting.Entity.Chapters.Length)
+            : base(visiting?.Entity?.Chapters?.Length ?? 0)
         {
-            Visiting = visiting;
+            Visiting = visiting ?? throw new System.ArgumentNullException(nameof(visiting));
         }
 
         protected override Task<IComicChapterManager<TResource>> OnLoadAsync(int index)

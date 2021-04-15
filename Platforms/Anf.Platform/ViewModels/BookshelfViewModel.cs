@@ -1,14 +1,14 @@
 ﻿using GalaSoft.MvvmLight;
-using Kw.Comic.Engine.Easy.Store;
-using Kw.Comic.Models;
-using Kw.Comic.Services;
+using Anf.Easy.Store;
+using Anf.Models;
+using Anf.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Kw.Comic.ViewModels
+namespace Anf.ViewModels
 {
     public class BookshelfViewModel : ViewModelBase
     {
@@ -91,7 +91,7 @@ namespace Kw.Comic.ViewModels
                 {
                     Bookshelves.Clear();
                 }
-                var datas = await bookshelfService.FindBookShelfAsync(CurrentPage * PageSize, PageSize);
+                var datas = await bookshelfService.FindBookShelfAsync(null, null);
                 Total = datas.Total;
                 foreach (var item in datas.Datas)
                 {

@@ -73,7 +73,7 @@ namespace Anf.KnowEngines
                 var cap = new ComicChapter
                 {
                     TargetUrl = GetBaseAddress() + url?.Value,
-                    Title = text
+                    Title = text?.Trim()
                 };
                 caps.Add(cap);
             }

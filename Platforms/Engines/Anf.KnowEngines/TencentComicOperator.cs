@@ -97,6 +97,38 @@ namespace Anf.KnowEngines
         {
             return XGetImageStreamAsync(targetUrl);
         }
+        private static string jsAddr = "https://ac.gtimg.com/media/js/ac.page.chapter.view_v2.6.0.js";
+        private static WeakReference<string> jsEval;
+
+        private static async Task<string> GetJsEvalAsync(Func<Task<string>> fetcher)
+        {
+            if (jsEval!=null&&jsEval.TryGetTarget(out var str))
+            {
+                return str;
+            }
+            str = await fetcher();
+            if (jsEval is null)
+            {
+                jsEval = new WeakReference<string>(str);
+            }
+            else
+            {
+                jsEval.SetTarget(str);
+            }
+            return str;
+        }
+        private async Task<string> FetchJsEvalAsync()
+        {
+            var js = string.Empty;
+            using (var sr = new StreamReader(await GetStreamAsync(jsAddr)))
+            {
+                js = sr.ReadToEnd();
+            }
+            var evalStart = js.IndexOf("eval(function(p,a,c,k,e,r)");
+            var evalEnd = js.IndexOf("}();", evalStart);
+            var eval = js.Substring(evalStart, evalEnd - evalStart);
+            return eval;
+        }
 
         public async Task<ComicPage[]> GetPagesAsync(string targetUrl)
         {
@@ -107,14 +139,7 @@ namespace Anf.KnowEngines
             }
             var html = new HtmlDocument();
             html.LoadHtml(str);
-            var js = string.Empty;
-            using (var sr=new StreamReader(await GetStreamAsync("https://ac.gtimg.com/media/js/ac.page.chapter.view_v2.6.0.js")))
-            {
-                js = sr.ReadToEnd();
-            }
-            var evalStart = js.IndexOf("eval(function(p,a,c,k,e,r)");
-            var evalEnd = js.IndexOf("}();", evalStart);
-            var eval = js.Substring(evalStart, evalEnd- evalStart);
+            var eval = await GetJsEvalAsync(FetchJsEvalAsync);
             var dataBlock = dataRegex.Match(str);
             var noticLeft = str.IndexOf("window[\"n", str.IndexOf("window[\"n")+4);
             var noticRight = str.IndexOf(";", noticLeft);

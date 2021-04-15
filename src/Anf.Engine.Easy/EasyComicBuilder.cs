@@ -36,29 +36,5 @@ namespace Anf.Easy
             builder.AddComicServices();
             return builder.Build();
         }
-        public static Task<ComicEntity> GetComicAsync(string address)
-        {
-            return Default.GetComicAsync(address);
-        }
-        public static Task DownloadAsync(string address, IComicSaver saver, CancellationToken token = default)
-        {
-            return Default.DownloadAsync(address, saver, token);
-        }
-        public static void Download(string address, IComicSaver saver, CancellationToken token = default)
-        {
-            Default.DownloadAsync(address, saver, token).GetAwaiter().GetResult();
-        }
-        public static void BatchDownload(string address, IComicSaver saver, int concurrent = 5, CancellationToken token = default)
-        {
-            Default.BatchDownloadAsync(address, saver, concurrent, token).GetAwaiter().GetResult();
-        }
-        public static Task BatchDownloadAsync(string address, IComicSaver saver, int concurrent = 5, CancellationToken token = default)
-        {
-            return Default.BatchDownloadAsync(address, saver, concurrent, token);
-        }
-        public static Task<ComicDetail> GetComicWithChaptersAsync(string address)
-        {
-            return Default.GetComicWithChaptersAsync(address);
-        }
     }
 }

@@ -20,6 +20,21 @@
               <Border IsVisible="{Binding LoadSucceed}">
                 <Border.ContextMenu>
                   <ContextMenu>
+                    <MenuItem Header="{Binding DataContext.CurrentChapter.Title,ElementName=Rep}" IsEnabled="False"/>
+                    <MenuItem Header="复制">
+                      <MenuItem Header="实体" Command="{Binding DataContext.CopyComicEntityCommand,ElementName=Rep}"/>
+                      <MenuItem Header="地址" Command="{Binding DataContext.CopyComicCommand,ElementName=Rep}"/>
+                      <MenuItem Header="章节" Command="{Binding DataContext.CopyChapterCommand,ElementName=Rep}"/>
+                    </MenuItem>
+                    <MenuItem Header="打开">
+                      <MenuItem Header="漫画" Command="{Binding DataContext.OpenComicCommand,ElementName=Rep}"/>
+                      <MenuItem Header="章节" Command="{Binding DataContext.OpenChapterCommand,ElementName=Rep}"/>
+                    </MenuItem>
+                    <MenuItem Header="控制">
+                      <MenuItem Header="上一章" Command="{Binding DataContext.PrevChapterCommand,ElementName=Rep}"/>
+                      <MenuItem Header="下一章" Command="{Binding DataContext.NextChapterCommand,ElementName=Rep}"/>
+                    </MenuItem>
+                    <MenuItem Header="-"/>
                     <MenuItem Header="保存" CommandParameter="{Binding}" Command="{Binding DataContext.SaveImageCommand,ElementName=Rep}"></MenuItem>
                     <MenuItem Header="重载" Command="{Binding ReLoadCommand}"/>
                   </ContextMenu>
@@ -52,14 +67,14 @@
         </StackPanel.Resources>
         <TextBlock Text="{Binding CurrentChapter.Title}"/>
         <TextBlock>(</TextBlock>
-        <TextBlock Text="{Binding CurrentPageCursor.CurrentIndex}"></TextBlock>
+        <TextBlock Text="{Binding CurrentPageCursor.CurrentIndex,Converter={StaticResource AddConverter}}"></TextBlock>
         <TextBlock>/</TextBlock>
         <TextBlock Text="{Binding CurrentPageCursor.Count}"></TextBlock>
         <TextBlock>)</TextBlock>
       </StackPanel>
     </Border>
     
-    <Border Grid.RowSpan="2" IsVisible="{Binding IsLoading}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Border IsVisible="{Binding IsLoading}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
       <ExperimentalAcrylicBorder>
         <ExperimentalAcrylicBorder.Material>
           <ExperimentalAcrylicMaterial TintColor="Blue" MaterialOpacity="0.8" TintOpacity="0.87" />

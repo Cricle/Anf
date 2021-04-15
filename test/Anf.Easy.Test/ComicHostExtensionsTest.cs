@@ -95,15 +95,17 @@ namespace Anf.Easy.Test
         public void CallGetSearchEngine_MustReturnEngineInstance()
         {
             var eng = new SearchEngine(new ValueServiceScopeFactory());
+            var comicEng = new ComicEngine();
             var provider = new ValueServiceProvider
             {
                 ServiceMap = new Dictionary<Type, Func<object>>
                 {
-                    [typeof(SearchEngine)] = () => eng
+                    [typeof(SearchEngine)] = () => eng,
+                    [typeof(ComicEngine)] = () => comicEng
                 }
             };
             var retEng = ComicHostExtensions.GetComicEngine(provider);
-            Assert.AreEqual(eng, retEng);
+            Assert.AreEqual(comicEng, retEng);
         }
         [TestMethod]
         public async Task GivenNullValue_CallSearchAsync_MustThrowException()
@@ -113,14 +115,18 @@ namespace Anf.Easy.Test
         [TestMethod]
         public async Task SearchAsync_MustReturnSearchResult()
         {
-            var eng = new SearchEngine(new ValueServiceScopeFactory());
             var provider = new ValueServiceProvider
             {
                 ServiceMap = new Dictionary<Type, Func<object>>
                 {
-                    [typeof(SearchEngine)] = () => eng
+                    
                 }
             };
+            var provfc = new ValueServiceScopeFactory { ScopeFactory = () => new ValueServiceScope { ServiceProvider = provider } };
+            var eng = new SearchEngine(provfc);
+            provider.ServiceMap[typeof(SearchEngine)] = () => eng;
+            provider.ServiceMap
+                    [typeof(IServiceScopeFactory)] = () => provfc;
             var res = await ComicHostExtensions.SearchAsync(provider, null, 5, 10);
             Assert.IsNotNull(res);
         }

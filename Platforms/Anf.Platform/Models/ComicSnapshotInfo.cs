@@ -15,11 +15,8 @@ namespace Anf.Models
             Snapshot = snapshot;
             var prov = AppEngine.GetRequiredService<ComicEngine>();
             SourceInfos = snapshot.Sources
-                .Select(x=> 
-                {
-                    var condition = prov.GetComicSourceProviderType(x.TargetUrl);
-                    return new ComicSourceInfo(snapshot, x, condition);
-                }).ToArray();
+                .Select(x => new ComicSourceInfo(snapshot, x, prov.GetComicSourceProviderType(x.TargetUrl)))
+                .ToArray();
         }
 
         public ComicSourceInfo CurrentSource

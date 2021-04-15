@@ -14,15 +14,11 @@ namespace Anf.Avalon
 {
     internal class AResourceCreator : IResourceFactory<Bitmap>
     {
-        private readonly IStoreService storeService;
-        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         private readonly ResourceFactoryCreateContext<Bitmap> context;
 
         public AResourceCreator(ResourceFactoryCreateContext<Bitmap> context)
         {
             this.context = context ?? throw new ArgumentNullException(nameof(context));
-            storeService = context.Visiting.Host.GetRequiredService<IStoreService>();
-            recyclableMemoryStreamManager = context.Visiting.Host.GetRequiredService<RecyclableMemoryStreamManager>();
         }
 
         public void Dispose()
@@ -31,6 +27,8 @@ namespace Anf.Avalon
         public async Task<Bitmap> GetAsync(string address)
         {
 #if ENABLE_CACHE
+            var storeService = context.Visiting.Host.GetRequiredService<IStoreService>();
+            var recyclableMemoryStreamManager = context.Visiting.Host.GetRequiredService<RecyclableMemoryStreamManager>();
             var str = await storeService.GetPathAsync(address);
             Stream stream = null;
             try

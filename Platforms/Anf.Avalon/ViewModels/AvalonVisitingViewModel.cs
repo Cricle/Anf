@@ -34,18 +34,18 @@ namespace Anf.Avalon.ViewModels
         public AvalonVisitingViewModel()
             : base(null)
         {
-            SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
+            AvalonInit();
         }
         public AvalonVisitingViewModel(IComicVisiting<Bitmap> visiting = null)
             : base(visiting)
         {
-            SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
+            AvalonInit();
         }
 
         public AvalonVisitingViewModel(IComicVisiting<Bitmap> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<Bitmap> streamImageConverter)
             : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter)
         {
-            SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
+            AvalonInit();
         }
         private bool chapterSelectorOpen;
         public ComicChapter TrulyCurrentComicChapter
@@ -62,12 +62,19 @@ namespace Anf.Avalon.ViewModels
             get { return chapterSelectorOpen; }
             set => Set(ref chapterSelectorOpen, value);
         }
-        public RelayCommand<ComicPageInfo<Bitmap>> SaveImageCommand { get; }
-
+        public RelayCommand<ComicPageInfo<Bitmap>> SaveImageCommand { get; protected set; }
+        private void AvalonInit()
+        {
+            SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
+        }
         public async void SaveImage(ComicPageInfo<Bitmap> info)
         {
             var name = $"{PathHelper.EnsureName(Name)}-{PathHelper.EnsureName(CurrentChapter.Title)}-{info.Index}.jpg";
             await info.Resource.PickSaveAsync(name);
+        }
+        protected async override void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<Bitmap>> cursor)
+        {
+            await LoadAllAsync();
         }
     }
 }

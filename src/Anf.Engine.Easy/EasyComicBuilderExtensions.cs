@@ -13,11 +13,21 @@ namespace Microsoft.Extensions.DependencyInjection
     {
         public static void AddStreamVisitor(this IServiceCollection services)
         {
+            if (services is null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
             services.AddSingleton<IResourceFactoryCreator<Stream>>(StreamResourceFactoryCreator.Default);
             services.AddSingleton<IComicVisiting<Stream>, ComicVisiting<Stream>>();
         }
         public static void AddDefaultEasyComic(this IServiceCollection services, NetworkAdapterTypes networkAdapterType = NetworkAdapterTypes.HttpClient)
         {
+            if (services is null)
+            {
+                throw new ArgumentNullException(nameof(services));
+            }
+
             services.AddEasyComic(networkAdapterType);
             services.AddStreamVisitor();
         }

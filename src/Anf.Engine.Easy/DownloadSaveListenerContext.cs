@@ -28,12 +28,14 @@ namespace Anf.Easy
         {
             var mem = CreateStream();
             await baseStream.CopyToAsync(mem);
+            mem.Seek(0, SeekOrigin.Begin);
             return mem;
         }
         public Stream CopyStream()
         {
             var mem = CreateStream();
             baseStream.CopyTo(mem);
+            mem.Seek(0, SeekOrigin.Begin);
             return mem;
         }
     }

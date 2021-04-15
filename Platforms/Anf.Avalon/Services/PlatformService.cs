@@ -17,7 +17,16 @@ namespace Anf.Avalon.Services
 
         public Task OpenAddressAsync(string address)
         {
+#if NETCOREAPP3_0_OR_GREATER
+            var psi = new ProcessStartInfo
+	        {
+    	            FileName = address,
+    	            UseShellExecute = true
+	        };
+	        Process.Start(psi);
+#else
             Process.Start(address);
+#endif
             return Task.CompletedTask;
         }
     }

@@ -16,6 +16,8 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Anf.Services;
+using Newtonsoft.Json;
 
 namespace Anf.ViewModels
 {
@@ -151,7 +153,42 @@ namespace Anf.ViewModels
         public RelayCommand NextPageCommand { get; protected set; }
         public RelayCommand<ComicPage> GoPageCommand { get; protected set; }
         public RelayCommand<int> GoPageIndexCommand { get; protected set; }
+
+        public RelayCommand OpenComicCommand { get; protected set; }
+        public RelayCommand OpenChapterCommand { get;protected set; }
+        public RelayCommand CopyComicCommand { get; protected set; }
+        public RelayCommand CopyChapterCommand { get; protected set; }
+        public RelayCommand CopyComicEntityCommand { get; protected set; }
+
+        private static IPlatformService PlatformService => AppEngine.GetRequiredService<IPlatformService>();
+        
         public SilentObservableCollection<ComicPageInfo<TResource>> Resources { get; protected set; }
+
+        public Task OpenComicAsync()
+        {
+            return PlatformService.OpenAddressAsync(ComicEntity.ComicUrl);
+        }
+        public Task OpenChapterAsync()
+        {
+            if (CurrentChapter is null )
+            {
+                return Task.CompletedTask;
+            }
+            return PlatformService.OpenAddressAsync(CurrentChapter.TargetUrl);
+        }
+        public void CopyComic()
+        {
+            PlatformService.Copy(ComicEntity.ComicUrl);
+        }
+        public void CopyComicEntity()
+        {
+            var str = JsonConvert.SerializeObject(ComicEntity);
+            PlatformService.Copy(str);
+        }
+        public void CopyChapter()
+        {
+            PlatformService.Copy(CurrentChapter.TargetUrl);
+        }
 
         protected void InitService(IServiceProvider provider, IComicVisiting<TResource> visiting = null)
         {
@@ -305,6 +342,12 @@ namespace Anf.ViewModels
             GoPageCommand = new RelayCommand<ComicPage>(x => _ = GoPageAsync(x));
             GoPageIndexCommand = new RelayCommand<int>(x => _ = GoPageIndexAsync(x));
 
+            OpenComicCommand = new RelayCommand(() => _ = OpenComicAsync());
+            OpenChapterCommand = new RelayCommand(() => _ = OpenChapterAsync());
+            CopyComicCommand = new RelayCommand(CopyComic);
+            CopyComicEntityCommand = new RelayCommand(CopyComicEntity);
+            CopyChapterCommand = new RelayCommand(CopyChapter);
+
             Resources = new SilentObservableCollection<ComicPageInfo<TResource>>();
             if (Visiting.IsLoad())
             {
@@ -339,7 +382,6 @@ namespace Anf.ViewModels
 
         private void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
         {
-            IsLoading = true;
             try
             {
 
@@ -371,7 +413,6 @@ namespace Anf.ViewModels
             }
             finally
             {
-                IsLoading = false;
             }
         }
 
