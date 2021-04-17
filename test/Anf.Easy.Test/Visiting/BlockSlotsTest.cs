@@ -39,9 +39,10 @@ namespace Anf.Easy.Test.Visiting
                 await slot.GetAsync(i);
             }
             slot.Dispose();
-            for (int i = 0; i < slot.Size; i++)
+            var objs = slot.GetCreatedValues().OfType<DispoableObject>().ToArray();
+            for (int i = 0; i < objs.Length; i++)
             {
-                var obj = (DispoableObject)slot[i];
+                var obj = objs[i];
                 Assert.IsTrue(obj.IsDisposed);
             }
         }
