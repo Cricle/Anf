@@ -10,7 +10,7 @@
     <MSIXBuild>false</MSIXBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSIXBuild)'!='true'">
-    <TargetFrameworks>net472;net6.0</TargetFrameworks>
+    <TargetFrameworks>net472;net5.0</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSIXBuild)'=='true'">
     <TargetFramework>net472</TargetFramework>
