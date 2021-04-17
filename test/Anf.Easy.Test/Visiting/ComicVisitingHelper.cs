@@ -9,7 +9,7 @@ namespace Anf.Easy.Test.Visiting
 {
     internal static class ComicVisitingHelper
     {
-        public static readonly Uri AnyUri = new Uri("http://localhost:8765/");
+        public static readonly Uri AnyUri = new Uri("http://localhost:8886/");
         public static ComicVisiting<Stream> CreateResrouceVisitor()
         {
             var creator = new StreamResourceFactoryCreator();
