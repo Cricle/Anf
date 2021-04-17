@@ -51,7 +51,7 @@ namespace Anf.Avalon
         private void InitServices()
         {
             AppEngine.Reset();
-            AppEngine.AddServices(NetworkAdapterTypes.WebRequest);
+            AppEngine.AddServices(NetworkAdapterTypes.HttpClient);
             var store = FileStoreService.FromMd5Default(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName));
             var hp = new Lazy<HomePage>(() => new HomePage());
             var cv = new Lazy<ComicView>(() => new ComicView());
@@ -90,8 +90,8 @@ namespace Anf.Avalon
                 var nav = AppEngine.GetRequiredService<MainNavigationService>();
                 var mainWin = AppEngine.GetRequiredService<MainWindow>();
                 desktop.MainWindow =mainWin;
-                nav.Navigate(new VisitingView());
-                //nav.Navigate<HomePage>();
+                //nav.Navigate(new VisitingView());
+                nav.Navigate<HomePage>();
                 AppEngine.GetRequiredService<TitleService>().Bind(mainWin);
                 mainWin.KeyDown += OnMainWinKeyDown;
 

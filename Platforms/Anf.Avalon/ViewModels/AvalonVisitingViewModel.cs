@@ -211,5 +211,10 @@ namespace Anf.Avalon.ViewModels
                 ExceptionService.Exception = ex;
             }
         }
+        public override void Dispose()
+        {
+            base.Dispose();
+            TitleService.Title = string.Empty;
+        }
     }
 }

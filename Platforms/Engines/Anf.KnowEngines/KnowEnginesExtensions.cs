@@ -18,6 +18,8 @@ namespace Anf.KnowEngines
             services.AddScoped<TencentComicOperator>();
             services.AddScoped<BilibiliComicOperator>();
             services.AddScoped<QimiaoComicOperator>();
+            services.AddScoped<MangabzComicOperator>();
+            services.AddScoped<XmanhuaComicOperator>();
         }
         public static void UseKnowEngines(this IServiceProvider provider)
         {
@@ -29,6 +31,8 @@ namespace Anf.KnowEngines
             eng.Add(new TencentComicSourceCondition());
             eng.Add(new BilibiliComicSourceCondition());
             eng.Add(new QimianComicSourceCondition());
+            eng.Add(new MangabzComicCondition());
+            eng.Add(new XmanhuaComicCondition());
             var searchEng = provider.GetRequiredService<SearchEngine>();
             searchEng.Add(typeof(SomanSearchProvider));
         }
