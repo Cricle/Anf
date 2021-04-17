@@ -22,7 +22,7 @@ namespace Anf.Easy.Test.Downloading
             }
             mgr.Start();
             var tks = new CancellationTokenSource();
-            var timeOutTask = Task.Delay(10 * 1000).ContinueWith(_ => tks.Cancel());
+            var timeOutTask = Task.Delay(TimeSpan.FromMinutes(30)).ContinueWith(_ => tks.Cancel());
             while (!tks.IsCancellationRequested)
             {
                 if (mgr.Count == 0)
