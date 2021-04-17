@@ -13,8 +13,8 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Anf.Engine.Easy\Anf.Easy.csproj" />
-    <ProjectReference Include="..\..\src\Anf.Engine\Anf.Engine.csproj" />
+    <ProjectReference Include="..\..\Platforms\Anf.Engine.Easy\Anf.Easy.csproj" />
+    <ProjectReference Include="..\..\Platforms\Anf.Engine\Anf.Engine.csproj" />
     <ProjectReference Include="..\SimpleService\SimpleService.csproj" />
   </ItemGroup>
 

@@ -8,6 +8,8 @@ namespace Anf.Test.Providers
     {
         public override string EnginName => "any";
 
+        public override Uri Address { get; } = new Uri("http://localhost:123");
+
         public override bool Condition(ComicSourceContext context)
         {
             return false;

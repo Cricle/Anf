@@ -14,11 +14,12 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Platforms\Anf.Engine\Anf.Engine.csproj" />
     <ProjectReference Include="..\..\src\Anf.Engine\Anf.Engine.csproj" />
     <ProjectReference Include="..\SimpleService\SimpleService.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Include="..\..\src\Anf.Engine\ObservableCollectionExtension.cs"></Compile>
+    <Compile Include="..\..\Platforms\Anf.Engine\ObservableCollectionExtension.cs"></Compile>
   </ItemGroup>
 </Project>

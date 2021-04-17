@@ -14,6 +14,10 @@ namespace Anf.Test.Providers
 
         public Func<ComicSourceContext,bool> ConditionFunc { get; set; }
 
+        public Uri Address { get; set; }
+
+        public Uri FaviconAddress { get; set; }
+
         public bool Condition(ComicSourceContext context)
         {
             return ConditionFunc(context);
