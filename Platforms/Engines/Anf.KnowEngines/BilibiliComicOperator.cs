@@ -1,4 +1,7 @@
 ﻿using Anf.Networks;
+using HtmlAgilityPack;
+using JavaScriptEngineSwitcher.Core;
+using Jint.Native.Array;
 #if !NETSTANDARD1_3
 using Microsoft.IO;
 #endif
@@ -9,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace Anf.KnowEngines

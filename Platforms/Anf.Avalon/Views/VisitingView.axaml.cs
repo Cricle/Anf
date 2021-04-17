@@ -142,6 +142,7 @@ namespace Anf.Avalon.Views
         {
             base.OnDetachedFromLogicalTree(e);
             titleService.LeftControls.Remove(vc);
+            vm.Dispose();
         }
         private void InitializeComponent()
         {

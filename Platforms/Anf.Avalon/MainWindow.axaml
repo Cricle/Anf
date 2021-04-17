@@ -9,33 +9,35 @@
         x:Class="Anf.Avalon.MainWindow"
         Title="Anf">
   <Grid>
-    <Grid.RowDefinitions>
-      <RowDefinition Height="Auto"/>
-      <RowDefinition Height="*"/>
-    </Grid.RowDefinitions>
-    <Border Background="{x:Null}" x:Name="TitleBar" IsVisible="{Binding TitleVisible}">
-      <Grid>
-        <ContentControl Content="{Binding TitleControl}" 
-                        HorizontalAlignment="Center"
-                        VerticalAlignment="Center">
-        </ContentControl>
-        <ItemsControl HorizontalAlignment="Left" Items="{Binding LeftControls}">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <StackPanel Orientation="Horizontal"/>
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-        </ItemsControl>
-      </Grid>
-    </Border>
-    <!-- Margin="{Binding #MainWindow.OffScreenMargin}"-->
-    <Panel Name="MainPlan" Margin="{Binding #MainWindow.OffScreenMargin}" Grid.Row="1">
-    </Panel>
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="*"/>
+      </Grid.RowDefinitions>
+      <Border Background="{x:Null}" x:Name="TitleBar" IsVisible="{Binding TitleVisible}">
+        <Grid>
+          <ContentControl Content="{Binding TitleControl}"
+                          HorizontalAlignment="Center"
+                          VerticalAlignment="Center">
+          </ContentControl>
+          <ItemsControl HorizontalAlignment="Left" Items="{Binding LeftControls}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+          </ItemsControl>
+        </Grid>
+      </Border>
+      <!-- Margin="{Binding #MainWindow.OffScreenMargin}"-->
+      <Panel Name="MainPlan" Margin="{Binding #MainWindow.OffScreenMargin}" Grid.Row="1">
+      </Panel>
+    </Grid>
     <Border x:Name="ExcetionBorder"
-            IsVisible="{Binding HasException}"
-            VerticalAlignment="Stretch"
-            HorizontalAlignment="Stretch"
-            Padding="16">
+        IsVisible="{Binding HasException}"
+        VerticalAlignment="Stretch"
+        HorizontalAlignment="Stretch"
+        Padding="16">
       <Border.ContextMenu>
         <ContextMenu>
           <MenuItem Command="{Binding CopyExceptionCommand}" Header="Copy"/>
@@ -65,6 +67,5 @@
         </Border>
       </Grid>
     </Border>
-
   </Grid>
 </Window>
