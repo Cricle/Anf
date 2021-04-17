@@ -32,6 +32,14 @@ steps:
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet test'
+  inputs:
+    command: test
+    projects: '**/*.Test.csproj'
+    arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
+    testRunTitle: MyProject.UnitTests
+
 - script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'
   displayName: 'Install ReportGenerator tool'
 
