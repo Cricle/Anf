@@ -11,9 +11,11 @@ namespace Anf.KnowEngines
     {
         public override string EnginName => "Tencent";
 
+        public override Uri Address { get; } = new Uri("https://ac.qq.com");
+
         public override bool Condition(ComicSourceContext context)
         {
-            return context.Uri.Host == "ac.qq.com";
+            return context.Uri.Host == Address.Host;
         }
     }
 }

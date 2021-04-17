@@ -68,6 +68,10 @@ namespace Anf.Networks
                     {
                         req.Accept = item.Value;
                     }
+                    else if (string.Equals("Content-Type",item .Key , StringComparison.OrdinalIgnoreCase))
+                    {
+                        req.ContentType = item.Value;
+                    }
                     else
                     {
 

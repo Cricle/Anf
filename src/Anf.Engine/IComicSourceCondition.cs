@@ -12,6 +12,10 @@ namespace Anf
 
         Type ProviderType { get; }
 
+        Uri Address { get; }
+
+        Uri FaviconAddress { get; }
+
         bool Condition(ComicSourceContext context);
     }
 }

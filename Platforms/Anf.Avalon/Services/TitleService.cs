@@ -11,6 +11,7 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia.Media;
 
 namespace Anf.Avalon.Services
 {
@@ -19,7 +20,21 @@ namespace Anf.Avalon.Services
         public const double FontSizeFactor = 0.45d;
         public TitleService()
         {
-            GoBackButton = new Button
+            GoBackButton = CreateIconButton("\xE72B");
+            GoBackButton.Click += GoBackButton_Click;
+            var tbx = new TextBlock
+            {
+                MaxWidth = 150,
+                TextTrimming = TextTrimming.WordEllipsis
+            };
+            TitleControl = tbx;
+            tbx.Bind(TextBlock.TextProperty,new Binding(nameof(Title)) { Source = this });
+            tbx.Bind(ToolTip.TipProperty, new Binding(nameof(Title)) { Source = this });
+            LeftControls = new ObservableCollection<IControl> { GoBackButton };
+        }
+        private Button CreateIconButton(string text)
+        {
+            var btn = new Button
             {
                 Background = null,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
@@ -27,34 +42,17 @@ namespace Anf.Avalon.Services
                 Content = new TextBlock
                 {
                     Classes = new Classes("segoblock"),
-                    Text = "\xE72B"
+                    Text = text
                 }
             };
-            GoBackButton.IsVisible = true;
-            GoBackButton.Bind(Button.FontSizeProperty, new Binding(nameof(AdviseFontSize)) { Source = this });
-            GoBackButton.Click += GoBackButton_Click;
-            var tbx = new TextBlock();
-            TitleControl = tbx;
-            tbx.Bind(TextBlock.TextProperty,new Binding(nameof(Title)) { Source = this });
-            LeftControls = new ObservableCollection<IControl> { GoBackButton };
+            btn.IsVisible = true;
+            btn.Bind(Button.FontSizeProperty, new Binding(nameof(AdviseFontSize)) { Source = this });
+            return btn;
         }
-
         private void GoBackButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
         {
             var navSer = AppEngine.GetRequiredService<MainNavigationService>();
-            var innerType = navSer.border.Child?.GetType();
-            if (innerType !=null&& !innerType.IsEquivalentTo(typeof(HomePage)))
-            {
-
-            if (innerType.IsEquivalentTo(typeof(VisitingView)))
-            {
-                navSer.Navigate<ComicView>();
-            }
-            else
-            {
-                navSer.Navigate<HomePage>();
-            }
-            }
+            navSer.GoBack();
         }
 
         private void BackButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)

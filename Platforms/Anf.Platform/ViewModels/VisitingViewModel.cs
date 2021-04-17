@@ -40,6 +40,7 @@ namespace Anf.ViewModels
             this.visiting = visiting ?? throw new ArgumentNullException(nameof(visiting));
             InitVisiting();
         }
+        private readonly SemaphoreSlim loadSlim = new SemaphoreSlim(1);
         private CancellationTokenSource loadCancellationTokenSource;
         protected readonly IServiceScope scope= AppEngine.CreateScope();
         protected IStreamImageConverter<TImage> streamImageConverter;
@@ -57,11 +58,29 @@ namespace Anf.ViewModels
         private string name;
         private ComicChapter currentChapter;
         private ChapterWithPage currentChapterWithPage;
+        private int resourceLoadCount;
 
         public MemoryStream LogoStream => logoStream;
         public ChapterSlots<TResource> ChapterSlots => chapterSlots;
         public CancellationTokenSource LoadCancellationTokenSource=> loadCancellationTokenSource;
-       
+
+        private bool resourceLoadDone;
+
+        public bool ResourceLoadDone
+        {
+            get { return resourceLoadDone; }
+            private set => Set(ref resourceLoadDone, value);
+        }
+
+        public int ResourceLoadCount
+        {
+            get { return resourceLoadCount; }
+            private set
+            {
+                Set(ref resourceLoadCount, value);
+                ResourceLoadDone = value >= Resources.Count;
+            }
+        }
         public ChapterWithPage CurrentChapterWithPage
         {
             get { return currentChapterWithPage; }
@@ -163,6 +182,8 @@ namespace Anf.ViewModels
         private static IPlatformService PlatformService => AppEngine.GetRequiredService<IPlatformService>();
         
         public SilentObservableCollection<ComicPageInfo<TResource>> Resources { get; protected set; }
+
+        public event Action<IDataCursor<IComicVisitPage<TResource>>, int> PageCursorMoved;
 
         public Task OpenComicAsync()
         {
@@ -378,6 +399,11 @@ namespace Anf.ViewModels
             {
                 await LoadLogoAsync(ComicEntity.ImageUrl);
             }
+            OnInitDone();
+        }
+        protected virtual void OnInitDone()
+        {
+
         }
 
         private void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
@@ -387,6 +413,11 @@ namespace Anf.ViewModels
 
                 loadCancellationTokenSource?.Cancel();
                 loadCancellationTokenSource?.Dispose();
+                foreach (var item in Resources)
+                {
+                    item.LoadDone -= Item_LoadDone;
+                }
+                ResourceLoadCount = 0;
                 Resources.Clear();
 
                 var ps = PageSlots;
@@ -398,6 +429,7 @@ namespace Anf.ViewModels
                 var cpc = CurrentPageCursor;
                 if (cpc!=null)
                 {
+                    CurrentPageCursor.Moved -= OnCurrentPageCursorMoved;
                     cpc.Dispose();
                 }
                 ps = ChapterSlots[arg2].CreatePageSlots();
@@ -405,8 +437,13 @@ namespace Anf.ViewModels
                 var datas = Enumerable.Range(0, PageSlots.Size)
                     .Select(x => CreatePageInfo(ps, x));
                 Resources.AddRange(datas);
+                foreach (var item in Resources)
+                {
+                    item.LoadDone += Item_LoadDone;
+                }
                 CurrentPageCursor = PageSlots.ToDataCursor();
                 CurrentChapterWithPage = PageSlots.ChapterManager.ChapterWithPage;
+                CurrentPageCursor.Moved += OnCurrentPageCursorMoved;
                 loadCancellationTokenSource = new CancellationTokenSource();
                 OnCurrentChaterCursorChanged(arg1);
                 GC.Collect(0, GCCollectionMode.Optimized);
@@ -414,6 +451,23 @@ namespace Anf.ViewModels
             finally
             {
             }
+        }
+        private void Item_LoadDone(ComicPageInfo<TResource> obj)
+        {
+            loadSlim.Wait();
+            try
+            {
+                ResourceLoadCount++;
+            }
+            finally
+            {
+                loadSlim.Release();
+            }
+        }
+
+        private void OnCurrentPageCursorMoved(IDataCursor<IComicVisitPage<TResource>> arg1, int arg2)
+        {
+            PageCursorMoved?.Invoke(arg1, arg2);
         }
 
         protected virtual ComicPageInfo<TResource> CreatePageInfo(PageSlots<TResource> slots,int index)
@@ -468,6 +522,7 @@ namespace Anf.ViewModels
             logoStream?.Dispose();
             Visiting.Dispose();
             scope?.Dispose();
+            loadSlim.Dispose();
             loadCancellationTokenSource?.Dispose();
         }
 

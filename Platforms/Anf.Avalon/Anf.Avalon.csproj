@@ -1,12 +1,19 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFrameworks>net472;net6.0</TargetFrameworks>
     <NgenR2R>false</NgenR2R>
     <UseFody>false</UseFody>
     <UseD2D>true</UseD2D>
     <EnableCache>true</EnableCache>
     <EnableBookshelfService>false</EnableBookshelfService>
+    <ApplicationIcon>Anf.ico</ApplicationIcon>
+    <MSIXBuild>false</MSIXBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MSIXBuild)'!='true'">
+    <TargetFrameworks>net472;net6.0</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MSIXBuild)'=='true'">
+    <TargetFramework>net472</TargetFramework>
   </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework.Trim(`0123456789`))'=='net'">
     <DefineConstants>$(DefineConstants);NETFX;</DefineConstants>
@@ -26,12 +33,15 @@
   <PropertyGroup Condition="'$(UseD2D)' == 'true'">
     <DefineConstants>$(DefineConstants);RENDER_D2D</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Avalonia" Version="0.10.0" />
-    <!--<PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />-->
+    <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />

@@ -7,12 +7,13 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Anf.KnowEngines
 {
-    public class BilibiliOperator : IComicSourceProvider
+    public class BilibiliComicOperator : IComicSourceProvider
     {
         private static readonly string detailUri = "https://manga.bilibili.com/twirp/comic.v1.Comic/ComicDetail?device=pc&platform=web";
         private static readonly string imgIndexUri = "https://manga.bilibili.com/twirp/comic.v1.Comic/GetImageIndex?device=pc&platform=web";
@@ -26,13 +27,13 @@ namespace Anf.KnowEngines
         };
 #if !NETSTANDARD1_3
         private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
-        public BilibiliOperator(INetworkAdapter networkAdapter, RecyclableMemoryStreamManager recyclableMemoryStreamManager)
+        public BilibiliComicOperator(INetworkAdapter networkAdapter, RecyclableMemoryStreamManager recyclableMemoryStreamManager)
         {
             this.networkAdapter = networkAdapter;
             this.recyclableMemoryStreamManager = recyclableMemoryStreamManager;
         }
 #else
-        public BilibiliOperator(INetworkAdapter networkAdapter)
+        public BilibiliComicOperator(INetworkAdapter networkAdapter)
         {
             this.networkAdapter = networkAdapter;
         }
@@ -50,6 +51,7 @@ namespace Anf.KnowEngines
                 Data = stream
             });
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Stream GetStream()
         {
 #if NETSTANDARD1_3
@@ -58,6 +60,12 @@ namespace Anf.KnowEngines
             return recyclableMemoryStreamManager.GetStream();
 #endif
         }
+        private void WrtieStream(Stream stream,string text)
+        {
+            var buffer = Encoding.UTF8.GetBytes(text);
+            stream.Write(buffer, 0, buffer.Length);
+            stream.Seek(0, SeekOrigin.Begin);
+        }
         public async Task<ComicEntity> GetChaptersAsync(string targetUrl)
         {
             var mc = new Uri(targetUrl).Segments.Last();
@@ -65,9 +73,7 @@ namespace Anf.KnowEngines
             using (var mem =GetStream())
             {
                 var arg = $"{{\"comic_id\":{part}}}";
-                var buffer = Encoding.UTF8.GetBytes(arg);
-                mem.Write(buffer, 0, buffer.Length);
-                mem.Seek(0, SeekOrigin.Begin);
+                WrtieStream(mem, arg);
                 var stream = await GetStreamAsync(detailUri,"POST", mem);
                 string str = null;
                 using (var sr = new StreamReader(stream))
@@ -119,9 +125,7 @@ namespace Anf.KnowEngines
             using (var mem = GetStream())
             {
                 var arg = $"{{\"ep_id\":{epId}}}";
-                var buffer = Encoding.UTF8.GetBytes(arg);
-                mem.Write(buffer, 0, buffer.Length);
-                mem.Seek(0, SeekOrigin.Begin);
+                WrtieStream(mem, arg);
                 var stream = await GetStreamAsync(imgIndexUri, "POST", mem);
                 string str = null;
                 using (var sr = new StreamReader(stream))
@@ -140,9 +144,7 @@ namespace Anf.KnowEngines
             }
             using (var mem = GetStream())
             {
-                var buffer = Encoding.UTF8.GetBytes(targetObj.ToString());
-                mem.Write(buffer, 0, buffer.Length);
-                mem.Seek(0, SeekOrigin.Begin);
+                WrtieStream(mem, targetObj.ToString());
                 var stream = await GetStreamAsync(imgTokenUri, "POST", mem);
                 string str = null;
                 using (var sr = new StreamReader(stream))

@@ -16,11 +16,14 @@
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
       <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
       <RowDefinition Height="*"/>
     </Grid.RowDefinitions>
     <Grid Margin="20,0,20,6">
       <Grid.ColumnDefinitions>
         <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
       <AutoCompleteBox HorizontalAlignment="Stretch" Watermark="Search" IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}" Text="{Binding Keyword,Mode=TwoWay}">
@@ -31,22 +34,69 @@
       <Button Grid.Column="1" VerticalAlignment="Stretch" Background="Transparent" Padding="16,8" Command="{Binding SearchCommand}" IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}" >
         <TextBlock Text="&#xE71E;" Classes="segoblock" VerticalAlignment="Center"></TextBlock>
       </Button>
+      <Border Grid.Column="2" IsVisible="{Binding HasAvaliableCondition}" Padding="3,0,0,0">
+        <Button Background="{x:Null}" HorizontalAlignment="Center" Command="{Binding GoSourceCommand}" ToolTip.Tip="此地址可能可以被直接解析">
+          <TextBlock Classes="segoblock" VerticalAlignment="Center" Text="&#xE707;"></TextBlock>
+        </Button>
+      </Border>
     </Grid>
-    <ProgressBar Grid.Row="1" IsVisible="{Binding Searching}" IsIndeterminate="True">
+    <ProgressBar Grid.Row="2" IsVisible="{Binding Searching}" IsIndeterminate="True">
 
     </ProgressBar>
-    <Border Grid.RowSpan="4" IsVisible="{Binding EmptySet}">
-      <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
-                  HorizontalAlignment="Center">
-        <TextBlock FontSize="22" Text="可以从上方输入框输入"/>
-        <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="关键字"/>
-        <TextBlock FontSize="22" Text="搜索或直接输入"/>
-        <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="可解析"/>
-        <TextBlock FontSize="22" Text="漫画网址"/>
-      </StackPanel>
+    <Border Grid.RowSpan="5" IsVisible="{Binding EmptySet}"
+            VerticalAlignment="Center"
+            HorizontalAlignment="Center">
+      <!--favicon.ico-->
+      <Grid VerticalAlignment="Center">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+          <TextBlock FontSize="22" Text="可以从上方输入框输入"/>
+          <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="关键字"/>
+          <TextBlock FontSize="22" Text="搜索或直接输入"/>
+          <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="可解析"/>
+          <TextBlock FontSize="22" Text="漫画网址"/>
+        </StackPanel>
+        <TextBlock Grid.Row="1" FontSize="24" FontWeight="Bold" Margin="0,10" HorizontalAlignment="Center">
+          可用引擎
+        </TextBlock>
+        <ItemsControl Grid.Row="2" Items="{Binding EngineIcons}"
+                      HorizontalAlignment="Center">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Border Padding="4">
+                <ToolTip.Tip>
+                  <ToolTip>
+                    <StackPanel Orientation="Vertical">
+                      <TextBlock Text="{Binding Condition.EnginName}"/>
+                      <TextBlock Text="{Binding Condition.Address}"/>
+                    </StackPanel>
+                  </ToolTip>
+                </ToolTip.Tip>
+                <Border.ContextMenu>
+                  <ContextMenu>
+                    <MenuItem Header="打开" Command="{Binding OpenCommand}"/>
+                    <MenuItem Header="复制" Command="{Binding CopyCommand}"/>
+                  </ContextMenu>
+                </Border.ContextMenu>
+                  <Image Source="{Binding Bitmap}"
+                         Width="24"/>
+                </Border>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </Grid>
     </Border>
 
-    <ListBox Grid.Row="2" Background="{x:Null}" Items="{Binding Snapshots}" SelectionMode="Single" VirtualizationMode="Simple" SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}" IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
+    <ListBox Grid.Row="3" Background="{x:Null}" Items="{Binding Snapshots}" SelectionMode="Single" VirtualizationMode="Simple" SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}" IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
           <WrapPanel Orientation="Horizontal"/>

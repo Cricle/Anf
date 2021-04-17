@@ -19,6 +19,8 @@ namespace Anf.KnowEngines
             this.networkAdapter = networkAdapter;
         }
 
+        public string EngineName => "Soman";
+
         public async Task<SearchComicResult> SearchAsync(string keywork, int skip, int take)
         {
             var page = 1;

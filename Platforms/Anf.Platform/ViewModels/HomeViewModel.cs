@@ -11,6 +11,7 @@ using System.Net;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Anf.ViewModels
 {
@@ -31,16 +32,61 @@ namespace Anf.ViewModels
             ComicEngine = comicEngine;
             SearchEngine = searchEngine;
             Snapshots = new SilentObservableCollection<ComicSnapshotInfo>();
-            MoveNextCommand = new RelayCommand(() => _ = MoveNextAsync());
             SearchCommand = new RelayCommand(() => _ = SearchAsync());
+            GoSourceCommand = new RelayCommand(GoSource);
+            scope = AppEngine.CreateScope();
+            var type = searchEngine.FirstOrDefault();
+            if (type != null)
+            {
+                CurrentSearchProvider = (ISearchProvider)scope.ServiceProvider.GetRequiredService(type);
+            }
         }
-        private IComicCursor comicCursor;
+        protected readonly IServiceScope scope;
         private string keyword;
         private bool emptySet=true;
         private bool searching;
         private int additionCount;
         private SearchComicResult searchResult;
         private ComicSnapshotInfo currentComicSnapshot;
+        private ISearchProvider currentSearchProvider;
+        private int skip;
+        private int take=PageSize;
+        private IComicSourceCondition avaliableCondition;
+        private bool hasAvaliableCondition;
+
+        public bool HasAvaliableCondition
+        {
+            get { return hasAvaliableCondition; }
+            private set => Set(ref hasAvaliableCondition, value);
+        }
+
+        public IComicSourceCondition AvaliableCondition
+        {
+            get { return avaliableCondition; }
+            private set
+            {
+                Set(ref avaliableCondition, value);
+                HasAvaliableCondition = value != null;
+            }
+        }
+
+        public int Take
+        {
+            get { return take; }
+            set => Set(ref take, value);
+        }
+
+        public int Skip
+        {
+            get { return skip; }
+            set => Set(ref skip, value);
+        }
+
+        public ISearchProvider CurrentSearchProvider
+        {
+            get { return currentSearchProvider; }
+            set => Set(ref currentSearchProvider, value);
+        }
 
         public ComicSnapshotInfo CurrentComicSnapshot
         {
@@ -96,7 +142,20 @@ namespace Anf.ViewModels
         public string Keyword
         {
             get { return keyword; }
-            set => Set(ref keyword, value);
+            set 
+            {
+                Set(ref keyword, value);
+                AvaliableCondition = null;
+                if (UrlHelper.IsWebsite(value))
+                {
+                    try
+                    {
+                        var addr = value.GetUrl();
+                        AvaliableCondition = ComicEngine.GetComicSourceProviderType(addr);
+                    }
+                    catch (Exception) { }
+                }
+            }
         }
         /// <summary>
         /// 漫画解析引擎
@@ -110,10 +169,7 @@ namespace Anf.ViewModels
         /// 搜索命令
         /// </summary>
         public ICommand SearchCommand { get; }
-        /// <summary>
-        /// 下一页命令
-        /// </summary>
-        public ICommand MoveNextCommand { get; }
+        public ICommand GoSourceCommand { get; }
         /// <summary>
         /// 漫画快照
         /// </summary>
@@ -124,32 +180,32 @@ namespace Anf.ViewModels
         /// <returns></returns>
         public async Task SearchAsync()
         {
+            if (CurrentSearchProvider is null)
+            {
+                return;
+            }
             Searching = true;
             try
             {
                 OnBeginSearch();
-                comicCursor?.Dispose();
                 Snapshots.Clear();
                 var keyword = Keyword;
-                try
-                {
-                    var type = ComicEngine.GetComicSourceProviderType(keyword);
-                    if (type != null)
-                    {
-                        var nav = AppEngine.GetRequiredService<IComicTurnPageService>();
-                        nav.GoSource(keyword);
-                        return;
-                    }
-                }
-                catch (Exception) { }
-                comicCursor = await SearchEngine.GetSearchCursorAsync(keyword, 0, PageSize);
-                await MoveNextAsync();
+                SearchResult=await CurrentSearchProvider.SearchAsync(keyword, Skip,Take);
                 InsertDatas();
                 OnEndSearch();
             }
             finally
             {
                 Searching = false;
+            }
+        }
+        public void GoSource()
+        {
+            if (HasAvaliableCondition)
+            {
+                var nav = AppEngine.GetRequiredService<IComicTurnPageService>();
+                var addr = keyword.GetUrl();
+                nav.GoSource(addr);
             }
         }
         protected virtual void OnBeginSearch()
@@ -162,11 +218,10 @@ namespace Anf.ViewModels
         }
         private void InsertDatas()
         {
-            var sn = comicCursor?.Current?.Snapshots;
+            var sn = SearchResult.Snapshots;
             if (sn != null)
             {
                 Snapshots.AddRange(sn.Select(x => CreateSnapshotInfo(x)));
-                SearchResult = comicCursor.Current;
                 AdditionCount = sn.Length;
             }
             else
@@ -188,22 +243,10 @@ namespace Anf.ViewModels
         {
 
         }
-        /// <summary>
-        /// 下一页
-        /// </summary>
-        /// <returns></returns>
-        public async Task MoveNextAsync()
-        {
-            if (comicCursor != null)
-            {
-                await comicCursor.MoveNextAsync();
-                InsertDatas();
-            }
-        }
 
         public virtual void Dispose()
         {
-            comicCursor?.Dispose();
+            scope.Dispose();
         }
     }
 

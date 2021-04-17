@@ -1,4 +1,5 @@
 ﻿using Anf;
+using System;
 
 namespace Anf.KnowEngines
 {
@@ -6,9 +7,11 @@ namespace Anf.KnowEngines
     {
         public override string EnginName => ComicConst.EngineKuaiKan;
 
+        public override Uri Address { get; } = new Uri("https://www.kuaikanmanhua.com");
+
         public override bool Condition(ComicSourceContext context)
         {
-            return context.Uri.Host == "www.kuaikanmanhua.com";
+            return context.Uri.Host == Address.Host;
         }
     }
 }

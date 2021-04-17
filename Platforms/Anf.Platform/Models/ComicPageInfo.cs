@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using Anf.Services;
 
 namespace Anf.Models
 {
@@ -28,13 +29,23 @@ namespace Anf.Models
         public bool LoadSucceed
         {
             get { return loadSucceed; }
-            private set => Set(ref loadSucceed, value);
+            private set
+            {
+                Set(ref loadSucceed, value);
+                if (value)
+                {
+                    LoadDone?.Invoke(this);
+                }
+            }
         }
 
         public TResource Resource
         {
             get { return resource; }
-            private set => Set(ref resource, value);
+            private set
+            {
+                Set(ref resource, value);
+            }
         }
 
         public Exception Exception
@@ -61,16 +72,14 @@ namespace Anf.Models
         {
             PageSlots = pageSlots ?? throw new ArgumentNullException(nameof(pageSlots));
             Index = index;
-            LoadCommand = new RelayCommand(() => _ = LoadAsync());
-            ReLoadCommand = new RelayCommand(() => _ = ReloadAsync());
             PageInfoType = ComicPageInfoTypes.FromLoad;
+            Init();
         }
         public ComicPageInfo(IComicVisitPage<TResource> visitPage)
         {
             VisitPage = visitPage;
-            PageInfoType = ComicPageInfoTypes.FromValue;
-            LoadCommand = new RelayCommand(() => _ = LoadAsync());
-            ReLoadCommand = new RelayCommand(() => _ = ReloadAsync());
+            PageInfoType = ComicPageInfoTypes.FromValue; 
+            Init();
         }
 
         public ComicPageInfoTypes PageInfoType { get; }
@@ -79,12 +88,43 @@ namespace Anf.Models
 
         public int Index { get; }
 
-        public RelayCommand LoadCommand { get; }
-        public RelayCommand ReLoadCommand { get; }
+        public RelayCommand LoadCommand { get; protected set; }
+        public RelayCommand ReLoadCommand { get; protected set; }
+        public RelayCommand CopyCommand { get; protected set; }
+        public RelayCommand OpenCommand { get; protected set; }
+        public RelayCommand CopyExceptionCommand { get; protected set; }
+
+        public event Action<ComicPageInfo<TResource>> LoadDone;
+        private void Init()
+        {
+            LoadCommand = new RelayCommand(() => _ = LoadAsync());
+            ReLoadCommand = new RelayCommand(() => _ = ReloadAsync());
+            CopyCommand = new RelayCommand(Copy);
+            CopyExceptionCommand = new RelayCommand(CopyException);
+            OpenCommand = new RelayCommand(() => _ = OpenAsync());
+        }
         public Task ReloadAsync()
         {
             Interlocked.Exchange(ref locker, SharedObject);
             return LoadAsync();
+        }
+        public Task OpenAsync()
+        {
+           return AppEngine.GetRequiredService<IPlatformService>()
+                .OpenAddressAsync(VisitPage.Page.TargetUrl);
+        }
+        public void Copy()
+        {
+            AppEngine.GetRequiredService<IPlatformService>()
+                .Copy(VisitPage.Page.TargetUrl);
+        }
+        public void CopyException()
+        {
+            if (Exception != null)
+            {
+                AppEngine.GetRequiredService<IPlatformService>()
+                    .Copy(Exception.ToString());
+            }
         }
         public async Task LoadAsync()
         {

@@ -17,6 +17,7 @@ using System.IO;
 using System.Linq;
 using Avalonia.Input;
 using System.Threading.Tasks;
+using Anf.Avalon.ViewModels;
 
 namespace Anf.Avalon
 {
@@ -26,15 +27,25 @@ namespace Anf.Avalon
         {
             AvaloniaXamlLoader.Load(this);
             InitServices();
+            HandleException();
         }
         private void HandleException()
         {
             AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
+            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+        }
+
+        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
+        {
+            var exser = AppEngine.GetRequiredService<ExceptionService>();
+            exser.Exception = e.Exception;
+            e.SetObserved();
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
-            
+            var exser = AppEngine.GetRequiredService<ExceptionService>();
+            exser.Exception = e.ExceptionObject as Exception;
         }
 
         private void InitServices()
@@ -63,6 +74,7 @@ namespace Anf.Avalon
             AppEngine.Services.AddSingleton<IStreamImageConverter<Bitmap>, StreamImageConverter>();
             AppEngine.Services.AddSingleton<IComicVisiting<Bitmap>, ComicVisiting<Bitmap>>();
             AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, AResourceCreatorFactory>();
+            AppEngine.Services.AddSingleton<ExceptionService>();
 
             var style = Styles.Where(x => x is FluentTheme).FirstOrDefault() as FluentTheme;
             AppEngine.Services.AddSingleton(style);
@@ -78,10 +90,15 @@ namespace Anf.Avalon
                 var nav = AppEngine.GetRequiredService<MainNavigationService>();
                 var mainWin = AppEngine.GetRequiredService<MainWindow>();
                 desktop.MainWindow =mainWin;
-                //nav.Navigate(new VisitingView());
-                nav.Navigate<HomePage>();
+                nav.Navigate(new VisitingView());
+                //nav.Navigate<HomePage>();
                 AppEngine.GetRequiredService<TitleService>().Bind(mainWin);
                 mainWin.KeyDown += OnMainWinKeyDown;
+
+                //var vc = new VisitingControlView { DataContext = new AvalonVisitingViewModel() };
+                //var titleService = AppEngine.GetRequiredService<TitleService>();
+                //titleService.LeftControls.Add(vc);
+
             }
             base.OnFrameworkInitializationCompleted();
         }

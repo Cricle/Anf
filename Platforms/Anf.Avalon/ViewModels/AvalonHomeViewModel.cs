@@ -12,6 +12,8 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Avalonia.Media.Imaging;
+using System.IO;
 
 namespace Anf.Avalon.ViewModels
 {
@@ -20,20 +22,44 @@ namespace Anf.Avalon.ViewModels
         public AvalonHomeViewModel()
         {
             httpClient = AppEngine.GetRequiredService<HttpClient>();
+            EngineIcons = new ObservableCollection<EngineInfo>();
+            LoadEngineIcons();
         }
 
         public AvalonHomeViewModel(SearchEngine searchEngine,ComicEngine comicEngine)
             : base(searchEngine,comicEngine)
         {
             httpClient = AppEngine.GetRequiredService<HttpClient>();
+            EngineIcons = new ObservableCollection<EngineInfo>();
+            LoadEngineIcons();
         }
         private ComicSnapshotInfo usingShapshot;
         private readonly HttpClient httpClient;
 
-
+        public ObservableCollection<EngineInfo> EngineIcons { get; }
         protected override void OnBeginSearch()
         {
             DisposeSnapshot();
+        }
+        private async void LoadEngineIcons()
+        {
+            foreach (var item in ComicEngine)
+            {
+                try
+                {
+                    using (var stream = await httpClient.GetAsync(item.FaviconAddress))
+                    using (var s = await stream.Content.ReadAsStreamAsync())
+                    {
+                        var bitmap = new Bitmap(s);
+                        EngineIcons.Add(new EngineInfo { Bitmap = bitmap, Condition = item });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    AppEngine.GetRequiredService<ExceptionService>()
+                        .Exception = ex;
+                }
+            }
         }
         private void DisposeSnapshot()
         {
@@ -62,10 +88,19 @@ namespace Anf.Avalon.ViewModels
         {
             return new AvalonComicSnapshotInfo(info, httpClient);
         }
+        private void DisposeLogo()
+        {
+            foreach (var item in EngineIcons)
+            {
+                item.Bitmap.Dispose();
+            }
+            EngineIcons.Clear();
+        }
         public override void Dispose()
         {
             base.Dispose();
             DisposeSnapshot();
+            DisposeLogo();
         }
     }
 }

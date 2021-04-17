@@ -25,7 +25,7 @@ namespace Anf.Avalon.Services
             types = new Stack<Type>();
         }
 
-        public bool CanGoBack => types.Count != 0;
+        public bool CanGoBack => types.Count !=0;
 
         public bool CanGoForward => false;
 
@@ -33,9 +33,17 @@ namespace Anf.Avalon.Services
         {
             if (CanGoBack)
             {
-                var type = types.Pop();
-                var control=viewActiver.Active(type);
+                var t=types.Pop();
+                if (CanGoBack && border.Child.GetType().IsEquivalentTo(t))
+                {
+                    t = types.Pop();
+                }
+                var control=viewActiver.Active(t);
                 NavigateCore(control);
+                if (types.Count==0)
+                {
+                    types.Push(t);
+                }
             }
             return false;
         }

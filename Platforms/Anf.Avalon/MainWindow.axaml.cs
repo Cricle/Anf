@@ -29,7 +29,7 @@ namespace Anf.Avalon
             InitializeComponent();
             MinWidth = 850;
             MinHeight = 400;
-#if DEBUG
+#if DEBUG&&NET472
             this.AttachDevTools();
 #endif
         }
@@ -45,7 +45,11 @@ namespace Anf.Avalon
             var titleSer = AppEngine.GetRequiredService<TitleService>();
             titleBar.DataContext =titleSer;
             titleBar.Bind(HeightProperty, new Binding(nameof(TitleService.OffsceneHeight)) { Source = titleSer });
+            var exSer = AppEngine.GetRequiredService<ExceptionService>();
+            var exBorder = this.Get<Border>("ExcetionBorder");
+            exBorder.DataContext = exSer;
         }
+
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
             base.OnDetachedFromLogicalTree(e);

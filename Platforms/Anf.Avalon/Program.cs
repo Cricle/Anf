@@ -6,6 +6,7 @@ using Anf.Networks;
 using Microsoft.IO;
 using System.Net.Http;
 using System.IO;
+using System;
 
 namespace Anf.Avalon
 {
@@ -17,7 +18,14 @@ namespace Anf.Avalon
         public static void Main(string[] args)
         {
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
-            BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            try
+            {
+                BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
+            }
+            catch (Exception ex)
+            {
+                Debug.WriteLine(ex.ToString());
+            }
         }
 
         private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)

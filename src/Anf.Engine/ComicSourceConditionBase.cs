@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Text;
 
 namespace Anf
@@ -20,6 +21,10 @@ namespace Anf
         public abstract string EnginName { get; }
 
         public EngineDescript Descript { get; }
+
+        public abstract Uri Address { get; }
+
+        public virtual Uri FaviconAddress => new Uri(Path.Combine(Address.AbsoluteUri, "favicon.ico"));
 
         public abstract bool Condition(ComicSourceContext context);
     }
