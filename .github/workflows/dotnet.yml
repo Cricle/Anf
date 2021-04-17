@@ -17,11 +17,9 @@ jobs:
       uses: actions/setup-dotnet@v1
       with:
         dotnet-version: 5.0.x
-    - name: Go folder
-      run: cd Platforms
     - name: Restore dependencies
-      run: dotnet restore
+      run: dotnet restore Platforms\Anf.sln
     - name: Build
-      run: dotnet build --no-restore
+      run: dotnet build Platforms\Anf.sln --no-restore 
     - name: Test
-      run: dotnet test --no-build --verbosity normal
+      run: dotnet test Platforms\Anf.sln --no-build --verbosity normal
