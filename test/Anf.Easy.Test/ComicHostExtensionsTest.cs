@@ -30,7 +30,7 @@ namespace Anf.Easy.Test
                      [typeof(IComicVisiting<Stream>)]=()=>ComicVisitingHelper.CreateResrouceVisitor()
                  }
             };
-            var visitor=await ComicHostExtensions.GetVisitingAndLoadAsync<Stream>(provider, "http://localhost:8765");
+            var visitor=await ComicHostExtensions.GetVisitingAndLoadAsync<Stream>(provider, "http://localhost:8887");
             Assert.IsNotNull(visitor);
             Assert.IsNotNull(visitor.Entity);
         }
@@ -44,7 +44,7 @@ namespace Anf.Easy.Test
                     [typeof(IComicVisiting<Stream>)] = () => new NullComicVisiting<Stream> { LoadSucceed=false}
                 }
             };
-            var visitor = await ComicHostExtensions.GetVisitingAndLoadAsync<Stream>(provider, "http://localhost:8765");
+            var visitor = await ComicHostExtensions.GetVisitingAndLoadAsync<Stream>(provider, "http://localhost:8889");
             Assert.IsNull(visitor);
         }
         [TestMethod]
