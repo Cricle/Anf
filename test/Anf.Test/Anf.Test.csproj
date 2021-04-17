@@ -4,6 +4,7 @@
     <TargetFrameworks>netcoreapp3.1;net461;net45</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
   <ItemGroup>
@@ -15,7 +16,6 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Platforms\Anf.Engine\Anf.Engine.csproj" />
-    <ProjectReference Include="..\..\src\Anf.Engine\Anf.Engine.csproj" />
     <ProjectReference Include="..\SimpleService\SimpleService.csproj" />
   </ItemGroup>
 

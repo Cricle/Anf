@@ -43,8 +43,8 @@
     <Compile Include="..\Anf.Platform\Services\IBookshelfService.cs" Link="Services\IBookshelfService.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Anf.Engine.Easy\Anf.Easy.csproj" />
-    <ProjectReference Include="..\..\src\Anf.Engine\Anf.Engine.csproj" />
+    <ProjectReference Include="..\Anf.Engine.Easy\Anf.Easy.csproj" />
+    <ProjectReference Include="..\Anf.Engine\Anf.Engine.csproj" />
     <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
   </ItemGroup>
 </Project>

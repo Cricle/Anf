@@ -5,8 +5,8 @@
     <Company>Anf</Company>
     <Product>Anf</Product>
     <Version>0.0.1</Version>
-      <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-</PropertyGroup>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net461'">
     <StandardLib>true</StandardLib>
     <DefineConstants>$(DefineConstants);StandardLib</DefineConstants>
