@@ -51,7 +51,8 @@ namespace Anf.Avalon
         private void InitServices()
         {
             AppEngine.Reset();
-            AppEngine.AddServices(NetworkAdapterTypes.HttpClient);
+            AppEngine.AddServices(NetworkAdapterTypes.WebRequest);
+            //var store = new GzipFileStoreService(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName)), MD5AddressToFileNameProvider.Instance);
             var store = FileStoreService.FromMd5Default(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName));
             var hp = new Lazy<HomePage>(() => new HomePage());
             var cv = new Lazy<ComicView>(() => new ComicView());
@@ -72,9 +73,9 @@ namespace Anf.Avalon
             AppEngine.Services.AddSingleton<IStoreService>(store);
             AppEngine.Services.AddSingleton<IPlatformService, PlatformService>();
             AppEngine.Services.AddSingleton<IStreamImageConverter<Bitmap>, StreamImageConverter>();
-            AppEngine.Services.AddSingleton<IComicVisiting<Bitmap>, ComicVisiting<Bitmap>>();
             AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, AResourceCreatorFactory>();
             AppEngine.Services.AddSingleton<ExceptionService>();
+            AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, ComicVisiting<Bitmap>>();
 
             var style = Styles.Where(x => x is FluentTheme).FirstOrDefault() as FluentTheme;
             AppEngine.Services.AddSingleton(style);
@@ -109,7 +110,7 @@ namespace Anf.Avalon
                 (e.KeyModifiers & KeyModifiers.Shift) != 0 &&
                 e.Key == Key.F12)
             {
-                GC.Collect(0);
+                GC.Collect();
             }
         }
     }

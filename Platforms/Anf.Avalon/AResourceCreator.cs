@@ -9,6 +9,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO.Compression;
 
 namespace Anf.Avalon
 {
@@ -24,44 +25,50 @@ namespace Anf.Avalon
         public void Dispose()
         {
         }
+
+        public bool EnableCache { get; set; }=true;
+
         public async Task<Bitmap> GetAsync(string address)
         {
-#if ENABLE_CACHE
-            var storeService = context.Visiting.Host.GetRequiredService<IStoreService>();
-            var recyclableMemoryStreamManager = context.Visiting.Host.GetRequiredService<RecyclableMemoryStreamManager>();
-            var str = await storeService.GetPathAsync(address);
-            Stream stream = null;
-            try
+            if (EnableCache)
             {
-                if (File.Exists(str))
+                var storeService = context.Visiting.Host.GetRequiredService<IStoreService>();
+                var recyclableMemoryStreamManager = context.Visiting.Host.GetRequiredService<RecyclableMemoryStreamManager>();
+                var str = await storeService.GetPathAsync(address);
+                Stream stream = null;
+                try
                 {
-                    stream = File.OpenRead(str);
-                }
-                else
-                {
-                    using (var mem = await context.SourceProvider.GetImageStreamAsync(address))
+                    if (File.Exists(str))
                     {
-                        stream = recyclableMemoryStreamManager.GetStream();
-
-                        await mem.CopyToAsync(stream);
-                        stream.Seek(0, SeekOrigin.Begin);
-                        await storeService.SaveAsync(address, stream);
-
-                        stream.Seek(0, SeekOrigin.Begin);
+                        stream = File.OpenRead(str);
                     }
+                    else
+                    {
+                        using (var mem = await context.SourceProvider.GetImageStreamAsync(address))
+                        {
+                            stream = recyclableMemoryStreamManager.GetStream();
+
+                            await mem.CopyToAsync(stream);
+                            stream.Seek(0, SeekOrigin.Begin);
+                            await storeService.SaveAsync(address, stream);
+
+                            stream.Seek(0, SeekOrigin.Begin);
+                        }
+                    }
+                    return new Bitmap(stream);
                 }
-                return new Bitmap(stream);
+                finally
+                {
+                    stream?.Dispose();
+                }
             }
-            finally
+            else
             {
-                stream?.Dispose();
+                using (var mem = await context.SourceProvider.GetImageStreamAsync(address))
+                {
+                    return new Bitmap(mem);
+                }
             }
-#else
-            using (var mem = await context.SourceProvider.GetImageStreamAsync(address))
-            {
-                return new Bitmap(mem);
-            }
-#endif
         }
     }
 }

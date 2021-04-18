@@ -82,12 +82,21 @@ namespace Anf.Easy.Store
         public virtual async Task<string> SaveAsync(string address, Stream stream)
         {
             var file = GetFile(address);
-            using (var fs = file.Open(FileMode.Create))
+            using (var fs = OpenFile(file))
             {
-                await stream.CopyToAsync(fs);
+                await WriteFileAsync(fs, stream);
+                await fs.FlushAsync();
                 addressToFileMap.Add(address, file);
                 return file.FullName;
             }
+        }
+        protected virtual Stream OpenFile(FileInfo file)
+        {
+            return file.Open(FileMode.Create);
+        }
+        protected virtual Task WriteFileAsync(Stream fs,Stream source)
+        {
+            return source.CopyToAsync(fs);
         }
 
         public virtual void Dispose()
