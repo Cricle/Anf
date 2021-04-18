@@ -516,14 +516,17 @@ namespace Anf.ViewModels
         {
             Visiting.Loading -= OnLoading;
             Visiting.Loaded -= OnLoaded;
-
-            chapterSlots?.Dispose();
-            pageSlots?.Dispose();
-            logoStream?.Dispose();
-            Visiting.Dispose();
-            scope?.Dispose();
-            loadSlim.Dispose();
-            loadCancellationTokenSource?.Dispose();
+            try
+            {
+                chapterSlots?.Dispose();
+                pageSlots?.Dispose();
+                logoStream?.Dispose();
+                Visiting.Dispose();
+                scope?.Dispose();
+                loadSlim.Dispose();
+                loadCancellationTokenSource?.Dispose();
+            }
+            catch (Exception) { }
         }
 
         private async Task LoadLogoAsync(string address)

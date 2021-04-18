@@ -88,10 +88,19 @@ namespace Anf.Easy.Visiting
             }
             if (Interlocked.CompareExchange(ref valueTasks[index], null, null) is null)
             {
-                var task = valueTasks[index] = OnLoadAsync(index);
-                var v = values[index] = await task;
-                PageLoaded?.Invoke(this, index, v);
-                return v;
+                try
+                {
+                    var task = valueTasks[index] = OnLoadAsync(index);
+                    var v = values[index] = await task;
+                    PageLoaded?.Invoke(this, index, v);
+                    return v;
+                }
+                catch (Exception)
+                {
+                    Interlocked.Exchange(ref values[index], default(TValue));
+                    _ = Interlocked.Exchange(ref valueTasks[index], null);
+                    throw;
+                }
             }
 
             var tsk = valueTasks[index];

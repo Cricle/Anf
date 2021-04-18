@@ -1,19 +1,12 @@
 ﻿using Anf.Avalon.Models;
 using Anf.Avalon.Services;
 using Anf.Avalon.Views;
-using Anf;
 using Anf.Models;
-using Anf.Services;
 using Anf.ViewModels;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
-using System.Threading.Tasks;
 using Avalonia.Media.Imaging;
-using System.IO;
 
 namespace Anf.Avalon.ViewModels
 {

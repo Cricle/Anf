@@ -11,6 +11,7 @@ using Anf.Avalon.Services;
 using Anf.Services;
 using Avalonia.LogicalTree;
 using Avalonia.Data;
+using Avalonia.Input;
 
 namespace Anf.Avalon
 {
@@ -45,9 +46,19 @@ namespace Anf.Avalon
             var titleSer = AppEngine.GetRequiredService<TitleService>();
             titleBar.DataContext =titleSer;
             titleBar.Bind(HeightProperty, new Binding(nameof(TitleService.OffsceneHeight)) { Source = titleSer });
-            var exSer = AppEngine.GetRequiredService<ExceptionService>();
+            exSer = AppEngine.GetRequiredService<ExceptionService>();
             var exBorder = this.Get<Border>("ExcetionBorder");
             exBorder.DataContext = exSer;
+            exBorder.KeyDown += ExBorder_KeyDown;
+        }
+        private ExceptionService exSer;
+        private void ExBorder_KeyDown(object sender, KeyEventArgs e)
+        {
+            if (e.Key== Key.Escape)
+            {
+                exSer.Exception = null;
+                e.Handled = true;
+            }
         }
 
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)

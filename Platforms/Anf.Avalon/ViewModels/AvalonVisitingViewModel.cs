@@ -1,24 +1,15 @@
-﻿using Avalonia.Controls;
-using Avalonia.Media.Imaging;
+﻿using Avalonia.Media.Imaging;
 using GalaSoft.MvvmLight.Command;
-using Anf;
 using Anf.Easy;
 using Anf.Easy.Visiting;
 using Anf.Models;
 using Anf.ViewModels;
 using Microsoft.IO;
 using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.Diagnostics;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Controls.PanAndZoom;
 using Anf.Avalon.Services;
-using Anf.Services;
 
 namespace Anf.Avalon.ViewModels
 {
