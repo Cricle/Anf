@@ -30,7 +30,7 @@
     <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.1.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.1.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.1.2" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Results\" />
