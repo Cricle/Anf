@@ -26,7 +26,11 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
-      <AutoCompleteBox HorizontalAlignment="Stretch" Watermark="Search" IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}" Text="{Binding Keyword,Mode=TwoWay}">
+      <AutoCompleteBox HorizontalAlignment="Stretch" 
+                       Watermark="Search" 
+                       IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}"
+                       Text="{Binding Keyword,Mode=TwoWay}"
+                       Items="{Binding HistoryService.Lines}">
         <AutoCompleteBox.KeyBindings>
           <KeyBinding Command="{Binding SearchCommand}" Gesture="Enter"/>
         </AutoCompleteBox.KeyBindings>

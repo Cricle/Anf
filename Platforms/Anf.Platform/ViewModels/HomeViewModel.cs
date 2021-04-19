@@ -12,10 +12,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
+using Anf.Platform.Services;
 
 namespace Anf.ViewModels
 {
-    public class HomeViewModel : ViewModelBase,IDisposable
+    public abstract class HomeViewModel<TSourceInfo> : ViewModelBase,IDisposable
+        where TSourceInfo:ComicSourceInfo
     {
         public const int PageSize = 50;
 
@@ -31,7 +33,7 @@ namespace Anf.ViewModels
         {
             ComicEngine = comicEngine;
             SearchEngine = searchEngine;
-            Snapshots = new SilentObservableCollection<ComicSnapshotInfo>();
+            Snapshots = new SilentObservableCollection<ComicSnapshotInfo<TSourceInfo>>();
             SearchCommand = new RelayCommand(() => _ = SearchAsync());
             GoSourceCommand = new RelayCommand(GoSource);
             scope = AppEngine.CreateScope();
@@ -47,7 +49,7 @@ namespace Anf.ViewModels
         private bool searching;
         private int additionCount;
         private SearchComicResult searchResult;
-        private ComicSnapshotInfo currentComicSnapshot;
+        private ComicSnapshotInfo<TSourceInfo> currentComicSnapshot;
         private ISearchProvider currentSearchProvider;
         private int skip;
         private int take=PageSize;
@@ -88,7 +90,7 @@ namespace Anf.ViewModels
             set => Set(ref currentSearchProvider, value);
         }
 
-        public ComicSnapshotInfo CurrentComicSnapshot
+        public ComicSnapshotInfo<TSourceInfo> CurrentComicSnapshot
         {
             get { return currentComicSnapshot; }
             set
@@ -165,6 +167,8 @@ namespace Anf.ViewModels
         /// 搜索引擎
         /// </summary>
         public SearchEngine SearchEngine { get; }
+
+        public HistoryService HistoryService { get; } = AppEngine.GetRequiredService<HistoryService>();
         /// <summary>
         /// 搜索命令
         /// </summary>
@@ -173,7 +177,7 @@ namespace Anf.ViewModels
         /// <summary>
         /// 漫画快照
         /// </summary>
-        public SilentObservableCollection<ComicSnapshotInfo> Snapshots { get; }
+        public SilentObservableCollection<ComicSnapshotInfo<TSourceInfo>> Snapshots { get; }
         /// <summary>
         /// 执行搜索
         /// </summary>
@@ -193,6 +197,7 @@ namespace Anf.ViewModels
                 SearchResult=await CurrentSearchProvider.SearchAsync(keyword, Skip,Take);
                 InsertDatas();
                 OnEndSearch();
+                HistoryService.Lines.Add(keyword);
             }
             finally
             {
@@ -205,6 +210,7 @@ namespace Anf.ViewModels
             {
                 var nav = AppEngine.GetRequiredService<IComicTurnPageService>();
                 var addr = keyword.GetUrl();
+                HistoryService.Lines.Add(addr);
                 nav.GoSource(addr);
             }
         }
@@ -231,15 +237,12 @@ namespace Anf.ViewModels
             }
             EmptySet = Snapshots.Count == 0;
         }
-        protected virtual ComicSnapshotInfo CreateSnapshotInfo(ComicSnapshot info)
-        {
-            return new ComicSnapshotInfo(info);
-        }
+        protected abstract ComicSnapshotInfo<TSourceInfo> CreateSnapshotInfo(ComicSnapshot info);
         protected virtual void OnSearchingChanged(bool res)
         {
 
         }
-        protected virtual void OnCurrentComicSnapshotChanged(ComicSnapshotInfo info)
+        protected virtual void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<TSourceInfo> info)
         {
 
         }

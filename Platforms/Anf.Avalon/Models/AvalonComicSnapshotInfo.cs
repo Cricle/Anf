@@ -7,7 +7,7 @@ using System.Net.Http;
 
 namespace Anf.Avalon.Models
 {
-    public class AvalonComicSnapshotInfo : ComicSnapshotInfo,IDisposable
+    public class AvalonComicSnapshotInfo : StorableComicSnapshotInfo,IDisposable
     {
         public AvalonComicSnapshotInfo(ComicSnapshot snapshot,HttpClient httpClient)
             : base(snapshot)

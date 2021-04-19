@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Media;
+using Avalonia.Interactivity;
 
 namespace Anf.Avalon.Services
 {
@@ -22,6 +23,10 @@ namespace Anf.Avalon.Services
         {
             GoBackButton = CreateIconButton("\xE72B");
             GoBackButton.Click += GoBackButton_Click;
+
+            FavoriteButton = CreateIconButton("\xE735;");
+            FavoriteButton.Click += FavoriteButton_Click;
+
             var tbx = new TextBlock
             {
                 MaxWidth = 150,
@@ -32,6 +37,13 @@ namespace Anf.Avalon.Services
             tbx.Bind(ToolTip.TipProperty, new Binding(nameof(Title)) { Source = this });
             LeftControls = new ObservableCollection<IControl> { GoBackButton };
         }
+
+        private void FavoriteButton_Click(object sender, RoutedEventArgs e)
+        {
+            var navSer = AppEngine.GetRequiredService<MainNavigationService>();
+            navSer.Navigate<BookshelfView>();
+        }
+
         private Button CreateIconButton(string text)
         {
             var btn = new Button
@@ -107,6 +119,7 @@ namespace Anf.Avalon.Services
         }
 
         public Button GoBackButton { get; }
+        public Button FavoriteButton { get; }
 
         public ObservableCollection<IControl> LeftControls { get; }
         public void UnBind()

@@ -7,10 +7,11 @@ using System;
 using System.Collections.ObjectModel;
 using System.Net.Http;
 using Avalonia.Media.Imaging;
+using Anf.Platform.Models;
 
 namespace Anf.Avalon.ViewModels
 {
-    public class AvalonHomeViewModel : HomeViewModel
+    public class AvalonHomeViewModel : HomeViewModel<StorableComicSourceInfo>
     {
         public AvalonHomeViewModel()
         {
@@ -26,7 +27,7 @@ namespace Anf.Avalon.ViewModels
             EngineIcons = new ObservableCollection<EngineInfo>();
             LoadEngineIcons();
         }
-        private ComicSnapshotInfo usingShapshot;
+        private ComicSnapshotInfo<StorableComicSourceInfo> usingShapshot;
         private readonly HttpClient httpClient;
 
         public ObservableCollection<EngineInfo> EngineIcons { get; }
@@ -64,7 +65,7 @@ namespace Anf.Avalon.ViewModels
                 }
             }
         }
-        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo info)
+        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<StorableComicSourceInfo> info)
         {
             usingShapshot = info;
             if (info is AvalonComicSnapshotInfo sn)
@@ -77,7 +78,7 @@ namespace Anf.Avalon.ViewModels
                 c.DataContext = vm;
             }
         }
-        protected override ComicSnapshotInfo CreateSnapshotInfo(ComicSnapshot info)
+        protected override ComicSnapshotInfo<StorableComicSourceInfo> CreateSnapshotInfo(ComicSnapshot info)
         {
             return new AvalonComicSnapshotInfo(info, httpClient);
         }

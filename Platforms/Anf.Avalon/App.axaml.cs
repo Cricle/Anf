@@ -18,6 +18,7 @@ using System.Linq;
 using Avalonia.Input;
 using System.Threading.Tasks;
 using Anf.Avalon.ViewModels;
+using Anf.Platform.Services;
 
 namespace Anf.Avalon
 {
@@ -50,16 +51,19 @@ namespace Anf.Avalon
 
         private void InitServices()
         {
+            var basePath = AppDomain.CurrentDomain.BaseDirectory;
             AppEngine.Reset();
             AppEngine.AddServices(NetworkAdapterTypes.WebRequest);
             //var store = new GzipFileStoreService(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName)), MD5AddressToFileNameProvider.Instance);
-            var store = FileStoreService.FromMd5Default(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName));
+            var store = FileStoreService.FromMd5Default(Path.Combine(basePath, XComicConst.CacheFolderName));
             var hp = new Lazy<HomePage>(() => new HomePage());
             var cv = new Lazy<ComicView>(() => new ComicView());
+            var bv = new Lazy<BookshelfView>(() => new BookshelfView());
             var va = new ViewActiver
             {
                 [typeof(HomePage)] = () => hp.Value,
-                [typeof(ComicView)] = () => cv.Value
+                [typeof(ComicView)] = () => cv.Value,
+                [typeof(BookshelfView)] = () => bv.Value
             };
             var nav = new MainNavigationService(new Border(), va);
             AppEngine.Services.AddSingleton<IViewActiver>(va);
@@ -75,6 +79,8 @@ namespace Anf.Avalon
             AppEngine.Services.AddSingleton<IStreamImageConverter<Bitmap>, StreamImageConverter>();
             AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, AResourceCreatorFactory>();
             AppEngine.Services.AddSingleton<ExceptionService>();
+            AppEngine.Services.AddSingleton(new ComicStoreService(new DirectoryInfo(Path.Combine(basePath,XComicConst.StoreFolderName))));
+            AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(basePath, HistoryService.HistoryFileName)));
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, ComicVisiting<Bitmap>>();
 
             var style = Styles.Where(x => x is FluentTheme).FirstOrDefault() as FluentTheme;

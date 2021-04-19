@@ -7,114 +7,124 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Text;
 using System.Threading.Tasks;
+using Anf.Platform.Services;
+using GalaSoft.MvvmLight.Command;
+using Anf.Platform.Models;
+using System.IO;
 
 namespace Anf.ViewModels
 {
     public class BookshelfViewModel : ViewModelBase
     {
-        public const int PageSize = 10;
+        public const int DefaultPageSize = 20;
 
-        private readonly IBookshelfService bookshelfService;
-
-        private int currentPage;
-        private int totalPage;
-        private long total;
-        private bool hasNextPage;
-        private bool hasPrevPage;
-        private bool isEmpty;
-        private string keyword;
-        private bool searching;
-
-        public BookshelfViewModel(IBookshelfService bookshelfService)
+        public BookshelfViewModel()
         {
-            this.bookshelfService = bookshelfService;
-            Bookshelves = new SilentObservableCollection<Bookshelf>();
+            StoreService = AppEngine.GetRequiredService<ComicStoreService>();
+            NextCommand = new RelayCommand(Next);
+            FlushCommand = new RelayCommand(Load);
+            RemoveCommand = new RelayCommand(Remove);
+            Load();
+        }
+        private IEnumerator<FileInfo> boxEnum;
+        private ComicStoreBox currentBox;
+        private int pageSize = DefaultPageSize;
+        private bool isLoading;
+        private bool endOfFetch;
+
+        public bool EndOfFetch
+        {
+            get { return endOfFetch; }
+            private set => Set(ref endOfFetch, value);
         }
 
-        public bool Searching
+        public bool IsLoading
         {
-            get { return searching; }
-            private set => Set(ref searching, value);
+            get { return isLoading; }
+            private set => Set(ref isLoading, value);
         }
 
-        public string Keyword
+        public int PageSize
         {
-            get { return keyword; }
-            set => Set(ref keyword, value);
-        }
-
-        public bool IsEmpty
-        {
-            get { return isEmpty; }
-            private set => Set(ref isEmpty, value);
-        }
-
-        public bool HasPrevPage
-        {
-            get { return hasPrevPage; }
-            private set => Set(ref hasPrevPage, value);
-        }
-
-        public bool HasNextPage
-        {
-            get { return hasNextPage; }
-            private set => Set(ref hasNextPage, value);
-        }
-
-        public long Total
-        {
-            get { return total; }
-            private set => Set(ref total, value);
-        }
-
-        public int TotalPage
-        {
-            get { return totalPage; }
-            private set => Set(ref totalPage, value);
-        }
-
-        public int CurrentPage
-        {
-            get { return currentPage; }
-            private set => Set(ref currentPage, value);
-        }
-
-
-        public SilentObservableCollection<Bookshelf> Bookshelves { get; }
-
-        public async Task LoadBookshelfAsync(bool clearPrev)
-        {
-            Searching = true;
-            try
+            get { return pageSize; }
+            set
             {
-                if (clearPrev)
+                if (value <= 0)
                 {
-                    Bookshelves.Clear();
+                    throw new ArgumentException($"PageSize must more than zero");
                 }
-                var datas = await bookshelfService.FindBookShelfAsync(null, null);
-                Total = datas.Total;
-                foreach (var item in datas.Datas)
-                {
-                    Bookshelves.Add(item);
-                }
-                UpdateInfo();
-            }
-            finally
-            {
-                Searching = false;
+                Set(ref pageSize, value);
             }
         }
-        public Task NextPageAsync(bool clearPrev)
+
+        public ComicStoreBox CurrentBox
         {
-            CurrentPage++;
-            return LoadBookshelfAsync(clearPrev);
+            get { return currentBox; }
+            set => Set(ref currentBox, value);
         }
-        private void UpdateInfo()
+
+        public ComicStoreService StoreService { get; }
+
+        public ObservableCollection<ComicStoreBox> StoreBoxs { get; }
+
+        public RelayCommand NextCommand { get; }
+        public RelayCommand FlushCommand { get; }
+        public RelayCommand RemoveCommand { get; }
+
+        public void Remove()
         {
-            HasPrevPage = Total != 0 && CurrentPage != 0;
-            TotalPage = (int)Math.Ceiling((double)(Total) / PageSize);
-            HasNextPage = Total != 0 && TotalPage > CurrentPage;
-            IsEmpty = Total == 0;
+            if (currentBox != null)
+            {
+                StoreService.Remove(CurrentBox.AttackModel.ComicUrl);
+                StoreBoxs.Remove(CurrentBox);
+                CurrentBox = null;
+            }
+        }
+
+        public void Next()
+        {
+            if (!IsLoading && boxEnum != null && !EndOfFetch)
+            {
+                IsLoading = true;
+                try
+                {
+                    var t = PageSize;
+                    var ok = true;
+                    while (ok && t-- > 0)
+                    {
+                        var val = boxEnum.Current;
+                        var box = new ComicStoreBox(val);
+                        box.Removed += OnItemRemoved;
+                        StoreBoxs.Add(box);
+                        ok = boxEnum.MoveNext();
+                    }
+                    if (!ok)
+                    {
+                        EndOfFetch = true;
+                    }
+                }
+                finally
+                {
+                    IsLoading = false;
+                }
+            }
+        }
+        public void Load()
+        {
+            CurrentBox = null;
+            EndOfFetch = false;
+            foreach (var item in StoreBoxs)
+            {
+                item.Removed -= OnItemRemoved;
+            }
+            StoreBoxs.Clear();
+            boxEnum = StoreService.EnumerableModelFiles().GetEnumerator();
+            Next();
+        }
+
+        private void OnItemRemoved(ComicStoreBox obj)
+        {
+            StoreBoxs.Remove(CurrentBox);
         }
     }
 }

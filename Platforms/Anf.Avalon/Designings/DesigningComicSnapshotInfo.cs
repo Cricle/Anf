@@ -11,7 +11,7 @@ namespace Anf.Avalon.Designings
 {
 #if DEBUG
 
-    public class DesigningComicSnapshotInfo : ComicSnapshotInfo
+    public class DesigningComicSnapshotInfo : ComicSourceInfo
     {
         private static readonly ComicSnapshot desisnValue = new ComicSnapshot
         {
@@ -28,7 +28,7 @@ namespace Anf.Avalon.Designings
                   }
         };
         public DesigningComicSnapshotInfo() 
-            : base(desisnValue)
+            : base(desisnValue,desisnValue.Sources[0],null)
         {
         }
     }
