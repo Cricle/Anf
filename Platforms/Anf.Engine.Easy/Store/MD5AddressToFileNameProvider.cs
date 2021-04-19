@@ -4,7 +4,6 @@ using System.Text;
 
 namespace Anf.Easy.Store
 {
-
     public class MD5AddressToFileNameProvider : IAddressToFileNameProvider
     {
         public static readonly MD5AddressToFileNameProvider Instance = new MD5AddressToFileNameProvider();

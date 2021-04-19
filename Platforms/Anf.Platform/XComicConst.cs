@@ -11,6 +11,8 @@ namespace Anf
 
         public static string CacheFolderName = "Caches";
 
+        public static string StoreFolderName = "Stores";
+
         public static string DbFileName = "comic.db3";
 
         public static string LocalDataPath = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
@@ -19,7 +21,7 @@ namespace Anf
 
         public static string CacheFolderPath = Path.Combine(LocalDataPath,CacheFolderName);
 
-        public static string DbFilePath=Path.Combine(DataFolderPath, DbFileName);
+        public static string DbFilePath = Path.Combine(DataFolderPath, DbFileName);
 
         public static void EnsureDataFolderCreated()
         {

@@ -8,10 +8,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Anf.Platform.ViewModels;
 
 namespace Anf.Avalon.ViewModels
 {
-    public class AvalonComicViewModel : ComicSnapshotInfo,IDisposable
+    public class AvalonComicViewModel : ComicViewModel, IDisposable
     {
         public AvalonComicViewModel(ComicSnapshot snapshot, HttpClient httpClient)
             : base(snapshot)
@@ -45,6 +46,7 @@ namespace Anf.Avalon.ViewModels
         {
             try
             {
+                //TODO: cache
                 using (var rep = await httpClient.GetAsync(Snapshot.ImageUri))
                 using (var stream = await rep.Content.ReadAsStreamAsync())
                 {
