@@ -64,7 +64,7 @@ namespace Anf.Avalon.Services
             var view = new VisitingView(address);
             Navigate(view);
         }
-        public Type BoderChildType => border.Child.GetType();
+        public Type BoderChildType => border.Child?.GetType();
         private IControl NavigateCore(object dest)
         {
             if (dest is IControl control)
@@ -85,7 +85,8 @@ namespace Anf.Avalon.Services
         }
         public IControl Navigate(Type type)
         {
-            if (BoderChildType.IsEquivalentTo(type))
+            var originType = BoderChildType;
+            if (originType!=null&&BoderChildType.IsEquivalentTo(type))
             {
                 return border.Child;
             }

@@ -90,6 +90,12 @@
         <ItemsControl.ItemTemplate>
           <DataTemplate>
             <Grid>
+              <Grid.ContextMenu>
+                <ContextMenu>
+                  <MenuItem Command="{Binding OpenCommand}" Header="打开"/>
+                  <MenuItem Command="{Binding CopyCommand}" Header="复制"/>
+                </ContextMenu>
+              </Grid.ContextMenu>
               <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="*"/>
@@ -117,24 +123,34 @@
                 <StackPanel.Resources>
                   <Thickness x:Key="BlockMargin">6,0</Thickness>
                 </StackPanel.Resources>
+                <Button Command="{Binding ToggleCommand}"
+                        Margin="{StaticResource BlockMargin}"
+                        IsEnabled="{Binding CanStore}">
+                  <ToolTip.Tip>
+                    <ToolTip>
+                      <StackPanel Orientation="Horizontal" IsVisible="{Binding HasBox}">
+                        <TextBlock Text="喜欢" />
+                        <TextBlock Text="，而且是特别喜欢" IsVisible="{Binding StoreBox.AttackModel.SuperFavorite}"/>
+                      </StackPanel>
+                    </ToolTip>
+                  </ToolTip.Tip>
+                  <StackPanel Orientation="Horizontal">
+                    <StackPanel.Styles>
+                      <Style Selector="TextBlock">
+                        <Setter Property="FontSize" Value="{StaticResource DescFontSize}"></Setter>
+                        <Setter Property="Margin" Value="{StaticResource DescMargin}"></Setter>
+                        <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                        <Setter Property="Text" Value="&#xE735;"></Setter>
+                      </Style>
+                    </StackPanel.Styles>
+                    <TextBlock Classes="segoblock" Foreground="Red" IsVisible="{Binding HasBox}"/>
+                    <TextBlock Classes="segoblock" IsVisible="{Binding HasBox,Converter={StaticResource RevBoolConverter}}"/>
+                  </StackPanel>
+                </Button>
                 <Button Command="{Binding WatchCommand}" IsVisible="{Binding CanParse}">
                   <StackPanel Orientation="Horizontal">
                     <TextBlock Classes="segoblock" FontSize="{StaticResource DescFontSize}" Text="&#xE768;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
                     <TextBlock VerticalAlignment="Center">进入</TextBlock>
-                  </StackPanel>
-                </Button>
-                <Button Command="{Binding OpenCommand}"
-                        Margin="{StaticResource BlockMargin}">
-                  <StackPanel Orientation="Horizontal">
-                    <TextBlock Classes="segoblock" FontSize="{StaticResource DescFontSize}" Text="&#xE753;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
-                    <TextBlock VerticalAlignment="Center">打开</TextBlock>
-                  </StackPanel>
-                </Button>
-                <Button Command="{Binding CopyCommand}"
-                        Margin="{StaticResource BlockMargin}">
-                  <StackPanel Orientation="Horizontal">
-                    <TextBlock Classes="segoblock" FontSize="{StaticResource DescFontSize}" Text="&#xE8A5;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
-                    <TextBlock VerticalAlignment="Center">复制</TextBlock>
                   </StackPanel>
                 </Button>
               </StackPanel>
