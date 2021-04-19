@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 
 namespace Anf.Platform.Models
 {
-    public class StorableComicSourceInfo : ComicSourceInfo,IDisposable
+    public abstract class StorableComicSourceInfo<TStoreBox> : ComicSourceInfo,IDisposable
+        where TStoreBox:ComicStoreBox
     {
         public StorableComicSourceInfo(ComicSnapshot snapshot, 
             ComicSource source, 
             IComicSourceCondition condition,
-            ComicStoreBox storeBox) 
+            TStoreBox storeBox) 
             : base(snapshot, source, condition)
         {
             StoreBox = storeBox;
@@ -25,10 +26,10 @@ namespace Anf.Platform.Models
             AddCommand = new RelayCommand(() => _ = AddAsync());
             RemoveCommand = new RelayCommand(Remove);
             ToggleCommand = new RelayCommand(() => _ = ToggleAsync());
-            StoreService = AppEngine.GetRequiredService<ComicStoreService>();
+            StoreService = AppEngine.GetRequiredService<ComicStoreService<TStoreBox>>();
         }
         private bool hasBox;
-        private ComicStoreBox storeBox;
+        private TStoreBox storeBox;
         private bool isStoring;
 
         public bool IsStoring
@@ -37,7 +38,7 @@ namespace Anf.Platform.Models
             private set => Set(ref isStoring, value);
         }
 
-        public ComicStoreBox StoreBox
+        public TStoreBox StoreBox
         {
             get { return storeBox; }
             private set
@@ -55,7 +56,7 @@ namespace Anf.Platform.Models
 
         public bool CanStore { get; }
 
-        public ComicStoreService StoreService { get; }
+        public ComicStoreService<TStoreBox> StoreService { get; }
 
         public RelayCommand ToggleSuperFavoriteCommand { get; }
         public RelayCommand AddCommand { get; }
@@ -99,7 +100,7 @@ namespace Anf.Platform.Models
                         var provider = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(Condition.ProviderType);
                         var entity = await provider.GetChaptersAsync(Source.TargetUrl);
                         var path=StoreService.Store(entity);
-                        StoreBox = new ComicStoreBox(new FileInfo(path));
+                        StoreBox = CreateBox(new FileInfo(path));
                     }
                 }
                 finally
@@ -108,6 +109,7 @@ namespace Anf.Platform.Models
                 }
             }
         }
+        protected abstract TStoreBox CreateBox(FileInfo file);
         public void Dispose()
         {
             StoreBox?.Dispose();
