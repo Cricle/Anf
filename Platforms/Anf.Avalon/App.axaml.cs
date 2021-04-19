@@ -19,6 +19,7 @@ using Avalonia.Input;
 using System.Threading.Tasks;
 using Anf.Avalon.ViewModels;
 using Anf.Platform.Services;
+using Anf.Avalon.Models;
 
 namespace Anf.Avalon
 {
@@ -79,7 +80,9 @@ namespace Anf.Avalon
             AppEngine.Services.AddSingleton<IStreamImageConverter<Bitmap>, StreamImageConverter>();
             AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, AResourceCreatorFactory>();
             AppEngine.Services.AddSingleton<ExceptionService>();
-            AppEngine.Services.AddSingleton(new ComicStoreService(new DirectoryInfo(Path.Combine(basePath,XComicConst.CacheFolderName,XComicConst.StoreFolderName))));
+            var storeSer = new AvalonComicStoreService(new DirectoryInfo(Path.Combine(basePath, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
+            AppEngine.Services.AddSingleton(storeSer);
+            AppEngine.Services.AddSingleton<ComicStoreService<AvalonComicStoreBox>>(storeSer);
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(basePath, HistoryService.HistoryFileName)));
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, ComicVisiting<Bitmap>>();
 

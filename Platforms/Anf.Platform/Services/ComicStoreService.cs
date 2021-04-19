@@ -15,7 +15,18 @@ using System.Threading.Tasks;
 
 namespace Anf.Platform.Services
 {
-    public class ComicStoreService : FileStoreService
+    public class ComicStoreService : ComicStoreService<ComicStoreBox>
+    {
+        public ComicStoreService(DirectoryInfo folder, int cacheSize = 50) : base(folder, cacheSize)
+        {
+        }
+        protected override ComicStoreBox CreateBox(FileInfo file)
+        {
+            return new ComicStoreBox(file);
+        }
+    }
+    public abstract class ComicStoreService<TStoreBox> : FileStoreService
+        where TStoreBox:ComicStoreBox
     {
         public const string Extensions = "anfc";
 
@@ -30,21 +41,22 @@ namespace Anf.Platform.Services
         {
             return Folder.EnumerateFiles(Pattern);
         }
-        public ComicStoreBox GetStoreBox(string address)
+        public TStoreBox GetStoreBox(string address)
         {
             return GetStoreBoxes(new[] { address }).FirstOrDefault();
         }
-        public IEnumerable<ComicStoreBox> GetStoreBoxes(IEnumerable<string> address)
+        public IEnumerable<TStoreBox> GetStoreBoxes(IEnumerable<string> address)
         {
             var convertedAddress =new HashSet<string>(address.Select(x => MD5AddressToFileNameProvider.Instance.Convert(x)),StringComparer.OrdinalIgnoreCase);
             foreach (var item in EnumerableModelFiles())
             {
                 if (convertedAddress.Contains(item.Name))
                 {
-                    yield return new ComicStoreBox(item);
+                    yield return CreateBox(item);
                 }
             }
         }
+        protected abstract TStoreBox CreateBox(FileInfo file);
         public string Store(ComicEntity entity,bool superFavorite=false)
         {
             var model = new ComicStoreModel
@@ -83,9 +95,9 @@ namespace Anf.Platform.Services
                 item.Delete();
             }
         }
-        public bool Remove(string name)
+        public bool Remove(string address)
         {
-            var path = GetModelPath(name);
+            var path = GetModelPath(address);
             if (File.Exists(path))
             {
                 File.Delete(path);

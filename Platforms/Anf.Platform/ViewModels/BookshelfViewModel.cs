@@ -14,21 +14,22 @@ using System.IO;
 
 namespace Anf.ViewModels
 {
-    public class BookshelfViewModel : ViewModelBase
+    public abstract class BookshelfViewModel<TStoreBox> : ViewModelBase,IDisposable
+        where TStoreBox:ComicStoreBox
     {
         public const int DefaultPageSize = 20;
 
         public BookshelfViewModel()
         {
-            StoreService = AppEngine.GetRequiredService<ComicStoreService>();
+            StoreService = AppEngine.GetRequiredService<ComicStoreService<TStoreBox>>();
             NextCommand = new RelayCommand(Next);
             FlushCommand = new RelayCommand(Load);
             RemoveCommand = new RelayCommand(Remove);
-            StoreBoxs = new ObservableCollection<ComicStoreBox>();
+            StoreBoxs = new ObservableCollection<TStoreBox>();
             Load();
         }
         private IEnumerator<FileInfo> boxEnum;
-        private ComicStoreBox currentBox;
+        private TStoreBox currentBox;
         private int pageSize = DefaultPageSize;
         private bool isLoading;
         private bool endOfFetch;
@@ -58,15 +59,15 @@ namespace Anf.ViewModels
             }
         }
 
-        public ComicStoreBox CurrentBox
+        public TStoreBox CurrentBox
         {
             get { return currentBox; }
             set => Set(ref currentBox, value);
         }
 
-        public ComicStoreService StoreService { get; }
+        public ComicStoreService<TStoreBox> StoreService { get; }
 
-        public ObservableCollection<ComicStoreBox> StoreBoxs { get; }
+        public ObservableCollection<TStoreBox> StoreBoxs { get; }
 
         public RelayCommand NextCommand { get; }
         public RelayCommand FlushCommand { get; }
@@ -94,7 +95,7 @@ namespace Anf.ViewModels
                     while ((ok = boxEnum.MoveNext()) && t-- > 0)
                     {
                         var val = boxEnum.Current;
-                        var box = new ComicStoreBox(val);
+                        var box = CreateBox(val);
                         box.Removed += OnItemRemoved;
                         StoreBoxs.Add(box);
                     }
@@ -109,6 +110,7 @@ namespace Anf.ViewModels
                 }
             }
         }
+        protected abstract TStoreBox CreateBox(FileInfo fileInfo);
         public void Load()
         {
             CurrentBox = null;
@@ -125,6 +127,15 @@ namespace Anf.ViewModels
         private void OnItemRemoved(ComicStoreBox obj)
         {
             StoreBoxs.Remove(CurrentBox);
+        }
+
+        public virtual void Dispose()
+        {
+            foreach (var item in StoreBoxs)
+            {
+                item.Dispose();
+            }
+            StoreBoxs.Clear();
         }
     }
 }

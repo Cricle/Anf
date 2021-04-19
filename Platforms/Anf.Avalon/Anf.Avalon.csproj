@@ -7,6 +7,7 @@
     <EnableCache>true</EnableCache>
     <ApplicationIcon>Anf.ico</ApplicationIcon>
     <MSIXBuild>false</MSIXBuild>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSIXBuild)'!='true'">
     <TargetFrameworks>net472;net5.0</TargetFrameworks>
@@ -24,9 +25,9 @@
   <PropertyGroup Condition="'$(UseD2D)' == 'true'">
     <DefineConstants>$(DefineConstants);RENDER_D2D</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
+  <!--<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
     <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>
+  </PropertyGroup>-->
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>

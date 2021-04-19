@@ -18,10 +18,14 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Anf.Services;
 using Newtonsoft.Json;
+using Anf.Platform.Services;
+using System.ComponentModel;
+using Anf.Platform.Models;
 
 namespace Anf.ViewModels
 {
-    public class VisitingViewModel<TResource, TImage> : ViewModelBase, IDisposable
+    public class VisitingViewModel<TResource, TImage, TStoreBox> : ViewModelBase, IDisposable
+        where TStoreBox:ComicStoreBox
     {
         public VisitingViewModel(IComicVisiting<TResource> visiting = null)
         {
@@ -65,6 +69,42 @@ namespace Anf.ViewModels
         public CancellationTokenSource LoadCancellationTokenSource=> loadCancellationTokenSource;
 
         private bool resourceLoadDone;
+        private ComicStoreBox storeBox;
+        private bool hasStoreBox;
+
+        public bool SuperFavorite
+        {
+            get => HasStoreBox ? StoreBox.AttackModel.SuperFavorite : false;
+            private set
+            {
+                ToggleSuperFavorite();
+            }
+        }
+
+        public bool HasStoreBox
+        {
+            get { return hasStoreBox; }
+            private set=> Set(ref hasStoreBox, value);
+        }
+
+        public ComicStoreBox StoreBox
+        {
+            get { return storeBox; }
+            private set
+            {
+                if (storeBox != null)
+                {
+                    storeBox.PropertyChanged -= OnStoreBoxPropertyChanged;
+                }
+                Set(ref storeBox, value);
+                if (value!=null)
+                {
+                    value.PropertyChanged -= OnStoreBoxPropertyChanged;
+                }
+                HasStoreBox = value != null;
+            }
+        }
+
 
         public bool ResourceLoadDone
         {
@@ -179,9 +219,14 @@ namespace Anf.ViewModels
         public RelayCommand CopyChapterCommand { get; protected set; }
         public RelayCommand CopyComicEntityCommand { get; protected set; }
 
+        public RelayCommand ToggleStoreCommand { get; protected set; }
+        public RelayCommand ToggleSuperFavoriteCommand { get; protected set; }
+
         private static IPlatformService PlatformService => AppEngine.GetRequiredService<IPlatformService>();
         
         public SilentObservableCollection<ComicPageInfo<TResource>> Resources { get; protected set; }
+
+        public ComicStoreService<TStoreBox> ComicStoreService { get; protected set; }
 
         public event Action<IDataCursor<IComicVisitPage<TResource>>, int> PageCursorMoved;
 
@@ -196,6 +241,15 @@ namespace Anf.ViewModels
                 return Task.CompletedTask;
             }
             return PlatformService.OpenAddressAsync(CurrentChapter.TargetUrl);
+        }
+
+        private void OnStoreBoxPropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var name = nameof(ComicStoreModel.SuperFavorite);
+            if (e.PropertyName == name)
+            {
+                RaisePropertyChanged(name);
+            }
         }
         public void CopyComic()
         {
@@ -369,6 +423,9 @@ namespace Anf.ViewModels
             CopyComicEntityCommand = new RelayCommand(CopyComicEntity);
             CopyChapterCommand = new RelayCommand(CopyChapter);
 
+            ToggleStoreCommand = new RelayCommand(ToggleStore);
+            ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
+
             Resources = new SilentObservableCollection<ComicPageInfo<TResource>>();
             if (Visiting.IsLoad())
             {
@@ -376,6 +433,31 @@ namespace Anf.ViewModels
             }
             Visiting.Loading += OnLoading;
             Visiting.Loaded += OnLoaded;
+            ComicStoreService = AppEngine.GetRequiredService<ComicStoreService<TStoreBox>>();
+        }
+        public void ToggleSuperFavorite()
+        {
+            if (!HasStoreBox)
+            {
+                ToggleStore();
+            }
+            if (HasStoreBox)
+            {
+                StoreBox.AttackModel.SuperFavorite
+                    = !StoreBox.AttackModel.SuperFavorite;
+            }
+        }
+
+        public void ToggleStore()
+        {
+            if (HasStoreBox)
+            {
+                ComicStoreService.Remove(ComicEntity.ComicUrl);
+            }
+            else
+            {
+                ComicStoreService.Store(ComicEntity);
+            }
         }
 
         private async void OnLoaded(ComicVisiting<TResource> arg1, ComicEntity arg2)
@@ -393,14 +475,28 @@ namespace Anf.ViewModels
         {
             chapterSlots = Visiting.CreateChapterSlots();
             CurrentChaterCursor = chapterSlots.ToDataCursor();
+            CurrentChaterCursor.Moving += OnCurrentChaterCursorMoving;
             CurrentChaterCursor.Moved += OnCurrentChaterCursorMoved;
+            CurrentChaterCursor.MoveComplated += OnCurrentChaterCursorMoveComplated;
             ComicEntity = Visiting.Entity;
+            StoreBox = ComicStoreService.GetStoreBox(comicEntity.ComicUrl);
             if (!string.IsNullOrEmpty(ComicEntity.ImageUrl))
             {
                 await LoadLogoAsync(ComicEntity.ImageUrl);
             }
             OnInitDone();
         }
+
+        private void OnCurrentChaterCursorMoveComplated(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
+        {
+            IsLoading = false;
+        }
+
+        private void OnCurrentChaterCursorMoving(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
+        {
+            IsLoading = true;
+        }
+
         protected virtual void OnInitDone()
         {
 
@@ -408,51 +504,45 @@ namespace Anf.ViewModels
 
         private void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
         {
-            try
-            {
 
-                loadCancellationTokenSource?.Cancel();
-                loadCancellationTokenSource?.Dispose();
-                foreach (var item in Resources)
-                {
-                    item.LoadDone -= Item_LoadDone;
-                }
-                ResourceLoadCount = 0;
-                Resources.Clear();
-
-                var ps = PageSlots;
-                if (ps != null)
-                {
-                    ps.Dispose();
-                    PageSlots = null;
-                }
-                var cpc = CurrentPageCursor;
-                if (cpc!=null)
-                {
-                    CurrentPageCursor.Moved -= OnCurrentPageCursorMoved;
-                    cpc.Dispose();
-                }
-                ps = ChapterSlots[arg2].CreatePageSlots();
-                PageSlots = ps;
-                var datas = Enumerable.Range(0, PageSlots.Size)
-                    .Select(x => CreatePageInfo(ps, x));
-                Resources.AddRange(datas);
-                foreach (var item in Resources)
-                {
-                    item.LoadDone += Item_LoadDone;
-                }
-                CurrentPageCursor = PageSlots.ToDataCursor();
-                CurrentChapterWithPage = PageSlots.ChapterManager.ChapterWithPage;
-                CurrentPageCursor.Moved += OnCurrentPageCursorMoved;
-                loadCancellationTokenSource = new CancellationTokenSource();
-                OnCurrentChaterCursorChanged(arg1);
-                GC.Collect(0, GCCollectionMode.Optimized);
-            }
-            finally
+            loadCancellationTokenSource?.Cancel();
+            loadCancellationTokenSource?.Dispose();
+            foreach (var item in Resources)
             {
+                item.LoadDone -= OnItemLoadDone;
             }
+            ResourceLoadCount = 0;
+            Resources.Clear();
+
+            var ps = PageSlots;
+            if (ps != null)
+            {
+                ps.Dispose();
+                PageSlots = null;
+            }
+            var cpc = CurrentPageCursor;
+            if (cpc != null)
+            {
+                CurrentPageCursor.Moved -= OnCurrentPageCursorMoved;
+                cpc.Dispose();
+            }
+            ps = ChapterSlots[arg2].CreatePageSlots();
+            PageSlots = ps;
+            var datas = Enumerable.Range(0, PageSlots.Size)
+                .Select(x => CreatePageInfo(ps, x));
+            Resources.AddRange(datas);
+            foreach (var item in Resources)
+            {
+                item.LoadDone += OnItemLoadDone;
+            }
+            CurrentPageCursor = PageSlots.ToDataCursor();
+            CurrentChapterWithPage = PageSlots.ChapterManager.ChapterWithPage;
+            CurrentPageCursor.Moved += OnCurrentPageCursorMoved;
+            loadCancellationTokenSource = new CancellationTokenSource();
+            OnCurrentChaterCursorChanged(arg1);
+            GC.Collect(0, GCCollectionMode.Optimized);
         }
-        private void Item_LoadDone(ComicPageInfo<TResource> obj)
+        private void OnItemLoadDone(ComicPageInfo<TResource> obj)
         {
             loadSlim.Wait();
             try

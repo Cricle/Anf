@@ -81,6 +81,27 @@
                    ToolTip.Tip="分享">
       <TextBlock Classes="segoblock" Text="&#xE72D;"/>
     </ToggleButton>
+    <ToggleButton Classes="control"
+                  Background="{x:Null}"
+                  ToolTip.Tip="喜欢"
+                  IsChecked="{Binding HasStoreBox}"
+                  Command="{Binding ToggleStoreCommand}">
+      <Grid>
+        <TextBlock Classes="segoblock" Text="&#xE735;" IsVisible="{Binding HasStoreBox,Converter={StaticResource RevBoolConverter}}"/>
+        <TextBlock Classes="segoblock" Foreground="OrangeRed" Text="&#xE735;" IsVisible="{Binding HasStoreBox}"/>
+      </Grid>
+    </ToggleButton>
+    <!--<ToggleButton Classes="control"
+                  Background="{x:Null}"
+                  ToolTip.Tip="非超喜欢"
+                  IsChecked="{Binding SuperFavorite}"
+                  Command="{Binding ToggleSuperFavoriteCommand}"
+                  IsVisible="{Binding HasStoreBox,Converter={StaticResource RevBoolConverter}}">
+      <Grid>
+        <TextBlock Classes="segoblock" Text="&#xE735;" IsVisible="{Binding SuperFavorite,Converter={StaticResource RevBoolConverter}}"/>
+        <TextBlock Classes="segoblock" Foreground="Gold" Text="&#xE735;" IsVisible="{Binding SuperFavorite}"/>
+      </Grid>
+    </ToggleButton>-->
   </StackPanel>
   <Grid ToolTip.Tip="状态">
     <ToggleButton Background="{x:Null}"
@@ -182,6 +203,9 @@
       <Grid HorizontalAlignment="Center"
             Margin="10">
         <Grid.Styles>
+          <Style Selector="Control">
+            <Setter Property="Margin" Value="0,3"/>
+          </Style>
           <Style Selector="TextBox.url">
             <Setter Property="FontSize" Value="12"/>
             <Setter Property="IsReadOnly" Value="True"/>

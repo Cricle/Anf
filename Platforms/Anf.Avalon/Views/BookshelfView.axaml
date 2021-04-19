@@ -20,9 +20,8 @@
           <Grid>
             <Grid.ContextMenu>
               <ContextMenu>
-                <MenuItem Header="删除"/>
-                <MenuItem Header="复制">
-                </MenuItem>
+                <MenuItem Header="删除" Command="{Binding RemoveCommand}"/>
+                <MenuItem Header="进入" Command="{Binding GoSourceCommand}"/>
               </ContextMenu>
             </Grid.ContextMenu>
             <ToolTip.Tip>
@@ -30,7 +29,7 @@
                 <TextBlock Text="{Binding AttackModel.Descript,Mode=OneTime}"/>
               </StackPanel>
             </ToolTip.Tip>
-            <Image Source="{Binding AttackModel.ImageUrl}" Width="300"/>
+            <Image Source="{Binding Image}" Width="300"/>
             <Border Background="#A1666666"
                     VerticalAlignment="Bottom">
               <TextBlock Text="{Binding AttackModel.Name}"

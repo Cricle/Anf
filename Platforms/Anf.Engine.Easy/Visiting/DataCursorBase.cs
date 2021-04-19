@@ -39,6 +39,10 @@ namespace Anf.Easy.Visiting
         }
 
         public event Action<IDataCursor<T>,int> Moved;
+
+        public event Action<IDataCursor<T>, int> Moving;
+        public event Action<IDataCursor<T>, int> MoveComplated;
+
         public virtual void Dispose()
         {
         }
@@ -50,20 +54,29 @@ namespace Anf.Easy.Visiting
                 OnSkipSet(index, default(T));
                 return false;
             }
-            var origin = CurrentIndex;
-            var value = await LoadAsync(index);
-            if (!enableSafeSet || origin == CurrentIndex)
+            Moving?.Invoke(this, index);
+            try
             {
-                CurrentIndex = index;
-                Current = value;
-                OnMoved(index, value);
-                Moved?.Invoke(this, index);
+
+                var origin = CurrentIndex;
+                var value = await LoadAsync(index);
+                if (!enableSafeSet || origin == CurrentIndex)
+                {
+                    CurrentIndex = index;
+                    Current = value;
+                    OnMoved(index, value);
+                    Moved?.Invoke(this, index);
+                }
+                else
+                {
+                    OnSkipSet(index, value);
+                }
+                return true;
             }
-            else
+            finally
             {
-                OnSkipSet(index, value);
+                MoveComplated?.Invoke(this, index);
             }
-            return true;
         }
         protected virtual void OnSkipSet(int index,T value)
         {
