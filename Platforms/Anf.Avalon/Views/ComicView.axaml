@@ -138,7 +138,6 @@
                     <StackPanel.Styles>
                       <Style Selector="TextBlock">
                         <Setter Property="FontSize" Value="{StaticResource DescFontSize}"></Setter>
-                        <Setter Property="Margin" Value="{StaticResource DescMargin}"></Setter>
                         <Setter Property="VerticalAlignment" Value="Center"></Setter>
                         <Setter Property="Text" Value="&#xE735;"></Setter>
                       </Style>

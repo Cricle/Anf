@@ -28,39 +28,13 @@ namespace Anf.Avalon
 
         public bool EnableCache { get; set; }=true;
 
+
         public async Task<Bitmap> GetAsync(string address)
         {
             if (EnableCache)
             {
-                var storeService = context.Visiting.Host.GetRequiredService<IStoreService>();
-                var recyclableMemoryStreamManager = context.Visiting.Host.GetRequiredService<RecyclableMemoryStreamManager>();
-                var str = await storeService.GetPathAsync(address);
-                Stream stream = null;
-                try
-                {
-                    if (File.Exists(str))
-                    {
-                        stream = File.OpenRead(str);
-                    }
-                    else
-                    {
-                        using (var mem = await context.SourceProvider.GetImageStreamAsync(address))
-                        {
-                            stream = recyclableMemoryStreamManager.GetStream();
-
-                            await mem.CopyToAsync(stream);
-                            stream.Seek(0, SeekOrigin.Begin);
-                            await storeService.SaveAsync(address, stream);
-
-                            stream.Seek(0, SeekOrigin.Begin);
-                        }
-                    }
-                    return new Bitmap(stream);
-                }
-                finally
-                {
-                    stream?.Dispose();
-                }
+                var bitmap= await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(address, () => context.SourceProvider.GetImageStreamAsync(address));
+                return bitmap;
             }
             else
             {

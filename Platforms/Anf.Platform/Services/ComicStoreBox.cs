@@ -121,7 +121,7 @@ namespace Anf.Platform.Services
             attackModel.PropertyChanged += OnAttackModelPropertyChanged;
         }
 
-        public void Dispose()
+        public virtual void Dispose()
         {
             AttackModel.PropertyChanged -= OnAttackModelPropertyChanged;
             writeLocker.Wait();

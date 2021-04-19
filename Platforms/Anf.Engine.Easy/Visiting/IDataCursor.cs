@@ -24,6 +24,10 @@ namespace Anf.Easy.Visiting
 
         Task<bool> MoveAsync(int index);
 
+        event Action<IDataCursor<T>, int> Moving;
+
         event Action<IDataCursor<T>, int> Moved;
+
+        event Action<IDataCursor<T>, int> MoveComplated;
     }
 }

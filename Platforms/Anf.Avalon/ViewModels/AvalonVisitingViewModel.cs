@@ -10,10 +10,11 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Avalonia.Controls.PanAndZoom;
 using Anf.Avalon.Services;
+using Anf.Avalon.Models;
 
 namespace Anf.Avalon.ViewModels
 {
-    public class AvalonVisitingViewModel : VisitingViewModel<Bitmap, Bitmap>
+    public class AvalonVisitingViewModel : VisitingViewModel<Bitmap, Bitmap,AvalonComicStoreBox>
     {
         public static async Task<AvalonVisitingViewModel> CreateAsync(string address)
         {
