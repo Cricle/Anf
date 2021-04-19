@@ -8,11 +8,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Anf.Platform.ViewModels;
+using Anf.Avalon.Models;
 
 namespace Anf.Avalon.ViewModels
 {
-    public class AvalonComicViewModel : ComicViewModel, IDisposable
+    public class AvalonComicViewModel : AvalonStorableComicSnapshotInfo, IDisposable
     {
         public AvalonComicViewModel(ComicSnapshot snapshot, HttpClient httpClient)
             : base(snapshot)

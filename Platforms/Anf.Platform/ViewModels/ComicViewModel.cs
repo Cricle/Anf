@@ -7,15 +7,4 @@ using System.Text;
 
 namespace Anf.Platform.ViewModels
 {
-    public class ComicViewModel : StorableComicSnapshotInfo
-    {
-        public ComicViewModel(ComicSnapshot snapshot)
-            : base(snapshot)
-        {
-            ComicStoreService = AppEngine.GetRequiredService<ComicStoreService>();
-        }
-
-        public ComicStoreService ComicStoreService { get; }
-
-    }
 }
