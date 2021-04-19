@@ -10,6 +10,7 @@
     <ResourceDictionary>
       <conv:AddConverter x:Key="AddConverter"/>
       <conv:RevBoolConverter x:Key="RevBoolConverter"/>
+      <conv:AddNumberConverter x:Key="AddNumberConverter"/>
     </ResourceDictionary>
   </Application.Resources>
   <Application.Styles>

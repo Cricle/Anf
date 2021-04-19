@@ -45,7 +45,7 @@ namespace Anf.Platform.Services
                 }
             }
         }
-        public void Store(ComicEntity entity)
+        public string Store(ComicEntity entity,bool superFavorite=false)
         {
             var model = new ComicStoreModel
             {
@@ -55,10 +55,11 @@ namespace Anf.Platform.Services
                 ImageUrl = entity.ImageUrl,
                 Name = entity.Name,
                 Descript = entity.Descript,
+                SuperFavorite= superFavorite
             };
-            Store(model);
+           return Store(model);
         }
-        public void Store(ComicStoreModel model)
+        public string Store(ComicStoreModel model)
         {
             if (model is null)
             {
@@ -67,6 +68,7 @@ namespace Anf.Platform.Services
             var str = JsonConvert.SerializeObject(model);
             var path = GetModelPath(model.ComicUrl);
             File.WriteAllText(path, str);
+            return path;
         }
         private string GetModelPath(string address)
         {

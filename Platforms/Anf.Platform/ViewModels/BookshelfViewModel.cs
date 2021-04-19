@@ -24,6 +24,7 @@ namespace Anf.ViewModels
             NextCommand = new RelayCommand(Next);
             FlushCommand = new RelayCommand(Load);
             RemoveCommand = new RelayCommand(Remove);
+            StoreBoxs = new ObservableCollection<ComicStoreBox>();
             Load();
         }
         private IEnumerator<FileInfo> boxEnum;
@@ -89,14 +90,13 @@ namespace Anf.ViewModels
                 try
                 {
                     var t = PageSize;
-                    var ok = true;
-                    while (ok && t-- > 0)
+                    bool ok ;
+                    while ((ok = boxEnum.MoveNext()) && t-- > 0)
                     {
                         var val = boxEnum.Current;
                         var box = new ComicStoreBox(val);
                         box.Removed += OnItemRemoved;
                         StoreBoxs.Add(box);
-                        ok = boxEnum.MoveNext();
                     }
                     if (!ok)
                     {

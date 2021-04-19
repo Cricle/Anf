@@ -9,7 +9,7 @@
     <vm:BookShelfViewModel></vm:BookShelfViewModel>
   </Design.DataContext>
   <Grid>
-    <ListBox Items="{Binding StoreBoxs}">
+    <ListBox Items="{Binding StoreBoxs}" Background="{x:Null}">
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
           <WrapPanel Orientation="Horizontal"/>
@@ -30,24 +30,24 @@
                 <TextBlock Text="{Binding AttackModel.Descript,Mode=OneTime}"/>
               </StackPanel>
             </ToolTip.Tip>
-            <Image Source="{Binding AttackModel.ImageUrl,Mode=OneTime}" Width="300"/>
+            <Image Source="{Binding AttackModel.ImageUrl}" Width="300"/>
             <Border Background="#A1666666"
                     VerticalAlignment="Bottom">
-              <TextBlock Text="{Binding AttackModel.Name,Mode=OneTime}"
+              <TextBlock Text="{Binding AttackModel.Name}"
                          FontSize="16"
                          Margin="0,16"
                          HorizontalAlignment="Center"/>
             </Border>
             <ProgressBar VerticalAlignment="Bottom"
-                         Maximum="{Binding AttackModel.Chapters.Length,Converter={StaticResource AddConverter}}"
-                         Value="{Binding CurrentChapter,Converter={StaticResource AddConverter}}">
+                         Maximum="{Binding AttackModel.Chapters.Length,Converter={StaticResource AddNumberConverter}}"
+                         Value="{Binding CurrentChapter,Converter={StaticResource AddNumberConverter}}">
               <ToolTip.Tip>
                 <ToolTip>
                   <StackPanel Orientation="Horizontal">
                     <TextBlock Text="已阅读到"/>
-                    <TextBlock Text="{Binding CurrentChapter,Converter={StaticResource AddConverter}}"/>
+                    <TextBlock Text="{Binding CurrentChapter,Converter={StaticResource AddNumberConverter}}"/>
                     <TextBlock Text="章"/>
-                    <TextBlock Text="{Binding CurrentPage,Converter={StaticResource AddConverter}}"/>
+                    <TextBlock Text="{Binding CurrentPage,Converter={StaticResource AddNumberConverter}}"/>
                     <TextBlock Text="页"/>
                   </StackPanel>
                 </ToolTip>

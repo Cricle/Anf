@@ -24,7 +24,7 @@ namespace Anf.Avalon.Services
             GoBackButton = CreateIconButton("\xE72B");
             GoBackButton.Click += GoBackButton_Click;
 
-            FavoriteButton = CreateIconButton("\xE735;");
+            FavoriteButton = CreateIconButton("\xE735");
             FavoriteButton.Click += FavoriteButton_Click;
 
             var tbx = new TextBlock
@@ -35,7 +35,7 @@ namespace Anf.Avalon.Services
             TitleControl = tbx;
             tbx.Bind(TextBlock.TextProperty,new Binding(nameof(Title)) { Source = this });
             tbx.Bind(ToolTip.TipProperty, new Binding(nameof(Title)) { Source = this });
-            LeftControls = new ObservableCollection<IControl> { GoBackButton };
+            LeftControls = new ObservableCollection<IControl> { GoBackButton,FavoriteButton };
         }
 
         private void FavoriteButton_Click(object sender, RoutedEventArgs e)

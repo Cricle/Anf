@@ -79,7 +79,7 @@ namespace Anf.Avalon
             AppEngine.Services.AddSingleton<IStreamImageConverter<Bitmap>, StreamImageConverter>();
             AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, AResourceCreatorFactory>();
             AppEngine.Services.AddSingleton<ExceptionService>();
-            AppEngine.Services.AddSingleton(new ComicStoreService(new DirectoryInfo(Path.Combine(basePath,XComicConst.StoreFolderName))));
+            AppEngine.Services.AddSingleton(new ComicStoreService(new DirectoryInfo(Path.Combine(basePath,XComicConst.CacheFolderName,XComicConst.StoreFolderName))));
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(basePath, HistoryService.HistoryFileName)));
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, ComicVisiting<Bitmap>>();
 

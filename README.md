@@ -13,7 +13,7 @@
 [![Code Climate issues](https://img.shields.io/codeclimate/issues/Cricle/Anf)](https://github.com/Cricle/Anf)
 [![GitHub search hit counter](https://img.shields.io/github/search/Cricle/Anf/comic)](https://github.com/Cricle/Anf)
 [![GitHub top language](https://img.shields.io/github/languages/top/Cricle/Anf)](https://github.com/Cricle/Anf)
-[![GitHub repo size](https://img.shields.io/github/languages/code-size/Cricle/Ao)](https://github.com/Cricle/Anf)
+[![GitHub repo size](https://img.shields.io/github/languages/code-size/Cricle/Anf)](https://github.com/Cricle/Anf)
 [![GitHub lines](https://img.shields.io/tokei/lines/github/Cricle/Anf)](https://github.com/Cricle/Anf)
 
 

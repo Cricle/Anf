@@ -14,15 +14,6 @@ namespace Anf.Platform.Models
         private int currentChapter;
         private int currentPage;
         private bool superFavorite;
-        private string providerAddress;
-        /// <summary>
-        /// 提供的地址
-        /// </summary>
-        public string ProviderAddress
-        {
-            get { return providerAddress; }
-            set => RaisePropertyChanged(ref providerAddress, value);
-        }
 
         /// <summary>
         /// 当前章节

@@ -1,21 +1,22 @@
 ﻿using Anf.Platform.Models;
+using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.IO;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 
 namespace Anf.Platform.Services
 {
-    public class ComicStoreBox : IDisposable
+    public class ComicStoreBox : ObservableObject,IDisposable
     {
         public static readonly TimeSpan DefaultLazyTime = TimeSpan.FromSeconds(5);
         public ComicStoreBox(FileInfo targetFile)
         {
             TargetFile = targetFile ?? throw new ArgumentNullException(nameof(targetFile));
-            AttackModel.PropertyChanged += OnAttackModelPropertyChanged;
             ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
             RemoveCommand = new RelayCommand(Remove);
             UpdateModelFromFile();
@@ -34,7 +35,11 @@ namespace Anf.Platform.Services
 
         public FileInfo TargetFile { get; }
 
-        public ComicStoreModel AttackModel => attackModel;
+        public ComicStoreModel AttackModel
+        {
+            get => attackModel;
+            private set => Set(ref attackModel, value);
+        }
 
         public string AttackModelJson => JsonConvert.SerializeObject(AttackModel);
 
@@ -113,6 +118,7 @@ namespace Anf.Platform.Services
         {
             var str = File.ReadAllText(TargetFile.FullName);
             attackModel = JsonConvert.DeserializeObject<ComicStoreModel>(str);
+            attackModel.PropertyChanged += OnAttackModelPropertyChanged;
         }
 
         public void Dispose()
