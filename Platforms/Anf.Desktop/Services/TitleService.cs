@@ -28,7 +28,7 @@ namespace Anf.Desktop.Services
 
             var tbx = new TextBlock
             {
-                MaxWidth = 150,
+                MaxWidth = 300,
                 TextTrimming = TextTrimming.WordEllipsis
             };
             TitleControl = tbx;

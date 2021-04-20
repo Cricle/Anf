@@ -9,6 +9,7 @@ using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 using Anf.Desktop.Models;
+using GalaSoft.MvvmLight.Command;
 
 namespace Anf.Desktop.ViewModels
 {
@@ -18,12 +19,14 @@ namespace Anf.Desktop.ViewModels
             : base(snapshot)
         {
             this.httpClient = httpClient;
+            SaveLogoImageCommand = new RelayCommand(SaveLogoImage);
             InitLogoImage();
         }
         public AvalonComicViewModel(ComicSnapshot snapshot, Bitmap logoImage)
             : base(snapshot)
         {
             LogoImage = logoImage;
+            SaveLogoImageCommand = new RelayCommand(SaveLogoImage);
         }
         private readonly HttpClient httpClient;
         private Bitmap logoImage;
@@ -33,7 +36,7 @@ namespace Anf.Desktop.ViewModels
             get { return logoImage; }
             private set => Set(ref logoImage, value);
         }
-
+        public RelayCommand SaveLogoImageCommand { get; }
         public async void SaveLogoImage()
         {
             if (LogoImage != null)
@@ -48,10 +51,7 @@ namespace Anf.Desktop.ViewModels
             {
                 LogoImage = await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(Snapshot.ImageUri, () => httpClient.GetStreamAsync(Snapshot.ImageUri));
             }
-            catch (Exception)
-            {
-
-            }
+            catch (Exception) { }
         }
 
         public void Dispose()

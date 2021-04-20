@@ -11,6 +11,16 @@
   <Design.DataContext>
     <vm:AvalonVisitingViewModel/>
   </Design.DataContext>
+  <UserControl.Styles>
+    <Style Selector="Border.flow">
+      <Setter Property="Grid.RowSpan" Value="2"/>
+      <Setter Property="VerticalAlignment" Value="Bottom"/>
+      <Setter Property="Background" Value="{DynamicResource SystemControlBackgroundChromeMediumLowBrush}"/>
+      <Setter Property="Padding" Value="8,4"/>
+      <Setter Property="CornerRadius" Value="8"/>
+      <Setter Property="Margin" Value="4,8"/>
+    </Style>
+  </UserControl.Styles>
   <UserControl.Resources>
     <ContextMenu x:Key="ControlMenu">
       <MenuItem Header="{Binding DataContext.CurrentChapter.Title,ElementName=Rep,Mode=OneTime}" IsEnabled="False"/>
@@ -27,9 +37,11 @@
         <MenuItem Header="上一章" Command="{Binding DataContext.PrevChapterCommand,ElementName=Rep,Mode=OneTime}"/>
         <MenuItem Header="下一章" Command="{Binding DataContext.NextChapterCommand,ElementName=Rep,Mode=OneTime}"/>
       </MenuItem>
-      <MenuItem Header="-"/>
-      <MenuItem Header="保存" CommandParameter="{Binding}" Command="{Binding DataContext.SaveImageCommand,ElementName=Rep,Mode=OneTime}"></MenuItem>
-      <MenuItem Header="重载" Command="{Binding ReLoadCommand,Mode=OneTime}"/>
+      <MenuItem Header="-" IsEnabled="False"/>
+      <MenuItem Header="保存图片" CommandParameter="{Binding}" Command="{Binding DataContext.SaveImageCommand,ElementName=Rep,Mode=OneTime}"></MenuItem>
+      <MenuItem Header="重载图片" Command="{Binding ReLoadCommand,Mode=OneTime}"/>
+      <MenuItem Header="-" IsEnabled="False"/>
+      <MenuItem Header="保存封面" IsEnabled="{Binding DataContext.HasLogo,ElementName=Rep}" Command="{Binding DataContext.SaveLogoCommand,ElementName=Rep,Mode=OneTime}"></MenuItem>
     </ContextMenu>
     <DataTemplate x:Key="ItemDt">
       <Grid>
@@ -79,23 +91,62 @@
       </ItemsRepeater>
     </ScrollViewer>
 
-    <Border VerticalAlignment="Bottom" HorizontalAlignment="Left" Grid.RowSpan="2" Background="Gray" Padding="8,4" CornerRadius="8" Margin="4,8">
-      <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
-        <StackPanel.Resources>
-          <Style x:Key="Tbx" Selector="TextBlock">
-            <Setter Property="FontSize" Value="10"/>
-          </Style>
-        </StackPanel.Resources>
-        <TextBlock Text="{Binding CurrentChapter.Title}"/>
-        <TextBlock>(</TextBlock>
-        <TextBlock Text="{Binding CurrentPageCursor.CurrentIndex,Converter={StaticResource AddConverter}}"></TextBlock>
-        <TextBlock>/</TextBlock>
-        <TextBlock Text="{Binding CurrentPageCursor.Count}"></TextBlock>
-        <TextBlock>)</TextBlock>
-      </StackPanel>
+    <Border Classes="flow" HorizontalAlignment="Left" ClipToBounds="True">
+      <ToolTip.Tip>
+        <ToolTip>
+          <StackPanel Orientation="Vertical">
+            <TextBlock>肯定能遇见自己喜欢的漫画的!</TextBlock>
+          </StackPanel>
+        </ToolTip>
+      </ToolTip.Tip>
+      <Grid>
+        <!--<Grid.RowDefinitions>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="2"/>
+        </Grid.RowDefinitions>-->
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <StackPanel.Resources>
+            <Style x:Key="Tbx" Selector="TextBlock">
+              <Setter Property="FontSize" Value="10"/>
+            </Style>
+          </StackPanel.Resources>
+          <TextBlock Text="{Binding CurrentChapter.Title}"/>
+          <TextBlock>(</TextBlock>
+          <TextBlock Text="{Binding CurrentPageCursor.CurrentIndex,Converter={StaticResource AddConverter}}"></TextBlock>
+          <TextBlock>/</TextBlock>
+          <TextBlock Text="{Binding CurrentPageCursor.Count,Converter={StaticResource AddConverter}}"></TextBlock>
+          <TextBlock>)</TextBlock>
+        </StackPanel>
+      <!--<ProgressBar VerticalAlignment="Bottom"
+                   MaxWidth="40"
+                   Grid.Row="1"
+                   Minimum="{Binding CurrentChaterCursor.CurrentIndex,Converter={StaticResource AddConverter}}"
+                   Value="{Binding CurrentChaterCursor.Count,Converter={StaticResource AddConverter}}"/>-->
+      </Grid>
+    </Border>
+    <Border Classes="flow" IsVisible="{Binding HasStoreBox}" Background="{x:Null}">
+      <Border Classes="flow" HorizontalAlignment="Right" IsVisible="{Binding StoreBox.IsSaving}">
+        <ToolTip.Tip>
+          <ToolTip>
+            <TextBlock>我正在保存你的位置，别客气OvO</TextBlock>
+          </ToolTip>
+        </ToolTip.Tip>
+        <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+          <StackPanel.Resources>
+            <Style x:Key="Tbx" Selector="TextBlock">
+              <Setter Property="FontSize" Value="10"/>
+            </Style>
+          </StackPanel.Resources>
+          <TextBlock>(</TextBlock>
+          <TextBlock Text="{Binding StoreBox.AttackModel.CurrentChapter,Converter={StaticResource AddConverter}}"></TextBlock>
+          <TextBlock Text=" - "></TextBlock>
+          <TextBlock Text="{Binding StoreBox.AttackModel.CurrentPage,Converter={StaticResource AddConverter}}"></TextBlock>
+          <TextBlock>)</TextBlock>
+        </StackPanel>
+      </Border>
     </Border>
 
-    <Border IsVisible="{Binding IsLoading}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+    <Border IsVisible="{Binding IsLoading}" HorizontalAlignment="Stretch" VerticalAlignment="Stretch" Background="{DynamicResource SystemControlBackgroundChromeBlackMediumBrush}">
       <ExperimentalAcrylicBorder>
         <ExperimentalAcrylicBorder.Material>
           <ExperimentalAcrylicMaterial TintColor="Blue" MaterialOpacity="0.8" TintOpacity="0.87" />
@@ -104,8 +155,10 @@
           <StackPanel.Resources>
             <Thickness x:Key="ItemMargin">0,20,0,0</Thickness>
           </StackPanel.Resources>
-          <Image Height="300" Source="{Binding LogoImage}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+          <Image Height="400" Source="{Binding LogoImage}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
           <TextBlock FontSize="22" Text="{Binding Name}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+          <TextBlock FontSize="12" Text="我已经在很努力获取数据了OvO！" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+          <ProgressBar IsIndeterminate="{Binding IsLoading}" Margin="0,10,0,0" MaxWidth="300"/>
         </StackPanel>
       </ExperimentalAcrylicBorder>
     </Border>

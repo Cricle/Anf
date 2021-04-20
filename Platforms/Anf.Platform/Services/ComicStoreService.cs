@@ -37,10 +37,11 @@ namespace Anf.Platform.Services
         }
         public IEnumerable<TStoreBox> GetStoreBoxes(IEnumerable<string> address)
         {
-            var convertedAddress =new HashSet<string>(address.Select(x => MD5AddressToFileNameProvider.Instance.Convert(x)),StringComparer.OrdinalIgnoreCase);
+            var convertedAddress =new HashSet<string>(address.Select(x => PathHelper.EnsureName(x)),StringComparer.OrdinalIgnoreCase);
             foreach (var item in EnumerableModelFiles())
             {
-                if (convertedAddress.Contains(item.Name))
+                var fn = Path.GetFileNameWithoutExtension(item.Name);
+                if (convertedAddress.Contains(fn))
                 {
                     yield return CreateBox(item);
                 }

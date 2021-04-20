@@ -40,7 +40,15 @@ namespace Anf.Desktop.Views
             try
             {
                 await vm.Visiting.LoadAsync(address);
-                await vm.NextChapterAsync();
+                if (vm.HasStoreBox)
+                {
+                    await vm.GoChapterIndexAsync(vm.StoreBox.AttackModel.CurrentChapter);
+                    await vm.GoPageIndexAsync(vm.StoreBox.AttackModel.CurrentPage);
+                }
+                else
+                {
+                    await vm.NextChapterAsync();
+                }
                 vm.TransverseChanged += Vm_TransverseChanged;
                 rep = this.Get<ItemsRepeater>("Rep");
                 car = this.Get<Carousel>("Car");

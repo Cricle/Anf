@@ -19,6 +19,7 @@ namespace Anf.Platform.Services
             TargetFile = targetFile ?? throw new ArgumentNullException(nameof(targetFile));
             ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
             RemoveCommand = new RelayCommand(Remove);
+            UpdateCommand = new RelayCommand(() => _ = UpdateAsync());
             UpdateModelFromFile();
         }
         public ComicStoreBox(FileInfo targetFile, ComicStoreModel attackModel)
@@ -28,12 +29,26 @@ namespace Anf.Platform.Services
             AttackModel.PropertyChanged += OnAttackModelPropertyChanged;
             ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
             RemoveCommand = new RelayCommand(Remove);
+            UpdateCommand = new RelayCommand(() => _ = UpdateAsync());
         }
         private readonly SemaphoreSlim writeLocker = new SemaphoreSlim(1);
         private object updateToken=new object();
         private ComicStoreModel attackModel;
+        private bool isSaving;
+        private bool isUpdating;
 
-        public FileInfo TargetFile { get; }
+        public bool IsUpdating
+        {
+            get { return isUpdating; }
+            private set => Set(ref isUpdating, value);
+        }
+
+        public bool IsSaving
+        {
+            get { return isSaving; }
+            private set => Set(ref isSaving, value);
+        }
+
 
         public ComicStoreModel AttackModel
         {
@@ -41,10 +56,12 @@ namespace Anf.Platform.Services
             private set => Set(ref attackModel, value);
         }
 
+        public FileInfo TargetFile { get; }
         public string AttackModelJson => JsonConvert.SerializeObject(AttackModel);
 
         public RelayCommand ToggleSuperFavoriteCommand { get; }
         public RelayCommand RemoveCommand { get; }
+        public RelayCommand UpdateCommand { get; }
 
         public event Action<ComicStoreBox> Removed;
 
@@ -63,6 +80,32 @@ namespace Anf.Platform.Services
         {
             return LazyWriteAsync(DefaultLazyTime);
         }
+        public async Task UpdateAsync()
+        {
+            if (IsUpdating)
+            {
+                return;
+            }
+            IsUpdating = true;
+            try
+            {
+
+                var addr = AttackModel.ComicUrl;
+                var eng = AppEngine.GetRequiredService<ComicEngine>();
+                var providerType = eng.GetComicSourceProviderType(addr);
+                using (var scope = AppEngine.CreateScope())
+                {
+                    var provider = (IComicSourceProvider)scope.ServiceProvider.GetService(providerType.ProviderType);
+                    var entity = await provider.GetChaptersAsync(addr);
+                    UpdateEntity(entity);
+                }
+                await WriteFileAsync();
+            }
+            finally
+            {
+                IsUpdating = false;
+            }
+        }
         public async Task<bool> LazyWriteAsync(TimeSpan delayTime)
         {
             var tk = updateToken;
@@ -70,7 +113,15 @@ namespace Anf.Platform.Services
             var newId = new object();
             if (Interlocked.CompareExchange(ref updateToken, newId, tk) == tk)
             {
-                await WriteFileAsync();
+                IsSaving = true;
+                try
+                {
+                    await WriteFileAsync();
+                }
+                finally
+                {
+                    IsSaving = false;
+                }
                 return true;
             }
             return false;
