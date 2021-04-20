@@ -20,31 +20,23 @@
   
   <ItemGroup>
     <PackageReference Include="CompressedStaticFiles" Version="2.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="5.0.4" />
     <PackageReference Include="MimeMapping" Version="1.0.1.37" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.4" />
-    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="5.1.28" />
   </ItemGroup>
   <ItemGroup Condition="'$(MiniService)'=='false'">
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
     <PackageReference Include="MiniProfiler.AspNetCore.Mvc" Version="4.2.22" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="6.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.1.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.1.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.1.3" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Results\" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\Anf.Platform\ComicDbContext.cs" Link="ComicDbContext.cs" />
-    <Compile Include="..\Anf.Platform\XComicConst.cs" Link="XComicConst.cs" />
-    <Compile Include="..\Anf.Platform\Services\BookshelfService.cs" Link="Services\BookshelfService.cs" />
-    <Compile Include="..\Anf.Platform\Models\Bookshelf.cs" Link="Models\Bookshelf.cs" />
-    <Compile Include="..\Anf.Platform\Services\IBookshelfService.cs" Link="Services\IBookshelfService.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\Anf.Engine.Easy\Anf.Easy.csproj" />
     <ProjectReference Include="..\Anf.Engine\Anf.Engine.csproj" />
+    <ProjectReference Include="..\Anf.Platform\Anf.Platform.csproj" />
     <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
   </ItemGroup>
 </Project>
