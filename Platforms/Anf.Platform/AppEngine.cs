@@ -45,8 +45,6 @@ namespace Anf
         }
         public static void AddServices(NetworkAdapterTypes type= NetworkAdapterTypes.HttpClient)
         {
-            XComicConst.EnsureDataFolderCreated();
-
             Services.AddLogging();
             Services.AddEasyComic(type);
             Services.AddKnowEngines();

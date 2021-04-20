@@ -78,7 +78,27 @@ namespace Anf.ViewModels
         protected override void OnInitDone()
         {
             StoreBox = ComicStoreService.GetStoreBox(ComicEntity.ComicUrl);
+            PageCursorMoved += OnStoreBoxVisitingViewModelPageCursorMoved;
         }
+        protected async override void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<TResource>> cursor)
+        {
+            var box = StoreBox;
+            if (box != null)
+            {
+                box.AttackModel.CurrentChapter = cursor.CurrentIndex;
+                await box.LazyWriteAsync();
+            }
+        }
+        private async void OnStoreBoxVisitingViewModelPageCursorMoved(IDataCursor<IComicVisitPage<TResource>> arg1, int arg2)
+        {
+            var box = StoreBox;
+            if (box != null)
+            {
+                box.AttackModel.CurrentPage = arg2;
+                await box.LazyWriteAsync();
+            }
+        }
+
         public void ToggleSuperFavorite()
         {
             if (!HasStoreBox)
@@ -103,6 +123,11 @@ namespace Anf.ViewModels
             {
                 ComicStoreService.Store(ComicEntity);
             }
+        }
+        public override void Dispose()
+        {
+            base.Dispose();
+            PageCursorMoved -= OnStoreBoxVisitingViewModelPageCursorMoved;
         }
     }
 }

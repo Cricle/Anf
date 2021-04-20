@@ -15,16 +15,6 @@ using System.Threading.Tasks;
 
 namespace Anf.Platform.Services
 {
-    public class ComicStoreService : ComicStoreService<ComicStoreBox>
-    {
-        public ComicStoreService(DirectoryInfo folder, int cacheSize = 50) : base(folder, cacheSize)
-        {
-        }
-        protected override ComicStoreBox CreateBox(FileInfo file)
-        {
-            return new ComicStoreBox(file);
-        }
-    }
     public abstract class ComicStoreService<TStoreBox> : FileStoreService
         where TStoreBox:ComicStoreBox
     {

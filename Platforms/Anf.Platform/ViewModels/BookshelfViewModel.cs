@@ -1,15 +1,9 @@
 ﻿using GalaSoft.MvvmLight;
-using Anf.Easy.Store;
-using Anf.Models;
-using Anf.Services;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Text;
-using System.Threading.Tasks;
 using Anf.Platform.Services;
 using GalaSoft.MvvmLight.Command;
-using Anf.Platform.Models;
 using System.IO;
 
 namespace Anf.ViewModels

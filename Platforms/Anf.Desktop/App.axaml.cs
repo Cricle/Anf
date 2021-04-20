@@ -86,8 +86,6 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(basePath, HistoryService.HistoryFileName)));
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, ComicVisiting<Bitmap>>();
 
-            var style = Styles.Where(x => x is FluentTheme).FirstOrDefault() as FluentTheme;
-            AppEngine.Services.AddSingleton(style);
         }
 
         public override void OnFrameworkInitializationCompleted()

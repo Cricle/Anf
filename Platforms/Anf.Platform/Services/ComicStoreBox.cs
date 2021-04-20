@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 
 namespace Anf.Platform.Services
 {
-    public class ComicStoreBox : ObservableObject,IDisposable
+    public abstract class ComicStoreBox : ObservableObject,IDisposable
     {
         public static readonly TimeSpan DefaultLazyTime = TimeSpan.FromSeconds(5);
         public ComicStoreBox(FileInfo targetFile)
@@ -29,7 +29,7 @@ namespace Anf.Platform.Services
             ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
             RemoveCommand = new RelayCommand(Remove);
         }
-        private SemaphoreSlim writeLocker = new SemaphoreSlim(1);
+        private readonly SemaphoreSlim writeLocker = new SemaphoreSlim(1);
         private object updateToken=new object();
         private ComicStoreModel attackModel;
 
@@ -55,11 +55,14 @@ namespace Anf.Platform.Services
         }
         public void Remove()
         {
-            var storeSer=AppEngine.GetRequiredService<ComicStoreService>();
-            storeSer.Remove(AttackModel.ComicUrl);
+            CoreRemove();
             Removed?.Invoke(this);
         }
-
+        protected abstract void CoreRemove();
+        public Task<bool> LazyWriteAsync()
+        {
+            return LazyWriteAsync(DefaultLazyTime);
+        }
         public async Task<bool> LazyWriteAsync(TimeSpan delayTime)
         {
             var tk = updateToken;

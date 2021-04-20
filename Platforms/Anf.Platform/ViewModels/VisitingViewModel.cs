@@ -38,7 +38,7 @@ namespace Anf.ViewModels
         }
         private readonly SemaphoreSlim loadSlim = new SemaphoreSlim(1);
         private CancellationTokenSource loadCancellationTokenSource;
-        protected readonly IServiceScope scope= AppEngine.CreateScope();
+        protected readonly IServiceScope scope = AppEngine.CreateScope();
         protected IStreamImageConverter<TImage> streamImageConverter;
         protected RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         protected HttpClient httpClient;
@@ -56,7 +56,7 @@ namespace Anf.ViewModels
         private int resourceLoadCount;
 
         public ChapterSlots<TResource> ChapterSlots => chapterSlots;
-        public CancellationTokenSource LoadCancellationTokenSource=> loadCancellationTokenSource;
+        public CancellationTokenSource LoadCancellationTokenSource => loadCancellationTokenSource;
 
         private bool resourceLoadDone;
         private bool loadingLogo;
@@ -176,13 +176,13 @@ namespace Anf.ViewModels
         public RelayCommand<int> GoPageIndexCommand { get; protected set; }
 
         public RelayCommand OpenComicCommand { get; protected set; }
-        public RelayCommand OpenChapterCommand { get;protected set; }
+        public RelayCommand OpenChapterCommand { get; protected set; }
         public RelayCommand CopyComicCommand { get; protected set; }
         public RelayCommand CopyChapterCommand { get; protected set; }
         public RelayCommand CopyComicEntityCommand { get; protected set; }
 
         private static IPlatformService PlatformService => AppEngine.GetRequiredService<IPlatformService>();
-        
+
         public SilentObservableCollection<ComicPageInfo<TResource>> Resources { get; protected set; }
 
 
@@ -194,14 +194,14 @@ namespace Anf.ViewModels
         }
         public Task OpenChapterAsync()
         {
-            if (CurrentChapter is null )
+            if (CurrentChapter is null)
             {
                 return Task.CompletedTask;
             }
             return PlatformService.OpenAddressAsync(CurrentChapter.TargetUrl);
         }
 
-        
+
         public void CopyComic()
         {
             PlatformService.Copy(ComicEntity.ComicUrl);
@@ -239,7 +239,7 @@ namespace Anf.ViewModels
         {
             var count = Resources.Count;
             var enu = Resources.GetEnumerator();
-            while (enu.MoveNext()&& !loadCancellationTokenSource.IsCancellationRequested)
+            while (enu.MoveNext() && !loadCancellationTokenSource.IsCancellationRequested)
             {
                 await enu.Current.LoadAsync();
             }
@@ -400,17 +400,24 @@ namespace Anf.ViewModels
 
         protected async Task Init()
         {
-            chapterSlots = Visiting.CreateChapterSlots();
-            CurrentChaterCursor = chapterSlots.ToDataCursor();
-            CurrentChaterCursor.Moving += OnCurrentChaterCursorMoving;
-            CurrentChaterCursor.Moved += OnCurrentChaterCursorMoved;
-            CurrentChaterCursor.MoveComplated += OnCurrentChaterCursorMoveComplated;
-            ComicEntity = Visiting.Entity;
-            if (!string.IsNullOrEmpty(ComicEntity.ImageUrl))
+            try
             {
-                await LoadLogoAsync(ComicEntity.ImageUrl);
+                chapterSlots = Visiting.CreateChapterSlots();
+                CurrentChaterCursor = chapterSlots.ToDataCursor();
+                CurrentChaterCursor.Moving += OnCurrentChaterCursorMoving;
+                CurrentChaterCursor.Moved += OnCurrentChaterCursorMoved;
+                CurrentChaterCursor.MoveComplated += OnCurrentChaterCursorMoveComplated;
+                ComicEntity = Visiting.Entity;
+                if (!string.IsNullOrEmpty(ComicEntity.ImageUrl))
+                {
+                    await LoadLogoAsync(ComicEntity.ImageUrl);
+                }
             }
-            OnInitDone();
+            finally
+            {
+                OnInitDone();
+
+            }
         }
 
         private void OnCurrentChaterCursorMoveComplated(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
