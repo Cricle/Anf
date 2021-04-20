@@ -15,7 +15,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{C11FD062
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleService", "..\test\SimpleService\SimpleService.csproj", "{6CE60150-1108-4B5D-943D-9256FCE6778A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Avalon", "Anf.Avalon\Anf.Avalon.csproj", "{E270CA32-F570-4533-9025-F543B871417F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Desktop", "Anf.Avalon\Anf.Desktop.csproj", "{E270CA32-F570-4533-9025-F543B871417F}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Web", "Anf.Web\Anf.Web.csproj", "{FF0E532F-EF23-4A60-B0BB-5EAAD58C5565}"
 EndProject

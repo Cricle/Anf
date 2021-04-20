@@ -1,0 +1,60 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:Anf.Platform.ViewModels"
+             x:Class="Anf.Desktop.Views.BookshelfView">
+  <Design.DataContext>
+    <vm:BookShelfViewModel></vm:BookShelfViewModel>
+  </Design.DataContext>
+  <Grid>
+    <ListBox Items="{Binding StoreBoxs}" Background="{x:Null}">
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Horizontal"/>
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Grid>
+            <Grid.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="删除" Command="{Binding RemoveCommand}"/>
+                <MenuItem Header="进入" Command="{Binding GoSourceCommand}"/>
+              </ContextMenu>
+            </Grid.ContextMenu>
+            <ToolTip.Tip>
+              <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding AttackModel.Descript,Mode=OneTime}"/>
+              </StackPanel>
+            </ToolTip.Tip>
+            <Image Source="{Binding Image}" Width="300"/>
+            <Border Background="#A1666666"
+                    VerticalAlignment="Bottom">
+              <TextBlock Text="{Binding AttackModel.Name}"
+                         FontSize="16"
+                         Margin="0,16"
+                         HorizontalAlignment="Center"/>
+            </Border>
+            <ProgressBar VerticalAlignment="Bottom"
+                         Maximum="{Binding AttackModel.Chapters.Length,Converter={StaticResource AddNumberConverter}}"
+                         Value="{Binding CurrentChapter,Converter={StaticResource AddNumberConverter}}">
+              <ToolTip.Tip>
+                <ToolTip>
+                  <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="已阅读到"/>
+                    <TextBlock Text="{Binding CurrentChapter,Converter={StaticResource AddNumberConverter}}"/>
+                    <TextBlock Text="章"/>
+                    <TextBlock Text="{Binding CurrentPage,Converter={StaticResource AddNumberConverter}}"/>
+                    <TextBlock Text="页"/>
+                  </StackPanel>
+                </ToolTip>
+              </ToolTip.Tip>
+            </ProgressBar>
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+  </Grid>
+</UserControl>
