@@ -167,6 +167,7 @@ namespace Anf.Desktop.ViewModels
         }
         protected override void OnInitDone()
         {
+            base.OnInitDone();
             TitleService.Title = $"Anf - {ComicEntity.Name}";
         }
 

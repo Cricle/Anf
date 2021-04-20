@@ -59,5 +59,10 @@ namespace Anf.Desktop.Models
             Image?.Dispose();
         }
 
+        protected override void CoreRemove()
+        {
+            var storeSer = AppEngine.GetRequiredService<AvalonComicStoreService>();
+            storeSer.Remove(AttackModel.ComicUrl);
+        }
     }
 }
