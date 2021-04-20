@@ -60,6 +60,13 @@ namespace Anf.ViewModels
 
         private bool resourceLoadDone;
         private bool loadingLogo;
+        private bool hasLogo;
+
+        public bool HasLogo
+        {
+            get { return hasLogo; }
+            private set => Set(ref hasLogo, value);
+        }
 
         public bool LoadingLogo
         {
@@ -125,6 +132,7 @@ namespace Anf.ViewModels
             private set
             {
                 Set(ref logoImage, value);
+                HasLogo = value != null;
             }
         }
 

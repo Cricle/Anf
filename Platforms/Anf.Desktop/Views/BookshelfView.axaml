@@ -3,25 +3,37 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
-             xmlns:vm="using:Anf.Platform.ViewModels"
+             xmlns:vm="using:Anf.Destop.ViewModels"
+             x:Name="Bv"
              x:Class="Anf.Desktop.Views.BookshelfView">
   <Design.DataContext>
-    <vm:BookShelfViewModel></vm:BookShelfViewModel>
+    <vm:AvalonBookShelfViewModel></vm:AvalonBookShelfViewModel>
   </Design.DataContext>
+  <UserControl.ContextMenu>
+    <ContextMenu>
+      <MenuItem Header="刷新" Command="{Binding FlushCommand}"/>
+      <MenuItem Header="更新全部" Command="{Binding UpdateCommand}"/>
+    </ContextMenu>
+  </UserControl.ContextMenu>
+
   <Grid>
-    <ListBox Items="{Binding StoreBoxs}" Background="{x:Null}">
-      <ListBox.ItemsPanel>
+    <ItemsControl Items="{Binding StoreBoxs}" Background="{x:Null}">
+      <ItemsControl.ItemsPanel>
         <ItemsPanelTemplate>
           <WrapPanel Orientation="Horizontal"/>
         </ItemsPanelTemplate>
-      </ListBox.ItemsPanel>
-      <ListBox.ItemTemplate>
+      </ItemsControl.ItemsPanel>
+      <ItemsControl.ItemTemplate>
         <DataTemplate>
-          <Grid>
+          <Grid Margin="3">
             <Grid.ContextMenu>
               <ContextMenu>
                 <MenuItem Header="删除" Command="{Binding RemoveCommand}"/>
                 <MenuItem Header="进入" Command="{Binding GoSourceCommand}"/>
+                <MenuItem Header="更新" Command="{Binding UpdateCommand}"/>
+                <MenuItem Header="-" IsEnabled="False"/>
+                <MenuItem Header="刷新" Command="{Binding DataContext.FlushCommand,ElementName=Bv}"/>
+                <MenuItem Header="更新全部" Command="{Binding DataContext.UpdateCommand,ElementName=Bv}"/>
               </ContextMenu>
             </Grid.ContextMenu>
             <ToolTip.Tip>
@@ -37,7 +49,8 @@
                          Margin="0,16"
                          HorizontalAlignment="Center"/>
             </Border>
-            <ProgressBar VerticalAlignment="Bottom"
+            <ProgressBar Height="3"
+                         VerticalAlignment="Bottom"
                          Maximum="{Binding AttackModel.Chapters.Length,Converter={StaticResource AddNumberConverter}}"
                          Value="{Binding CurrentChapter,Converter={StaticResource AddNumberConverter}}">
               <ToolTip.Tip>
@@ -52,9 +65,21 @@
                 </ToolTip>
               </ToolTip.Tip>
             </ProgressBar>
+            <Border IsVisible="{Binding IsUpdating}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{DynamicResource SystemControlBackgroundChromeBlackMediumBrush}">
+              <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">正在更新</TextBlock>
+                <ProgressBar Margin="8" IsIndeterminate="{Binding IsUpdating}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+              </StackPanel>
+            </Border>
           </Grid>
         </DataTemplate>
-      </ListBox.ItemTemplate>
-    </ListBox>
+      </ItemsControl.ItemTemplate>
+    </ItemsControl>
+    <ProgressBar VerticalAlignment="Bottom"
+                 IsIndeterminate="{Binding IsUpdating}"
+                 IsVisible="{Binding IsUpdating}"
+                 Height="2"
+                 Maximum="{Binding StoreBoxs.Count,Converter={StaticResource AddNumberConverter},Mode=OneWay}"
+                 Value="{Binding Updated,Converter={StaticResource AddNumberConverter},Mode=OneWay}"/>
   </Grid>
 </UserControl>

@@ -50,23 +50,18 @@ namespace Anf.Easy
         public unsafe static string EnsureName(string name,char invalidChar=DefaultInvalidReplaceChar)
         {
             var len = name.Length;
-            var arr = new char[len];
-            char c;
+            var arr = Encoding.UTF8.GetBytes(name);
+            byte c;
             for (int i = 0; i < len; i++)
             {
-                c = name[i];
-                if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c < 'Z' || AvaliableChars.Contains(c))
+                c = arr[i];
+                if (InvalidChars.Contains((char)c))
                 {
-                    arr[i] = c;
-                }
-                else
-                {
-                    arr[i] = invalidChar;
+                    arr[i] = (byte)invalidChar;
                 }
             }
-            return new string(arr);
+            return Encoding.UTF8.GetString(arr);
         }
-
 #endif
     }
 }

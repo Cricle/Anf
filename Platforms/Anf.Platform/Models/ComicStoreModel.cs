@@ -50,6 +50,7 @@ namespace Anf.Platform.Models
         {
             if (!EqualityComparer<T>.Default.Equals(prop,value))
             {
+                prop = value;
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(name));
             }
         }

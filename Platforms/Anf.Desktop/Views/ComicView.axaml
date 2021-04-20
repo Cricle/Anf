@@ -27,20 +27,34 @@
         <ColumnDefinition Width="*"/>
       </Grid.ColumnDefinitions>
       <Border>
+        <Border.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="保存" Command="{Binding SaveLogoImageCommand}"/>
+          </ContextMenu>
+        </Border.ContextMenu>
         <Image Source="{Binding LogoImage}"
-               Stretch="UniformToFill"
-               Width="280"/>
+                 Stretch="UniformToFill"
+                 Width="280"/>
       </Border>
       <StackPanel Grid.Column="1"
             Orientation="Vertical"
             Margin="35,0,0,0">
         <TextBlock Text="{Binding Snapshot.Name}" FontSize="26"/>
         <Grid Margin="{StaticResource ItemMargin}">
+          <Grid.ContextMenu>
+            <ContextMenu>
+              <MenuItem Header="复制名字" Command="{Binding CopyNameCommand}"/>
+              <MenuItem Header="复制作者" Command="{Binding CopyAuthorizeCommand}"/>
+              <MenuItem Header="复制描述" Command="{Binding CopyDescriptCommand}"/>
+              <MenuItem Header="-" IsEnabled="False"/>
+              <MenuItem Header="复制实体" Command="{Binding CopyEntityCommand}"/>
+            </ContextMenu>
+          </Grid.ContextMenu>
           <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
             <ColumnDefinition Width="*"/>
           </Grid.ColumnDefinitions>
-          <TextBlock Classes="segoblock" FontSize="{StaticResource DescFontSize}" Text="&#xE8B8;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
+          <TextBlock Classes="segoblock" FontSize="{StaticResource DescFontSize}" Text="&#xE77B;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
           <TextBlock Text="{Binding Snapshot.Author}"
                      FontSize="{StaticResource DescFontSize}"
                      Grid.Column="1"/>

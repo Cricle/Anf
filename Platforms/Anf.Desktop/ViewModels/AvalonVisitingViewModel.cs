@@ -153,6 +153,7 @@ namespace Anf.Desktop.ViewModels
         public event Action<AvalonVisitingViewModel, bool> TransverseChanged;
         internal ExceptionService ExceptionService { get; set; }
         public RelayCommand<ComicPageInfo<Bitmap>> SaveImageCommand { get; protected set; }
+        public RelayCommand SaveLogoCommand { get;protected set; }
         private void AvalonInit()
         {
             MinWidth = 200;
@@ -161,6 +162,8 @@ namespace Anf.Desktop.ViewModels
             StretchMode = StretchMode.None;
             StretchModes = ZoomBorder.StretchModes;
             SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
+            SaveLogoCommand = new RelayCommand(SaveLogo);
+
             PageCursorMoved += AvalonVisitingViewModel_PageCursorMoved;
             TitleService = AppEngine.GetRequiredService<TitleService>();
             ExceptionService = AppEngine.GetRequiredService<ExceptionService>();
@@ -170,7 +173,7 @@ namespace Anf.Desktop.ViewModels
             base.OnInitDone();
             TitleService.Title = $"Anf - {ComicEntity.Name}";
         }
-
+        
         private void AvalonVisitingViewModel_PageCursorMoved(IDataCursor<IComicVisitPage<Bitmap>> arg1, int arg2)
         {
             var res = this.Resources;
@@ -179,7 +182,15 @@ namespace Anf.Desktop.ViewModels
                 SelectedResource = res[arg2];
             }
         }
-
+        public async void SaveLogo()
+        {
+            var logo = LogoImage;
+            if (logo!=null)
+            {
+                var name = $"{PathHelper.EnsureName(Name)}-logo.jpg";
+                await logo.PickSaveAsync(name);
+            }
+        }
         public async void SaveImage(ComicPageInfo<Bitmap> info)
         {
             try
@@ -196,6 +207,8 @@ namespace Anf.Desktop.ViewModels
         {
             try
             {
+                TitleService.Title = $"Anf - {ComicEntity.Name} - {cursor.Current.ChapterWithPage.Chapter.Title}";
+                base.OnCurrentChaterCursorChanged(cursor);
                 SelectedResource = null;
                 await LoadAllAsync();
             }

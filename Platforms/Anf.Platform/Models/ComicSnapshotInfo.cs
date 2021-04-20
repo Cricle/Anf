@@ -5,6 +5,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Anf.Platform.Models;
 using Anf.Platform.Services;
+using Anf.Services;
+using GalaSoft.MvvmLight.Command;
+using Newtonsoft.Json;
 
 namespace Anf.Models
 {
@@ -27,6 +30,10 @@ namespace Anf.Models
         public ComicSnapshotInfo()
         {
             ComicEngine = AppEngine.GetRequiredService<ComicEngine>();
+            CopyAuthorizeCommand = new RelayCommand(CopyAuthorize);
+            CopyDescriptCommand = new RelayCommand(CopyDescript);
+            CopyNameCommand = new RelayCommand(CopyName);
+            CopyEntityCommand = new RelayCommand(CopyEntity);
         }
 
         public ComicSnapshotInfo(ComicSnapshot snapshot)
@@ -80,6 +87,29 @@ namespace Anf.Models
 
         public event Action<ComicSnapshotInfo<TSourceInfo>, TSourceInfo> SourceChanged;
 
+        private IPlatformService PlatformService => AppEngine.GetRequiredService<IPlatformService>();
 
+        public RelayCommand CopyDescriptCommand { get; }
+        public RelayCommand CopyNameCommand { get; }
+        public RelayCommand CopyAuthorizeCommand { get; }
+        public RelayCommand CopyEntityCommand { get; }
+
+        public void CopyDescript()
+        {
+            PlatformService.Copy(Snapshot.Descript);
+        }
+        public void CopyName()
+        {
+            PlatformService.Copy(Snapshot.Name);
+        }
+        public void CopyAuthorize()
+        {
+            PlatformService.Copy(Snapshot.Author);
+        }
+        public void CopyEntity()
+        {
+            var str = JsonConvert.SerializeObject(Snapshot);
+            PlatformService.Copy(str);
+        }
     }
 }

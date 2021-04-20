@@ -80,22 +80,20 @@ namespace Anf.ViewModels
             StoreBox = ComicStoreService.GetStoreBox(ComicEntity.ComicUrl);
             PageCursorMoved += OnStoreBoxVisitingViewModelPageCursorMoved;
         }
-        protected async override void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<TResource>> cursor)
+        protected override void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<TResource>> cursor)
         {
             var box = StoreBox;
             if (box != null)
             {
                 box.AttackModel.CurrentChapter = cursor.CurrentIndex;
-                await box.LazyWriteAsync();
             }
         }
-        private async void OnStoreBoxVisitingViewModelPageCursorMoved(IDataCursor<IComicVisitPage<TResource>> arg1, int arg2)
+        private void OnStoreBoxVisitingViewModelPageCursorMoved(IDataCursor<IComicVisitPage<TResource>> arg1, int arg2)
         {
             var box = StoreBox;
             if (box != null)
             {
                 box.AttackModel.CurrentPage = arg2;
-                await box.LazyWriteAsync();
             }
         }
 
@@ -118,10 +116,12 @@ namespace Anf.ViewModels
             if (HasStoreBox)
             {
                 ComicStoreService.Remove(ComicEntity.ComicUrl);
+                StoreBox = null;
             }
             else
             {
-                ComicStoreService.Store(ComicEntity);
+                var path=ComicStoreService.Store(ComicEntity);
+                StoreBox = ComicStoreService.GetStoreBox(path);
             }
         }
         public override void Dispose()

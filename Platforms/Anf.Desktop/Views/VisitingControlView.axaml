@@ -81,11 +81,12 @@
                    ToolTip.Tip="分享">
       <TextBlock Classes="segoblock" Text="&#xE72D;"/>
     </ToggleButton>
+    <!---->
     <ToggleButton Classes="control"
-                  Background="{x:Null}"
                   ToolTip.Tip="喜欢"
                   IsChecked="{Binding HasStoreBox}"
-                  Command="{Binding ToggleStoreCommand}">
+                  Command="{Binding ToggleStoreCommand}"
+                  Background="{x:Null}">
       <Grid>
         <TextBlock Classes="segoblock" Text="&#xE735;" IsVisible="{Binding HasStoreBox,Converter={StaticResource RevBoolConverter}}"/>
         <TextBlock Classes="segoblock" Foreground="OrangeRed" Text="&#xE735;" IsVisible="{Binding HasStoreBox}"/>

@@ -19,12 +19,6 @@ namespace Anf.Desktop.Views
             DataContext = vm = new AvalonBookshelfViewModel();
             binder = AppEngine.GetRequiredService<MainWindow>().BindDecorationMargin(this);
         }
-        protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
-        {
-            binder.Dispose();
-            base.OnDetachedFromLogicalTree(e);
-        }
-
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
