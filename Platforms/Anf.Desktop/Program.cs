@@ -7,6 +7,7 @@ using Microsoft.IO;
 using System.Net.Http;
 using System.IO;
 using System;
+using Anf.Desktop.Services;
 
 namespace Anf.Desktop
 {
@@ -18,6 +19,7 @@ namespace Anf.Desktop
         public static void Main(string[] args)
         {
             TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
             try
             {
                 BuildAvaloniaApp().StartWithClassicDesktopLifetime(args);
@@ -28,9 +30,16 @@ namespace Anf.Desktop
             }
         }
 
+        private static void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
+        {
+            var exSer = AppEngine.GetRequiredService<ExceptionService>();
+            exSer.Exception = e.ExceptionObject as Exception;
+        }
+
         private static void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
         {
-            Debug.WriteLine(e.Exception);
+            var exSer = AppEngine.GetRequiredService<ExceptionService>();
+            exSer.Exception = e.Exception;
             e.SetObserved();
         }
 
@@ -40,6 +49,7 @@ namespace Anf.Desktop
 #if RENDER_D2D
                 .UseWin32()
                 .UseDirect2D1()
+                .With(new Win32PlatformOptions { AllowEglInitialization = false })
 #else
                 .UsePlatformDetect()
 #endif

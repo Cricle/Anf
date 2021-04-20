@@ -13,8 +13,6 @@ using Anf.Easy.Store;
 using Anf.Web.Services;
 using Anf.Easy.Visiting;
 using Anf;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
 using Anf.Services;
 using Anf.KnowEngines;
 using JavaScriptEngineSwitcher.Jint;
@@ -51,17 +49,9 @@ namespace Anf.Web
             services.AddSingleton<IComicSaver>(fs);
             services.AddSingleton(fs);
             services.AddKnowEngines();
-            services.AddScoped<IBookshelfService, BookshelfService>();
             services.AddScoped<IComicVisiting<string>, ComicVisiting<string>>();
             services.AddCompressedStaticFiles();
             services.AddScoped<IJsEngine, JintJsEngine>();
-            services.AddDbContext<ComicDbContext>(x =>
-            {
-                var builder = new SqliteConnectionStringBuilder();
-                builder.DataSource = XComicConst.DbFileName;
-                x.UseSqlite(builder.ConnectionString);
-
-            }, ServiceLifetime.Scoped);
             services.AddResponseCompression(x =>
             {
                 x.Providers.Add<GzipCompressionProvider>();
@@ -141,12 +131,6 @@ namespace Anf.Web
                     spa.UseProxyToSpaDevelopmentServer("http://localhost:4200/");
                 }
             });
-            using (var scope=app.ApplicationServices.GetServiceScope())
-            {
-
-                scope.ServiceProvider.GetRequiredService<ComicDbContext>()
-                .Database.EnsureCreated();
-            }
             app.ApplicationServices.UseKnowEngines();
         }
     }

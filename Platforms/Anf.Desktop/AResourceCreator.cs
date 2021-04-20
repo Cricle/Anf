@@ -15,30 +15,29 @@ namespace Anf.Desktop
 {
     internal class AResourceCreator : IResourceFactory<Bitmap>
     {
-        private readonly ResourceFactoryCreateContext<Bitmap> context;
+        private readonly IComicSourceProvider provider;
 
-        public AResourceCreator(ResourceFactoryCreateContext<Bitmap> context)
+        public AResourceCreator(IComicSourceProvider provider)
         {
-            this.context = context ?? throw new ArgumentNullException(nameof(context));
+            this.provider = provider;
         }
 
         public void Dispose()
         {
         }
 
-        public bool EnableCache { get; set; }=true;
-
+        public bool EnableCache { get; set; } = true;
 
         public async Task<Bitmap> GetAsync(string address)
         {
             if (EnableCache)
             {
-                var bitmap= await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(address, () => context.SourceProvider.GetImageStreamAsync(address));
+                var bitmap = await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(address, () => provider.GetImageStreamAsync(address));
                 return bitmap;
             }
             else
             {
-                using (var mem = await context.SourceProvider.GetImageStreamAsync(address))
+                using (var mem = await provider.GetImageStreamAsync(address))
                 {
                     return new Bitmap(mem);
                 }

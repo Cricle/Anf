@@ -14,7 +14,8 @@
     </ResourceDictionary>
   </Application.Resources>
   <Application.Styles>
-    <FluentTheme Mode="Dark"/>
+    <!--NOTE: 不要移除，占位置的-->
+    <Style/>
     <Style Selector="TextBlock.segoblock">
       <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
     </Style>

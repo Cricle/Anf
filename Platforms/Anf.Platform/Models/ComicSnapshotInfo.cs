@@ -76,7 +76,7 @@ namespace Anf.Models
 
         public ComicEngine ComicEngine { get; }
 
-        public bool HasSourceUri => !(CurrentSource is null) && CurrentSource.CanParse && !(CurrentSource.Source?.TargetUrl is null);
+        public bool HasSourceUri => CurrentSource != null && CurrentSource.CanParse && !(CurrentSource.Source?.TargetUrl is null);
 
         public event Action<ComicSnapshotInfo<TSourceInfo>, TSourceInfo> SourceChanged;
 
