@@ -1,31 +1,23 @@
 ﻿using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Anf;
 using Anf.Easy.Visiting;
 using Anf.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
 using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using System.Windows.Input;
 using Anf.Services;
 using Newtonsoft.Json;
-using Anf.Platform.Services;
-using System.ComponentModel;
-using Anf.Platform.Models;
+using Anf.Platform;
 
 namespace Anf.ViewModels
 {
-    public class VisitingViewModel<TResource, TImage, TStoreBox> : ViewModelBase, IDisposable
-        where TStoreBox:ComicStoreBox
+    public class VisitingViewModel<TResource, TImage> : ViewModelBase, IDisposable
     {
         public VisitingViewModel(IComicVisiting<TResource> visiting = null)
         {
@@ -51,7 +43,6 @@ namespace Anf.ViewModels
         protected RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         protected HttpClient httpClient;
         private IComicVisiting<TResource> visiting;
-        private MemoryStream logoStream;
         private bool isLoading;
         private ChapterSlots<TResource> chapterSlots;
         private PageSlots<TResource> pageSlots;
@@ -64,47 +55,17 @@ namespace Anf.ViewModels
         private ChapterWithPage currentChapterWithPage;
         private int resourceLoadCount;
 
-        public MemoryStream LogoStream => logoStream;
         public ChapterSlots<TResource> ChapterSlots => chapterSlots;
         public CancellationTokenSource LoadCancellationTokenSource=> loadCancellationTokenSource;
 
         private bool resourceLoadDone;
-        private ComicStoreBox storeBox;
-        private bool hasStoreBox;
+        private bool loadingLogo;
 
-        public bool SuperFavorite
+        public bool LoadingLogo
         {
-            get => HasStoreBox ? StoreBox.AttackModel.SuperFavorite : false;
-            private set
-            {
-                ToggleSuperFavorite();
-            }
+            get { return loadingLogo; }
+            private set => Set(ref loadingLogo, value);
         }
-
-        public bool HasStoreBox
-        {
-            get { return hasStoreBox; }
-            private set=> Set(ref hasStoreBox, value);
-        }
-
-        public ComicStoreBox StoreBox
-        {
-            get { return storeBox; }
-            private set
-            {
-                if (storeBox != null)
-                {
-                    storeBox.PropertyChanged -= OnStoreBoxPropertyChanged;
-                }
-                Set(ref storeBox, value);
-                if (value!=null)
-                {
-                    value.PropertyChanged -= OnStoreBoxPropertyChanged;
-                }
-                HasStoreBox = value != null;
-            }
-        }
-
 
         public bool ResourceLoadDone
         {
@@ -198,6 +159,7 @@ namespace Anf.ViewModels
         }
         public IComicVisiting<TResource> Visiting => visiting;
 
+        public bool SwitchChapterGC { get; set; } = true;
 
         public RelayCommand FirstChapterCommand { get; protected set; }
         public RelayCommand LastChapterCommand { get; protected set; }
@@ -219,14 +181,10 @@ namespace Anf.ViewModels
         public RelayCommand CopyChapterCommand { get; protected set; }
         public RelayCommand CopyComicEntityCommand { get; protected set; }
 
-        public RelayCommand ToggleStoreCommand { get; protected set; }
-        public RelayCommand ToggleSuperFavoriteCommand { get; protected set; }
-
         private static IPlatformService PlatformService => AppEngine.GetRequiredService<IPlatformService>();
         
         public SilentObservableCollection<ComicPageInfo<TResource>> Resources { get; protected set; }
 
-        public ComicStoreService<TStoreBox> ComicStoreService { get; protected set; }
 
         public event Action<IDataCursor<IComicVisitPage<TResource>>, int> PageCursorMoved;
 
@@ -243,14 +201,7 @@ namespace Anf.ViewModels
             return PlatformService.OpenAddressAsync(CurrentChapter.TargetUrl);
         }
 
-        private void OnStoreBoxPropertyChanged(object sender, PropertyChangedEventArgs e)
-        {
-            var name = nameof(ComicStoreModel.SuperFavorite);
-            if (e.PropertyName == name)
-            {
-                RaisePropertyChanged(name);
-            }
-        }
+        
         public void CopyComic()
         {
             PlatformService.Copy(ComicEntity.ComicUrl);
@@ -423,9 +374,6 @@ namespace Anf.ViewModels
             CopyComicEntityCommand = new RelayCommand(CopyComicEntity);
             CopyChapterCommand = new RelayCommand(CopyChapter);
 
-            ToggleStoreCommand = new RelayCommand(ToggleStore);
-            ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
-
             Resources = new SilentObservableCollection<ComicPageInfo<TResource>>();
             if (Visiting.IsLoad())
             {
@@ -433,33 +381,12 @@ namespace Anf.ViewModels
             }
             Visiting.Loading += OnLoading;
             Visiting.Loaded += OnLoaded;
-            ComicStoreService = AppEngine.GetRequiredService<ComicStoreService<TStoreBox>>();
+            OnInitedVisiting();
         }
-        public void ToggleSuperFavorite()
+        protected virtual void OnInitedVisiting()
         {
-            if (!HasStoreBox)
-            {
-                ToggleStore();
-            }
-            if (HasStoreBox)
-            {
-                StoreBox.AttackModel.SuperFavorite
-                    = !StoreBox.AttackModel.SuperFavorite;
-            }
-        }
 
-        public void ToggleStore()
-        {
-            if (HasStoreBox)
-            {
-                ComicStoreService.Remove(ComicEntity.ComicUrl);
-            }
-            else
-            {
-                ComicStoreService.Store(ComicEntity);
-            }
         }
-
         private async void OnLoaded(ComicVisiting<TResource> arg1, ComicEntity arg2)
         {
             await Init();
@@ -479,7 +406,6 @@ namespace Anf.ViewModels
             CurrentChaterCursor.Moved += OnCurrentChaterCursorMoved;
             CurrentChaterCursor.MoveComplated += OnCurrentChaterCursorMoveComplated;
             ComicEntity = Visiting.Entity;
-            StoreBox = ComicStoreService.GetStoreBox(comicEntity.ComicUrl);
             if (!string.IsNullOrEmpty(ComicEntity.ImageUrl))
             {
                 await LoadLogoAsync(ComicEntity.ImageUrl);
@@ -540,7 +466,10 @@ namespace Anf.ViewModels
             CurrentPageCursor.Moved += OnCurrentPageCursorMoved;
             loadCancellationTokenSource = new CancellationTokenSource();
             OnCurrentChaterCursorChanged(arg1);
-            GC.Collect(0, GCCollectionMode.Optimized);
+            if (SwitchChapterGC)
+            {
+                GC.Collect(0, GCCollectionMode.Optimized);
+            }
         }
         private void OnItemLoadDone(ComicPageInfo<TResource> obj)
         {
@@ -610,7 +539,6 @@ namespace Anf.ViewModels
             {
                 chapterSlots?.Dispose();
                 pageSlots?.Dispose();
-                logoStream?.Dispose();
                 Visiting.Dispose();
                 scope?.Dispose();
                 loadSlim.Dispose();
@@ -621,25 +549,28 @@ namespace Anf.ViewModels
 
         private async Task LoadLogoAsync(string address)
         {
-            var r = await OnLoadingLogoAsync(address);
-            if (r)
+            LoadingLogo = true;
+            try
             {
-                await OnLoadedLogoAsync(address, false);
-                return;
+                var r = await OnLoadingLogoAsync(address);
+                if (r)
+                {
+                    await OnLoadedLogoAsync(address, false);
+                    return;
+                }
+                if (LogoImage is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+                LogoImage = await StoreFetchHelper.GetAsOrFromCacheAsync(address,
+                    () => httpClient.GetStreamAsync(address),
+                    s => streamImageConverter.ToImageAsync(s));
+                await OnLoadedLogoAsync(address, true);
             }
-            logoStream?.Dispose();
-            if (LogoImage is IDisposable disposable)
+            finally
             {
-                disposable.Dispose();
+                LoadingLogo = false;
             }
-            using (var rep = await httpClient.GetAsync(address))
-            {
-                logoStream = recyclableMemoryStreamManager.GetStream();
-                await rep.Content.CopyToAsync(logoStream);
-                logoStream.Seek(0, SeekOrigin.Begin);
-                LogoImage = await streamImageConverter.ToImageAsync(logoStream);
-            }
-            await OnLoadedLogoAsync(address, true);
         }
         protected virtual Task<bool> OnLoadingLogoAsync(string address)
         {

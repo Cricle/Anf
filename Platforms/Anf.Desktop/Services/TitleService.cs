@@ -13,6 +13,9 @@ using System.Text;
 using System.Threading.Tasks;
 using Avalonia.Media;
 using Avalonia.Interactivity;
+using Avalonia.Controls.Primitives;
+using Anf.Desktop.Converters;
+using Avalonia.Themes.Fluent;
 
 namespace Anf.Desktop.Services
 {
@@ -21,11 +24,7 @@ namespace Anf.Desktop.Services
         public const double FontSizeFactor = 0.45d;
         public TitleService()
         {
-            GoBackButton = CreateIconButton("\xE72B");
-            GoBackButton.Click += GoBackButton_Click;
 
-            FavoriteButton = CreateIconButton("\xE735");
-            FavoriteButton.Click += FavoriteButton_Click;
 
             var tbx = new TextBlock
             {
@@ -35,7 +34,7 @@ namespace Anf.Desktop.Services
             TitleControl = tbx;
             tbx.Bind(TextBlock.TextProperty,new Binding(nameof(Title)) { Source = this });
             tbx.Bind(ToolTip.TipProperty, new Binding(nameof(Title)) { Source = this });
-            LeftControls = new ObservableCollection<IControl> { GoBackButton,FavoriteButton };
+            LeftControls = new SilentObservableCollection<IControl>();
         }
 
         private void FavoriteButton_Click(object sender, RoutedEventArgs e)
@@ -44,9 +43,40 @@ namespace Anf.Desktop.Services
             navSer.Navigate<BookshelfView>();
         }
 
-        private Button CreateIconButton(string text)
+        public void CreateControls()
         {
-            var btn = new Button
+            GoBackButton = CreateIconButton<Button>("\xE72B");
+            GoBackButton.Click += GoBackButton_Click;
+
+            FavoriteButton = CreateIconButton<Button>("\xE735");
+            FavoriteButton.Click += FavoriteButton_Click;
+
+            ThemeButton = CreateIconButton<ToggleButton>("\xE890");
+            themeService = AppEngine.GetRequiredService<ThemeService>();
+            ThemeButton.Bind(ToggleButton.IsCheckedProperty, new Binding(nameof(MainWindow.TransparencyLevelHint), BindingMode.TwoWay)
+            {
+                Source = themeService.MainWindow,
+                Converter = new BoolWindowTransparencyLevelConverter(),
+            });
+
+            NightButton = CreateIconButton<ToggleButton>("\xE71A");
+            NightButton.Bind(ToggleButton.IsCheckedProperty, new Binding(nameof(ThemeService.CurrentModel), BindingMode.TwoWay)
+            {
+                Source = themeService,
+                Converter = new BoolFluentThemeModeConverter(),
+            });
+
+            LeftControls.AddRange(new IControl[] { GoBackButton, FavoriteButton, ThemeButton, NightButton });
+        }
+
+
+
+        private ThemeService themeService;
+
+        private TButton CreateIconButton<TButton>(string text)
+            where TButton:Button,new()
+        {
+            var btn = new TButton
             {
                 Background = null,
                 HorizontalContentAlignment = HorizontalAlignment.Center,
@@ -118,10 +148,12 @@ namespace Anf.Desktop.Services
             }
         }
 
-        public Button GoBackButton { get; }
-        public Button FavoriteButton { get; }
+        public Button GoBackButton { get; private set; }
+        public Button FavoriteButton { get; private set; }
+        public ToggleButton ThemeButton { get; private set; }
+        public ToggleButton NightButton { get; private set; }
 
-        public ObservableCollection<IControl> LeftControls { get; }
+        public SilentObservableCollection<IControl> LeftControls { get; }
         public void UnBind()
         {
             binder?.Dispose();

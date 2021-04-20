@@ -28,16 +28,11 @@ namespace Anf.Desktop.Models
         {
             try
             {
-
-                using (var rep = await httpClient.GetAsync(Snapshot.ImageUri))
-                using (var stream = await rep.Content.ReadAsStreamAsync())
-                {
-                    LogoImage = new Bitmap(stream);
-                }
+                LogoImage = await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(Snapshot.ImageUri, () => httpClient.GetStreamAsync(Snapshot.ImageUri));
             }
-            catch (Exception)
+            catch (Exception) 
             {
-
+                //TODO: null img
             }
         }
 

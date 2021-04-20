@@ -8,7 +8,7 @@ namespace Anf.Desktop
     {
         public Task<IResourceFactory<Bitmap>> CreateAsync(ResourceFactoryCreateContext<Bitmap> context)
         {
-            return Task.FromResult<IResourceFactory<Bitmap>>(new AResourceCreator(context));
+            return Task.FromResult<IResourceFactory<Bitmap>>(new AResourceCreator(context.SourceProvider));
         }
     }
 }

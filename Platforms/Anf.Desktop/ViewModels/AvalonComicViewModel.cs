@@ -46,12 +46,7 @@ namespace Anf.Desktop.ViewModels
         {
             try
             {
-                //TODO: cache
-                using (var rep = await httpClient.GetAsync(Snapshot.ImageUri))
-                using (var stream = await rep.Content.ReadAsStreamAsync())
-                {
-                    LogoImage = new Bitmap(stream);
-                }
+                LogoImage = await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(Snapshot.ImageUri, () => httpClient.GetStreamAsync(Snapshot.ImageUri));
             }
             catch (Exception)
             {

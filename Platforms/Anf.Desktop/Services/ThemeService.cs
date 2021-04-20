@@ -1,8 +1,10 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
+using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.Themes.Fluent;
+using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -11,36 +13,31 @@ using System.Threading.Tasks;
 
 namespace Anf.Desktop.Services
 {
-    internal class ThemeService
+    internal class ThemeService : ObservableObject
     {
-
-        public ThemeService(FluentTheme fluentTheme, IClassicDesktopStyleApplicationLifetime app,
+        public ThemeService(IClassicDesktopStyleApplicationLifetime app,
             MainWindow window)
         {
-            FluentTheme = fluentTheme;
             App = app;
             MainWindow = window;
             InitWin();
+            SwitchModel(FluentThemeMode.Dark);
         }
-        public WindowTransparencyLevel TransparencyLevel
+        private FluentThemeMode currentModel;
+
+        public FluentThemeMode CurrentModel
         {
-            get => MainWindow.TransparencyLevelHint;
-            set => MainWindow.TransparencyLevelHint = value;
-        }
-        public SystemDecorations SystemDecorations
-        {
-            get => MainWindow.SystemDecorations;
-            set => MainWindow.SystemDecorations = value;
-        }
-        public FluentThemeMode Mode
-        {
-            get => FluentTheme.Mode;
+            get { return currentModel; }
             set
             {
-                FluentTheme.Mode = value;
+                if (currentModel==value)
+                {
+                    return;
+                }
+                Set(ref currentModel, value);
+                SwitchModel(value);
             }
         }
-        public FluentTheme FluentTheme { get; }
 
         public IClassicDesktopStyleApplicationLifetime App { get; }
 
@@ -68,7 +65,14 @@ namespace Anf.Desktop.Services
                         win.TransparencyLevelHint = WindowTransparencyLevel.AcrylicBlur;
                     }
                 });
-
+        }
+        private readonly FluentTheme lightTheme = new FluentTheme(new Uri("avares://Avalonia.Themes.Fluent/FluentLight.xaml"));
+        private readonly FluentTheme darkTheme = new FluentTheme(new Uri("avares://Avalonia.Themes.Fluent/FluentDark.xaml")) { Mode = FluentThemeMode.Dark };
+        public void SwitchModel(FluentThemeMode mode)
+        {
+            Application.Current.Styles[0]
+                = mode == FluentThemeMode.Dark ? darkTheme : lightTheme;
+            CurrentModel = mode;
         }
         public void DisEnableBlur()
         {

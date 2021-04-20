@@ -14,7 +14,7 @@ using Anf.Desktop.Models;
 
 namespace Anf.Desktop.ViewModels
 {
-    public class AvalonVisitingViewModel : VisitingViewModel<Bitmap, Bitmap,AvalonComicStoreBox>
+    public class AvalonVisitingViewModel : StoreBoxVisitingViewModel<Bitmap, Bitmap,AvalonComicStoreBox>
     {
         public static async Task<AvalonVisitingViewModel> CreateAsync(string address)
         {

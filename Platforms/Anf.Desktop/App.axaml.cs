@@ -96,18 +96,17 @@ namespace Anf.Desktop
             {
                 AppEngine.Services.AddSingleton(desktop);
                 AppEngine.Services.AddSingleton<MainWindow>();
-                AppEngine.GetRequiredService<ThemeService>();
+                var themeSer=AppEngine.GetRequiredService<ThemeService>();
                 var nav = AppEngine.GetRequiredService<MainNavigationService>();
                 var mainWin = AppEngine.GetRequiredService<MainWindow>();
                 desktop.MainWindow =mainWin;
                 //nav.Navigate(new VisitingView());
                 nav.Navigate<HomePage>();
-                AppEngine.GetRequiredService<TitleService>().Bind(mainWin);
+                var titleSer = AppEngine.GetRequiredService<TitleService>();
+                titleSer.Bind(mainWin);
                 mainWin.KeyDown += OnMainWinKeyDown;
-
-                //var vc = new VisitingControlView { DataContext = new AvalonVisitingViewModel() };
-                //var titleService = AppEngine.GetRequiredService<TitleService>();
-                //titleService.LeftControls.Add(vc);
+                titleSer.CreateControls();
+                //themeSer.EnableBlur();
 
             }
             base.OnFrameworkInitializationCompleted();

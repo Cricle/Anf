@@ -47,16 +47,6 @@ namespace Anf
         {
             XComicConst.EnsureDataFolderCreated();
 
-            var store = FileStoreService.FromMd5Default(XComicConst.CacheFolderPath);
-#if EnableBookshelfService
-            Services.AddSingleton<IBookshelfService, BookshelfService>();
-            Services.AddDbContext<ComicDbContext>(x =>
-            {
-                var builder = new SqliteConnectionStringBuilder();
-                builder.DataSource = XComicConst.DbFilePath;
-                x.UseSqlite(builder.ConnectionString);
-            },ServiceLifetime.Singleton);
-#endif
             Services.AddLogging();
             Services.AddEasyComic(type);
             Services.AddKnowEngines();
