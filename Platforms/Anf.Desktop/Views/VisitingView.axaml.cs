@@ -52,7 +52,7 @@ namespace Anf.Desktop.Views
                 vm.TransverseChanged += Vm_TransverseChanged;
                 rep = this.Get<ItemsRepeater>("Rep");
                 car = this.Get<Carousel>("Car");
-                this.KeyDown += Car_KeyDown;
+                this.KeyDown += OnCarKeyDown;
                 Vm_TransverseChanged(vm, vm.Transverse);
             }
             catch (Exception ex)
@@ -60,7 +60,7 @@ namespace Anf.Desktop.Views
                 vm.ExceptionService.Exception = ex;
             }
         }
-        private async void Car_KeyDown(object sender, KeyEventArgs e)
+        private async void OnCarKeyDown(object sender, KeyEventArgs e)
         {
             if (vm.Transverse)
             {
@@ -81,15 +81,41 @@ namespace Anf.Desktop.Views
         {
             if (arg2)
             {
-                rep.ElementPrepared -= OnElementPrepared;
+                rep.ElementPrepared -= OnRepElementPrepared;
+                rep.ElementIndexChanged -= OnRepElementIndexChanged;
                 car.SelectionChanged += OnSelectionChanged;
                 car.PointerReleased += OnCarPointerReleased;
             }
             else
             {
-                rep.ElementPrepared += OnElementPrepared;
+                rep.ElementPrepared += OnRepElementPrepared;
+                rep.ElementIndexChanged += OnRepElementIndexChanged;
                 car.SelectionChanged -= OnSelectionChanged;
                 car.PointerReleased -= OnCarPointerReleased;
+            }
+        }
+
+        private async void OnRepElementPrepared(object sender, ItemsRepeaterElementPreparedEventArgs e)
+        {
+            try
+            {
+                await vm.LoadResourceAsync(e.Index);
+            }
+            catch (Exception ex)
+            {
+                vm.ExceptionService.Exception = ex;
+            }
+        }
+
+        private async void OnRepElementIndexChanged(object sender, ItemsRepeaterElementIndexChangedEventArgs e)
+        {
+            try
+            {
+                await vm.LoadResourceAsync(e.NewIndex);
+            }
+            catch (Exception ex)
+            {
+                vm.ExceptionService.Exception = ex;
             }
         }
 
@@ -135,17 +161,6 @@ namespace Anf.Desktop.Views
             }
         }
 
-        private async void OnElementPrepared(object sender, ItemsRepeaterElementPreparedEventArgs e)
-        {
-            try
-            {
-                await vm.GoPageIndexAsync(e.Index);
-            }
-            catch (Exception ex)
-            {
-                vm.ExceptionService.Exception = ex;
-            }
-        }
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
             base.OnDetachedFromLogicalTree(e);

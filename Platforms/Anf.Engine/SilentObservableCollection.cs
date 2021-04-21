@@ -12,7 +12,19 @@ namespace System.Collections.ObjectModel
 	/// <typeparam name="T"></typeparam>
 	public class SilentObservableCollection<T> : ObservableCollection<T>
 	{
-		internal static class EventArgsCache
+        public SilentObservableCollection()
+        {
+        }
+
+        public SilentObservableCollection(IEnumerable<T> collection) : base(collection)
+        {
+        }
+
+        public SilentObservableCollection(List<T> list) : base(list)
+        {
+        }
+
+        internal static class EventArgsCache
 		{
 			internal static readonly PropertyChangedEventArgs CountPropertyChanged = new PropertyChangedEventArgs("Count");
 			internal static readonly PropertyChangedEventArgs IndexerPropertyChanged = new PropertyChangedEventArgs("Item[]");

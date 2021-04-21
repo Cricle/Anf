@@ -5,17 +5,20 @@ using System.Net.Http;
 using Anf.Platform.Services;
 using System.ComponentModel;
 using Anf.Platform.Models;
+using System;
 
 namespace Anf.ViewModels
 {
     public class StoreBoxVisitingViewModel<TResource, TImage, TStoreBox> : VisitingViewModel<TResource, TImage>
            where TStoreBox : ComicStoreBox
     {
-        public StoreBoxVisitingViewModel(IComicVisiting<TResource> visiting = null) : base(visiting)
+        public StoreBoxVisitingViewModel(Func<IServiceProvider, IComicVisiting<TResource>> visiting = null)
+            : base(visiting)
         {
         }
 
-        public StoreBoxVisitingViewModel(IComicVisiting<TResource> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<TImage> streamImageConverter) : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter)
+        public StoreBoxVisitingViewModel(IComicVisiting<TResource> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<TImage> streamImageConverter, IObservableCollectionFactory observableCollectionFactory)
+            : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter, observableCollectionFactory)
         {
         }
 

@@ -23,25 +23,19 @@ namespace Anf.ViewModels
 
 
         public HomeViewModel()
-            :this(AppEngine.GetRequiredService<SearchEngine>(),
-                 AppEngine.GetRequiredService<ComicEngine>())
         {
-
-        }
-
-        public HomeViewModel(SearchEngine searchEngine, ComicEngine comicEngine)
-        {
-            ComicEngine = comicEngine;
-            SearchEngine = searchEngine;
-            Snapshots = new SilentObservableCollection<ComicSnapshotInfo<TSourceInfo>>();
+            ComicEngine = AppEngine.GetRequiredService<ComicEngine>();
+            SearchEngine = AppEngine.GetRequiredService<SearchEngine>();
             SearchCommand = new RelayCommand(() => _ = SearchAsync());
             GoSourceCommand = new RelayCommand(GoSource);
             scope = AppEngine.CreateScope();
-            var type = searchEngine.FirstOrDefault();
+            var type = SearchEngine.FirstOrDefault();
             if (type != null)
             {
                 CurrentSearchProvider = (ISearchProvider)scope.ServiceProvider.GetRequiredService(type);
             }
+            observableCollectionFactory = AppEngine.GetRequiredService<IObservableCollectionFactory>();
+            Snapshots = observableCollectionFactory.Create<ComicSnapshotInfo<TSourceInfo>>();
         }
         protected readonly IServiceScope scope;
         private string keyword;
@@ -177,7 +171,8 @@ namespace Anf.ViewModels
         /// <summary>
         /// 漫画快照
         /// </summary>
-        public SilentObservableCollection<ComicSnapshotInfo<TSourceInfo>> Snapshots { get; }
+        public IList<ComicSnapshotInfo<TSourceInfo>> Snapshots { get; }
+        private readonly IObservableCollectionFactory observableCollectionFactory;
         /// <summary>
         /// 执行搜索
         /// </summary>
@@ -227,7 +222,7 @@ namespace Anf.ViewModels
             var sn = SearchResult.Snapshots;
             if (sn != null)
             {
-                Snapshots.AddRange(sn.Select(x => CreateSnapshotInfo(x)));
+                observableCollectionFactory.AddRange(Snapshots,sn.Select(x => CreateSnapshotInfo(x)));
                 AdditionCount = sn.Length;
             }
             else

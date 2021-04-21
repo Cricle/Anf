@@ -9,7 +9,7 @@
     <MSIXBuild>false</MSIXBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSIXBuild)'!='true'">
-    <TargetFrameworks>net472;net5.0</TargetFrameworks>
+    <TargetFrameworks>net472;net5.0;</TargetFrameworks>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSIXBuild)'=='true'">
     <TargetFramework>net472</TargetFramework>
@@ -35,8 +35,11 @@
     <PackageReference Include="Avalonia" Version="0.10.0" />
     <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.7.2" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseFody)'=='true'">
     <PackageReference Include="Costura.Fody" Version="5.1.0">
@@ -70,5 +73,10 @@
   <ItemGroup>
     <ProjectReference Include="..\Anf.Platform\Anf.Platform.csproj" />
     <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
 </Project>

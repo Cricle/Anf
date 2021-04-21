@@ -83,6 +83,14 @@
         </DataTemplate>
       </Carousel.ItemTemplate>
     </Carousel>
+    <Grid IsVisible="{Binding Transverse}">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Border Cursor="LeftSide"/>
+      <Border Cursor="RightSide" Grid.Column="1"/>
+    </Grid>
     <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsVisible="{Binding Transverse,Converter={StaticResource RevBoolConverter}}">
       <ItemsRepeater Name="Rep"
                      Background="{x:Null}"

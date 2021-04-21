@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Anf.Services;
+using System.Diagnostics;
 
 namespace Anf.Models
 {
@@ -95,6 +96,7 @@ namespace Anf.Models
         public RelayCommand CopyExceptionCommand { get; protected set; }
 
         public event Action<ComicPageInfo<TResource>> LoadDone;
+        public event Action<ComicPageInfo<TResource>,Exception> LoadException;
         private void Init()
         {
             LoadCommand = new RelayCommand(() => _ = LoadAsync());
@@ -108,30 +110,50 @@ namespace Anf.Models
             Interlocked.Exchange(ref locker, SharedObject);
             return LoadAsync();
         }
+        private IPlatformService PlatformService => AppEngine.GetRequiredService<IPlatformService>();
         public Task OpenAsync()
         {
-           return AppEngine.GetRequiredService<IPlatformService>()
-                .OpenAddressAsync(VisitPage.Page.TargetUrl);
+            if (VisitPage is null)
+            {
+                return Task.CompletedTask;
+            }
+           return PlatformService.OpenAddressAsync(VisitPage.Page.TargetUrl);
         }
         public void Copy()
         {
-            AppEngine.GetRequiredService<IPlatformService>()
-                .Copy(VisitPage.Page.TargetUrl);
+            if (VisitPage != null)
+            {
+                PlatformService.Copy(VisitPage.Page.TargetUrl);
+            }
         }
         public void CopyException()
         {
             if (Exception != null)
             {
-                AppEngine.GetRequiredService<IPlatformService>()
-                    .Copy(Exception.ToString());
+                PlatformService.Copy(Exception.ToString());
             }
         }
+
+        public void Release()
+        {
+            if (VisitPage != null && Interlocked.CompareExchange(ref locker, locker, null) != null)
+            {
+                HasException = false;
+                LoadSucceed = false;
+                var vp = VisitPage;
+                VisitPage = null;
+                task = null;
+                if (vp.Resource is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+        }
+
         public async Task LoadAsync()
         {
-            if (PageSlots is null)
-            {
-                return;
-            }
+            Debug.Assert(PageSlots != null);
+
             if (Interlocked.CompareExchange(ref locker, null, locker) != null)
             {
                 HasException = false;
@@ -150,6 +172,7 @@ namespace Anf.Models
                     task = null;
                     HasException = true;
                     Interlocked.CompareExchange(ref locker, SharedObject, null);
+                    LoadException?.Invoke(this, ex);
                 }
                 finally
                 {

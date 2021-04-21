@@ -17,13 +17,13 @@
   </UserControl.ContextMenu>
 
   <Grid>
-    <ItemsControl Items="{Binding StoreBoxs}" Background="{x:Null}">
-      <ItemsControl.ItemsPanel>
+    <ListBox Items="{Binding StoreBoxs}" Background="{x:Null}">
+      <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
           <WrapPanel Orientation="Horizontal"/>
         </ItemsPanelTemplate>
-      </ItemsControl.ItemsPanel>
-      <ItemsControl.ItemTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
         <DataTemplate>
           <Grid Margin="3">
             <Grid.ContextMenu>
@@ -73,8 +73,8 @@
             </Border>
           </Grid>
         </DataTemplate>
-      </ItemsControl.ItemTemplate>
-    </ItemsControl>
+      </ListBox.ItemTemplate>
+    </ListBox>
     <ProgressBar VerticalAlignment="Bottom"
                  IsIndeterminate="{Binding IsUpdating}"
                  IsVisible="{Binding IsUpdating}"

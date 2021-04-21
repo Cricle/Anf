@@ -8,6 +8,7 @@ using System.Collections.ObjectModel;
 using System.Net.Http;
 using Avalonia.Media.Imaging;
 using Anf.Platform.Models;
+using Avalonia.Collections;
 
 namespace Anf.Desktop.ViewModels
 {
@@ -16,21 +17,14 @@ namespace Anf.Desktop.ViewModels
         public AvalonHomeViewModel()
         {
             httpClient = AppEngine.GetRequiredService<HttpClient>();
-            EngineIcons = new ObservableCollection<EngineInfo>();
+            EngineIcons = new AvaloniaList<EngineInfo>();
             LoadEngineIcons();
         }
 
-        public AvalonHomeViewModel(SearchEngine searchEngine,ComicEngine comicEngine)
-            : base(searchEngine,comicEngine)
-        {
-            httpClient = AppEngine.GetRequiredService<HttpClient>();
-            EngineIcons = new ObservableCollection<EngineInfo>();
-            LoadEngineIcons();
-        }
         private ComicSnapshotInfo<AvalonStorableComicSourceInfo> usingShapshot;
         private readonly HttpClient httpClient;
 
-        public ObservableCollection<EngineInfo> EngineIcons { get; }
+        public AvaloniaList<EngineInfo> EngineIcons { get; }
         protected override void OnBeginSearch()
         {
             DisposeSnapshot();
@@ -41,10 +35,10 @@ namespace Anf.Desktop.ViewModels
             {
                 try
                 {
-                    using (var stream = await httpClient.GetAsync(item.FaviconAddress))
-                    using (var s = await stream.Content.ReadAsStreamAsync())
+                    using(var rep=await httpClient.GetAsync(item.FaviconAddress))
+                    using (var stream = await rep.Content.ReadAsStreamAsync())
                     {
-                        var bitmap = new Bitmap(s);
+                        var bitmap = new Bitmap(stream);
                         EngineIcons.Add(new EngineInfo { Bitmap = bitmap, Condition = item });
                     }
                 }

@@ -10,17 +10,40 @@ namespace Anf.Platform
 {
     public static class StoreFetchHelper
     {
-        public static async Task<Stream> GetOrFromCacheAsync(string address, Func<Task<Stream>> streamCreator, bool notUseCache = false)
+        private static StoreFetchSettings defaultStoreFetchSettings = StoreFetchSettings.DefaultCache;
+
+        public static StoreFetchSettings DefaultStoreFetchSettings
+        {
+            get => defaultStoreFetchSettings;
+            set
+            {
+                if (value is null)
+                {
+                    throw new ArgumentNullException();
+                }
+                defaultStoreFetchSettings = value;
+            }
+        }
+
+        public static async Task<Stream> GetOrFromCacheAsync(string address, Func<Task<Stream>> streamCreator, StoreFetchSettings settings = null)
         {
             var storeService = AppEngine.GetRequiredService<IStoreService>();
             Stream stream = null;
-            if (!notUseCache)
+            if (settings is null)
+            {
+                settings = DefaultStoreFetchSettings;
+            }
+            if (!settings.ForceNoCache)
             {
                 var str = await storeService.GetPathAsync(address);
                 if (File.Exists(str))
                 {
-                    stream = File.OpenRead(str);
-                    return stream;
+                    if (settings.ExpiresTime == null ||
+                        (DateTime.Now - File.GetLastWriteTime(str)) < settings.ExpiresTime)
+                    {
+                        stream = File.OpenRead(str);
+                        return stream;
+                    }
                 }
             }
             var recyclableMemoryStreamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
@@ -59,7 +82,7 @@ namespace Anf.Platform
             {
                 try
                 {
-                    stream = await GetOrFromCacheAsync(address, streamCreator, true);
+                    stream = await GetOrFromCacheAsync(address, streamCreator, StoreFetchSettings.NoCache);
                     return await converter(stream);
                 }
                 catch (Exception)
