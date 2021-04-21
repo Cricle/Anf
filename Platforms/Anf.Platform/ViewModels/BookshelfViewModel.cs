@@ -18,13 +18,16 @@ namespace Anf.ViewModels
         public BookshelfViewModel()
         {
             StoreService = AppEngine.GetRequiredService<ComicStoreService<TStoreBox>>();
+            observableCollectionFactory = AppEngine.GetRequiredService<IObservableCollectionFactory>();
             NextCommand = new RelayCommand(Next);
             FlushCommand = new RelayCommand(Load);
             RemoveCommand = new RelayCommand(Remove);
             UpdateCommand = new RelayCommand(() => _ = UpdateAsync());
-            StoreBoxs = new ObservableCollection<TStoreBox>();
+            StoreBoxs = observableCollectionFactory.Create<TStoreBox>();
             Load();
         }
+        private readonly IObservableCollectionFactory observableCollectionFactory;
+
         private IEnumerator<FileInfo> boxEnum;
         private TStoreBox currentBox;
         private int pageSize = DefaultPageSize;
@@ -81,7 +84,7 @@ namespace Anf.ViewModels
 
         public ComicStoreService<TStoreBox> StoreService { get; }
 
-        public ObservableCollection<TStoreBox> StoreBoxs { get; }
+        public IList<TStoreBox> StoreBoxs { get; }
 
         public RelayCommand NextCommand { get; }
         public RelayCommand FlushCommand { get; }

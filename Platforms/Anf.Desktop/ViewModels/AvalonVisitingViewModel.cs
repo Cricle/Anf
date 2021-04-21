@@ -11,14 +11,22 @@ using System.Threading.Tasks;
 using Avalonia.Controls.PanAndZoom;
 using Anf.Desktop.Services;
 using Anf.Desktop.Models;
+using Anf.Platform.Services;
+using Microsoft.Extensions.DependencyInjection;
+using Anf.Platform;
 
 namespace Anf.Desktop.ViewModels
 {
     public class AvalonVisitingViewModel : StoreBoxVisitingViewModel<Bitmap, Bitmap,AvalonComicStoreBox>
     {
-        public static async Task<AvalonVisitingViewModel> CreateAsync(string address)
+        public static async Task<AvalonVisitingViewModel> CreateAsync(string address,bool usingStore=false)
         {
-            var vm = new AvalonVisitingViewModel();
+            var vm = new AvalonVisitingViewModel(x=> 
+            {
+                var visiting=x.GetRequiredService<StoreComicVisiting<Bitmap>>();
+                visiting.UseStore = usingStore;
+                return visiting;
+            });
             var ok = await vm.Visiting.LoadAsync(address);
             if (ok)
             {
@@ -31,14 +39,14 @@ namespace Anf.Desktop.ViewModels
         {
             AvalonInit();
         }
-        public AvalonVisitingViewModel(IComicVisiting<Bitmap> visiting = null)
+        public AvalonVisitingViewModel(Func<IServiceProvider,IComicVisiting<Bitmap>> visiting = null)
             : base(visiting)
         {
             AvalonInit();
         }
 
-        public AvalonVisitingViewModel(IComicVisiting<Bitmap> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<Bitmap> streamImageConverter)
-            : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter)
+        public AvalonVisitingViewModel(IComicVisiting<Bitmap> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<Bitmap> streamImageConverter,IObservableCollectionFactory observableCollectionFactory)
+            : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter, observableCollectionFactory)
         {
             AvalonInit();
         }
@@ -53,6 +61,20 @@ namespace Anf.Desktop.ViewModels
         private double minHeight;
         private ComicPageInfo<Bitmap> selectedResource;
         private bool statusShow;
+        private bool loadAllModel;
+
+        public bool LoadAllModel
+        {
+            get { return loadAllModel; }
+            set
+            {
+                Set(ref loadAllModel, value);
+                if (value)
+                {
+                    _ = LoadAllAsync();
+                }
+            }
+        }
 
         public bool StatusShow
         {
@@ -210,7 +232,10 @@ namespace Anf.Desktop.ViewModels
                 TitleService.Title = $"Anf - {ComicEntity.Name} - {cursor.Current.ChapterWithPage.Chapter.Title}";
                 base.OnCurrentChaterCursorChanged(cursor);
                 SelectedResource = null;
-                await LoadAllAsync();
+                if (loadAllModel)
+                {
+                    await LoadAllAsync();
+                }
             }
             catch (Exception ex)
             {

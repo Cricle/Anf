@@ -20,6 +20,10 @@ using System.Threading.Tasks;
 using Anf.Desktop.ViewModels;
 using Anf.Platform.Services;
 using Anf.Desktop.Models;
+using Anf.Platform;
+using Microsoft.Extensions.Logging;
+using NLog.Extensions.Logging;
+using Microsoft.Extensions.Configuration;
 
 namespace Anf.Desktop
 {
@@ -82,10 +86,15 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton<ExceptionService>();
             var storeSer = new AvalonComicStoreService(new DirectoryInfo(Path.Combine(basePath, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
             AppEngine.Services.AddSingleton(storeSer);
+            AppEngine.Services.AddSingleton<IObservableCollectionFactory>(new AvaloniaObservableCollectionFactory());
             AppEngine.Services.AddSingleton<ComicStoreService<AvalonComicStoreBox>>(storeSer);
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(basePath, HistoryService.HistoryFileName)));
-            AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, ComicVisiting<Bitmap>>();
-
+            AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, StoreComicVisiting<Bitmap>>();
+            AppEngine.Services.AddScoped<StoreComicVisiting<Bitmap>>();
+            var configBuilder = new ConfigurationBuilder();
+            AppEngine.Services.AddSingleton(x => configBuilder.Build());
+            AppEngine.Services.AddSingleton<IConfiguration>(x => x.GetRequiredService<IConfigurationRoot>());
+            AppEngine.Services.AddLogging(x => x.ClearProviders().AddNLog("NLog.config"));
         }
 
         public override void OnFrameworkInitializationCompleted()

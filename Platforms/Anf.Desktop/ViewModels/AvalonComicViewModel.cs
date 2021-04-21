@@ -49,17 +49,18 @@ namespace Anf.Desktop.ViewModels
         {
             try
             {
-                LogoImage = await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(Snapshot.ImageUri, () => httpClient.GetStreamAsync(Snapshot.ImageUri));
+                LogoImage = await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(Snapshot.ImageUri, async () =>
+                {
+                    var req = await httpClient.GetAsync(Snapshot.ImageUri);
+                    return await req.Content.ReadAsStreamAsync();
+                });
             }
             catch (Exception) { }
         }
 
         public void Dispose()
         {
-            if (httpClient !=null)
-            {
-                LogoImage?.Dispose();
-            }
+            LogoImage?.Dispose();
         }
     }
 }

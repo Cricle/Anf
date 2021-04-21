@@ -14,12 +14,14 @@ using System.Threading.Tasks;
 using Anf.Services;
 using Newtonsoft.Json;
 using Anf.Platform;
+using Anf.Platform.Services;
+using System.Collections.Generic;
 
 namespace Anf.ViewModels
 {
     public class VisitingViewModel<TResource, TImage> : ViewModelBase, IDisposable
     {
-        public VisitingViewModel(IComicVisiting<TResource> visiting = null)
+        public VisitingViewModel(Func<IServiceProvider, IComicVisiting<TResource>> visiting = null)
         {
             InitService(scope.ServiceProvider, visiting);
             InitVisiting();
@@ -28,15 +30,18 @@ namespace Anf.ViewModels
             IComicVisiting<TResource> visiting,
             HttpClient httpClient,
             RecyclableMemoryStreamManager recyclableMemoryStreamManager,
-            IStreamImageConverter<TImage> streamImageConverter)
+            IStreamImageConverter<TImage> streamImageConverter,
+            IObservableCollectionFactory observableCollectionFactory)
         {
             this.streamImageConverter = streamImageConverter ?? throw new ArgumentNullException(nameof(streamImageConverter));
             this.recyclableMemoryStreamManager = recyclableMemoryStreamManager ?? throw new ArgumentNullException(nameof(recyclableMemoryStreamManager));
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.visiting = visiting ?? throw new ArgumentNullException(nameof(visiting));
+            this.observableCollectionFactory = observableCollectionFactory ?? throw new ArgumentNullException(nameof(observableCollectionFactory));
             InitVisiting();
         }
         private readonly SemaphoreSlim loadSlim = new SemaphoreSlim(1);
+        private IObservableCollectionFactory observableCollectionFactory;
         private CancellationTokenSource loadCancellationTokenSource;
         protected readonly IServiceScope scope = AppEngine.CreateScope();
         protected IStreamImageConverter<TImage> streamImageConverter;
@@ -191,7 +196,7 @@ namespace Anf.ViewModels
 
         private static IPlatformService PlatformService => AppEngine.GetRequiredService<IPlatformService>();
 
-        public SilentObservableCollection<ComicPageInfo<TResource>> Resources { get; protected set; }
+        public IList<ComicPageInfo<TResource>> Resources { get; protected set; }
 
 
         public event Action<IDataCursor<IComicVisitPage<TResource>>, int> PageCursorMoved;
@@ -224,12 +229,13 @@ namespace Anf.ViewModels
             PlatformService.Copy(CurrentChapter.TargetUrl);
         }
 
-        protected void InitService(IServiceProvider provider, IComicVisiting<TResource> visiting = null)
+        protected void InitService(IServiceProvider provider, Func<IServiceProvider,IComicVisiting<TResource>> visiting = null)
         {
-            this.visiting = visiting ?? provider.GetRequiredService<IComicVisiting<TResource>>();
+            this.visiting = visiting?.Invoke(provider) ?? provider.GetRequiredService<IComicVisiting<TResource>>();
             httpClient = provider.GetRequiredService<HttpClient>();
             recyclableMemoryStreamManager = provider.GetRequiredService<RecyclableMemoryStreamManager>();
             streamImageConverter = provider.GetRequiredService<IStreamImageConverter<TImage>>();
+            observableCollectionFactory = provider.GetRequiredService<IObservableCollectionFactory>();
         }
         protected virtual void OnLoadingChanged(bool loading)
         {
@@ -252,6 +258,24 @@ namespace Anf.ViewModels
                 await enu.Current.LoadAsync();
             }
             return count;
+        }
+        public ComicPageInfo<TResource> GetResource(int i)
+        {
+            var res = Resources;
+            if (i >= 0 && i < res.Count)
+            {
+                return res[i];
+            }
+            return null;
+        }
+        public Task LoadResourceAsync(int i)
+        {
+            var res = GetResource(i);
+            if (res!=null)
+            {
+                return res.LoadAsync();
+            }
+            return Task.CompletedTask;
         }
         #region CursorMove
         public Task<bool> FirstPageAsync()
@@ -382,7 +406,7 @@ namespace Anf.ViewModels
             CopyComicEntityCommand = new RelayCommand(CopyComicEntity);
             CopyChapterCommand = new RelayCommand(CopyChapter);
 
-            Resources = new SilentObservableCollection<ComicPageInfo<TResource>>();
+            Resources = observableCollectionFactory.Create<ComicPageInfo<TResource>>();
             if (Visiting.IsLoad())
             {
                 _ = Init();
@@ -450,6 +474,10 @@ namespace Anf.ViewModels
             loadCancellationTokenSource?.Dispose();
             foreach (var item in Resources)
             {
+                if (item.Resource is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
                 item.LoadDone -= OnItemLoadDone;
             }
             ResourceLoadCount = 0;
@@ -471,7 +499,7 @@ namespace Anf.ViewModels
             PageSlots = ps;
             var datas = Enumerable.Range(0, PageSlots.Size)
                 .Select(x => CreatePageInfo(ps, x));
-            Resources.AddRange(datas);
+            observableCollectionFactory.AddRange(Resources, datas);
             foreach (var item in Resources)
             {
                 item.LoadDone += OnItemLoadDone;
