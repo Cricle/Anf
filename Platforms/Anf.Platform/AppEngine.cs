@@ -13,6 +13,7 @@ using Anf.Easy.Store;
 using JavaScriptEngineSwitcher.Core;
 using JavaScriptEngineSwitcher.Jint;
 using Anf.KnowEngines;
+using Microsoft.Extensions.Logging;
 
 namespace Anf
 {
@@ -66,6 +67,10 @@ namespace Anf
         public static T GetRequiredService<T>()
         {
             return Provider.GetRequiredService<T>();
+        }
+        public static ILogger<T> GetLogger<T>()
+        {
+            return Provider.GetRequiredService<ILoggerFactory>().CreateLogger<T>();
         }
         public static object GetRequiredService(Type type)
         {

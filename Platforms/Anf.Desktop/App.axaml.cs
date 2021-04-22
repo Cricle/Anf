@@ -24,6 +24,8 @@ using Anf.Platform;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
+using Ao.SavableConfig;
+using Microsoft.Extensions.FileProviders;
 
 namespace Anf.Desktop
 {
@@ -45,13 +47,18 @@ namespace Anf.Desktop
         {
             var exser = AppEngine.GetRequiredService<ExceptionService>();
             exser.Exception = e.Exception;
+            var logger = AppEngine.GetLogger<App>();
+            logger.LogError(e.Exception, sender?.ToString() ?? string.Empty);
             e.SetObserved();
         }
 
         private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
         {
             var exser = AppEngine.GetRequiredService<ExceptionService>();
-            exser.Exception = e.ExceptionObject as Exception;
+            var ex = e.ExceptionObject as Exception;
+            var logger = AppEngine.GetLogger<App>();
+            logger.LogError(ex, sender?.ToString() ?? string.Empty);
+            exser.Exception = ex;
         }
 
         private void InitServices()
@@ -91,10 +98,20 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(basePath, HistoryService.HistoryFileName)));
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, StoreComicVisiting<Bitmap>>();
             AppEngine.Services.AddScoped<StoreComicVisiting<Bitmap>>();
-            var configBuilder = new ConfigurationBuilder();
-            AppEngine.Services.AddSingleton(x => configBuilder.Build());
-            AppEngine.Services.AddSingleton<IConfiguration>(x => x.GetRequiredService<IConfigurationRoot>());
+            AppEngine.Services.AddSingleton<AnfSetting>();
+            var configRoot = BuildConfiguration();
+            AppEngine.Services.AddSingleton(configRoot);
+            AppEngine.Services.AddSingleton<IConfiguration>(configRoot);
+            AppEngine.Services.AddSingleton<IConfigurationRoot>(configRoot);
             AppEngine.Services.AddLogging(x => x.ClearProviders().AddNLog("NLog.config"));
+        }
+
+        private SavableConfigurationRoot BuildConfiguration()
+        {
+            var configBuilder = new SavableConfiurationBuilder();
+            configBuilder.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
+            configBuilder.AddJsonFile(XComicConst.SettingFileFolder,true,true);
+            return configBuilder.Build();
         }
 
         public override void OnFrameworkInitializationCompleted()
@@ -103,18 +120,16 @@ namespace Anf.Desktop
             {
                 AppEngine.Services.AddSingleton(desktop);
                 AppEngine.Services.AddSingleton<MainWindow>();
-                var themeSer=AppEngine.GetRequiredService<ThemeService>();
+                var themeSer = AppEngine.GetRequiredService<ThemeService>();
                 var nav = AppEngine.GetRequiredService<MainNavigationService>();
                 var mainWin = AppEngine.GetRequiredService<MainWindow>();
-                desktop.MainWindow =mainWin;
+                desktop.MainWindow = mainWin;
                 //nav.Navigate(new VisitingView());
                 nav.Navigate<HomePage>();
                 var titleSer = AppEngine.GetRequiredService<TitleService>();
                 titleSer.Bind(mainWin);
                 mainWin.KeyDown += OnMainWinKeyDown;
                 titleSer.CreateControls();
-                //themeSer.EnableBlur();
-
             }
             base.OnFrameworkInitializationCompleted();
         }

@@ -20,6 +20,13 @@ namespace Anf.Models
         private TResource resource;
         private bool loadSucceed;
         private bool hasException;
+        private bool emitLoad;
+
+        public bool EmitLoad
+        {
+            get { return emitLoad; }
+            private set => Set(ref emitLoad, value);
+        }
 
         public bool HasException
         {
@@ -95,6 +102,7 @@ namespace Anf.Models
         public RelayCommand OpenCommand { get; protected set; }
         public RelayCommand CopyExceptionCommand { get; protected set; }
 
+        public event Action<ComicPageInfo<TResource>> SkipAtConcurrent;
         public event Action<ComicPageInfo<TResource>> LoadDone;
         public event Action<ComicPageInfo<TResource>,Exception> LoadException;
         private void Init()
@@ -140,6 +148,7 @@ namespace Anf.Models
             {
                 HasException = false;
                 LoadSucceed = false;
+                EmitLoad = false;
                 var vp = VisitPage;
                 VisitPage = null;
                 task = null;
@@ -153,35 +162,42 @@ namespace Anf.Models
         public async Task LoadAsync()
         {
             Debug.Assert(PageSlots != null);
-
-            if (Interlocked.CompareExchange(ref locker, null, locker) != null)
+            try
             {
-                HasException = false;
-                LoadSucceed = false;
-                Loading = true;
-                try
+                if (Interlocked.CompareExchange(ref locker, null, locker) != null)
                 {
-                    task = PageSlots.GetAsync(Index);
-                    VisitPage = await task;
-                    Resource = VisitPage.Resource;
-                    LoadSucceed = true;
+                    HasException = false;
+                    LoadSucceed = false;
+                    Loading = true;
+                    try
+                    {
+                        task = PageSlots.GetAsync(Index);
+                        VisitPage = await task;
+                        Resource = VisitPage.Resource;
+                        LoadSucceed = true;
+                    }
+                    catch (Exception ex)
+                    {
+                        Exception = ex;
+                        task = null;
+                        HasException = true;
+                        Interlocked.CompareExchange(ref locker, SharedObject, null);
+                        LoadException?.Invoke(this, ex);
+                    }
+                    finally
+                    {
+                        Loading = false;
+                    }
                 }
-                catch (Exception ex)
+                else
                 {
-                    Exception = ex;
-                    task = null;
-                    HasException = true;
-                    Interlocked.CompareExchange(ref locker, SharedObject, null);
-                    LoadException?.Invoke(this, ex);
-                }
-                finally
-                {
-                    Loading = false;
+                    await task;
+                    SkipAtConcurrent?.Invoke(this);
                 }
             }
-            else
+            finally
             {
-                await task;
+                EmitLoad = true;
             }
         }
     }

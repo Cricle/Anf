@@ -1,0 +1,55 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="50"
+             Background="{x:Null}"
+             x:Class="Anf.Desktop.SettingsControlView">
+  <UserControl.Styles>
+    <StyleInclude Source="avares://Anf.Desktop/Styles/controling.axaml"/>
+    <Style Selector="ToggleButton">
+      <Setter Property="FontSize" Value="{Binding TitleService.AdviseFontSize}"/>
+    </Style>
+  </UserControl.Styles>
+  <Grid>
+    <StackPanel Orientation="Horizontal">
+      <ToggleButton x:Name="SettingBtn"
+                    Classes="control part"
+                    Background="{x:Null}"
+                    ToolTip.Tip="可以很好看">
+        <TextBlock Classes="segoblock" Text="&#xE8B1;" Foreground="{Binding TitleService.AdviseFontSize}"/>
+      </ToggleButton>
+    </StackPanel>
+    <Popup IsOpen="{Binding ElementName=SettingBtn,Path=IsChecked,Mode=TwoWay}"
+           PlacementMode="Bottom"
+           PlacementAnchor="Bottom"
+           StaysOpen="False"
+           PlacementTarget="{Binding ElementName=SettingBtn}">
+      <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+              CornerRadius="6"
+              Padding="12">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="60"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+          </Grid.RowDefinitions>
+          <TextBlock Text="亚克力" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding ThemeService.MainWindow.TransparencyLevelHint,Mode=TwoWay,Converter={StaticResource BoolWindowTransparencyLevelConverter}}"
+                        Grid.Column="1"/>
+          <TextBlock Grid.Row="1" Text="黑主题" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding ThemeService.CurrentModel,Mode=TwoWay,Converter={StaticResource BoolFluentThemeModeConverter}}"
+                        Grid.Column="1"
+                        Grid.Row="1"/>
+        </Grid>
+      </Border>
+    </Popup>
+  </Grid>
+</UserControl>

@@ -24,8 +24,6 @@ namespace Anf.Desktop.Services
         public const double FontSizeFactor = 0.45d;
         public TitleService()
         {
-
-
             var tbx = new TextBlock
             {
                 MaxWidth = 300,
@@ -51,27 +49,11 @@ namespace Anf.Desktop.Services
             FavoriteButton = CreateIconButton<Button>("\xE735");
             FavoriteButton.Click += FavoriteButton_Click;
 
-            ThemeButton = CreateIconButton<ToggleButton>("\xE890");
-            themeService = AppEngine.GetRequiredService<ThemeService>();
-            ThemeButton.Bind(ToggleButton.IsCheckedProperty, new Binding(nameof(MainWindow.TransparencyLevelHint), BindingMode.TwoWay)
-            {
-                Source = themeService.MainWindow,
-                Converter = new BoolWindowTransparencyLevelConverter(),
-            });
+            var v = new SettingsControlView();
 
-            NightButton = CreateIconButton<ToggleButton>("\xE71A");
-            NightButton.Bind(ToggleButton.IsCheckedProperty, new Binding(nameof(ThemeService.CurrentModel), BindingMode.TwoWay)
-            {
-                Source = themeService,
-                Converter = new BoolFluentThemeModeConverter(),
-            });
-
-            LeftControls.AddRange(new IControl[] { GoBackButton, FavoriteButton, ThemeButton, NightButton });
+            LeftControls.AddRange(new IControl[] { GoBackButton, FavoriteButton,v });
         }
 
-
-
-        private ThemeService themeService;
 
         private TButton CreateIconButton<TButton>(string text)
             where TButton:Button,new()
@@ -91,13 +73,13 @@ namespace Anf.Desktop.Services
             btn.Bind(Button.FontSizeProperty, new Binding(nameof(AdviseFontSize)) { Source = this });
             return btn;
         }
-        private void GoBackButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void GoBackButton_Click(object sender, RoutedEventArgs e)
         {
             var navSer = AppEngine.GetRequiredService<MainNavigationService>();
             navSer.GoBack();
         }
 
-        private void BackButton_Click(object sender, Avalonia.Interactivity.RoutedEventArgs e)
+        private void BackButton_Click(object sender, RoutedEventArgs e)
         {
             var navSer = AppEngine.GetRequiredService<INavigationService>();
             navSer.GoBack();
@@ -150,8 +132,6 @@ namespace Anf.Desktop.Services
 
         public Button GoBackButton { get; private set; }
         public Button FavoriteButton { get; private set; }
-        public ToggleButton ThemeButton { get; private set; }
-        public ToggleButton NightButton { get; private set; }
 
         public SilentObservableCollection<IControl> LeftControls { get; }
         public void UnBind()
