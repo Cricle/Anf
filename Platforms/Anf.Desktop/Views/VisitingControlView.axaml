@@ -13,25 +13,17 @@
     <conv:StretchModeConverter x:Key="StretchModeConverter"/>
   </StackPanel.Resources>
   <StackPanel.Styles>
-    <Style Selector="Control.center">
-      <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="HorizontalAlignment" Value="Center"/>
-    </Style>
+    <StyleInclude Source="avares://Anf.Desktop/Styles/controling.axaml"/>
     <Style Selector="Button">
       <Setter Property="FontSize" Value="{Binding TitleService.AdviseFontSize}"/>
     </Style>
     <Style Selector="ToggleButton">
       <Setter Property="FontSize" Value="{Binding TitleService.AdviseFontSize}"/>
     </Style>
-    <Style Selector="Button.control">
-      <Setter Property="Background" Value="Transparent"/>
-      <Setter Property="VerticalContentAlignment" Value="Center"/>
-      <Setter Property="HorizontalContentAlignment" Value="Center"/>
-    </Style>
   </StackPanel.Styles>
   <StackPanel Orientation="Horizontal">
     <Button x:Name="ChapterSelector" Classes="control">
-      <TextBlock Classes="segoblock" Text="&#xEA37;"/>
+      <TextBlock Classes="segoblock" Text="&#xEA37;" FontSize="{Binding TitleService.AdviseFontSize}"/>
       <ToolTip.Tip>
         <StackPanel Orientation="Horizontal">
           <TextBlock>展开章节列表</TextBlock>
@@ -63,7 +55,7 @@
                   Background="{x:Null}"
                   IsChecked="{Binding Transverse,Mode=TwoWay}"
                   ToolTip.Tip="横向模式">
-      <TextBlock Classes="segoblock" Text="&#xE8EA;"/>
+      <TextBlock Classes="segoblock" Text="&#xE8EA;" FontSize="{Binding TitleService.AdviseFontSize}"/>
     </ToggleButton>
   </StackPanel>
   <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" IsVisible="{Binding Transverse}">
@@ -71,7 +63,7 @@
                   Classes="control part"
                   Background="{x:Null}"
                   ToolTip.Tip="观察模式">
-      <TextBlock Classes="segoblock" Text="&#xE7A8;"/>
+      <TextBlock Classes="segoblock" Text="&#xE7A8;" FontSize="{Binding TitleService.AdviseFontSize}"/>
     </ToggleButton>
   </StackPanel>
   <StackPanel Orientation="Horizontal">
@@ -79,7 +71,7 @@
                   Classes="control"
                   Background="{x:Null}"
                    ToolTip.Tip="分享">
-      <TextBlock Classes="segoblock" Text="&#xE72D;"/>
+      <TextBlock Classes="segoblock" Text="&#xE72D;" FontSize="{Binding TitleService.AdviseFontSize}"/>
     </ToggleButton>
     <!---->
     <ToggleButton Classes="control"
@@ -88,8 +80,8 @@
                   Command="{Binding ToggleStoreCommand}"
                   Background="{x:Null}">
       <Grid>
-        <TextBlock Classes="segoblock" Text="&#xE735;" IsVisible="{Binding HasStoreBox,Converter={StaticResource RevBoolConverter}}"/>
-        <TextBlock Classes="segoblock" Foreground="OrangeRed" Text="&#xE735;" IsVisible="{Binding HasStoreBox}"/>
+        <TextBlock Classes="segoblock" FontSize="{Binding TitleService.AdviseFontSize}" Text="&#xE735;" IsVisible="{Binding HasStoreBox,Converter={StaticResource RevBoolConverter}}"/>
+        <TextBlock Classes="segoblock" FontSize="{Binding TitleService.AdviseFontSize}" Foreground="OrangeRed" Text="&#xE735;" IsVisible="{Binding HasStoreBox}"/>
       </Grid>
     </ToggleButton>
     <!--<ToggleButton Classes="control"
@@ -108,7 +100,7 @@
     <ToggleButton Background="{x:Null}"
                   IsChecked="{Binding StatusShow,Mode=TwoWay}"
                   IsVisible="{Binding ResourceLoadDone}">
-      <TextBlock Classes="segoblock" Text="&#xE8FB;" Foreground="Green"/>
+      <TextBlock Classes="segoblock" Text="&#xE8FB;" Foreground="Green" FontSize="{Binding TitleService.AdviseFontSize}"/>
     </ToggleButton>
     <ToggleButton Background="{x:Null}"
                   IsChecked="{Binding StatusShow,Mode=TwoWay}"
@@ -152,7 +144,7 @@
           <ItemsRepeater Items="{Binding Resources}">
             <ItemsRepeater.ItemTemplate>
               <DataTemplate>
-                <Grid Margin="0,4">
+                <Grid Margin="0,4" IsVisible="{Binding EmitLoad}">
                   <Grid.ContextMenu>
                     <ContextMenu>
                       <MenuItem Header="复制" Command="{Binding CopyCommand}"/>
@@ -268,15 +260,6 @@
     <Border Background="{DynamicResource SystemControlBackgroundBaseLowBrush}"
             Padding="6"
             CornerRadius="6">
-      <Border.Styles>
-        <Style Selector="ToggleSwitch">
-          <Setter Property="OnContent" Value="{x:Null}"/>
-          <Setter Property="OffContent" Value="{x:Null}"/>
-          <Setter Property="HorizontalAlignment" Value="Stretch"/>
-          <Setter Property="VerticalAlignment" Value="Center"/>
-          <Setter Property="HorizontalContentAlignment" Value="Center"/>
-        </Style>
-      </Border.Styles>
       <Border.Resources>
         <Thickness x:Key="ItemMargin">
           0,6,0,0
@@ -297,19 +280,19 @@
           <RowDefinition Height="Auto"/>
         </Grid.RowDefinitions>
         <TextBlock Text="手势" Grid.Column="0" Grid.Row="0"/>
-        <ToggleSwitch Classes="control part"
-                Margin="3,0"
-                IsChecked="{Binding EnableGesture,Mode=TwoWay}"
+        <ToggleSwitch Classes="control part forcehover"
+                    Margin="3,0"
+                    IsChecked="{Binding EnableGesture,Mode=TwoWay}"
                        Grid.Column="1" Grid.Row="0">
         </ToggleSwitch>
         <TextBlock Margin="{StaticResource ItemMargin}" Text="缩放" Grid.Column="0" Grid.Row="1"/>
-        <ToggleSwitch Classes="control part"
+        <ToggleSwitch Classes="control part forcehover"
                       Margin="{StaticResource ControlItemMargin}"
                       IsChecked="{Binding EnableZoom,Mode=TwoWay}"
                       Grid.Column="1" Grid.Row="1">
         </ToggleSwitch>
         <TextBlock Margin="{StaticResource ItemMargin}" Text="容器" Grid.Column="0" Grid.Row="2"/>
-        <ToggleSwitch Classes="control part item"
+        <ToggleSwitch Classes="control part item forcehover"
                       Margin="{StaticResource ControlItemMargin}"
                       IsChecked="{Binding EnableConstrains,Mode=TwoWay}"
                       Grid.Column="1" Grid.Row="2">

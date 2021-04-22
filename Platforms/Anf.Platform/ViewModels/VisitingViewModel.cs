@@ -59,13 +59,34 @@ namespace Anf.ViewModels
         private ComicChapter currentChapter;
         private ChapterWithPage currentChapterWithPage;
         private int resourceLoadCount;
+        private bool resourceLoadDone;
+        private bool loadingLogo;
+        private bool hasLogo;
 
         public ChapterSlots<TResource> ChapterSlots => chapterSlots;
         public CancellationTokenSource LoadCancellationTokenSource => loadCancellationTokenSource;
 
-        private bool resourceLoadDone;
-        private bool loadingLogo;
-        private bool hasLogo;
+        private int currentPage;
+        private int totalPage;
+        private string chapterName;
+
+        public string ChapterName
+        {
+            get { return chapterName; }
+            private set => Set(ref chapterName, value);
+        }
+
+        public int TotalPage
+        {
+            get { return totalPage; }
+            private set => Set(ref totalPage, value);
+        }
+
+        public int CurrentPage
+        {
+            get { return currentPage; }
+            private set => Set(ref currentPage, value);
+        }
 
         public bool HasLogo
         {
@@ -107,7 +128,11 @@ namespace Anf.ViewModels
         public ComicChapter CurrentChapter
         {
             get { return currentChapter; }
-            private set => Set(ref currentChapter, value);
+            private set
+            {
+                Set(ref currentChapter, value);
+                ChapterName = value?.Title;
+            }
         }
 
         public string Name
@@ -467,9 +492,8 @@ namespace Anf.ViewModels
 
         }
 
-        private void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
+        private async void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
         {
-
             loadCancellationTokenSource?.Cancel();
             loadCancellationTokenSource?.Dispose();
             foreach (var item in Resources)
@@ -495,6 +519,8 @@ namespace Anf.ViewModels
                 CurrentPageCursor.Moved -= OnCurrentPageCursorMoved;
                 cpc.Dispose();
             }
+            CurrentPage = 0;
+            TotalPage = cpc.Count;
             ps = ChapterSlots[arg2].CreatePageSlots();
             PageSlots = ps;
             var datas = Enumerable.Range(0, PageSlots.Size)
@@ -504,7 +530,9 @@ namespace Anf.ViewModels
             {
                 item.LoadDone += OnItemLoadDone;
             }
-            CurrentPageCursor = PageSlots.ToDataCursor();
+            var pageCursor = PageSlots.ToDataCursor();
+            await pageCursor.MoveNextAsync();
+            CurrentPageCursor = pageCursor;
             CurrentChapterWithPage = PageSlots.ChapterManager.ChapterWithPage;
             CurrentPageCursor.Moved += OnCurrentPageCursorMoved;
             loadCancellationTokenSource = new CancellationTokenSource();
@@ -529,6 +557,7 @@ namespace Anf.ViewModels
 
         private void OnCurrentPageCursorMoved(IDataCursor<IComicVisitPage<TResource>> arg1, int arg2)
         {
+            CurrentPage = arg2;
             PageCursorMoved?.Invoke(arg1, arg2);
         }
 

@@ -22,8 +22,19 @@ namespace Anf.Desktop.Services
             MainWindow = window;
             InitWin();
             SwitchModel(FluentThemeMode.Dark);
+            Window.TransparencyLevelHintProperty.Changed.Subscribe(x =>
+            {
+                var setting = AppEngine.GetRequiredService<AnfSetting>();
+                setting.Save();
+            });
         }
         private FluentThemeMode currentModel;
+
+        public bool EnableAcrylicBlur
+        {
+            get => MainWindow.TransparencyLevelHint == WindowTransparencyLevel.AcrylicBlur;
+            set => MainWindow.TransparencyLevelHint = value ? WindowTransparencyLevel.AcrylicBlur : WindowTransparencyLevel.None;
+        }
 
         public FluentThemeMode CurrentModel
         {
@@ -73,14 +84,6 @@ namespace Anf.Desktop.Services
             Application.Current.Styles[0]
                 = mode == FluentThemeMode.Dark ? darkTheme : lightTheme;
             CurrentModel = mode;
-        }
-        public void DisEnableBlur()
-        {
-            MainWindow.TransparencyLevelHint = WindowTransparencyLevel.None;
-        }
-        public void EnableBlur()
-        {
-            MainWindow.TransparencyLevelHint = WindowTransparencyLevel.AcrylicBlur;
         }
         
     }

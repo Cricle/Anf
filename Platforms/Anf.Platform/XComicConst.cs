@@ -13,5 +13,8 @@ namespace Anf
 
         public static string StoreFolderName = "Stores";
 
+        public static string SettingFileName = "anf.json";
+
+        public static string SettingFileFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,SettingFileName);
     }
 }

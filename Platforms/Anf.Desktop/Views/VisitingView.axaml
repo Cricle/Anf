@@ -95,7 +95,7 @@
       <ItemsRepeater Name="Rep"
                      Background="{x:Null}"
                      Items="{Binding Resources}"
-        ItemTemplate="{StaticResource ItemDt}">
+                     ItemTemplate="{StaticResource ItemDt}">
       </ItemsRepeater>
     </ScrollViewer>
 
@@ -118,11 +118,11 @@
               <Setter Property="FontSize" Value="10"/>
             </Style>
           </StackPanel.Resources>
-          <TextBlock Text="{Binding CurrentChapter.Title}"/>
+          <TextBlock Text="{Binding ChapterName}"/>
           <TextBlock>(</TextBlock>
-          <TextBlock Text="{Binding CurrentPageCursor.CurrentIndex,Converter={StaticResource AddConverter}}"></TextBlock>
+          <TextBlock Text="{Binding CurrentPage,Converter={StaticResource AddConverter}}"></TextBlock>
           <TextBlock>/</TextBlock>
-          <TextBlock Text="{Binding CurrentPageCursor.Count,Converter={StaticResource AddConverter}}"></TextBlock>
+          <TextBlock Text="{Binding TotalPage,Converter={StaticResource AddConverter}}"></TextBlock>
           <TextBlock>)</TextBlock>
         </StackPanel>
       <!--<ProgressBar VerticalAlignment="Bottom"

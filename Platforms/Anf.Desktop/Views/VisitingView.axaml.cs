@@ -39,11 +39,11 @@ namespace Anf.Desktop.Views
             titleService.LeftControls.Add(vc);
             try
             {
+                vm.LoadAllModel = true;
                 await vm.Visiting.LoadAsync(address);
                 if (vm.HasStoreBox)
                 {
                     await vm.GoChapterIndexAsync(vm.StoreBox.AttackModel.CurrentChapter);
-                    await vm.GoPageIndexAsync(vm.StoreBox.AttackModel.CurrentPage);
                 }
                 else
                 {
@@ -99,7 +99,7 @@ namespace Anf.Desktop.Views
         {
             try
             {
-                await vm.LoadResourceAsync(e.Index);
+                await vm.GoPageIndexAsync(e.Index);
             }
             catch (Exception ex)
             {
@@ -111,7 +111,7 @@ namespace Anf.Desktop.Views
         {
             try
             {
-                await vm.LoadResourceAsync(e.NewIndex);
+                await vm.GoPageIndexAsync(e.NewIndex);
             }
             catch (Exception ex)
             {
