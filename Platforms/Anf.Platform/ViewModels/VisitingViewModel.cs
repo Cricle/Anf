@@ -520,7 +520,6 @@ namespace Anf.ViewModels
                 cpc.Dispose();
             }
             CurrentPage = 0;
-            TotalPage = cpc.Count;
             ps = ChapterSlots[arg2].CreatePageSlots();
             PageSlots = ps;
             var datas = Enumerable.Range(0, PageSlots.Size)
@@ -533,6 +532,7 @@ namespace Anf.ViewModels
             var pageCursor = PageSlots.ToDataCursor();
             await pageCursor.MoveNextAsync();
             CurrentPageCursor = pageCursor;
+            TotalPage = pageCursor.Count;
             CurrentChapterWithPage = PageSlots.ChapterManager.ChapterWithPage;
             CurrentPageCursor.Moved += OnCurrentPageCursorMoved;
             loadCancellationTokenSource = new CancellationTokenSource();

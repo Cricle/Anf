@@ -5,6 +5,7 @@ using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.Themes.Fluent;
 using GalaSoft.MvvmLight;
+using Microsoft.Extensions.Configuration;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -24,8 +25,11 @@ namespace Anf.Desktop.Services
             SwitchModel(FluentThemeMode.Dark);
             Window.TransparencyLevelHintProperty.Changed.Subscribe(x =>
             {
-                var setting = AppEngine.GetRequiredService<AnfSetting>();
-                setting.Save();
+                if (EnableSaveConfig)
+                {
+                    var config = AppEngine.GetRequiredService<IConfiguration>();
+                    config[AnfSetting.AcrylicBlurKey] = EnableAcrylicBlur.ToString();
+                }
             });
         }
         private FluentThemeMode currentModel;
@@ -33,7 +37,10 @@ namespace Anf.Desktop.Services
         public bool EnableAcrylicBlur
         {
             get => MainWindow.TransparencyLevelHint == WindowTransparencyLevel.AcrylicBlur;
-            set => MainWindow.TransparencyLevelHint = value ? WindowTransparencyLevel.AcrylicBlur : WindowTransparencyLevel.None;
+            set
+            {
+                    MainWindow.TransparencyLevelHint = value ? WindowTransparencyLevel.AcrylicBlur : WindowTransparencyLevel.None;
+            }
         }
 
         public FluentThemeMode CurrentModel
@@ -47,12 +54,19 @@ namespace Anf.Desktop.Services
                 }
                 Set(ref currentModel, value);
                 SwitchModel(value);
+                if (EnableSaveConfig)
+                {
+                    var config = AppEngine.GetRequiredService<IConfiguration>();
+                    config[AnfSetting.DrakMoelKey] = (value== FluentThemeMode.Dark).ToString();
+                }
             }
         }
 
         public IClassicDesktopStyleApplicationLifetime App { get; }
 
         public MainWindow MainWindow { get; }
+
+        public bool EnableSaveConfig { get; set; }
 
         private void InitWin()
         {
