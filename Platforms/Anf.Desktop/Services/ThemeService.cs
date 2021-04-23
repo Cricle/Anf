@@ -39,7 +39,7 @@ namespace Anf.Desktop.Services
             get => MainWindow.TransparencyLevelHint == WindowTransparencyLevel.AcrylicBlur;
             set
             {
-                    MainWindow.TransparencyLevelHint = value ? WindowTransparencyLevel.AcrylicBlur : WindowTransparencyLevel.None;
+                MainWindow.TransparencyLevelHint = value ? WindowTransparencyLevel.AcrylicBlur : WindowTransparencyLevel.None;
             }
         }
 
@@ -48,7 +48,7 @@ namespace Anf.Desktop.Services
             get { return currentModel; }
             set
             {
-                if (currentModel==value)
+                if (currentModel == value)
                 {
                     return;
                 }
@@ -57,7 +57,7 @@ namespace Anf.Desktop.Services
                 if (EnableSaveConfig)
                 {
                     var config = AppEngine.GetRequiredService<IConfiguration>();
-                    config[AnfSetting.DrakMoelKey] = (value== FluentThemeMode.Dark).ToString();
+                    config[AnfSetting.DrakMoelKey] = (value == FluentThemeMode.Dark).ToString();
                 }
             }
         }
@@ -99,16 +99,16 @@ namespace Anf.Desktop.Services
                 = mode == FluentThemeMode.Dark ? darkTheme : lightTheme;
             CurrentModel = mode;
         }
-        
+
     }
     public static class WindowExtensions
     {
-        public static IDisposable BindDecorationMargin(this Window win,Action<Thickness> action)
+        public static IDisposable BindDecorationMargin(this Window win, Action<Thickness> action)
         {
             return win.GetObservable(Window.WindowDecorationMarginProperty)
                  .Subscribe(action);
         }
-        public static IDisposable BindDecorationMargin(this Window win,Layoutable inst)
+        public static IDisposable BindDecorationMargin(this Window win, Layoutable inst)
         {
             return win.GetObservable(Window.WindowDecorationMarginProperty)
                  .Subscribe(x =>

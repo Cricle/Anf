@@ -20,6 +20,7 @@ namespace Anf.KnowEngines
             services.AddScoped<QimiaoComicOperator>();
             services.AddScoped<MangabzComicOperator>();
             services.AddScoped<XmanhuaComicOperator>();
+            services.AddScoped<BikabikaComicOperator>();
         }
         public static void UseKnowEngines(this IServiceProvider provider)
         {
@@ -33,6 +34,7 @@ namespace Anf.KnowEngines
             eng.Add(new QimianComicSourceCondition());
             eng.Add(new MangabzComicCondition());
             eng.Add(new XmanhuaComicCondition());
+            eng.Add(new BikabikaComicCondition());
             var searchEng = provider.GetRequiredService<SearchEngine>();
             searchEng.Add(typeof(SomanSearchProvider));
         }

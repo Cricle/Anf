@@ -9,15 +9,14 @@
   <Design.DataContext>
     <vm:AvalonBookShelfViewModel></vm:AvalonBookShelfViewModel>
   </Design.DataContext>
-  <UserControl.ContextMenu>
-    <ContextMenu>
-      <MenuItem Header="刷新" Command="{Binding FlushCommand}"/>
-      <MenuItem Header="更新全部" Command="{Binding UpdateCommand}"/>
-    </ContextMenu>
-  </UserControl.ContextMenu>
-
   <Grid>
     <ListBox Items="{Binding StoreBoxs}" Background="{x:Null}">
+      <ListBox.ContextMenu>
+        <ContextMenu>
+          <MenuItem Header="刷新" Command="{Binding FlushCommand}"/>
+          <MenuItem Header="更新全部" Command="{Binding UpdateCommand}"/>
+        </ContextMenu>
+      </ListBox.ContextMenu>
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
           <WrapPanel Orientation="Horizontal"/>
@@ -28,17 +27,26 @@
           <Grid Margin="3">
             <Grid.ContextMenu>
               <ContextMenu>
-                <MenuItem Header="删除" Command="{Binding RemoveCommand}"/>
                 <MenuItem Header="进入" Command="{Binding GoSourceCommand}"/>
                 <MenuItem Header="更新" Command="{Binding UpdateCommand}"/>
                 <MenuItem Header="-" IsEnabled="False"/>
                 <MenuItem Header="刷新" Command="{Binding DataContext.FlushCommand,ElementName=Bv}"/>
                 <MenuItem Header="更新全部" Command="{Binding DataContext.UpdateCommand,ElementName=Bv}"/>
+                <MenuItem Header="-" IsEnabled="False"/>
+                <MenuItem Header="删除" Foreground="Red" Command="{Binding RemoveCommand}"/>
               </ContextMenu>
             </Grid.ContextMenu>
             <ToolTip.Tip>
               <StackPanel Orientation="Vertical">
                 <TextBlock Text="{Binding AttackModel.Descript,Mode=OneTime}"/>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                  <TextBlock Classes="segoblock" VerticalAlignment="Center" Text="&#xE77C;" Margin="0,0,8,0"/>
+                  <TextBlock Text="已阅读到第"/>
+                  <TextBlock VerticalAlignment="Center" FontWeight="Bold" Text="{Binding AttackModel.CurrentChapter,Converter={StaticResource AddConverter},Mode=OneWay}"/>
+                  <TextBlock Text="章第"/>
+                  <TextBlock VerticalAlignment="Center" FontWeight="Bold" Text="{Binding AttackModel.CurrentPage,Converter={StaticResource AddConverter},Mode=OneWay}"/>
+                  <TextBlock Text="页"/>
+                </StackPanel>
               </StackPanel>
             </ToolTip.Tip>
             <Image Source="{Binding Image}" Width="300"/>
@@ -49,21 +57,11 @@
                          Margin="0,16"
                          HorizontalAlignment="Center"/>
             </Border>
-            <ProgressBar Height="3"
+            <ProgressBar Height="4"
+                         Background="{x:Null}"
                          VerticalAlignment="Bottom"
-                         Maximum="{Binding AttackModel.Chapters.Length,Converter={StaticResource AddNumberConverter}}"
-                         Value="{Binding CurrentChapter,Converter={StaticResource AddNumberConverter}}">
-              <ToolTip.Tip>
-                <ToolTip>
-                  <StackPanel Orientation="Horizontal">
-                    <TextBlock Text="已阅读到"/>
-                    <TextBlock Text="{Binding CurrentChapter,Converter={StaticResource AddNumberConverter}}"/>
-                    <TextBlock Text="章"/>
-                    <TextBlock Text="{Binding CurrentPage,Converter={StaticResource AddNumberConverter}}"/>
-                    <TextBlock Text="页"/>
-                  </StackPanel>
-                </ToolTip>
-              </ToolTip.Tip>
+                         Maximum="{Binding AttackModel.Chapters.Length}"
+                         Value="{Binding AttackModel.CurrentChapter,Converter={StaticResource AddNumberConverter},Mode=OneWay}">
             </ProgressBar>
             <Border IsVisible="{Binding IsUpdating}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{DynamicResource SystemControlBackgroundChromeBlackMediumBrush}">
               <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
