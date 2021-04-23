@@ -20,38 +20,14 @@ namespace Anf.Desktop
     internal class AnfSetting : ObservableObject
     {
         public static readonly string SectionKey = "RuntimeSettings";
-        public static readonly string DrakMoelKey = ConfigurationPath.Combine(SectionKey, nameof(EnableDarkModel));
-        public static readonly string AcrylicBlurKey = ConfigurationPath.Combine(SectionKey, nameof(EnableAcrylicBlur));
+        public static readonly string EnableDarkModelKey = "EnableDarkModel";
+        public static readonly string EnableAcrylicBlurKey = "EnableAcrylicBlur";
+        public static readonly string DrakMoelKey = ConfigurationPath.Combine(SectionKey, EnableDarkModelKey);
+        public static readonly string AcrylicBlurKey = ConfigurationPath.Combine(SectionKey, EnableAcrylicBlurKey);
 
-        private readonly ThemeService themeService;
-        private readonly IConfigurationRoot configuration;
-
-        public AnfSetting(ThemeService themeService, IConfigurationRoot configuration)
-        {
-            this.themeService = themeService;
-            this.configuration = configuration;
-        }
-
-
-        public bool EnableDarkModel
-        {
-            get => configuration.GetValue<bool>(DrakMoelKey);
-            set
-            {
-                themeService.CurrentModel = value ? FluentThemeMode.Dark : FluentThemeMode.Light;
-            }
-        }
-
-        public bool EnableAcrylicBlur
-        {
-            get => configuration.GetValue<bool>(AcrylicBlurKey);
-            set
-            {
-                themeService.EnableAcrylicBlur = value;
-            }
-        }
         private object tk;
-        public async void Save()
+
+        public async void Save(ThemeService themeService)
         {
             var s = tk;
             await Task.Delay(1000);
@@ -62,8 +38,8 @@ namespace Anf.Desktop
                     var data = new JObject();
                     var settingObj = new JObject();
                     data[SectionKey] = settingObj;
-                    settingObj[nameof(EnableDarkModel)] = EnableDarkModel;
-                    settingObj[nameof(EnableAcrylicBlur)] = EnableAcrylicBlur;
+                    settingObj[EnableDarkModelKey] = themeService.CurrentModel== FluentThemeMode.Dark;
+                    settingObj[EnableAcrylicBlurKey] = themeService.EnableAcrylicBlur;
                     var str = data.ToString();
                     File.WriteAllText(XComicConst.SettingFileFolder, str);
                 }

@@ -26,6 +26,8 @@ using NLog.Extensions.Logging;
 using Microsoft.Extensions.Configuration;
 using Ao.SavableConfig;
 using Microsoft.Extensions.FileProviders;
+using Ao.SavableConfig.Saver;
+using Avalonia.Threading;
 
 namespace Anf.Desktop
 {
@@ -100,17 +102,52 @@ namespace Anf.Desktop
             AppEngine.Services.AddScoped<StoreComicVisiting<Bitmap>>();
             AppEngine.Services.AddSingleton<AnfSetting>();
             var configRoot = BuildConfiguration();
+            watcher = configRoot.CreateWatcher();
+            watcher.ChangePushed += Watcher_ChangePushed;
+            section=configRoot.GetSection(AnfSetting.SectionKey);
+            section.GetReloadToken().RegisterChangeCallback(OnChange,null);
             AppEngine.Services.AddSingleton(configRoot);
             AppEngine.Services.AddSingleton<IConfiguration>(configRoot);
             AppEngine.Services.AddSingleton<IConfigurationRoot>(configRoot);
             AppEngine.Services.AddLogging(x => x.ClearProviders().AddNLog("NLog.config"));
+        }
+        private IConfigurationSection section;
+        private void OnChange(object status)
+        {
+            var configRoot = AppEngine.GetRequiredService<IConfiguration>();
+            var theme = configRoot.GetValue<bool>(AnfSetting.DrakMoelKey);
+            var arc = configRoot.GetValue<bool>(AnfSetting.AcrylicBlurKey);
+            var themeSer = AppEngine.GetRequiredService<ThemeService>();
+            Dispatcher.UIThread.Post(() =>
+            {
+                themeSer.EnableSaveConfig = false;
+                themeSer.EnableAcrylicBlur = arc;
+                themeSer.CurrentModel = theme ? FluentThemeMode.Dark : FluentThemeMode.Light;
+                themeSer.EnableSaveConfig = true;
+            });
+            section.GetReloadToken()
+                .RegisterChangeCallback(OnChange, null);
+        }
+        private ChangeWatcher watcher;
+        private readonly ConcurrentOnce once = new ConcurrentOnce();
+        private async void Watcher_ChangePushed(object sender, IConfigurationChangeInfo e)
+        {
+            if (await once.WaitAsync(TimeSpan.FromSeconds(1)))
+            {
+                var config = AppEngine.GetRequiredService<SavableConfigurationRoot>();
+                var changes = watcher.ChangeInfos.ToArray();
+                watcher.Clear();
+                var changer = ChangeReport.FromChanges(config, changes);
+                var saver = new ChangeSaver(changer, JsonChangeTransferCondition.Instance);
+                saver.EmitAndSave();
+            }
         }
 
         private SavableConfigurationRoot BuildConfiguration()
         {
             var configBuilder = new SavableConfiurationBuilder();
             configBuilder.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
-            configBuilder.AddJsonFile(XComicConst.SettingFileFolder,true,true);
+            configBuilder.AddJsonFile(XComicConst.SettingFileFolder, true, true);
             return configBuilder.Build();
         }
 
@@ -130,6 +167,12 @@ namespace Anf.Desktop
                 titleSer.Bind(mainWin);
                 mainWin.KeyDown += OnMainWinKeyDown;
                 titleSer.CreateControls();
+                var config = AppEngine.GetRequiredService<IConfiguration>();
+                var anfSetting = AppEngine.GetRequiredService<AnfSetting>();
+                themeSer.EnableAcrylicBlur = config.GetValue<bool>(AnfSetting.AcrylicBlurKey);
+                themeSer.CurrentModel = config.GetValue<bool>(AnfSetting.DrakMoelKey) ?
+                     FluentThemeMode.Dark : FluentThemeMode.Light;
+                themeSer.EnableSaveConfig = true;
             }
             base.OnFrameworkInitializationCompleted();
         }
