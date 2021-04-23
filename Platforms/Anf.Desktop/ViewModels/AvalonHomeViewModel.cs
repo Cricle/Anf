@@ -33,9 +33,14 @@ namespace Anf.Desktop.ViewModels
         {
             foreach (var item in ComicEngine)
             {
+                var addr = item.FaviconAddress;
+                if (addr is null)
+                {
+                    continue;
+                }
                 try
                 {
-                    using(var rep=await httpClient.GetAsync(item.FaviconAddress))
+                    using(var rep=await httpClient.GetAsync(addr))
                     using (var stream = await rep.Content.ReadAsStreamAsync())
                     {
                         var bitmap = new Bitmap(stream);

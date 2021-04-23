@@ -1,6 +1,6 @@
 {
   "RuntimeSettings": {
-    "EnableDarkModel": false,
+    "EnableDarkModel": true,
     "EnableAcrylicBlur": false
   }
 }
