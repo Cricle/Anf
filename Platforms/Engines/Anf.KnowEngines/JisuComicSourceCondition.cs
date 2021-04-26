@@ -5,7 +5,7 @@ namespace Anf.KnowEngines
 {
     public class JisuComicSourceCondition : ComicSourceConditionBase<JisuComicOperator>
     {
-        public override string EnginName => ComicConst.EngineJisu;
+        public override string EngineName => ComicConst.EngineJisu;
 
         public override Uri Address { get; } = new Uri("https://www.1kkk.com");
 

@@ -12,6 +12,7 @@ using Anf.Models;
 using Avalonia.Media.Imaging;
 using Avalonia.Input;
 using Avalonia.VisualTree;
+using System.Threading.Tasks;
 
 namespace Anf.Desktop.Views
 {
@@ -39,7 +40,6 @@ namespace Anf.Desktop.Views
             titleService.LeftControls.Add(vc);
             try
             {
-                vm.LoadAllModel = true;
                 await vm.Visiting.LoadAsync(address);
                 if (vm.HasStoreBox)
                 {
@@ -49,9 +49,12 @@ namespace Anf.Desktop.Views
                 {
                     await vm.NextChapterAsync();
                 }
+                _ = LoadPageAsync(0);
                 vm.TransverseChanged += Vm_TransverseChanged;
                 rep = this.Get<ItemsRepeater>("Rep");
                 car = this.Get<Carousel>("Car");
+                var sv = this.Get<ScrollViewer>("RepSv");
+                sv.ScrollChanged += Sv_ScrollChanged;
                 this.KeyDown += OnCarKeyDown;
                 Vm_TransverseChanged(vm, vm.Transverse);
             }
@@ -60,6 +63,29 @@ namespace Anf.Desktop.Views
                 vm.ExceptionService.Exception = ex;
             }
         }
+        private Task LoadPageAsync(int index)
+        {
+            var p = vm.GetResource(index);
+            if (p is null)
+            {
+                return Task.CompletedTask;
+            }
+            return p.LoadAsync();
+        }
+        private async void Sv_ScrollChanged(object sender, ScrollChangedEventArgs e)
+        {
+            if (!vm.ReadingSettings.LoadAll)
+            {
+                var sv = (ScrollViewer)sender;
+                if (sv.Extent.Height <= sv.Offset.Y + sv.Viewport.Height*2)
+                {
+                    var idx = vm.CurrentPageCursor.CurrentIndex;
+                    await vm.LoadResourceAsync(idx + 1);
+                    await vm.GoPageIndexAsync(idx + 1);
+                }
+            }
+        }
+
         private async void OnCarKeyDown(object sender, KeyEventArgs e)
         {
             if (vm.Transverse)
@@ -97,25 +123,31 @@ namespace Anf.Desktop.Views
 
         private async void OnRepElementPrepared(object sender, ItemsRepeaterElementPreparedEventArgs e)
         {
-            try
+            if (vm.ReadingSettings.LoadAll)
             {
-                await vm.GoPageIndexAsync(e.Index);
-            }
-            catch (Exception ex)
-            {
-                vm.ExceptionService.Exception = ex;
+                try
+                {
+                    await vm.GoPageIndexAsync(e.Index);
+                }
+                catch (Exception ex)
+                {
+                    vm.ExceptionService.Exception = ex;
+                }
             }
         }
 
         private async void OnRepElementIndexChanged(object sender, ItemsRepeaterElementIndexChangedEventArgs e)
         {
-            try
+            if (vm.ReadingSettings.LoadAll)
             {
-                await vm.GoPageIndexAsync(e.NewIndex);
-            }
-            catch (Exception ex)
-            {
-                vm.ExceptionService.Exception = ex;
+                try
+                {
+                    await vm.GoPageIndexAsync(e.NewIndex);
+                }
+                catch (Exception ex)
+                {
+                    vm.ExceptionService.Exception = ex;
+                }
             }
         }
 

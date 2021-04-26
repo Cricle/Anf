@@ -76,16 +76,20 @@ namespace Anf.Models
         private object locker = SharedObject;
         private Task<IComicVisitPage<TResource>> task;
 
+        public ComicPage Page { get; }
+
         public ComicPageInfo(PageSlots<TResource> pageSlots, int index)
         {
             PageSlots = pageSlots ?? throw new ArgumentNullException(nameof(pageSlots));
             Index = index;
+            Page=PageSlots.ChapterManager.ChapterWithPage.Pages[index];
             PageInfoType = ComicPageInfoTypes.FromLoad;
             Init();
         }
         public ComicPageInfo(IComicVisitPage<TResource> visitPage)
         {
             VisitPage = visitPage;
+            Page = visitPage.Page;
             PageInfoType = ComicPageInfoTypes.FromValue; 
             Init();
         }

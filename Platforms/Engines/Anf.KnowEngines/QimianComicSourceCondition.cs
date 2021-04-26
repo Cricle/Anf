@@ -4,7 +4,7 @@ namespace Anf.KnowEngines
 {
     public class QimianComicSourceCondition : ComicSourceConditionBase<QimiaoComicOperator>
     {
-        public override string EnginName => "qimiaomh";
+        public override string EngineName => "qimiaomh";
 
         public override Uri Address { get; } = new Uri("https://www.qimiaomh.com");
 

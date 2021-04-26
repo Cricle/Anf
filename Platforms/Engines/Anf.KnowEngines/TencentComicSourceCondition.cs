@@ -9,7 +9,7 @@ namespace Anf.KnowEngines
 {
     public class TencentComicSourceCondition : ComicSourceConditionBase<TencentComicOperator>
     {
-        public override string EnginName => "Tencent";
+        public override string EngineName => "Tencent";
 
         public override Uri Address { get; } = new Uri("https://ac.qq.com");
 

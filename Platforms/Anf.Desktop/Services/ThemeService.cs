@@ -4,6 +4,7 @@ using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.Themes.Fluent;
+using Avalonia.Threading;
 using GalaSoft.MvvmLight;
 using Microsoft.Extensions.Configuration;
 using System;
@@ -16,21 +17,11 @@ namespace Anf.Desktop.Services
 {
     internal class ThemeService : ObservableObject
     {
-        public ThemeService(IClassicDesktopStyleApplicationLifetime app,
-            MainWindow window)
+        public ThemeService(MainWindow window)
         {
-            App = app;
             MainWindow = window;
             InitWin();
             SwitchModel(FluentThemeMode.Dark);
-            Window.TransparencyLevelHintProperty.Changed.Subscribe(x =>
-            {
-                if (EnableSaveConfig)
-                {
-                    var config = AppEngine.GetRequiredService<IConfiguration>();
-                    config[AnfSetting.AcrylicBlurKey] = EnableAcrylicBlur.ToString();
-                }
-            });
         }
         private FluentThemeMode currentModel;
 
@@ -39,7 +30,17 @@ namespace Anf.Desktop.Services
             get => MainWindow.TransparencyLevelHint == WindowTransparencyLevel.AcrylicBlur;
             set
             {
-                MainWindow.TransparencyLevelHint = value ? WindowTransparencyLevel.AcrylicBlur : WindowTransparencyLevel.None;
+                if (MainWindow.CheckAccess())
+                {
+                    MainWindow.TransparencyLevelHint = value ? WindowTransparencyLevel.AcrylicBlur : WindowTransparencyLevel.None;
+                }
+                else
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        MainWindow.TransparencyLevelHint = value ? WindowTransparencyLevel.AcrylicBlur : WindowTransparencyLevel.None;
+                    });
+                }
             }
         }
 
@@ -52,21 +53,23 @@ namespace Anf.Desktop.Services
                 {
                     return;
                 }
-                Set(ref currentModel, value);
-                SwitchModel(value);
-                if (EnableSaveConfig)
+                if (MainWindow.CheckAccess())
                 {
-                    var config = AppEngine.GetRequiredService<IConfiguration>();
-                    config[AnfSetting.DrakMoelKey] = (value == FluentThemeMode.Dark).ToString();
+                    Set(ref currentModel, value);
+                    SwitchModel(value);
+                }
+                else
+                {
+                    Dispatcher.UIThread.Post(() =>
+                    {
+                        Set(ref currentModel, value);
+                        SwitchModel(value);
+                    });
                 }
             }
         }
 
-        public IClassicDesktopStyleApplicationLifetime App { get; }
-
         public MainWindow MainWindow { get; }
-
-        public bool EnableSaveConfig { get; set; }
 
         private void InitWin()
         {

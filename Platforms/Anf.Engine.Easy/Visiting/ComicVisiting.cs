@@ -176,7 +176,7 @@ namespace Anf.Easy.Visiting
         public void Dispose()
         {
             resourceFactory?.Dispose();
-            semaphoreSlim.Wait();
+            semaphoreSlim.Wait(1000);
             semaphoreSlim.Dispose();
         }
 

@@ -5,7 +5,7 @@ namespace Anf.KnowEngines
 {
     public class KuaikanComicSourceCondition : ComicSourceConditionBase<KuaikanComicOperator>
     {
-        public override string EnginName => ComicConst.EngineKuaiKan;
+        public override string EngineName => ComicConst.EngineKuaiKan;
 
         public override Uri Address { get; } = new Uri("https://www.kuaikanmanhua.com");
 

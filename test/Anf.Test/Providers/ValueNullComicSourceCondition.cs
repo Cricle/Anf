@@ -6,7 +6,7 @@ namespace Anf.Test.Providers
 {
     internal class DataProviderComicSourceCondition : ComicSourceConditionBase<DataProvider>
     {
-        public override string EnginName => "any";
+        public override string EngineName => "any";
 
         public override Uri Address { get; } = new Uri("http://localhost:123");
 

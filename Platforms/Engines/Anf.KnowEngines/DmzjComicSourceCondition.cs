@@ -5,7 +5,7 @@ namespace Anf.KnowEngines
 {
     public class DmzjComicSourceCondition : ComicSourceConditionBase<DmzjComicOperator>
     {
-        public override string EnginName => ComicConst.EngineDMZJ;
+        public override string EngineName => ComicConst.EngineDMZJ;
 
         public override Uri Address { get; } = new Uri("https://www.dmzj.com");
 

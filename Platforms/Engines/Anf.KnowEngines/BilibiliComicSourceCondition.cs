@@ -6,7 +6,7 @@ namespace Anf.KnowEngines
 {
     public class BilibiliComicSourceCondition : ComicSourceConditionBase<BilibiliComicOperator>
     {
-        public override string EnginName => "Bilibili";
+        public override string EngineName => "Bilibili";
 
         public override Uri Address { get; } = new Uri("http://manga.bilibili.com");
 

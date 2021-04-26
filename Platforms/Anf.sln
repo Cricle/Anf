@@ -31,7 +31,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Test", "..\test\Anf.Tes
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Desktop", "Anf.Desktop\Anf.Desktop.csproj", "{085CBE58-3023-4066-BACB-F94CC8CB7787}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anf.Platform.Test", "..\test\Anf.Platform.Test\Anf.Platform.Test.csproj", "{C0FABB01-7DC1-4363-8CE8-F0113C0C12B3}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Platform.Test", "..\test\Anf.Platform.Test\Anf.Platform.Test.csproj", "{C0FABB01-7DC1-4363-8CE8-F0113C0C12B3}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "libs", "libs", "{85C1AE3A-AC4E-4B87-B0DE-D7675A584904}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

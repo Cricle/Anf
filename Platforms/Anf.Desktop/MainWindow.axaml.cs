@@ -28,7 +28,7 @@ namespace Anf.Desktop
         public MainWindow()
         {
             InitializeComponent();
-            MinWidth = 850;
+            MinWidth = 650;
             MinHeight = 400;
 #if DEBUG&&NET472
             this.AttachDevTools();
@@ -40,13 +40,16 @@ namespace Anf.Desktop
         {
             AvaloniaXamlLoader.Load(this);
             navSer = (MainNavigationService)AppEngine.GetRequiredService<INavigationService>();
+            var titleSer = AppEngine.GetRequiredService<TitleService>();
+            exSer = AppEngine.GetRequiredService<ExceptionService>();
+
             mainPlan = this.Get<Panel>("MainPlan");
             mainPlan.Children.Add(navSer.border);
+
             var titleBar = this.Get<Border>("TitleBar");
-            var titleSer = AppEngine.GetRequiredService<TitleService>();
             titleBar.DataContext =titleSer;
             titleBar.Bind(HeightProperty, new Binding(nameof(TitleService.OffsceneHeight)) { Source = titleSer });
-            exSer = AppEngine.GetRequiredService<ExceptionService>();
+           
             var exBorder = this.Get<Border>("ExcetionBorder");
             exBorder.DataContext = exSer;
             exBorder.KeyDown += ExBorder_KeyDown;

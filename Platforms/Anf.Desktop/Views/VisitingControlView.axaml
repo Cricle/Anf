@@ -22,7 +22,9 @@
     </Style>
   </StackPanel.Styles>
   <StackPanel Orientation="Horizontal">
-    <Button x:Name="ChapterSelector" Classes="control">
+    <ToggleButton x:Name="ChapterSelector"
+                  Classes="control part"
+                  Background="{x:Null}">
       <TextBlock Classes="segoblock" Text="&#xEA37;" FontSize="{Binding TitleService.AdviseFontSize}"/>
       <ToolTip.Tip>
         <StackPanel Orientation="Horizontal">
@@ -34,20 +36,29 @@
           <TextBlock>)</TextBlock>
         </StackPanel>
       </ToolTip.Tip>
-    </Button>
-    <Popup x:Name="ChaterpPop"
-           PlacementTarget="{Binding ElementName=ChapterSelector}"
+    </ToggleButton>
+    <Popup PlacementTarget="{Binding ElementName=ChapterSelector}"
            PlacementMode="Bottom"
            PlacementAnchor="Bottom"
            StaysOpen="False"
-           IsOpen="{Binding ChapterSelectorOpen,Mode=TwoWay}">
-      <ListBox x:Name="ChapterBoxs" SelectedItem="{Binding TrulyCurrentComicChapter,Mode=TwoWay}" MaxHeight="200" Items="{Binding ComicEntity.Chapters}">
-        <ListBox.ItemTemplate>
-          <DataTemplate DataType="{x:Type kwc:ComicChapter}">
-            <TextBlock ToolTip.Tip="{Binding TargetUrl}" Text="{Binding Title}"/>
-          </DataTemplate>
-        </ListBox.ItemTemplate>
-      </ListBox>
+           IsOpen="{Binding ElementName=ChapterSelector,Path=IsChecked,Mode=TwoWay}">
+      <Grid>
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Button FontWeight="Bold" Content="左侧弹出" Command="{Binding OpenPaneCommand}"/>
+        <ListBox SelectedItem="{Binding TrulyCurrentComicChapter,Mode=TwoWay}"
+                 Items="{Binding ComicEntity.Chapters}"
+                 MaxHeight="200"
+                 Grid.Row="1">
+          <ListBox.ItemTemplate>
+            <DataTemplate DataType="{x:Type kwc:ComicChapter}">
+              <TextBlock ToolTip.Tip="{Binding TargetUrl}" Text="{Binding Title}"/>
+            </DataTemplate>
+          </ListBox.ItemTemplate>
+        </ListBox>
+      </Grid>
     </Popup>
   </StackPanel>
   <StackPanel Orientation="Horizontal">
@@ -73,7 +84,6 @@
                    ToolTip.Tip="分享">
       <TextBlock Classes="segoblock" Text="&#xE72D;" FontSize="{Binding TitleService.AdviseFontSize}"/>
     </ToggleButton>
-    <!---->
     <ToggleButton Classes="control"
                   ToolTip.Tip="喜欢"
                   IsChecked="{Binding HasStoreBox}"
@@ -144,11 +154,12 @@
           <ItemsRepeater Items="{Binding Resources}">
             <ItemsRepeater.ItemTemplate>
               <DataTemplate>
-                <Grid Margin="0,4" IsVisible="{Binding EmitLoad}">
+                <Grid Margin="0,4">
                   <Grid.ContextMenu>
                     <ContextMenu>
                       <MenuItem Header="复制" Command="{Binding CopyCommand}"/>
                       <MenuItem Header="打开" Command="{Binding OpenCommand}"/>
+                      <MenuItem Header="重新加载" Command="{Binding ReLoadCommand}"/>
                       <MenuItem Header="复制异常" IsVisible="{Binding HasException}" Command="{Binding CopyExceptionCommand}"/>
                     </ContextMenu>
                   </Grid.ContextMenu>
@@ -157,10 +168,10 @@
                     <ColumnDefinition Width="Auto"/>
                     <ColumnDefinition Width="Auto"/>
                   </Grid.ColumnDefinitions>
-                  <TextBlock Text="{Binding VisitPage.Page.TargetUrl}"
+                  <TextBlock Text="{Binding Page.TargetUrl}"
                              TextTrimming="CharacterEllipsis"
                              TextWrapping="NoWrap"
-                             ToolTip.Tip="{Binding VisitPage.Page.TargetUrl}"
+                             ToolTip.Tip="{Binding Page.TargetUrl}"
                              VerticalAlignment="Center"/>
                   <StackPanel Orientation="Horizontal"
                               Grid.Column="1"
@@ -169,8 +180,8 @@
                     <TextBlock Classes="segoblock" Text="&#xE894;" Foreground="Red" IsVisible="{Binding HasException}"/>
                     <TextBlock Classes="segoblock" Text="&#xE8FB;" Foreground="Green" IsVisible="{Binding LoadSucceed}"/>
                   </StackPanel>
-                  <Button Grid.Column="2" 
-                          Margin="6,0,0,0" 
+                  <Button Grid.Column="2"
+                          Margin="6,0,0,0"
                           Command="{Binding CopyCommand}"
                           ToolTip.Tip="复制">
                     <TextBlock Text="&#xE8C8;" Classes="segoblock"/>

@@ -62,7 +62,7 @@ namespace Anf.KnowEngines
             
             var chpsBox = html.DocumentNode.SelectNodes("//div[@id='chapterlistload']/a");
             var chps = new List<ComicChapter>();
-            foreach (var item in chpsBox)
+            foreach (var item in chpsBox.Reverse())
             {
                 var name = item.InnerText.Replace("  ", string.Empty);
                 var addr = item.Attributes["href"].Value;

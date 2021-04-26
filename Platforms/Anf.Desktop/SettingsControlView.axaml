@@ -36,18 +36,26 @@
           <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
           </Grid.RowDefinitions>
           <TextBlock Text="亚克力" VerticalAlignment="Center"/>
           <ToggleSwitch Classes="control part forcehover"
                         Margin="3,0"
-                        IsChecked="{Binding ThemeService.MainWindow.TransparencyLevelHint,Mode=TwoWay,Converter={StaticResource BoolWindowTransparencyLevelConverter}}"
+                        IsChecked="{Binding ThemeSettings.EnableAcrylicBlur,Mode=TwoWay}"
                         Grid.Column="1"/>
           <TextBlock Grid.Row="1" Text="黑主题" VerticalAlignment="Center"/>
           <ToggleSwitch Classes="control part forcehover"
                         Margin="3,0"
-                        IsChecked="{Binding ThemeService.CurrentModel,Mode=TwoWay,Converter={StaticResource BoolFluentThemeModeConverter}}"
+                        IsChecked="{Binding ThemeSettings.EnableDrakTheme,Mode=TwoWay}"
                         Grid.Column="1"
                         Grid.Row="1"/>
+          <TextBlock Grid.Row="2" Text="立即全部" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding ReadingSettings.LoadAll,Mode=TwoWay}"
+                        Grid.Column="1"
+                        Grid.Row="2"
+                        ToolTip.Tip="加载时立即加载全部而不是被动加载(省内存省流量OvO"/>
         </Grid>
       </Border>
     </Popup>

@@ -4,7 +4,7 @@ namespace Anf.KnowEngines
 {
     public class MangabzComicCondition : ComicSourceConditionBase<MangabzComicOperator>
     {
-        public override string EnginName => "Mangabz";
+        public override string EngineName => "Mangabz";
 
         public override Uri Address { get; } = new Uri("http://www.mangabz.com/");
 
