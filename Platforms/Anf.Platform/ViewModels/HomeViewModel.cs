@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Anf.Platform.Services;
+using Anf.Engine;
 
 namespace Anf.ViewModels
 {
@@ -26,6 +27,8 @@ namespace Anf.ViewModels
         {
             ComicEngine = AppEngine.GetRequiredService<ComicEngine>();
             SearchEngine = AppEngine.GetRequiredService<SearchEngine>();
+            ProposalEngine = AppEngine.GetRequiredService<ProposalEngine>();
+
             SearchCommand = new RelayCommand(() => _ = SearchAsync());
             GoSourceCommand = new RelayCommand(GoSource);
             scope = AppEngine.CreateScope();
@@ -36,6 +39,7 @@ namespace Anf.ViewModels
             }
             observableCollectionFactory = AppEngine.GetRequiredService<IObservableCollectionFactory>();
             Snapshots = observableCollectionFactory.Create<ComicSnapshotInfo<TSourceInfo>>();
+            ProposalSnapshots = observableCollectionFactory.Create<ComicSnapshotInfo<TSourceInfo>>();
         }
         protected readonly IServiceScope scope;
         private string keyword;
@@ -172,7 +176,16 @@ namespace Anf.ViewModels
         /// 漫画快照
         /// </summary>
         public IList<ComicSnapshotInfo<TSourceInfo>> Snapshots { get; }
+        public IList<ComicSnapshotInfo<TSourceInfo>> ProposalSnapshots { get; }
+        public ProposalEngine ProposalEngine { get; }
         private readonly IObservableCollectionFactory observableCollectionFactory;
+        public async Task UpdateProposalAsync()
+        {
+            var proposal= ProposalEngine.Active(0);
+            var datas = await proposal.Provider.GetProposalAsync(30);
+            observableCollectionFactory.AddRange(ProposalSnapshots, datas.Select(x => CreateSnapshotInfo(x)));
+
+        }
         /// <summary>
         /// 执行搜索
         /// </summary>

@@ -19,6 +19,7 @@ namespace Anf.Desktop.ViewModels
             httpClient = AppEngine.GetRequiredService<HttpClient>();
             EngineIcons = new AvaloniaList<EngineInfo>();
             LoadEngineIcons();
+            _ = this.UpdateProposalAsync();
         }
 
         private ComicSnapshotInfo<AvalonStorableComicSourceInfo> usingShapshot;

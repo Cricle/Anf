@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Text;
 using Anf;
+using Anf.Engine;
+using Anf.KnowEngines.ProposalProviders;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anf.KnowEngines
@@ -21,6 +23,9 @@ namespace Anf.KnowEngines
             services.AddScoped<MangabzComicOperator>();
             services.AddScoped<XmanhuaComicOperator>();
             services.AddScoped<BikabikaComicOperator>();
+
+
+            services.AddScoped<Dm5ProposalProvider>();
         }
         public static void UseKnowEngines(this IServiceProvider provider)
         {
@@ -37,6 +42,9 @@ namespace Anf.KnowEngines
             eng.Add(new BikabikaComicCondition());
             var searchEng = provider.GetRequiredService<SearchEngine>();
             searchEng.Add(typeof(SomanSearchProvider));
+
+            var proEng = provider.GetRequiredService<ProposalEngine>();
+            proEng.Add(typeof(Dm5ProposalProvider));
         }
     }
 }

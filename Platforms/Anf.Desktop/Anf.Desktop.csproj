@@ -5,7 +5,7 @@
     <UseFody>false</UseFody>
     <UseD2D>true</UseD2D>
     <EnableCache>true</EnableCache>
-    <ApplicationIcon>Anf.ico</ApplicationIcon>
+    <ApplicationIcon>..\..\assets\Anf.ico</ApplicationIcon>
     <MSIXBuild>false</MSIXBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSIXBuild)'!='true'">

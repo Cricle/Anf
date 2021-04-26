@@ -7,6 +7,7 @@ using Avalonia.Markup.Xaml;
 using Anf.Desktop.Services;
 using Anf.Desktop.ViewModels;
 using System;
+using Anf.Engine;
 
 namespace Anf.Desktop.Views
 {
@@ -22,7 +23,14 @@ namespace Anf.Desktop.Views
         }
         private void InitializeComponent()
         {
+            Run();
             AvaloniaXamlLoader.Load(this);
+        }
+        private async void Run()
+        {
+            var eng = AppEngine.GetRequiredService<ProposalEngine>();
+            var p = eng.Active(0);
+            var res= await p.Provider.GetProposalAsync(10);
         }
     }
 }
