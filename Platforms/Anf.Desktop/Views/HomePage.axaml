@@ -12,6 +12,47 @@
   <Design.DataContext>
     <vm:AvalonHomeViewModel></vm:AvalonHomeViewModel>
   </Design.DataContext>
+  <UserControl.Resources>
+    <DataTemplate x:Key="CsiDt" DataType="{x:Type m:AvalonComicSnapshotInfo}">
+      <Grid>
+        <Grid.ContextMenu>
+          <ContextMenu>
+            <MenuItem Header="打开">
+              <MenuItem Header="从浏览器"/>
+              <MenuItem Header="从文件夹"/>
+            </MenuItem>
+            <MenuItem Header="复制"></MenuItem>
+          </ContextMenu>
+        </Grid.ContextMenu>
+        <ToolTip.Tip>
+          <StackPanel Orientation="Vertical">
+            <TextBlock Text="{Binding Snapshot.Descript,Mode=OneTime}"/>
+            <ItemsRepeater Items="{Binding SourceInfos}" Margin="0,4,0,0">
+              <ItemsRepeater.Layout>
+                <StackLayout Orientation="Horizontal"/>
+              </ItemsRepeater.Layout>
+              <ItemsRepeater.ItemTemplate>
+                <DataTemplate DataType="{x:Type kwce:ComicSource}">
+                  <Border Padding="4,2" CornerRadius="3" Background="Gray" Margin="0,0,2,0">
+                    <TextBlock Text="{Binding Source.Name}"/>
+                  </Border>
+                </DataTemplate>
+              </ItemsRepeater.ItemTemplate>
+            </ItemsRepeater>
+          </StackPanel>
+        </ToolTip.Tip>
+        <Image Source="{Binding LogoImage,Mode=OneWay}" Width="300"/>
+        <Border Background="#A1666666"
+                            VerticalAlignment="Bottom">
+          <TextBlock Text="{Binding Snapshot.Name,Mode=OneTime}"
+                     FontSize="16"
+                     Margin="0,16"
+                     HorizontalAlignment="Center"/>
+        </Border>
+      </Grid>
+    </DataTemplate>
+
+  </UserControl.Resources>
   <Grid>
     <Grid.RowDefinitions>
       <RowDefinition Height="Auto"/>
@@ -26,8 +67,8 @@
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
-      <AutoCompleteBox HorizontalAlignment="Stretch" 
-                       Watermark="Search" 
+      <AutoCompleteBox HorizontalAlignment="Stretch"
+                       Watermark="Search"
                        IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}"
                        Text="{Binding Keyword,Mode=TwoWay}"
                        Items="{Binding HistoryService.Lines}">
@@ -53,6 +94,7 @@
       <!--favicon.ico-->
       <Grid VerticalAlignment="Center">
         <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
           <RowDefinition Height="Auto"/>
           <RowDefinition Height="Auto"/>
           <RowDefinition Height="Auto"/>
@@ -91,61 +133,44 @@
                     <MenuItem Header="复制" Command="{Binding CopyCommand}"/>
                   </ContextMenu>
                 </Border.ContextMenu>
-                  <Image Source="{Binding Bitmap}"
-                         Width="24"/>
-                </Border>
+                <Image Source="{Binding Bitmap}"
+                       Width="24"/>
+              </Border>
             </DataTemplate>
           </ItemsControl.ItemTemplate>
         </ItemsControl>
+        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" Margin="0,20,0,0">
+          <ListBox Background="{x:Null}"
+                   Items="{Binding ProposalSnapshots}"
+                   SelectionMode="Single"
+                   VirtualizationMode="Simple"
+                   ItemTemplate="{StaticResource CsiDt}"
+                   SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}"
+                   IsVisible="{Binding EmptySet}">
+            <ListBox.ItemsPanel>
+              <ItemsPanelTemplate>
+                <StackPanel Orientation="Horizontal"/>
+              </ItemsPanelTemplate>
+            </ListBox.ItemsPanel>
+          </ListBox>
+        </ScrollViewer>
+
       </Grid>
     </Border>
 
-    <ListBox Grid.Row="3" Background="{x:Null}" Items="{Binding Snapshots}" SelectionMode="Single" VirtualizationMode="Simple" SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}" IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
+    <ListBox Grid.Row="3"
+             Background="{x:Null}"
+             Items="{Binding Snapshots}"
+             SelectionMode="Single"
+             VirtualizationMode="Simple"
+             ItemTemplate="{StaticResource CsiDt}"
+             SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}"
+             IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
       <ListBox.ItemsPanel>
         <ItemsPanelTemplate>
           <WrapPanel Orientation="Horizontal"/>
         </ItemsPanelTemplate>
       </ListBox.ItemsPanel>
-      <ListBox.ItemTemplate>
-        <DataTemplate DataType="{x:Type m:AvalonComicSnapshotInfo}">
-          <Grid>
-            <Grid.ContextMenu>
-              <ContextMenu>
-                <MenuItem Header="打开">
-                  <MenuItem Header="从浏览器"/>
-                  <MenuItem Header="从文件夹"/>
-                </MenuItem>
-                <MenuItem Header="复制"></MenuItem>
-              </ContextMenu>
-            </Grid.ContextMenu>
-            <ToolTip.Tip>
-              <StackPanel Orientation="Vertical">
-                <TextBlock Text="{Binding Snapshot.Descript,Mode=OneTime}"/>
-                <ItemsRepeater Items="{Binding SourceInfos}" Margin="0,4,0,0">
-                  <ItemsRepeater.Layout>
-                    <StackLayout Orientation="Horizontal"/>
-                  </ItemsRepeater.Layout>
-                  <ItemsRepeater.ItemTemplate>
-                    <DataTemplate DataType="{x:Type kwce:ComicSource}">
-                      <Border Padding="4,2" CornerRadius="3" Background="Gray" Margin="0,0,2,0">
-                        <TextBlock Text="{Binding Source.Name}"/>
-                      </Border>
-                    </DataTemplate>
-                  </ItemsRepeater.ItemTemplate>
-                </ItemsRepeater>
-              </StackPanel>
-            </ToolTip.Tip>
-            <Image Source="{Binding LogoImage,Mode=OneWay}" Width="300"/>
-            <Border Background="#A1666666"
-                                VerticalAlignment="Bottom">
-              <TextBlock Text="{Binding Snapshot.Name,Mode=OneTime}"
-                         FontSize="16"
-                         Margin="0,16"
-                         HorizontalAlignment="Center"/>
-            </Border>
-          </Grid>
-        </DataTemplate>
-      </ListBox.ItemTemplate>
     </ListBox>
   </Grid>
 </UserControl>

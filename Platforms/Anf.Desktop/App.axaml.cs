@@ -30,6 +30,7 @@ using Ao.SavableConfig.Saver;
 using Avalonia.Threading;
 using Ao.SavableConfig.Binder;
 using Anf.Desktop.Settings;
+using Anf.Engine;
 
 namespace Anf.Desktop
 {
@@ -100,6 +101,7 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton<IObservableCollectionFactory>(new AvaloniaObservableCollectionFactory());
             AppEngine.Services.AddSingleton<ComicStoreService<AvalonComicStoreBox>>(storeSer);
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(basePath, HistoryService.HistoryFileName)));
+            AppEngine.Services.AddSingleton<ProposalEngine>();
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, StoreComicVisiting<Bitmap>>();
             AppEngine.Services.AddScoped<StoreComicVisiting<Bitmap>>();
             var configRoot = BuildConfiguration();
