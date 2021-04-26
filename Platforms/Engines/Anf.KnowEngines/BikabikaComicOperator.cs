@@ -94,7 +94,7 @@ namespace Anf.KnowEngines
             var urlStr = Base64Decode(Encoding.UTF8, cid);
             var urls = urlStr.Split(new string[] { "$qingtiandy$" }, StringSplitOptions.RemoveEmptyEntries);
             var index = 1;
-            return urls.Select(x => new ComicPage { TargetUrl = x, Name = index++.ToString() })
+            return urls.Reverse().Select(x => new ComicPage { TargetUrl = x, Name = index++.ToString() })
                 .ToArray();
         }
         private static string Base64Decode(Encoding encodeType, string result)

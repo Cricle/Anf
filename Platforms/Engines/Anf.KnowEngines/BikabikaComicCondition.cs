@@ -4,7 +4,7 @@ namespace Anf.KnowEngines
 {
     public class BikabikaComicCondition : ComicSourceConditionBase<BikabikaComicOperator>
     {
-        public override string EnginName => "Bikabika";
+        public override string EngineName => "Bikabika";
 
         public override Uri Address { get; } = new Uri("http://www.bikabika.com/");
 

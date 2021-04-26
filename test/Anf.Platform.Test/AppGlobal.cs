@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Text;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Anf.Platform.Test
 {
@@ -10,7 +11,8 @@ namespace Anf.Platform.Test
         [TestInitialize]
         public static void Init()
         {
-            
+            AppEngine.AddServices();
+            AppEngine.Services.AddDefaultEasyComic();
         }
     }
 }

@@ -77,7 +77,7 @@ namespace Anf.KnowEngines
             }
             var img = doc.DocumentNode.SelectSingleNode("//div[@class='wrap_intro_l_comic']/div[@class='comic_i']/div[@class='comic_i_img']/a/img");
             var chartps = new List<ComicChapter>();
-            for (int i = 0; i < node.Count; i++)
+            for (int i = node.Count-1; i >= 0; i--)
             {
                 var item = node[i];
                 var name = item.InnerText;

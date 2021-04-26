@@ -3,10 +3,8 @@ using System.Threading.Tasks;
 
 namespace Anf
 {
-    public interface ISearchProvider
+    public interface ISearchProvider: IEngine
     {
-        string EngineName { get; }
-
         Task<SearchComicResult> SearchAsync(string keywork,int skip,int take);
     }
 }

@@ -28,6 +28,8 @@ using Ao.SavableConfig;
 using Microsoft.Extensions.FileProviders;
 using Ao.SavableConfig.Saver;
 using Avalonia.Threading;
+using Ao.SavableConfig.Binder;
+using Anf.Desktop.Settings;
 
 namespace Anf.Desktop
 {
@@ -38,6 +40,7 @@ namespace Anf.Desktop
             AvaloniaXamlLoader.Load(this);
             InitServices();
             HandleException();
+
         }
         private void HandleException()
         {
@@ -86,7 +89,6 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton<INavigationService>(nav);
             AppEngine.Services.AddSingleton<IComicTurnPageService>(nav);
             AppEngine.Services.AddSingleton(nav);
-            AppEngine.Services.AddSingleton(store);
             AppEngine.Services.AddSingleton<IComicSaver>(store);
             AppEngine.Services.AddSingleton<IStoreService>(store);
             AppEngine.Services.AddSingleton<IPlatformService, PlatformService>();
@@ -100,47 +102,20 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(basePath, HistoryService.HistoryFileName)));
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, StoreComicVisiting<Bitmap>>();
             AppEngine.Services.AddScoped<StoreComicVisiting<Bitmap>>();
-            AppEngine.Services.AddSingleton<AnfSetting>();
             var configRoot = BuildConfiguration();
-            watcher = configRoot.CreateWatcher();
-            watcher.ChangePushed += Watcher_ChangePushed;
-            section=configRoot.GetSection(AnfSetting.SectionKey);
-            section.GetReloadToken().RegisterChangeCallback(OnChange,null);
+            AppEngine.Services.AddSingleton(CreateSettings);
             AppEngine.Services.AddSingleton(configRoot);
             AppEngine.Services.AddSingleton<IConfiguration>(configRoot);
             AppEngine.Services.AddSingleton<IConfigurationRoot>(configRoot);
             AppEngine.Services.AddLogging(x => x.ClearProviders().AddNLog("NLog.config"));
         }
-        private IConfigurationSection section;
-        private void OnChange(object status)
+        private AnfSettings CreateSettings(IServiceProvider provider)
         {
-            var configRoot = AppEngine.GetRequiredService<IConfiguration>();
-            var theme = configRoot.GetValue<bool>(AnfSetting.DrakMoelKey);
-            var arc = configRoot.GetValue<bool>(AnfSetting.AcrylicBlurKey);
-            var themeSer = AppEngine.GetRequiredService<ThemeService>();
-            Dispatcher.UIThread.Post(() =>
-            {
-                themeSer.EnableSaveConfig = false;
-                themeSer.EnableAcrylicBlur = arc;
-                themeSer.CurrentModel = theme ? FluentThemeMode.Dark : FluentThemeMode.Light;
-                themeSer.EnableSaveConfig = true;
-            });
-            section.GetReloadToken()
-                .RegisterChangeCallback(OnChange, null);
-        }
-        private ChangeWatcher watcher;
-        private readonly ConcurrentOnce once = new ConcurrentOnce();
-        private async void Watcher_ChangePushed(object sender, IConfigurationChangeInfo e)
-        {
-            if (await once.WaitAsync(TimeSpan.FromSeconds(1)))
-            {
-                var config = AppEngine.GetRequiredService<SavableConfigurationRoot>();
-                var changes = watcher.ChangeInfos.ToArray();
-                watcher.Clear();
-                var changer = ChangeReport.FromChanges(config, changes);
-                var saver = new ChangeSaver(changer, JsonChangeTransferCondition.Instance);
-                saver.EmitAndSave();
-            }
+            var root = provider.GetRequiredService<SavableConfigurationRoot>();
+            var instType = ProxyHelper.Default.CreateComplexProxy<AnfSettings>(true);
+            var inst = (AnfSettings)instType.Build(root);
+            var disposable = root.BindTwoWay(inst, JsonChangeTransferCondition.Instance);
+            return inst;
         }
 
         private SavableConfigurationRoot BuildConfiguration()
@@ -157,22 +132,18 @@ namespace Anf.Desktop
             {
                 AppEngine.Services.AddSingleton(desktop);
                 AppEngine.Services.AddSingleton<MainWindow>();
-                var themeSer = AppEngine.GetRequiredService<ThemeService>();
                 var nav = AppEngine.GetRequiredService<MainNavigationService>();
                 var mainWin = AppEngine.GetRequiredService<MainWindow>();
+                var titleSer = AppEngine.GetRequiredService<TitleService>();
+                _ = AppEngine.GetRequiredService<AnfSettings>();
+                mainWin.Icon = new WindowIcon("Anf.ico");
                 desktop.MainWindow = mainWin;
+                titleSer.Bind(mainWin);
+                titleSer.CreateControls();
+                mainWin.KeyDown += OnMainWinKeyDown;
+
                 //nav.Navigate(new VisitingView());
                 nav.Navigate<HomePage>();
-                var titleSer = AppEngine.GetRequiredService<TitleService>();
-                titleSer.Bind(mainWin);
-                mainWin.KeyDown += OnMainWinKeyDown;
-                titleSer.CreateControls();
-                var config = AppEngine.GetRequiredService<IConfiguration>();
-                var anfSetting = AppEngine.GetRequiredService<AnfSetting>();
-                themeSer.EnableAcrylicBlur = config.GetValue<bool>(AnfSetting.AcrylicBlurKey);
-                themeSer.CurrentModel = config.GetValue<bool>(AnfSetting.DrakMoelKey) ?
-                     FluentThemeMode.Dark : FluentThemeMode.Light;
-                themeSer.EnableSaveConfig = true;
             }
             base.OnFrameworkInitializationCompleted();
         }

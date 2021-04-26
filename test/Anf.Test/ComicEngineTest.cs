@@ -21,7 +21,7 @@ namespace Anf.Test
             var eng = new ComicEngine();
             var val = eng.GetComicSourceProviderType("http://www.baidu.com");
             Assert.IsNull(val);
-            eng.Add(new DataCondition { Descript=new EngineDescript(), EnginName="test", Order=1, ProviderType=typeof(void), ConditionFunc = _ => false });
+            eng.Add(new DataCondition { Descript=new EngineDescript(), EngineName="test", Order=1, ProviderType=typeof(void), ConditionFunc = _ => false });
             val = eng.GetComicSourceProviderType(new Uri("http://www.baidu.com"));
             Assert.IsNull(val);
         }

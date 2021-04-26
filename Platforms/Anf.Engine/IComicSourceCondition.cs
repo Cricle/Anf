@@ -2,10 +2,8 @@
 
 namespace Anf
 {
-    public interface IComicSourceCondition
+    public interface IComicSourceCondition: IEngine
     {
-        string EnginName { get; }
-
         int Order { get; }
 
         EngineDescript Descript { get; }

@@ -14,6 +14,7 @@ using Anf.Desktop.Models;
 using Anf.Platform.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Anf.Platform;
+using Anf.Desktop.Settings;
 
 namespace Anf.Desktop.ViewModels
 {
@@ -50,7 +51,6 @@ namespace Anf.Desktop.ViewModels
         {
             AvalonInit();
         }
-        private bool chapterSelectorOpen;
         private StretchMode stretchMode;
         private double zoomSpeed;
         private bool enableGesture;
@@ -61,19 +61,12 @@ namespace Anf.Desktop.ViewModels
         private double minHeight;
         private ComicPageInfo<Bitmap> selectedResource;
         private bool statusShow;
-        private bool loadAllModel;
+        private bool leftPaneOpen;
 
-        public bool LoadAllModel
+        public bool LeftPaneOpen
         {
-            get { return loadAllModel; }
-            set
-            {
-                Set(ref loadAllModel, value);
-                if (value)
-                {
-                    _ = LoadAllAsync();
-                }
-            }
+            get { return leftPaneOpen; }
+            set => Set(ref leftPaneOpen, value);
         }
 
         public bool StatusShow
@@ -152,22 +145,27 @@ namespace Anf.Desktop.ViewModels
                 _ = AvalonGoChapterAsync(value);
             }
         }
+        public ReadingSettings ReadingSettings { get; private set; }
+        public RelayCommand OpenPaneCommand { get; private set; }
+        public RelayCommand ClosePaneCommand { get; private set; }
+        public void OpenPane()
+        {
+            LeftPaneOpen = true;
+        }
+        public void ClosePane()
+        {
+            LeftPaneOpen = false;
+        }
         private async Task AvalonGoChapterAsync(ComicChapter chapter)
         {
             try
             {
                 await GoChapterAsync(chapter);
-                RaisePropertyChanged(nameof(TrulyCurrentComicChapter));
             }
             catch (Exception ex)
             {
                 ExceptionService.Exception = ex;
             }
-        }
-        public bool ChapterSelectorOpen
-        {
-            get { return chapterSelectorOpen; }
-            set => Set(ref chapterSelectorOpen, value);
         }
 
         public StretchMode[] StretchModes { get; protected set; }
@@ -180,16 +178,29 @@ namespace Anf.Desktop.ViewModels
         {
             MinWidth = 200;
             MinHeight = 400;
-            ZoomSpeed = 2;
-            StretchMode = StretchMode.None;
+            ZoomSpeed = 1;
+            StretchMode = StretchMode.UniformToFill;
             StretchModes = ZoomBorder.StretchModes;
             SaveImageCommand = new RelayCommand<ComicPageInfo<Bitmap>>(SaveImage);
             SaveLogoCommand = new RelayCommand(SaveLogo);
+            OpenPaneCommand = new RelayCommand(OpenPane);
+            ClosePaneCommand = new RelayCommand(ClosePane);
 
             PageCursorMoved += AvalonVisitingViewModel_PageCursorMoved;
             TitleService = AppEngine.GetRequiredService<TitleService>();
             ExceptionService = AppEngine.GetRequiredService<ExceptionService>();
+            ReadingSettings = AppEngine.GetRequiredService<AnfSettings>().Reading;
+            ReadingSettings.LoadAllChanged += OnReadingSettingsLoadAllChanged;
         }
+
+        private void OnReadingSettingsLoadAllChanged(bool obj)
+        {
+            if (obj)
+            {
+                _ = LoadAllAsync();
+            }
+        }
+
         protected override void OnInitDone()
         {
             base.OnInitDone();
@@ -198,11 +209,7 @@ namespace Anf.Desktop.ViewModels
         
         private void AvalonVisitingViewModel_PageCursorMoved(IDataCursor<IComicVisitPage<Bitmap>> arg1, int arg2)
         {
-            var res = this.Resources;
-            if (arg2 >= 0 && arg2 < res.Count)
-            {
-                SelectedResource = res[arg2];
-            }
+            SelectedResource = GetResource(arg2);
         }
         public async void SaveLogo()
         {
@@ -229,12 +236,17 @@ namespace Anf.Desktop.ViewModels
         {
             try
             {
-                TitleService.Title = $"Anf - {ComicEntity.Name} - {cursor.Current.ChapterWithPage.Chapter.Title}";
                 base.OnCurrentChaterCursorChanged(cursor);
+                TitleService.Title = $"Anf - {ComicEntity.Name} - {cursor.Current.ChapterWithPage.Chapter.Title}";
                 SelectedResource = null;
-                if (loadAllModel)
+                RaisePropertyChanged(nameof(TrulyCurrentComicChapter));
+                if (ReadingSettings.LoadAll)
                 {
                     await LoadAllAsync();
+                }
+                else
+                {
+                    await LoadResourceAsync(0);
                 }
             }
             catch (Exception ex)

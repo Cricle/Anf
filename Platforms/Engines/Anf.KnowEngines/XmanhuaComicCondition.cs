@@ -4,7 +4,7 @@ namespace Anf.KnowEngines
 {
     public class XmanhuaComicCondition : ComicSourceConditionBase<MangabzComicOperator>
     {
-        public override string EnginName => "Xmanhua";
+        public override string EngineName => "Xmanhua";
 
         public override Uri Address { get; } = new Uri("http://www.xmanhua.com/");
 

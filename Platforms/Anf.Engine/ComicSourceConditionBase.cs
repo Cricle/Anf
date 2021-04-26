@@ -18,7 +18,7 @@ namespace Anf
 
         public Type ProviderType { get; }
 
-        public abstract string EnginName { get; }
+        public abstract string EngineName { get; }
 
         public EngineDescript Descript { get; }
 

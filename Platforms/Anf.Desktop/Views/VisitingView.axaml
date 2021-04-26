@@ -60,44 +60,77 @@
     </DataTemplate>
   </UserControl.Resources>
   <Grid>
-    <Carousel x:Name="Car"
+    <SplitView IsPaneOpen="{Binding LeftPaneOpen,Mode=TwoWay}"
+               CompactPaneLength="0"
+               DisplayMode="CompactInline">
+      <SplitView.Pane>
+        <Grid>
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Grid Margin="0,3">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock FontWeight="Bold" Text="{Binding Name}" VerticalAlignment="Center"
+                       HorizontalAlignment="Center"
+                       TextWrapping="NoWrap"
+                       TextTrimming="CharacterEllipsis"
+                       ToolTip.Tip="{Binding Name}"/>
+          <Button Command="{Binding ClosePaneCommand}" Grid.Column="1" Background="{x:Null}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch">
+            <TextBlock Classes="segoblock" Text="&#xE894;" Foreground="Red"/>
+          </Button>
+          </Grid>
+          <ListBox SelectedItem="{Binding TrulyCurrentComicChapter,Mode=TwoWay}"
+                   Items="{Binding ComicEntity.Chapters}"
+                   Grid.Row="1"
+                   Background="{x:Null}">
+            <ListBox.ItemTemplate>
+              <DataTemplate DataType="{x:Type kwc:ComicChapter}">
+                <TextBlock ToolTip.Tip="{Binding TargetUrl}" Text="{Binding Title}"/>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+        </Grid>
+      </SplitView.Pane>
+      <SplitView.Content>
+        <Grid>
+
+          <Carousel x:Name="Car"
               Items="{Binding Resources}"
               Background="{x:Null}"
               IsVisible="{Binding Transverse}"
               SelectedItem="{Binding SelectedResource,Mode=TwoWay}">
-      <Carousel.ItemTemplate>
-        <DataTemplate>
-          <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
-            <s:ZoomBorder EnableZoom="{Binding DataContext.EnableZoom,ElementName=Car,Mode=TwoWay}"
-                          EnableConstrains="{Binding DataContext.EnableConstrains,ElementName=Car,Mode=TwoWay}"
-                          EnableGestureZoom="{Binding DataContext.EnableGesture,ElementName=Car}"
-                          EnableGestureRotation="{Binding DataContext.EnableGesture,ElementName=Car}"
-                          EnableGestureTranslation="{Binding DataContext.EnableGesture,ElementName=Car}"
-                          ZoomSpeed="{Binding DataContext.ZoomSpeed,ElementName=Car,Mode=TwoWay}"
-                          Stretch="{Binding DataContext.StretchMode,ElementName=Car,Mode=TwoWay}"
-                          MinWidth="{Binding DataContext.MinWidth,ElementName=Car}"
-                          MinHeight="{Binding DataContext.MinHeight,ElementName=Car}">
-              <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ItemDt}"/>
-            </s:ZoomBorder>
+            <Carousel.ItemTemplate>
+              <DataTemplate>
+                <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto">
+                  <s:ZoomBorder EnableZoom="{Binding DataContext.EnableZoom,ElementName=Car,Mode=TwoWay}"
+                                EnableConstrains="{Binding DataContext.EnableConstrains,ElementName=Car,Mode=TwoWay}"
+                                EnableGestureZoom="{Binding DataContext.EnableGesture,ElementName=Car}"
+                                EnableGestureRotation="{Binding DataContext.EnableGesture,ElementName=Car}"
+                                EnableGestureTranslation="{Binding DataContext.EnableGesture,ElementName=Car}"
+                                ZoomSpeed="{Binding DataContext.ZoomSpeed,ElementName=Car,Mode=TwoWay}"
+                                Stretch="{Binding DataContext.StretchMode,ElementName=Car,Mode=TwoWay}"
+                                MinWidth="{Binding DataContext.MinWidth,ElementName=Car}"
+                                MinHeight="{Binding DataContext.MinHeight,ElementName=Car}">
+                    <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ItemDt}"/>
+                  </s:ZoomBorder>
+                </ScrollViewer>
+              </DataTemplate>
+            </Carousel.ItemTemplate>
+          </Carousel>
+          <ScrollViewer Name="RepSv" HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsVisible="{Binding Transverse,Converter={StaticResource RevBoolConverter}}">
+            <ItemsRepeater Name="Rep"
+                           Background="{x:Null}"
+                           Items="{Binding Resources}"
+                           ItemTemplate="{StaticResource ItemDt}">
+            </ItemsRepeater>
           </ScrollViewer>
-        </DataTemplate>
-      </Carousel.ItemTemplate>
-    </Carousel>
-    <Grid IsVisible="{Binding Transverse}">
-      <Grid.ColumnDefinitions>
-        <ColumnDefinition Width="*"/>
-        <ColumnDefinition Width="*"/>
-      </Grid.ColumnDefinitions>
-      <Border Cursor="LeftSide"/>
-      <Border Cursor="RightSide" Grid.Column="1"/>
-    </Grid>
-    <ScrollViewer HorizontalScrollBarVisibility="Auto" VerticalScrollBarVisibility="Auto" IsVisible="{Binding Transverse,Converter={StaticResource RevBoolConverter}}">
-      <ItemsRepeater Name="Rep"
-                     Background="{x:Null}"
-                     Items="{Binding Resources}"
-                     ItemTemplate="{StaticResource ItemDt}">
-      </ItemsRepeater>
-    </ScrollViewer>
+        </Grid>
+      </SplitView.Content>
+    </SplitView>
 
     <Border Classes="flow" HorizontalAlignment="Left" ClipToBounds="True">
       <ToolTip.Tip>
@@ -125,7 +158,7 @@
           <TextBlock Text="{Binding TotalPage}"></TextBlock>
           <TextBlock>)</TextBlock>
         </StackPanel>
-      <!--<ProgressBar VerticalAlignment="Bottom"
+        <!--<ProgressBar VerticalAlignment="Bottom"
                    MaxWidth="40"
                    Grid.Row="1"
                    Minimum="{Binding CurrentChaterCursor.CurrentIndex,Converter={StaticResource AddConverter}}"
@@ -165,7 +198,7 @@
           </StackPanel.Resources>
           <Image Height="400" Source="{Binding LogoImage}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
           <TextBlock FontSize="22" Text="{Binding Name}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
-          <TextBlock FontSize="12" Text="我已经在很努力获取数据了OvO！" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+          <TextBlock FontSize="12" Text="已经在很努力解析了OvO！" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
           <ProgressBar IsIndeterminate="{Binding IsLoading}" Margin="0,10,0,0" MaxWidth="300"/>
         </StackPanel>
       </ExperimentalAcrylicBorder>

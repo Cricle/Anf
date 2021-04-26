@@ -4,7 +4,7 @@ namespace Anf.Test.Providers
 {
     internal class DataCondition : IComicSourceCondition
     {
-        public string EnginName { get; set; }
+        public string EngineName { get; set; }
 
         public int Order { get; set; }
 

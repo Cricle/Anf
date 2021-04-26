@@ -1,5 +1,6 @@
 using Anf.Desktop.Converters;
 using Anf.Desktop.Services;
+using Anf.Desktop.Settings;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;
@@ -13,13 +14,16 @@ namespace Anf.Desktop
         public SettingsControlView()
         {
             DataContext = this;
-            TitleService = AppEngine.GetRequiredService<TitleService>();
-            ThemeService = AppEngine.GetRequiredService<ThemeService>();
+            AnfSettings = AppEngine.GetRequiredService<AnfSettings>();
+            ThemeSettings = AnfSettings.Theme;
+            ReadingSettings = AnfSettings.Reading;
             InitializeComponent();
         }
 
-        internal TitleService TitleService { get; }
-        internal ThemeService ThemeService { get; }
+        internal AnfSettings AnfSettings { get; }
+
+        internal ThemeSettings ThemeSettings { get; }
+        internal ReadingSettings ReadingSettings { get; }
 
         private void InitializeComponent()
         {

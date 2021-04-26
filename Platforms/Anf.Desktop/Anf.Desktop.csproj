@@ -32,7 +32,9 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Ao.SavableConfig.Json" Version="2.0.1" />
+    <PackageReference Include="Ao.SavableConfig" Version="2.2.1" />
+    <PackageReference Include="Ao.SavableConfig.Binder" Version="2.2.1" />
+    <PackageReference Include="Ao.SavableConfig.Json" Version="2.2.1" />
     <PackageReference Include="Avalonia" Version="0.10.2" />
     <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
@@ -78,7 +80,10 @@
     <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Update="NLog.config">
+    <None Include="..\..\assets\Anf.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\assets\NLog.config">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </None>
   </ItemGroup>
