@@ -30,7 +30,7 @@ namespace Anf.Test.Networks
         {
             Assert.ThrowsExceptionAsync<ArgumentNullException>(async() =>await new HttpClientAdapter(new HttpClient()).GetStreamAsync(null));
         }
-        private int port = 21765;
+        private int port = 8888;
         [TestMethod]
         [DataRow("POST")]
         [DataRow("GET")]
