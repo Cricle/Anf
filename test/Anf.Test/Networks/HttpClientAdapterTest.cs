@@ -30,6 +30,7 @@ namespace Anf.Test.Networks
         {
             Assert.ThrowsExceptionAsync<ArgumentNullException>(async() =>await new HttpClientAdapter(new HttpClient()).GetStreamAsync(null));
         }
+        private int port = 21765;
         [TestMethod]
         [DataRow("POST")]
         [DataRow("GET")]
@@ -39,7 +40,7 @@ namespace Anf.Test.Networks
             var ada = new HttpClientAdapter(new HttpClient());
             using (var ser = new EngineService())
             {
-                var url = "http://localhost:21765/";
+                var url = "http://localhost:"+ (port++)+"/";
                 ser.Listener.Prefixes.Add(url);
                 ser.Listen();
                 var req = new RequestSettings
