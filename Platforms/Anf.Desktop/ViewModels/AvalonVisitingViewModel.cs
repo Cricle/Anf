@@ -15,6 +15,7 @@ using Anf.Platform.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Anf.Platform;
 using Anf.Desktop.Settings;
+using System.ComponentModel;
 
 namespace Anf.Desktop.ViewModels
 {
@@ -190,12 +191,13 @@ namespace Anf.Desktop.ViewModels
             TitleService = AppEngine.GetRequiredService<TitleService>();
             ExceptionService = AppEngine.GetRequiredService<ExceptionService>();
             ReadingSettings = AppEngine.GetRequiredService<AnfSettings>().Reading;
-            ReadingSettings.LoadAllChanged += OnReadingSettingsLoadAllChanged;
+            readingSubscriber = ReadingSettings.Subscribe(x => x.LoadAll, OnReadingSettingsLoadAllChanged);
         }
+        private IDisposable readingSubscriber;
 
-        private void OnReadingSettingsLoadAllChanged(bool obj)
+        private void OnReadingSettingsLoadAllChanged()
         {
-            if (obj)
+            if (ReadingSettings.LoadAll)
             {
                 _ = LoadAllAsync();
             }
@@ -237,7 +239,7 @@ namespace Anf.Desktop.ViewModels
             try
             {
                 base.OnCurrentChaterCursorChanged(cursor);
-                TitleService.Title = $"Anf - {ComicEntity.Name} - {cursor.Current.ChapterWithPage.Chapter.Title}";
+                TitleService.Title = $"{ComicEntity.Name}";
                 SelectedResource = null;
                 RaisePropertyChanged(nameof(TrulyCurrentComicChapter));
                 if (ReadingSettings.LoadAll)
@@ -258,6 +260,7 @@ namespace Anf.Desktop.ViewModels
         {
             base.Dispose();
             TitleService.Title = string.Empty;
+            readingSubscriber.Dispose();
         }
     }
 }

@@ -46,7 +46,7 @@ namespace Anf.Desktop.Services
             GoBackButton = CreateIconButton<Button>("\xE72B");
             GoBackButton.Click += GoBackButton_Click;
 
-            FavoriteButton = CreateIconButton<Button>("\xE735");
+            FavoriteButton = CreateIconButton<Button>("\xE8F1;");
             FavoriteButton.Click += FavoriteButton_Click;
 
             var v = new SettingsControlView();

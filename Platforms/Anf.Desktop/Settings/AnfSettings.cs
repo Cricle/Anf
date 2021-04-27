@@ -10,12 +10,13 @@ using System.Threading.Tasks;
 
 namespace Anf.Desktop.Settings
 {
+    [ConfigStepIn]
     public class AnfSettings
     {
-        [ConfigStepIn]
         public ThemeSettings Theme { get; set; }
 
-        [ConfigStepIn]
         public ReadingSettings Reading{ get; set; }
+
+        public StartupSettings Startup { get; set; }
     }
 }

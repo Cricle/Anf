@@ -1,5 +1,4 @@
 ﻿using Anf.Services;
-using Avalonia.Media.Imaging;
 using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
@@ -7,9 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Anf.Desktop.Models
+namespace Anf.Platform.Models
 {
-    public class EngineInfo
+    public class EngineInfo<TImage>
     {
         public EngineInfo()
         {
@@ -19,7 +18,7 @@ namespace Anf.Desktop.Models
 
         public IComicSourceCondition Condition { get; set; }
 
-        public Bitmap Bitmap { get; set; }
+        public TImage Bitmap { get; set; }
 
         public RelayCommand OpenCommand { get; }
         public RelayCommand CopyCommand { get; }

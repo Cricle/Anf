@@ -57,6 +57,7 @@ namespace Anf.KnowEngines
             html.LoadHtml(str);
 
             var block = html.DocumentNode.SelectNodes("//ul[@id='detail-list-select-1']/li/a");
+            var hideBlock= html.DocumentNode.SelectNodes("//ul[@id='detail-list-select-1']/ul[@class='chapteritem']/li/a");
             var titleBlock = html.DocumentNode.SelectSingleNode("//div[@class='banner_detail_form']/div[@class='info']/p[@class='title']")?.ChildNodes[0].InnerText;
             if (titleBlock == null)
             {
@@ -66,7 +67,12 @@ namespace Anf.KnowEngines
             var descBlock = html.DocumentNode.SelectSingleNode("//div[@class='banner_detail_form']/div[@class='info']/p[@class='content']");
             var imgBlock = html.DocumentNode.SelectSingleNode("//div[@class='banner_detail_form']/div[@class='cover']/img");
             var caps = new List<ComicChapter>();
-            foreach (var item in block)
+            IEnumerable<HtmlNode> blocks = block;
+            if (hideBlock!=null)
+            {
+                blocks = blocks.Concat(hideBlock);
+            }
+            foreach (var item in blocks)
             {
                 var url = item.Attributes["href"];
                 var text = item.ChildNodes[0].InnerText;
