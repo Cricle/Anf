@@ -14,13 +14,7 @@ namespace Anf.Desktop.Settings
         public virtual bool LoadAll
         {
             get { return loadAll; }
-            set
-            {
-                Set(ref loadAll, value);
-                LoadAllChanged?.Invoke(value);
-            }
+            set { Set(ref loadAll, value); }
         }
-
-        public event Action<bool> LoadAllChanged;
     }
 }

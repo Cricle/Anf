@@ -29,7 +29,7 @@ namespace Anf.Web.Services
         public string GetProviderIdentity(string address)
         {
             var type = comicEngine.GetComicSourceProviderType(address);
-            return type?.EnginName;
+            return type?.EngineName;
         }
         public async Task<string> GetImageStreamAsync(string provider, string address)
         {
@@ -38,7 +38,7 @@ namespace Anf.Web.Services
             {
                 return url;
             }
-            var type = comicEngine.FirstOrDefault(x => x.EnginName== provider);
+            var type = comicEngine.FirstOrDefault(x => x.EngineName== provider);
             if (type == null)
             {
                 return null;

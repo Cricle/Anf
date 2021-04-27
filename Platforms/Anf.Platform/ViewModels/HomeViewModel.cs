@@ -14,10 +14,12 @@ using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Anf.Platform.Services;
 using Anf.Engine;
+using Anf.Platform.Models;
+using System.Net.Http;
 
 namespace Anf.ViewModels
 {
-    public abstract class HomeViewModel<TSourceInfo> : ViewModelBase,IDisposable
+    public abstract class HomeViewModel<TSourceInfo,TImage> : ViewModelBase,IDisposable
         where TSourceInfo:ComicSourceInfo
     {
         public const int PageSize = 50;
@@ -40,6 +42,7 @@ namespace Anf.ViewModels
             observableCollectionFactory = AppEngine.GetRequiredService<IObservableCollectionFactory>();
             Snapshots = observableCollectionFactory.Create<ComicSnapshotInfo<TSourceInfo>>();
             ProposalSnapshots = observableCollectionFactory.Create<ComicSnapshotInfo<TSourceInfo>>();
+            EngineIcons = observableCollectionFactory.Create<EngineInfo<TImage>>();
         }
         protected readonly IServiceScope scope;
         private string keyword;
@@ -166,6 +169,7 @@ namespace Anf.ViewModels
         /// </summary>
         public SearchEngine SearchEngine { get; }
 
+        public IList<EngineInfo<TImage>> EngineIcons { get; }
         public HistoryService HistoryService { get; } = AppEngine.GetRequiredService<HistoryService>();
         /// <summary>
         /// 搜索命令
@@ -185,6 +189,43 @@ namespace Anf.ViewModels
             var datas = await proposal.Provider.GetProposalAsync(30);
             observableCollectionFactory.AddRange(ProposalSnapshots, datas.Select(x => CreateSnapshotInfo(x)));
 
+        }
+        public async Task LoadEngineIcons(Action<IComicSourceCondition,Exception> eceptionHandler=null)
+        {
+            var httpClient = AppEngine.GetRequiredService<HttpClient>();
+            var streamTransfer = AppEngine.GetRequiredService<IStreamImageConverter<TImage>>();
+            foreach (var item in ComicEngine)
+            {
+                var addr = item.FaviconAddress;
+                if (addr is null)
+                {
+                    continue;
+                }
+                try
+                {
+                    using (var rep = await httpClient.GetAsync(addr))
+                    using (var stream = await rep.Content.ReadAsStreamAsync())
+                    {
+                        var bitmap =await streamTransfer.ToImageAsync(stream);
+                        EngineIcons.Add(new EngineInfo<TImage> { Bitmap = bitmap, Condition = item });
+                    }
+                }
+                catch (Exception ex)
+                {
+                    eceptionHandler?.Invoke(item,ex);
+                }
+            }
+        }
+        private void DisposeLogo()
+        {
+            foreach (var item in EngineIcons)
+            {
+                if (item .Bitmap is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+            EngineIcons.Clear();
         }
         /// <summary>
         /// 执行搜索
@@ -258,6 +299,7 @@ namespace Anf.ViewModels
         public virtual void Dispose()
         {
             scope.Dispose();
+            DisposeLogo();
         }
     }
 
