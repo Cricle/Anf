@@ -14,4 +14,15 @@
     <Setter Property="VerticalContentAlignment" Value="Center"/>
     <Setter Property="HorizontalContentAlignment" Value="Center"/>
   </Style>
+
+  <Style Selector="TextBlock.segoblock">
+    <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
+  </Style>
+  <Style Selector="ToggleSwitch.forcehover">
+    <Setter Property="OnContent" Value="{x:Null}"/>
+    <Setter Property="OffContent" Value="{x:Null}"/>
+    <Setter Property="HorizontalAlignment" Value="Stretch"/>
+    <Setter Property="VerticalAlignment" Value="Center"/>
+    <Setter Property="HorizontalContentAlignment" Value="Center"/>
+  </Style>
 </Styles>

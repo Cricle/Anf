@@ -32,9 +32,15 @@ namespace System.ComponentModel
             {
                 throw new ArgumentNullException(nameof(handler));
             }
-
-            var exp = expression.Body as MemberExpression;
-            var name = exp.Member.Name;
+            string name = null;
+            if (expression.Body is MemberExpression exp)
+            {
+                name = exp.Member.Name;
+            }
+            else if (expression.Body is UnaryExpression uexp&&uexp.Operand is MemberExpression propExp)
+            {
+                name = propExp.Member.Name;
+            }
             var sub = new PropertyChangedEventHandler((o, e) =>
               {
                   if (e.PropertyName == name)
@@ -42,6 +48,7 @@ namespace System.ComponentModel
                       handler(o, e);
                   }
               });
+            notify.PropertyChanged += sub;
             return new Subscriber(notify, sub);
         }
         public static IDisposable Subscribe<T>(this T notify, Expression<Func<T, object>> expression, Action<object> handler)

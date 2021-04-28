@@ -12,12 +12,14 @@ using Anf.Services;
 using Avalonia.LogicalTree;
 using Avalonia.Data;
 using Avalonia.Input;
+using Anf.Platform.Services;
+using Anf.Desktop.Settings;
 
 namespace Anf.Desktop
 {
     public class MainWindow : Window, IStyleable
     {
-        internal void SetPseudoClasses(string name,bool value)
+        internal void SetPseudoClasses(string name, bool value)
         {
             PseudoClasses.Set(name, value);
         }
@@ -28,36 +30,57 @@ namespace Anf.Desktop
         public MainWindow()
         {
             InitializeComponent();
-            MinWidth = 650;
-            MinHeight = 400;
-#if DEBUG&&NET472
+#if DEBUG && NET461_OR_GREATER
             this.AttachDevTools();
 #endif
         }
         private Panel mainPlan;
         private MainNavigationService navSer;
+        private ExceptionService exSer;
+        Type IStyleable.StyleKey => typeof(Window);
+
+        internal void RunInitAll()
+        {
+
+            navSer = (MainNavigationService)AppEngine.GetRequiredService<MainNavigationService>();
+            var titleSer = AppEngine.GetRequiredService<TitleService>();
+            exSer = AppEngine.GetRequiredService<ExceptionService>();
+            var settings = AppEngine.GetRequiredService<AnfSettings>();
+
+            mainPlan = this.Get<Panel>("MainPlan");
+            var titleBar = this.Get<Border>("TitleBar");
+            var exBorder = this.Get<Border>("ExcetionBorder");
+
+            mainPlan.Children.Add(navSer.border);
+
+            titleBar.DataContext = titleSer;
+            titleBar.Bind(HeightProperty, new Binding(nameof(TitleService.OffsceneHeight)) { Source = titleSer });
+
+            exBorder.DataContext = exSer;
+            exBorder.KeyDown += ExBorder_KeyDown;
+
+            this.Bind(MinWidthProperty, new Binding(nameof(WindowSettings.MinWidth))
+            {
+                Source = settings.Window
+            });
+            this.Bind(MinHeightProperty, new Binding(nameof(WindowSettings.MinHeight))
+            {
+                Source = settings.Window
+            });
+            this.Bind(TopmostProperty, new Binding(nameof(WindowSettings.Topmost))
+            {
+                Source = settings.Window
+            });
+        }
+
         private void InitializeComponent()
         {
             AvaloniaXamlLoader.Load(this);
-            navSer = (MainNavigationService)AppEngine.GetRequiredService<INavigationService>();
-            var titleSer = AppEngine.GetRequiredService<TitleService>();
-            exSer = AppEngine.GetRequiredService<ExceptionService>();
 
-            mainPlan = this.Get<Panel>("MainPlan");
-            mainPlan.Children.Add(navSer.border);
-
-            var titleBar = this.Get<Border>("TitleBar");
-            titleBar.DataContext =titleSer;
-            titleBar.Bind(HeightProperty, new Binding(nameof(TitleService.OffsceneHeight)) { Source = titleSer });
-           
-            var exBorder = this.Get<Border>("ExcetionBorder");
-            exBorder.DataContext = exSer;
-            exBorder.KeyDown += ExBorder_KeyDown;
         }
-        private ExceptionService exSer;
         private void ExBorder_KeyDown(object sender, KeyEventArgs e)
         {
-            if (e.Key== Key.Escape)
+            if (e.Key == Key.Escape)
             {
                 exSer.Exception = null;
                 e.Handled = true;
@@ -67,9 +90,8 @@ namespace Anf.Desktop
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)
         {
             base.OnDetachedFromLogicalTree(e);
-            mainPlan.Children.Remove(navSer.border);   
+            mainPlan.Children.Remove(navSer.border);
         }
-        Type IStyleable.StyleKey => typeof(Window);
 
 
         protected override void OnApplyTemplate(TemplateAppliedEventArgs e)

@@ -11,23 +11,11 @@
       <conv:AddConverter x:Key="AddConverter"/>
       <conv:RevBoolConverter x:Key="RevBoolConverter"/>
       <conv:AddNumberConverter x:Key="AddNumberConverter"/>
-      <conv:BoolFluentThemeModeConverter x:Key="BoolFluentThemeModeConverter"/>
-      <conv:BoolWindowTransparencyLevelConverter x:Key="BoolWindowTransparencyLevelConverter"/>
     </ResourceDictionary>
   </Application.Resources>
   <Application.Styles>
     <!--NOTE: 不要移除，占位置的-->
     <FluentTheme/>
-    <Style Selector="TextBlock.segoblock">
-      <Setter Property="FontFamily" Value="Segoe MDL2 Assets"/>
-    </Style>
-    <Style Selector="ToggleSwitch.forcehover">
-      <Setter Property="OnContent" Value="{x:Null}"/>
-      <Setter Property="OffContent" Value="{x:Null}"/>
-      <Setter Property="HorizontalAlignment" Value="Stretch"/>
-      <Setter Property="VerticalAlignment" Value="Center"/>
-      <Setter Property="HorizontalContentAlignment" Value="Center"/>
-    </Style>
-
+    <StyleInclude Source="avares://Anf.Desktop/Styles/controling.axaml"/>
   </Application.Styles>
 </Application>

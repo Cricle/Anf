@@ -1,4 +1,5 @@
 ﻿using Anf.Platform.Models;
+using Anf.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using Newtonsoft.Json;
@@ -17,19 +18,17 @@ namespace Anf.Platform.Services
         public ComicStoreBox(FileInfo targetFile)
         {
             TargetFile = targetFile ?? throw new ArgumentNullException(nameof(targetFile));
-            ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
             RemoveCommand = new RelayCommand(Remove);
             UpdateCommand = new RelayCommand(() => _ = UpdateAsync());
             UpdateModelFromFile();
+            Init();
         }
         public ComicStoreBox(FileInfo targetFile, ComicStoreModel attackModel)
         {
             TargetFile = targetFile ?? throw new ArgumentNullException(nameof(targetFile));
             this.attackModel = attackModel ?? throw new ArgumentNullException(nameof(attackModel));
             AttackModel.PropertyChanged += OnAttackModelPropertyChanged;
-            ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
-            RemoveCommand = new RelayCommand(Remove);
-            UpdateCommand = new RelayCommand(() => _ = UpdateAsync());
+            Init();
         }
         private readonly SemaphoreSlim writeLocker = new SemaphoreSlim(1);
         private object updateToken=new object();
@@ -59,9 +58,10 @@ namespace Anf.Platform.Services
         public FileInfo TargetFile { get; }
         public string AttackModelJson => JsonConvert.SerializeObject(AttackModel);
 
-        public RelayCommand ToggleSuperFavoriteCommand { get; }
-        public RelayCommand RemoveCommand { get; }
-        public RelayCommand UpdateCommand { get; }
+        public RelayCommand ToggleSuperFavoriteCommand { get; protected set; }
+        public RelayCommand RemoveCommand { get; protected set; }
+        public RelayCommand UpdateCommand { get; protected set; }
+        public RelayCommand GoSourceCommand { get; protected set; }
 
         public event Action<ComicStoreBox> Removed;
 
@@ -69,6 +69,14 @@ namespace Anf.Platform.Services
         {
             AttackModel.SuperFavorite
                 = !AttackModel.SuperFavorite;
+        }
+
+        private void Init()
+        {
+            ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
+            RemoveCommand = new RelayCommand(Remove);
+            UpdateCommand = new RelayCommand(() => _ = UpdateAsync());
+            GoSourceCommand = new RelayCommand(GoSource);
         }
         public void Remove()
         {
@@ -79,6 +87,12 @@ namespace Anf.Platform.Services
         public Task<bool> LazyWriteAsync()
         {
             return LazyWriteAsync(DefaultLazyTime);
+        }
+
+        public void GoSource()
+        {
+            AppEngine.GetRequiredService<IComicTurnPageService>()
+                .GoSource(AttackModel.ComicUrl);
         }
         public async Task UpdateAsync()
         {

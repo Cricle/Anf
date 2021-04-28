@@ -44,9 +44,12 @@ namespace Anf
                 return provider;
             }
         }
+        public static void UseProvider(IServiceProvider provider)
+        {
+            AppEngine.provider = provider;
+        }
         public static void AddServices(NetworkAdapterTypes type= NetworkAdapterTypes.HttpClient)
         {
-            Services.AddLogging();
             Services.AddEasyComic(type);
             Services.AddKnowEngines();
             Services.AddScoped<IJsEngine, JintJsEngine>();

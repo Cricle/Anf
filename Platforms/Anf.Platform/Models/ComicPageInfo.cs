@@ -8,6 +8,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Anf.Services;
 using System.Diagnostics;
+using Anf.Platform;
 
 namespace Anf.Models
 {
@@ -127,9 +128,9 @@ namespace Anf.Models
         {
             if (VisitPage is null)
             {
-                return Task.CompletedTask;
+                return TaskHelper.GetComplatedTask();
             }
-           return PlatformService.OpenAddressAsync(VisitPage.Page.TargetUrl);
+            return PlatformService.OpenAddressAsync(VisitPage.Page.TargetUrl);
         }
         public void Copy()
         {

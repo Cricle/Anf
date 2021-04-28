@@ -3,6 +3,7 @@ using Microsoft.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -27,13 +28,13 @@ namespace Anf.Platform
 
         public static async Task<Stream> GetOrFromCacheAsync(string address, Func<Task<Stream>> streamCreator, StoreFetchSettings settings = null)
         {
-            var storeService = AppEngine.GetRequiredService<IStoreService>();
+            var storeService = AppEngine.GetService<IStoreService>();
             Stream stream = null;
             if (settings is null)
             {
                 settings = DefaultStoreFetchSettings;
             }
-            if (!settings.ForceNoCache)
+            if (!settings.ForceNoCache && storeService != null)
             {
                 var str = await storeService.GetPathAsync(address);
                 if (File.Exists(str))
@@ -47,7 +48,12 @@ namespace Anf.Platform
                 }
             }
             var recyclableMemoryStreamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
-            using (var mem = await streamCreator())
+            var mem = await streamCreator();
+            if (storeService is null)
+            {
+                return mem;
+            }
+            using (mem)
             {
                 stream = recyclableMemoryStreamManager.GetStream();
 
@@ -59,13 +65,27 @@ namespace Anf.Platform
             }
             return stream;
         }
-        public static Task<T> GetAsOrFromCacheAsync<T>(string address,
+        public static Task<T> GetOrFromCacheAsync<T>(string address,
             Func<Task<Stream>> streamCreator,
             Func<Stream, T> converter)
         {
-            return GetAsOrFromCacheAsync<T>(address, streamCreator, x => Task.FromResult(converter(x)));
+            return GetOrFromCacheAsync(address, streamCreator, x => Task.FromResult(converter(x)));
         }
-        public static async Task<T> GetAsOrFromCacheAsync<T>(string address,
+        public static Task<T> GetOrFromCacheAsync<T>(string address)
+        {
+            return GetOrFromCacheAsync<T>(address, async () =>
+            {
+                var rep = await AppEngine.GetRequiredService<HttpClient>().GetAsync(address);
+                return await rep.Content.ReadAsStreamAsync();
+            });
+        }
+        public static Task<T> GetOrFromCacheAsync<T>(string address,
+            Func<Task<Stream>> streamCreator)
+        {
+            var convert = AppEngine.GetRequiredService<IStreamImageConverter<T>>();
+            return GetOrFromCacheAsync(address, streamCreator, x => convert.ToImageAsync(x));
+        }
+        public static async Task<T> GetOrFromCacheAsync<T>(string address,
             Func<Task<Stream>> streamCreator,
             Func<Stream,Task<T>> converter)
         {

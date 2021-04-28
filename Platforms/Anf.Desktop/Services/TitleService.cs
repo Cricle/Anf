@@ -46,7 +46,7 @@ namespace Anf.Desktop.Services
             GoBackButton = CreateIconButton<Button>("\xE72B");
             GoBackButton.Click += GoBackButton_Click;
 
-            FavoriteButton = CreateIconButton<Button>("\xE8F1;");
+            FavoriteButton = CreateIconButton<Button>("\xE8F1");
             FavoriteButton.Click += FavoriteButton_Click;
 
             var v = new SettingsControlView();
@@ -81,7 +81,7 @@ namespace Anf.Desktop.Services
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            var navSer = AppEngine.GetRequiredService<INavigationService>();
+            var navSer = AppEngine.GetRequiredService<MainNavigationService>();
             navSer.GoBack();
         }
         private string title;
