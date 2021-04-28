@@ -10,16 +10,4 @@ namespace Anf.Services
         void GoSource(ComicSourceInfo info);
         void GoSource(string info);
     }
-    public interface INavigationService
-    {
-        bool CanGoBack { get; }
-
-        bool CanGoForward { get; }
-
-        void Navigate(object dest);
-
-        bool GoBack();
-
-        bool GoForward();
-    }
 }

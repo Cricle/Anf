@@ -16,6 +16,7 @@ using Anf.Platform.Services;
 using Anf.Engine;
 using Anf.Platform.Models;
 using System.Net.Http;
+using Anf.Networks;
 
 namespace Anf.ViewModels
 {
@@ -56,6 +57,13 @@ namespace Anf.ViewModels
         private int take=PageSize;
         private IComicSourceCondition avaliableCondition;
         private bool hasAvaliableCondition;
+        private bool proposalLoading;
+
+        public bool ProposalLoading
+        {
+            get { return proposalLoading; }
+            private set => Set(ref proposalLoading, value);
+        }
 
         public bool HasAvaliableCondition
         {
@@ -170,7 +178,7 @@ namespace Anf.ViewModels
         public SearchEngine SearchEngine { get; }
 
         public IList<EngineInfo<TImage>> EngineIcons { get; }
-        public HistoryService HistoryService { get; } = AppEngine.GetRequiredService<HistoryService>();
+        public HistoryService HistoryService { get; } = AppEngine.GetService<HistoryService>();
         /// <summary>
         /// 搜索命令
         /// </summary>
@@ -183,16 +191,29 @@ namespace Anf.ViewModels
         public IList<ComicSnapshotInfo<TSourceInfo>> ProposalSnapshots { get; }
         public ProposalEngine ProposalEngine { get; }
         private readonly IObservableCollectionFactory observableCollectionFactory;
-        public async Task UpdateProposalAsync()
+        public async Task UpdateProposalAsync(int count)
         {
-            var proposal= ProposalEngine.Active(0);
-            var datas = await proposal.Provider.GetProposalAsync(30);
-            observableCollectionFactory.AddRange(ProposalSnapshots, datas.Select(x => CreateSnapshotInfo(x)));
-
+            if (ProposalLoading)
+            {
+                return;
+            }
+            ProposalLoading = true;
+            try
+            {
+                var proposal = ProposalEngine.Active(0);
+                var datas = await proposal.Provider.GetProposalAsync(count);
+                observableCollectionFactory.AddRange(ProposalSnapshots, datas.Select(x => CreateSnapshotInfo(x)));
+            }
+            finally
+            {
+                ProposalLoading = false;
+            }
         }
         public async Task LoadEngineIcons(Action<IComicSourceCondition,Exception> eceptionHandler=null)
         {
-            var httpClient = AppEngine.GetRequiredService<HttpClient>();
+            DisposeLogo();
+            EngineIcons.Clear();
+            var httpClient = AppEngine.GetRequiredService<INetworkAdapter>();
             var streamTransfer = AppEngine.GetRequiredService<IStreamImageConverter<TImage>>();
             foreach (var item in ComicEngine)
             {
@@ -203,8 +224,11 @@ namespace Anf.ViewModels
                 }
                 try
                 {
-                    using (var rep = await httpClient.GetAsync(addr))
-                    using (var stream = await rep.Content.ReadAsStreamAsync())
+                    var reqSetting = new RequestSettings
+                    {
+                        Address=addr.AbsoluteUri
+                    };
+                    using (var stream = await httpClient.GetStreamAsync(reqSetting))
                     {
                         var bitmap =await streamTransfer.ToImageAsync(stream);
                         EngineIcons.Add(new EngineInfo<TImage> { Bitmap = bitmap, Condition = item });
@@ -212,6 +236,11 @@ namespace Anf.ViewModels
                 }
                 catch (Exception ex)
                 {
+                    var exSer=AppEngine.GetService<ExceptionService>();
+                    if (exSer!=null)
+                    {
+                        exSer.Exception = ex;
+                    }
                     eceptionHandler?.Invoke(item,ex);
                 }
             }
@@ -240,13 +269,17 @@ namespace Anf.ViewModels
             Searching = true;
             try
             {
+                DisposeSnapshot();
                 OnBeginSearch();
                 Snapshots.Clear();
                 var keyword = Keyword;
                 SearchResult=await CurrentSearchProvider.SearchAsync(keyword, Skip,Take);
                 InsertDatas();
                 OnEndSearch();
-                HistoryService.Lines.Add(keyword);
+                if (HistoryService != null)
+                {
+                    HistoryService.Lines.Add(keyword);
+                }
             }
             finally
             {
@@ -259,7 +292,10 @@ namespace Anf.ViewModels
             {
                 var nav = AppEngine.GetRequiredService<IComicTurnPageService>();
                 var addr = keyword.GetUrl();
-                HistoryService.Lines.Add(addr);
+                if (HistoryService != null)
+                {
+                    HistoryService.Lines.Add(addr);
+                }
                 nav.GoSource(addr);
             }
         }
@@ -295,10 +331,21 @@ namespace Anf.ViewModels
         {
 
         }
+        protected void DisposeSnapshot()
+        {
+            foreach (var item in Snapshots)
+            {
+                if (item is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+        }
 
         public virtual void Dispose()
         {
             scope.Dispose();
+            DisposeSnapshot();
             DisposeLogo();
         }
     }

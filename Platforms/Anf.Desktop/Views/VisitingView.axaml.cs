@@ -30,10 +30,10 @@ namespace Anf.Desktop.Views
         }
         private VisitingControlView vc;
         private TitleService titleService;
-        private AvalonVisitingViewModel vm;
+        private DesktopVisitingViewModel vm;
         private async void LoadVm(string address)
         {
-            vm = new AvalonVisitingViewModel();
+            vm = new DesktopVisitingViewModel();
             DataContext = vm;
             vc = new VisitingControlView { DataContext = vm };
             titleService= AppEngine.GetRequiredService<TitleService>();
@@ -103,7 +103,7 @@ namespace Anf.Desktop.Views
 
         private ItemsRepeater rep;
         private Carousel car;
-        private void Vm_TransverseChanged(AvalonVisitingViewModel arg1, bool arg2)
+        private void Vm_TransverseChanged(DesktopVisitingViewModel arg1, bool arg2)
         {
             if (arg2)
             {

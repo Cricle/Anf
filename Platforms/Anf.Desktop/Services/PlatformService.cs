@@ -17,7 +17,7 @@ namespace Anf.Desktop.Services
 
         public Task OpenAddressAsync(string address)
         {
-#if NETCOREAPP3_0_OR_GREATER
+#if NETCOREAPP1_0_OR_GREATER
             var psi = new ProcessStartInfo
 	        {
     	            FileName = address,

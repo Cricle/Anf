@@ -14,7 +14,7 @@ namespace Anf.Desktop.Views
     public class HomePage : UserControl
     {
         private readonly IDisposable binder;
-        private readonly AvalonHomeViewModel vm = new AvalonHomeViewModel();
+        private readonly DesktopHomeViewModel vm = new DesktopHomeViewModel();
         public HomePage()
         {
             InitializeComponent();

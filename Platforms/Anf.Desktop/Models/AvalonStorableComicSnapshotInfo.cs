@@ -19,7 +19,7 @@ namespace Anf.Desktop.Models
 
         protected override AvalonStorableComicSourceInfo CreateSourceInfo(ComicSnapshot snapshot, ComicSource source, ComicEngine engine)
         {
-            var store = AppEngine.GetRequiredService<AvalonComicStoreService>();
+            var store = AppEngine.GetRequiredService<DesktopComicStoreService>();
             var box = store.GetStoreBox(source.TargetUrl);
             return new AvalonStorableComicSourceInfo(snapshot, source, engine.GetComicSourceProviderType(source.TargetUrl), box);
         }

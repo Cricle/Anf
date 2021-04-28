@@ -234,7 +234,7 @@ namespace Anf.ViewModels
         {
             if (CurrentChapter is null)
             {
-                return Task.CompletedTask;
+                return TaskHelper.GetComplatedTask();
             }
             return PlatformService.OpenAddressAsync(CurrentChapter.TargetUrl);
         }
@@ -300,7 +300,7 @@ namespace Anf.ViewModels
             {
                 return res.LoadAsync();
             }
-            return Task.CompletedTask;
+            return TaskHelper.GetComplatedTask();
         }
         #region CursorMove
         public Task<bool> FirstPageAsync()
@@ -587,7 +587,7 @@ namespace Anf.ViewModels
         }
         protected virtual Task OnLoadedAsync(string address)
         {
-            return Task.CompletedTask;
+            return TaskHelper.GetComplatedTask();
         }
 
         public Task<bool> SelectChapterAsync(int index)
@@ -601,7 +601,7 @@ namespace Anf.ViewModels
         }
         protected virtual Task OnSelectedChapterAsync(int index)
         {
-            return Task.CompletedTask;
+            return TaskHelper.GetComplatedTask();
         }
         public virtual void Dispose()
         {
@@ -634,7 +634,7 @@ namespace Anf.ViewModels
                 {
                     disposable.Dispose();
                 }
-                LogoImage = await StoreFetchHelper.GetAsOrFromCacheAsync(address,
+                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync(address,
                     () => httpClient.GetStreamAsync(address),
                     s => streamImageConverter.ToImageAsync(s));
                 await OnLoadedLogoAsync(address, true);
@@ -650,7 +650,7 @@ namespace Anf.ViewModels
         }
         protected virtual Task OnLoadedLogoAsync(string address, bool isDefault)
         {
-            return Task.CompletedTask;
+            return TaskHelper.GetComplatedTask();
         }
     }
 }

@@ -8,6 +8,7 @@ using System.Net.Http;
 using System.IO;
 using System;
 using Anf.Desktop.Services;
+using Anf.Platform.Services;
 
 namespace Anf.Desktop
 {

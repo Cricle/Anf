@@ -1,0 +1,18 @@
+{
+  "Reading": {
+    "LoadAll": "False"
+  },
+  "Theme": {
+    "EnableDrakTheme": "True",
+    "EnableAcrylicBlur": "False"
+  },
+  "Window": {
+    "Topmost": false,
+    "MinHeight": "400",
+    "MinWidth": "650"
+  },
+  "Startup": {
+    "StartupType": "Proposal",
+    "DisplayProposalCount": "10"
+  }
+}

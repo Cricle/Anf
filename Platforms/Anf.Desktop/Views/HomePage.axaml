@@ -6,6 +6,8 @@
              xmlns:m="using:Anf.Desktop.Models"
              xmlns:kwce="using:Anf"
              xmlns:paz="using:Avalonia.Controls.PanAndZoom"
+             xmlns:conv="using:Anf.Desktop.Converters"
+             xmlns:s="using:Anf.Desktop.Settings"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Background="Transparent"
              x:Class="Anf.Desktop.Views.HomePage">
@@ -13,6 +15,7 @@
     <vm:AvalonHomeViewModel></vm:AvalonHomeViewModel>
   </Design.DataContext>
   <UserControl.Resources>
+    <conv:StartupTypeBoolConverter x:Key="StartupTypeBoolConverter"/>
     <DataTemplate x:Key="CsiDt" DataType="{x:Type m:AvalonComicSnapshotInfo}">
       <Grid>
         <Grid.ContextMenu>
@@ -51,7 +54,6 @@
         </Border>
       </Grid>
     </DataTemplate>
-
   </UserControl.Resources>
   <Grid>
     <Grid.RowDefinitions>
@@ -88,58 +90,63 @@
     <ProgressBar Grid.Row="2" IsVisible="{Binding Searching}" IsIndeterminate="True">
 
     </ProgressBar>
-    <Border Grid.RowSpan="5" IsVisible="{Binding EmptySet}"
-            VerticalAlignment="Center"
-            HorizontalAlignment="Center">
-      <!--favicon.ico-->
-      <Grid VerticalAlignment="Center">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="Auto"/>
-          <RowDefinition Height="Auto"/>
-          <RowDefinition Height="Auto"/>
-          <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
-          <TextBlock FontSize="22" Text="可以从上方输入框输入"/>
-          <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="关键字"/>
-          <TextBlock FontSize="22" Text="搜索或直接输入"/>
-          <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="可解析"/>
-          <TextBlock FontSize="22" Text="漫画网址"/>
-        </StackPanel>
-        <TextBlock Grid.Row="1" FontSize="24" FontWeight="Bold" Margin="0,10" HorizontalAlignment="Center">
-          可用引擎
-        </TextBlock>
-        <ItemsControl Grid.Row="2" Items="{Binding EngineIcons}"
-                      HorizontalAlignment="Center">
-          <ItemsControl.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel Orientation="Horizontal"/>
-            </ItemsPanelTemplate>
-          </ItemsControl.ItemsPanel>
-          <ItemsControl.ItemTemplate>
-            <DataTemplate>
-              <Border Padding="4">
-                <ToolTip.Tip>
-                  <ToolTip>
-                    <StackPanel Orientation="Vertical">
-                      <TextBlock Text="{Binding Condition.EnginName}"/>
-                      <TextBlock Text="{Binding Condition.Address}"/>
-                    </StackPanel>
-                  </ToolTip>
-                </ToolTip.Tip>
-                <Border.ContextMenu>
-                  <ContextMenu>
-                    <MenuItem Header="打开" Command="{Binding OpenCommand}"/>
-                    <MenuItem Header="复制" Command="{Binding CopyCommand}"/>
-                  </ContextMenu>
-                </Border.ContextMenu>
-                <Image Source="{Binding Bitmap}"
-                       Width="24"/>
-              </Border>
-            </DataTemplate>
-          </ItemsControl.ItemTemplate>
-        </ItemsControl>
-        <ScrollViewer Grid.Row="3" HorizontalScrollBarVisibility="Auto" Margin="0,20,0,0">
+    <Grid Grid.RowSpan="5" IsVisible="{Binding EmptySet}">
+      <Grid VerticalAlignment="Center"
+            HorizontalAlignment="Center"
+            IsVisible="{Binding StartupSettings.StartupType,ConverterParameter={x:Static s:StartupTypes.Providers}, Converter={StaticResource StartupTypeBoolConverter}}">
+        <!--favicon.ico-->
+        <Grid VerticalAlignment="Center">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+            <TextBlock FontSize="22" Text="可以从上方输入框输入"/>
+            <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="关键字"/>
+            <TextBlock FontSize="22" Text="搜索或直接输入"/>
+            <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="可解析"/>
+            <TextBlock FontSize="22" Text="漫画网址"/>
+          </StackPanel>
+          <TextBlock Grid.Row="1" FontSize="24" FontWeight="Bold" Margin="0,10" HorizontalAlignment="Center">
+            可用引擎
+          </TextBlock>
+          <ItemsControl Grid.Row="2" Items="{Binding EngineIcons}"
+                        HorizontalAlignment="Center">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <WrapPanel Orientation="Horizontal"/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Border Padding="4">
+                  <ToolTip.Tip>
+                    <ToolTip>
+                      <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Condition.EnginName}"/>
+                        <TextBlock Text="{Binding Condition.Address}"/>
+                      </StackPanel>
+                    </ToolTip>
+                  </ToolTip.Tip>
+                  <Border.ContextMenu>
+                    <ContextMenu>
+                      <MenuItem Header="打开" Command="{Binding OpenCommand}"/>
+                      <MenuItem Header="复制" Command="{Binding CopyCommand}"/>
+                    </ContextMenu>
+                  </Border.ContextMenu>
+                  <Image Source="{Binding Bitmap}"
+                         Width="24"/>
+                </Border>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </Grid>
+        <ScrollViewer Grid.Row="3"
+                      HorizontalScrollBarVisibility="Auto"
+                      Margin="0,20,0,0"
+                      IsVisible="{Binding StartupSettings.StartupType,ConverterParameter={x:Static s:StartupTypes.Proposal}, Converter={StaticResource StartupTypeBoolConverter}}">
           <ListBox Background="{x:Null}"
                    Items="{Binding ProposalSnapshots}"
                    SelectionMode="Single"
@@ -156,21 +163,34 @@
         </ScrollViewer>
 
       </Grid>
-    </Border>
 
-    <ListBox Grid.Row="3"
-             Background="{x:Null}"
-             Items="{Binding Snapshots}"
-             SelectionMode="Single"
-             VirtualizationMode="Simple"
-             ItemTemplate="{StaticResource CsiDt}"
-             SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}"
-             IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
-      <ListBox.ItemsPanel>
-        <ItemsPanelTemplate>
-          <WrapPanel Orientation="Horizontal"/>
-        </ItemsPanelTemplate>
-      </ListBox.ItemsPanel>
-    </ListBox>
+      <Grid HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="*"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel IsVisible="{Binding ProposalLoading}"
+                    Orientation="Vertical"
+                    HorizontalAlignment="Center">
+          <ProgressBar IsIndeterminate="{Binding ProposalLoading}" MaxWidth="200"/>
+          <TextBlock>正在加载推介</TextBlock>
+        </StackPanel>
+        <ListBox Background="{x:Null}"
+                 Items="{Binding Snapshots}"
+                 SelectionMode="Single"
+                 VirtualizationMode="Simple"
+                 ItemTemplate="{StaticResource CsiDt}"
+                 SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}"
+                 IsVisible="{Binding ProposalLoading,Converter={StaticResource RevBoolConverter}}">
+          <ListBox.ItemsPanel>
+            <ItemsPanelTemplate>
+              <WrapPanel Orientation="Horizontal"/>
+            </ItemsPanelTemplate>
+          </ListBox.ItemsPanel>
+        </ListBox>
+      </Grid>
+    </Grid>
   </Grid>
 </UserControl>

@@ -1,6 +1,7 @@
 ﻿using Anf.Easy;
 using Anf.Easy.Store;
 using Anf.Platform.Models;
+using Anf.Services;
 using GalaSoft.MvvmLight;
 using Newtonsoft.Json;
 using System;
@@ -27,6 +28,7 @@ namespace Anf.Platform.Services
         {
 
         }
+
         public IEnumerable<FileInfo> EnumerableModelFiles()
         {
             return Folder.EnumerateFiles(Pattern);

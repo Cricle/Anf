@@ -4,6 +4,7 @@ using Anf.Models;
 using Microsoft.IO;
 using System;
 using System.Net.Http;
+using Anf.Platform;
 
 namespace Anf.Desktop.Models
 {
@@ -28,11 +29,7 @@ namespace Anf.Desktop.Models
         {
             try
             {
-                LogoImage = await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(Snapshot.ImageUri, async() => 
-                {
-                    var req = await httpClient.GetAsync(Snapshot.ImageUri);
-                    return await req.Content.ReadAsStreamAsync();
-                });
+                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync<Bitmap>(Snapshot.ImageUri);
             }
             catch (Exception) 
             {

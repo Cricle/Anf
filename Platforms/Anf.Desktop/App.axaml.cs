@@ -31,6 +31,7 @@ using Avalonia.Threading;
 using Ao.SavableConfig.Binder;
 using Anf.Desktop.Settings;
 using Anf.Engine;
+using System.Reactive.PlatformServices;
 
 namespace Anf.Desktop
 {
@@ -40,70 +41,47 @@ namespace Anf.Desktop
         {
             AvaloniaXamlLoader.Load(this);
             InitServices();
-            HandleException();
-
-        }
-        private void HandleException()
-        {
-            AppDomain.CurrentDomain.UnhandledException += CurrentDomain_UnhandledException;
-            TaskScheduler.UnobservedTaskException += TaskScheduler_UnobservedTaskException;
+            GlobalExceptionHelper.Enable = true;
         }
 
-        private void TaskScheduler_UnobservedTaskException(object sender, UnobservedTaskExceptionEventArgs e)
-        {
-            var exser = AppEngine.GetRequiredService<ExceptionService>();
-            exser.Exception = e.Exception;
-            var logger = AppEngine.GetLogger<App>();
-            logger.LogError(e.Exception, sender?.ToString() ?? string.Empty);
-            e.SetObserved();
-        }
-
-        private void CurrentDomain_UnhandledException(object sender, UnhandledExceptionEventArgs e)
-        {
-            var exser = AppEngine.GetRequiredService<ExceptionService>();
-            var ex = e.ExceptionObject as Exception;
-            var logger = AppEngine.GetLogger<App>();
-            logger.LogError(ex, sender?.ToString() ?? string.Empty);
-            exser.Exception = ex;
-        }
+        public static string Workstation { get; } = AppDomain.CurrentDomain.BaseDirectory;
 
         private void InitServices()
         {
-            var basePath = AppDomain.CurrentDomain.BaseDirectory;
             AppEngine.Reset();
             AppEngine.AddServices(NetworkAdapterTypes.WebRequest);
             //var store = new GzipFileStoreService(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName)), MD5AddressToFileNameProvider.Instance);
-            var store = FileStoreService.FromMd5Default(Path.Combine(basePath, XComicConst.CacheFolderName));
+            var store = FileStoreService.FromMd5Default(Path.Combine(Workstation, XComicConst.CacheFolderName));
             var hp = new Lazy<HomePage>(() => new HomePage());
             var cv = new Lazy<ComicView>(() => new ComicView());
             var bv = new Lazy<BookshelfView>(() => new BookshelfView());
-            var va = new ViewActiver
+            var va = new ViewActiver<IControl>
             {
                 [typeof(HomePage)] = () => hp.Value,
                 [typeof(ComicView)] = () => cv.Value,
                 [typeof(BookshelfView)] = () => bv.Value
             };
             var nav = new MainNavigationService(new Border(), va);
-            AppEngine.Services.AddSingleton<IViewActiver>(va);
+            AppEngine.Services.AddSingleton<IViewActiver<IControl>>(va);
             AppEngine.Services.AddSingleton<ThemeService>();
             AppEngine.Services.AddSingleton<TitleService>();
-            AppEngine.Services.AddSingleton<INavigationService>(nav);
             AppEngine.Services.AddSingleton<IComicTurnPageService>(nav);
             AppEngine.Services.AddSingleton(nav);
             AppEngine.Services.AddSingleton<IComicSaver>(store);
             AppEngine.Services.AddSingleton<IStoreService>(store);
             AppEngine.Services.AddSingleton<IPlatformService, PlatformService>();
             AppEngine.Services.AddSingleton<IStreamImageConverter<Bitmap>, StreamImageConverter>();
-            AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, AResourceCreatorFactory>();
+            AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, PlatformResourceCreatorFactory<Bitmap>>();
             AppEngine.Services.AddSingleton<ExceptionService>();
-            var storeSer = new AvalonComicStoreService(new DirectoryInfo(Path.Combine(basePath, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
+            var storeSer = new DesktopComicStoreService(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
             AppEngine.Services.AddSingleton(storeSer);
             AppEngine.Services.AddSingleton<IObservableCollectionFactory>(new AvaloniaObservableCollectionFactory());
             AppEngine.Services.AddSingleton<ComicStoreService<AvalonComicStoreBox>>(storeSer);
-            AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(basePath, HistoryService.HistoryFileName)));
+            AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(Workstation, HistoryService.HistoryFileName)));
             AppEngine.Services.AddSingleton<ProposalEngine>();
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, StoreComicVisiting<Bitmap>>();
             AppEngine.Services.AddScoped<StoreComicVisiting<Bitmap>>();
+
             var configRoot = BuildConfiguration();
             AppEngine.Services.AddSingleton(CreateSettings);
             AppEngine.Services.AddSingleton(configRoot);
@@ -123,7 +101,7 @@ namespace Anf.Desktop
         private SavableConfigurationRoot BuildConfiguration()
         {
             var configBuilder = new SavableConfiurationBuilder();
-            configBuilder.SetBasePath(AppDomain.CurrentDomain.BaseDirectory);
+            configBuilder.SetBasePath(Workstation);
             configBuilder.AddJsonFile(XComicConst.SettingFileFolder, true, true);
             return configBuilder.Build();
         }
@@ -146,6 +124,8 @@ namespace Anf.Desktop
 
                 //nav.Navigate(new VisitingView());
                 nav.Navigate<HomePage>();
+                var themeSer = AppEngine.GetRequiredService<ThemeService>();
+                mainWin.RunInitAll();
             }
             base.OnFrameworkInitializationCompleted();
         }
