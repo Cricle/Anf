@@ -5,7 +5,7 @@ import { Observable } from 'rxjs';
 import { IComicApiService } from './comic-api.service.def'
 import {EntityResult,ComicDetail,ChapterWithPage,ComicRef,Position, ProcessInfo, ComicSnapshot, SetResult, Bookshelf, Result, ComicEntityRef} from './model'
 
-const part: string = "/api/v1/";
+const part: string = "https://www.bing.com/api/v1/";
 const comivPart: string = part + "Visiting";
 const bookPart:string =part + 'Bookshelf';
 
