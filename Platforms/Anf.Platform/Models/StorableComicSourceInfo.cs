@@ -77,7 +77,7 @@ namespace Anf.Platform.Models
             if (HasBox)
             {
                 Remove();
-                return Task.CompletedTask;
+                return TaskHelper.GetComplatedTask();
             }
             return AddAsync();
         }

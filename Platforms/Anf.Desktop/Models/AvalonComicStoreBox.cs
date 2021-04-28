@@ -1,4 +1,5 @@
 ﻿using Anf.Desktop.Services;
+using Anf.Platform;
 using Anf.Platform.Models;
 using Anf.Platform.Services;
 using Avalonia.Media.Imaging;
@@ -17,16 +18,13 @@ namespace Anf.Desktop.Models
     {
         public AvalonComicStoreBox(FileInfo targetFile) : base(targetFile)
         {
-            GoSourceCommand = new RelayCommand(GoSource);
             _ = LoadLogoAsync();
         }
 
         public AvalonComicStoreBox(FileInfo targetFile, ComicStoreModel attackModel) : base(targetFile, attackModel)
         {
-            GoSourceCommand = new RelayCommand(GoSource);
             _ = LoadLogoAsync();
         }
-        private readonly HttpClient httpClient=AppEngine.GetRequiredService<HttpClient>();
         private Bitmap image;
 
         public Bitmap Image
@@ -35,22 +33,13 @@ namespace Anf.Desktop.Models
             private set => Set(ref image, value);
         }
 
-        public RelayCommand GoSourceCommand { get; }
-
         private async Task LoadLogoAsync()
         {
-            Image = await CacheFetchHelper.GetAsBitmapOrFromCacheAsync(this.AttackModel.ImageUrl, DownloadAsync);
-            
-        }
-        private async Task<Stream> DownloadAsync()
-        {
-            var rep = await httpClient.GetAsync(this.AttackModel.ImageUrl);
-            return await rep.Content.ReadAsStreamAsync();
-        }
-        public void GoSource()
-        {
-            AppEngine.GetRequiredService<MainNavigationService>()
-                .GoSource(AttackModel.ComicUrl);
+            try
+            {
+                Image = await StoreFetchHelper.GetOrFromCacheAsync<Bitmap>(AttackModel.ImageUrl);   
+            }
+            catch (Exception) { }
         }
 
         public override void Dispose()
@@ -61,7 +50,7 @@ namespace Anf.Desktop.Models
 
         protected override void CoreRemove()
         {
-            var storeSer = AppEngine.GetRequiredService<AvalonComicStoreService>();
+            var storeSer = AppEngine.GetRequiredService<DesktopComicStoreService>();
             storeSer.Remove(AttackModel.ComicUrl);
         }
     }

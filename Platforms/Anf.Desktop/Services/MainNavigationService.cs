@@ -10,22 +10,23 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Anf.Platform.Services;
 
 namespace Anf.Desktop.Services
 {
-    internal class MainNavigationService : ObservableObject, INavigationService, IComicTurnPageService
+    internal class MainNavigationService : ObservableObject, IComicTurnPageService
     {
-        private readonly IViewActiver viewActiver;
+        private readonly IViewActiver<IControl> viewActiver;
         private readonly Stack<Type> types;
         internal readonly Border border;
-        public MainNavigationService(Border border, IViewActiver viewActiver)
+        public MainNavigationService(Border border, IViewActiver<IControl> viewActiver)
         {
             this.border = border;
             this.viewActiver = viewActiver;
             types = new Stack<Type>();
         }
 
-        public bool CanGoBack => types.Count !=0;
+        public bool CanGoBack => types.Count != 0;
 
         public bool CanGoForward => false;
 
@@ -33,14 +34,14 @@ namespace Anf.Desktop.Services
         {
             if (CanGoBack)
             {
-                var t=types.Pop();
+                var t = types.Pop();
                 if (CanGoBack && border.Child.GetType().IsEquivalentTo(t))
                 {
                     t = types.Pop();
                 }
-                var control=viewActiver.Active(t);
+                var control = viewActiver.Active(t);
                 NavigateCore(control);
-                if (types.Count==0)
+                if (types.Count == 0)
                 {
                     types.Push(t);
                 }
@@ -86,7 +87,7 @@ namespace Anf.Desktop.Services
         public IControl Navigate(Type type)
         {
             var originType = BoderChildType;
-            if (originType!=null&&BoderChildType.IsEquivalentTo(type))
+            if (originType != null && BoderChildType.IsEquivalentTo(type))
             {
                 return border.Child;
             }
@@ -96,11 +97,6 @@ namespace Anf.Desktop.Services
         public IControl Navigate<T>()
         {
             return Navigate(typeof(T));
-        }
-
-        void INavigationService.Navigate(object dest)
-        {
-            this.Navigate(dest);
         }
     }
 }

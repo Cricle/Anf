@@ -64,7 +64,11 @@ namespace Anf.Models
                 Set(ref snapshot, value);
                 if (value is null)
                 {
+#if NET452|| NETSTANDARD1_4
+                    SourceInfos = new TSourceInfo[0];
+#else
                     SourceInfos = Array.Empty<TSourceInfo>();
+#endif
                 }
                 else
                 {

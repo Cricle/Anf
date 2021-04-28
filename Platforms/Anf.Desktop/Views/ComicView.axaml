@@ -6,9 +6,6 @@
              xmlns:m="using:Anf.Desktop.Designings"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              x:Class="Anf.Desktop.Views.ComicView">
-  <Design.DataContext>
-    <m:DesigningComicSnapshotInfo/>
-  </Design.DataContext>
   <UserControl.Resources>
     <Thickness x:Key="IconMargin">0,0,12,0</Thickness>
     <Thickness x:Key="DescMargin">0,0,12,0</Thickness>
