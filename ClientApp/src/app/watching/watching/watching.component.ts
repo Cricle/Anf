@@ -4,7 +4,6 @@ import { ComicApiService } from '../../comic-api/comic-api.service';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 import { ChapterWithPage, ComicEntity, ComicEntityRef, ComicInfo, ComicRef } from '../../comic-api/model';
-import { Title } from '_@angular_platform-browser@8.2.12@@angular/platform-browser';
 @Component({
   selector: 'app-watching',
   templateUrl: './watching.component.html',
@@ -14,7 +13,6 @@ export class WatchingComponent implements OnInit {
   private _nav: ActivatedRoute;
   private _apiSer:ComicApiService;
   private _notify:NzNotificationService;
-  private _title:Title;
   private ref:string;
   
   chapterIndef:number;
@@ -23,8 +21,7 @@ export class WatchingComponent implements OnInit {
 
   constructor(nav: ActivatedRoute,
     apiSer:ComicApiService,
-    notify:NzNotificationService,
-    title:Title) {
+    notify:NzNotificationService) {
     this._notify=notify;
     this._apiSer=apiSer;
     this._nav = nav;
@@ -38,7 +35,7 @@ export class WatchingComponent implements OnInit {
     });
   }
   private updateTitle(){
-    this._title.setTitle(this.entityRef.entity.name+' - '+this.currentChapter.chapter.title);
+    //this._title.setTitle(this.entityRef.entity.name+' - '+this.currentChapter.chapter.title);
   }
 
   ngOnInit(): void {
