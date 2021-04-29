@@ -17,6 +17,7 @@ namespace Anf.Desktop
             AnfSettings = AppEngine.GetRequiredService<AnfSettings>();
             ThemeSettings = AnfSettings.Theme;
             ReadingSettings = AnfSettings.Reading;
+            PerformaceSettings = AnfSettings.Performace;
             InitializeComponent();
         }
 
@@ -24,6 +25,7 @@ namespace Anf.Desktop
 
         internal ThemeSettings ThemeSettings { get; }
         internal ReadingSettings ReadingSettings { get; }
+        internal PerformaceSettings PerformaceSettings { get; }
 
         private void InitializeComponent()
         {

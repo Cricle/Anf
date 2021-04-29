@@ -20,5 +20,7 @@ namespace Anf.Desktop.Settings
         public StartupSettings Startup { get; set; }
 
         public WindowSettings Window { get; set; }
+
+        public PerformaceSettings Performace { get; set; }
     }
 }

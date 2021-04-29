@@ -1,5 +1,10 @@
 import { RedirectRequest} from './models'
 export async function handleRequest(request: Request): Promise<Response> {
+  const url=new URL(request.url);
+  if (url.searchParams.keys().next().done) {
+    var query=await fetch('https://anfw.pages.dev/'+url.pathname);
+    return query;
+  } 
   const dataProm:Promise<RedirectRequest>=(request.method=='GET'||request.method=='get')?analysisGet(request):analysisPost(request);
   const data=await dataProm;
   const reqInit:RequestInit={
