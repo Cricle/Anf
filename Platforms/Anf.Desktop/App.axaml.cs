@@ -79,7 +79,7 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton<ComicStoreService<AvalonComicStoreBox>>(storeSer);
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(Workstation, HistoryService.HistoryFileName)));
             AppEngine.Services.AddSingleton<ProposalEngine>();
-            AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, StoreComicVisiting<Bitmap>>();
+            AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, DesktopStoreComicVisiting>();
             AppEngine.Services.AddScoped<StoreComicVisiting<Bitmap>>();
 
             var configRoot = BuildConfiguration();
