@@ -27,8 +27,11 @@ namespace Anf.Networks
 
             var req = (HttpWebRequest)WebRequest.Create(settings.Address);
             req.Method = "GET";
+            if (!string.IsNullOrEmpty(settings.Method))
+            {
+                req.Method = settings.Method;
+            }
             req.AllowAutoRedirect = true;
-            req.KeepAlive = false;
             if (!string.IsNullOrEmpty(settings.Accept))
             {
                 req.ContentType = settings.Accept;
