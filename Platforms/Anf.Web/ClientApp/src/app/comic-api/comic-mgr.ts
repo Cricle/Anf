@@ -1,6 +1,6 @@
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { Observable } from 'rxjs'
-import { Injectable } from '_@angular_core@8.2.12@@angular/core';
+import { Injectable } from '@angular/core';
 
 import { ComicApiService } from "./comic-api.service";
 import { Bookshelf, BookshelfInfo, ComicSnapshot, SetResult } from "./model";

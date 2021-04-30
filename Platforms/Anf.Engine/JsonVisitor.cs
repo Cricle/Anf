@@ -1,56 +1,55 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-//#if StandardLib
-//using System.Text.Json;
-//#else
-//#endif
+#if StandardLib
+using System.Text.Json;
+#else
 using Newtonsoft.Json.Linq;
+#endif
 
 namespace Anf
 {
-//#if StandardLib
-//    public struct JsonVisitor : IJsonVisitor
-//    {
-//        private readonly JsonElement doc;
-//        private readonly JsonDocument docx;
+#if StandardLib
+    public struct JsonVisitor : IJsonVisitor
+    {
+        private readonly JsonElement doc;
+        private readonly JsonDocument docx;
 
-//        public JsonVisitor(JsonElement doc, JsonDocument docx)
-//        {
-//            this.doc = doc;
-//            this.docx = docx;
-//        }
+        public JsonVisitor(JsonElement doc, JsonDocument docx)
+        {
+            this.doc = doc;
+            this.docx = docx;
+        }
 
-//        public IJsonVisitor this[string key]
-//        {
-//            get => new JsonVisitor(doc.GetProperty(key), docx);
-//        }
+        public IJsonVisitor this[string key]
+        {
+            get => new JsonVisitor(doc.GetProperty(key), docx);
+        }
 
-//        public IEnumerable<IJsonVisitor> ToArray()
-//        {
-//            foreach (var item in doc.EnumerateArray())
-//            {
-//                yield return new JsonVisitor(item, docx);
-//            }
-//        }
+        public IEnumerable<IJsonVisitor> ToArray()
+        {
+            foreach (var item in doc.EnumerateArray())
+            {
+                yield return new JsonVisitor(item, docx);
+            }
+        }
 
-//        public override string ToString()
-//        {
-//            return doc.ToString();
-//        }
-//        public static IJsonVisitor FromString(string txt)
-//        {
-//           var doc= JsonDocument.Parse(txt);
-//            return new JsonVisitor(doc.RootElement,doc);
-//        }
+        public override string ToString()
+        {
+            return doc.ToString();
+        }
+        public static IJsonVisitor FromString(string txt)
+        {
+            var doc = JsonDocument.Parse(txt);
+            return new JsonVisitor(doc.RootElement, doc);
+        }
 
-//        public void Dispose()
-//        {
-//            docx.Dispose();
-//        }
-//    }
-//#else
-//#endif
+        public void Dispose()
+        {
+            docx.Dispose();
+        }
+    }
+#else
     public struct JsonVisitor : IJsonVisitor
     {
         private readonly JToken @object;
@@ -94,4 +93,5 @@ namespace Anf
             return @object?.ToString();
         }
     }
+#endif
 }

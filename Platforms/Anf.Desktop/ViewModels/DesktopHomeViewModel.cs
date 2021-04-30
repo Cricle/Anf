@@ -14,6 +14,7 @@ using Anf.Platform.Services;
 using Anf.Desktop.Settings;
 using System.ComponentModel;
 using System.Collections.Generic;
+using Anf.Engine;
 
 namespace Anf.Desktop.ViewModels
 {
@@ -69,6 +70,10 @@ namespace Anf.Desktop.ViewModels
                 default:
                     break;
             }
+        }
+        protected override void OnSelectedProposalChanged(IProposalDescription description)
+        {
+            UpdateIfNeedAsync();
         }
         private void InitDatas()
         {

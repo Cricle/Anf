@@ -12,18 +12,26 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Anf.Services;
-using Newtonsoft.Json;
 using Anf.Platform;
 using Anf.Platform.Services;
 using System.Collections.Generic;
+using Anf.Engine;
 
 namespace Anf.ViewModels
 {
     public class VisitingViewModel<TResource, TImage> : ViewModelBase, IDisposable
     {
-        public VisitingViewModel(Func<IServiceProvider, IComicVisiting<TResource>> visiting = null)
+        public VisitingViewModel(IServiceProvider provider,Func<IServiceProvider, IComicVisiting<TResource>> visiting = null)
         {
-            InitService(scope.ServiceProvider, visiting);
+            this.provider = provider;
+            InitService(provider, visiting);
+            InitVisiting();
+        }
+        public VisitingViewModel(Func<IServiceProvider, IComicVisiting<TResource>> visiting = null, bool ignoreVisting = false)
+        {
+            scope = AppEngine.CreateScope();
+            provider = scope.ServiceProvider;
+            InitService(scope.ServiceProvider, visiting,ignoreVisting);
             InitVisiting();
         }
         public VisitingViewModel(
@@ -33,6 +41,7 @@ namespace Anf.ViewModels
             IStreamImageConverter<TImage> streamImageConverter,
             IObservableCollectionFactory observableCollectionFactory)
         {
+            provider = visiting.Host;
             this.streamImageConverter = streamImageConverter ?? throw new ArgumentNullException(nameof(streamImageConverter));
             this.recyclableMemoryStreamManager = recyclableMemoryStreamManager ?? throw new ArgumentNullException(nameof(recyclableMemoryStreamManager));
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
@@ -43,11 +52,12 @@ namespace Anf.ViewModels
         private readonly SemaphoreSlim loadSlim = new SemaphoreSlim(1);
         private IObservableCollectionFactory observableCollectionFactory;
         private CancellationTokenSource loadCancellationTokenSource;
-        protected readonly IServiceScope scope = AppEngine.CreateScope();
+        protected readonly IServiceScope scope;
+        protected readonly IServiceProvider provider;
         protected IStreamImageConverter<TImage> streamImageConverter;
         protected RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         protected HttpClient httpClient;
-        private IComicVisiting<TResource> visiting;
+        protected IComicVisiting<TResource> visiting;
         private bool isLoading;
         private ChapterSlots<TResource> chapterSlots;
         private PageSlots<TResource> pageSlots;
@@ -246,7 +256,7 @@ namespace Anf.ViewModels
         }
         public void CopyComicEntity()
         {
-            var str = JsonConvert.SerializeObject(ComicEntity);
+            var str = JsonHelper.Serialize(ComicEntity);
             PlatformService.Copy(str);
         }
         public void CopyChapter()
@@ -254,9 +264,12 @@ namespace Anf.ViewModels
             PlatformService.Copy(CurrentChapter.TargetUrl);
         }
 
-        protected void InitService(IServiceProvider provider, Func<IServiceProvider,IComicVisiting<TResource>> visiting = null)
+        protected void InitService(IServiceProvider provider, Func<IServiceProvider, IComicVisiting<TResource>> visiting = null, bool ignoreVisiting = false)
         {
-            this.visiting = visiting?.Invoke(provider) ?? provider.GetRequiredService<IComicVisiting<TResource>>();
+            if (!ignoreVisiting)
+            {
+                this.visiting = visiting?.Invoke(provider) ?? provider.GetRequiredService<IComicVisiting<TResource>>();
+            }
             httpClient = provider.GetRequiredService<HttpClient>();
             recyclableMemoryStreamManager = provider.GetRequiredService<RecyclableMemoryStreamManager>();
             streamImageConverter = provider.GetRequiredService<IStreamImageConverter<TImage>>();
@@ -496,13 +509,16 @@ namespace Anf.ViewModels
         {
             loadCancellationTokenSource?.Cancel();
             loadCancellationTokenSource?.Dispose();
-            foreach (var item in Resources)
+            if (!DoNotDisposeVisiting)
             {
-                if (item.Resource is IDisposable disposable)
+                foreach (var item in Resources)
                 {
-                    disposable.Dispose();
+                    if (item.Resource is IDisposable disposable)
+                    {
+                        disposable.Dispose();
+                    }
+                    item.LoadDone -= OnItemLoadDone;
                 }
-                item.LoadDone -= OnItemLoadDone;
             }
             ResourceLoadCount = 0;
             Resources.Clear();
@@ -510,14 +526,20 @@ namespace Anf.ViewModels
             var ps = PageSlots;
             if (ps != null)
             {
-                ps.Dispose();
+                if (!DoNotDisposeVisiting)
+                {
+                    ps.Dispose();
+                }
                 PageSlots = null;
             }
             var cpc = CurrentPageCursor;
             if (cpc != null)
             {
                 CurrentPageCursor.Moved -= OnCurrentPageCursorMoved;
-                cpc.Dispose();
+                if (!DoNotDisposeVisiting)
+                {
+                    cpc.Dispose();
+                }
             }
             CurrentPage = 0;
             ps = ChapterSlots[arg2].CreatePageSlots();
@@ -565,15 +587,22 @@ namespace Anf.ViewModels
         {
             return new ComicPageInfo<TResource>(slots, index);
         }
+        protected virtual Task<bool> LoadComicAsync(string address)
+        {
+            return Visiting.LoadAsync(address);
+        }
         public async Task LoadAsync(string address)
         {
             IsLoading = true;
             try
             {
-                chapterSlots?.Dispose();
+                if (!DoNotDisposeVisiting)
+                {
+                    chapterSlots?.Dispose();
+                }
                 chapterSlots = null;
                 CurrentChaterCursor = null;
-                var ok = await Visiting.LoadAsync(address);
+                var ok = await LoadComicAsync(address);
                 if (ok)
                 {
                     await Init();
@@ -603,15 +632,19 @@ namespace Anf.ViewModels
         {
             return TaskHelper.GetComplatedTask();
         }
+        public bool DoNotDisposeVisiting { get; set; }
         public virtual void Dispose()
         {
             Visiting.Loading -= OnLoading;
             Visiting.Loaded -= OnLoaded;
             try
             {
-                chapterSlots?.Dispose();
-                pageSlots?.Dispose();
-                Visiting.Dispose();
+                if (!DoNotDisposeVisiting)
+                {
+                    Visiting.Dispose();
+                    chapterSlots?.Dispose();
+                    pageSlots?.Dispose();
+                }
                 scope?.Dispose();
                 loadSlim.Dispose();
                 loadCancellationTokenSource?.Dispose();
@@ -630,7 +663,7 @@ namespace Anf.ViewModels
                     await OnLoadedLogoAsync(address, false);
                     return;
                 }
-                if (LogoImage is IDisposable disposable)
+                if (!DoNotDisposeVisiting && LogoImage is IDisposable disposable)
                 {
                     disposable.Dispose();
                 }

@@ -8,7 +8,15 @@ using System.Text;
 
 namespace Anf.Engine
 {
-    public class ProposalEngine : ObservableCollection<Type>
+    public interface IProposalDescription
+    {
+        Type ProviderType { get; }
+
+        string Name { get; }
+
+        Uri DescritionUri { get; }
+    }
+    public class ProposalEngine : ObservableCollection<IProposalDescription>
     {
         private readonly IServiceScopeFactory serviceScopeFactory;
 
@@ -16,13 +24,16 @@ namespace Anf.Engine
         {
             this.serviceScopeFactory = serviceScopeFactory;
         }
-
-        public ProposalProviderBox Active(int index)
+        public ProposalProviderBox Active(Type type)
         {
-            var type = this[index];
             var scope = serviceScopeFactory.CreateScope();
             var eng = (IProposalProvider)scope.ServiceProvider.GetRequiredService(type);
             return new ProposalProviderBox(eng, scope);
+        }
+        public ProposalProviderBox Active(int index)
+        {
+            var type = this[index];
+            return Active(type.ProviderType);
         }
     }
 }

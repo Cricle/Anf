@@ -7,7 +7,7 @@ using Anf.Platform.Models;
 using Anf.Platform.Services;
 using Anf.Services;
 using GalaSoft.MvvmLight.Command;
-using Newtonsoft.Json;
+using Anf.Engine;
 
 namespace Anf.Models
 {
@@ -112,7 +112,7 @@ namespace Anf.Models
         }
         public void CopyEntity()
         {
-            var str = JsonConvert.SerializeObject(Snapshot);
+            var str = JsonHelper.Serialize(Snapshot);
             PlatformService.Copy(str);
         }
     }
