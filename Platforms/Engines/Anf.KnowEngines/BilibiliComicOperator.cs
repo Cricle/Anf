@@ -5,7 +5,6 @@ using Jint.Native.Array;
 #if !NETSTANDARD1_3
 using Microsoft.IO;
 #endif
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -125,7 +124,7 @@ namespace Anf.KnowEngines
         {
             const int width = 660;
             var epId = new Uri(targetUrl).Segments.Last();
-            JToken targetObj = null;
+            string targetObjStr = null;
             using (var mem = GetStream())
             {
                 var arg = $"{{\"ep_id\":{epId}}}";
@@ -140,15 +139,16 @@ namespace Anf.KnowEngines
                 {
                     var imgs = jobj["data"]["images"].ToArray();
                     var paths = imgs.Select(x => x["path"].ToString()+$"@{width}w.jpg").ToArray();
-                    targetObj = JObject.FromObject(new
-                    {
-                        urls="[\""+string.Join(",",paths)+"\"]"
-                    });
+                    targetObjStr = "{urls:\"[\"" + string.Join(",", paths) + "\"]\"}";
+                    //targetObj = JObject.FromObject(new
+                    //{
+                    //    urls="[\""+string.Join(",",paths)+"\"]"
+                    //});
                 }
             }
             using (var mem = GetStream())
             {
-                WrtieStream(mem, targetObj.ToString());
+                WrtieStream(mem, targetObjStr);
                 var stream = await GetStreamAsync(imgTokenUri, "POST", mem);
                 string str = null;
                 using (var sr = new StreamReader(stream))

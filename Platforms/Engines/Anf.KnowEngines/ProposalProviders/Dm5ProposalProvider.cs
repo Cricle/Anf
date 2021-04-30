@@ -1,4 +1,5 @@
-﻿using Anf.Networks;
+﻿using Anf.Engine;
+using Anf.Networks;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -10,7 +11,7 @@ namespace Anf.KnowEngines.ProposalProviders
 {
     public class Dm5ProposalProvider : IProposalProvider
     {
-        private static readonly string Home = "http://www.dm5.com/";
+        internal static readonly string Home = "http://www.dm5.com/";
 
         public string EngineName { get; } = "Dm5";
 
@@ -33,7 +34,7 @@ namespace Anf.KnowEngines.ProposalProviders
         public async Task<ComicSnapshot[]> GetProposalAsync(int take)
         {
             var str = string.Empty;
-            using (var stream=new StreamReader(await GetStreamAsync(Home)))
+            using (var stream = new StreamReader(await GetStreamAsync(Home)))
             {
                 str = stream.ReadToEnd();
             }
@@ -42,7 +43,7 @@ namespace Anf.KnowEngines.ProposalProviders
             var sns = new List<ComicSnapshot>();
             void Fetch(int index)
             {
-                if (sns.Count>= take)
+                if (sns.Count >= take)
                 {
                     return;
                 }
@@ -81,11 +82,11 @@ namespace Anf.KnowEngines.ProposalProviders
                         TargetUrl = Home,
                         Sources = new ComicSource[]
                         {
-                        new ComicSource
-                        {
-                            TargetUrl=Home+addr,
-                            Name="1"
-                        }
+                            new ComicSource
+                            {
+                                TargetUrl=Home+addr,
+                                Name=EngineName
+                            }
                         }
                     };
                     sns.Add(sn);

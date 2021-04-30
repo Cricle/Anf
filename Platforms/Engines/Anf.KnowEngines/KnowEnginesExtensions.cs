@@ -26,6 +26,7 @@ namespace Anf.KnowEngines
 
 
             services.AddScoped<Dm5ProposalProvider>();
+            services.AddScoped<BilibiliProposalProvider>();
         }
         public static void UseKnowEngines(this IServiceProvider provider)
         {
@@ -44,7 +45,8 @@ namespace Anf.KnowEngines
             searchEng.Add(typeof(SomanSearchProvider));
 
             var proEng = provider.GetRequiredService<ProposalEngine>();
-            proEng.Add(typeof(Dm5ProposalProvider));
+            proEng.Add(new Dm5ProposalDescrition());
+            proEng.Add(new BilibiliProposalDescription());
         }
     }
 }

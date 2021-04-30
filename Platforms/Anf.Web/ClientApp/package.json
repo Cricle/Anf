@@ -7,7 +7,7 @@
     "build": "ng build",
     "build:ssr": "ng run Kw.Comic.Web:server:dev",
     "build.prod": "ng build --prod --aot && gulp compress",
-    "build.min":"ng build --prod --aot --build-optimizer --extract-css --vendor-chunk=true& gulp compress",
+    "build.min": "ng build --prod --aot --build-optimizer --extract-css --vendor-chunk=true& gulp compress",
     "postbuild": "gulp compress",
     "test": "ng test",
     "lint": "ng lint",

@@ -1,6 +1,5 @@
 ﻿using Anf.Easy.Store;
 using Anf.Networks;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -64,14 +63,16 @@ namespace Anf.Platform.Services
             using (var sr=new StreamReader(s))
             {
                 var str = sr.ReadToEnd();
-                var obj = JObject.Parse(str);
-                var succeed = string.Equals(obj["success"]?.ToString(), "true", StringComparison.OrdinalIgnoreCase);
-                if (!succeed)
+                using (var visitor=JsonVisitor.FromString(str))
                 {
-                    return false;
+                    var succeed= string.Equals(visitor["success"]?.ToString(), "true", StringComparison.OrdinalIgnoreCase);
+                    if (!succeed)
+                    {
+                        return false;
+                    }
+                    var result = visitor["result_info"]?["count"]?.ToString();
+                    return result != "0";
                 }
-                var result = obj["result_info"]?["count"]?.ToString();
-                return result != "0";
             }
 
         }

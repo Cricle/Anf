@@ -136,7 +136,7 @@
       <ToolTip.Tip>
         <ToolTip>
           <StackPanel Orientation="Vertical">
-            <TextBlock>肯定能遇见自己喜欢的漫画的!</TextBlock>
+            <TextBlock>唉，很难做!</TextBlock>
           </StackPanel>
         </ToolTip>
       </ToolTip.Tip>
@@ -198,7 +198,7 @@
           </StackPanel.Resources>
           <Image Height="400" Source="{Binding LogoImage}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
           <TextBlock FontSize="22" Text="{Binding Name}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
-          <TextBlock FontSize="12" Text="已经在很努力解析了OvO！" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+          <TextBlock FontSize="12" Text="正在解析章节OvO" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
           <ProgressBar IsIndeterminate="{Binding IsLoading}" Margin="0,10,0,0" MaxWidth="300"/>
         </StackPanel>
       </ExperimentalAcrylicBorder>

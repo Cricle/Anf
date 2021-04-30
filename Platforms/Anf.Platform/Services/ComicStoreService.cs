@@ -1,9 +1,9 @@
 ﻿using Anf.Easy;
 using Anf.Easy.Store;
+using Anf.Engine;
 using Anf.Platform.Models;
 using Anf.Services;
 using GalaSoft.MvvmLight;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -70,7 +70,7 @@ namespace Anf.Platform.Services
             {
                 throw new ArgumentNullException(nameof(model));
             }
-            var str = JsonConvert.SerializeObject(model);
+            var str = JsonHelper.Serialize(model);
             var path = GetModelPath(model.ComicUrl);
             File.WriteAllText(path, str);
             return path;
@@ -101,7 +101,7 @@ namespace Anf.Platform.Services
         public ComicStoreModel GetModel(string path)
         {
             var text = File.ReadAllText(path);
-            var model = JsonConvert.DeserializeObject<ComicStoreModel>(text);
+            var model = JsonHelper.Deserialize<ComicStoreModel>(text);
             return model;
         }
         public IEnumerable<ComicStoreModel> EnumerableModels(bool ignoreErrorFile = true, Action<FileInfo, Exception> errorCallback = null)
