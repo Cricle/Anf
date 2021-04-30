@@ -23,5 +23,10 @@ namespace Anf.Desktop.Views
         {
             AvaloniaXamlLoader.Load(this);
         }
+        protected override async void OnAttachedToVisualTree(VisualTreeAttachmentEventArgs e)
+        {
+            base.OnAttachedToVisualTree(e);
+            await vm.UpdateAsync();
+        }
     }
 }

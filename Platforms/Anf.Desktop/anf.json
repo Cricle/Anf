@@ -12,7 +12,11 @@
     "MinWidth": "650"
   },
   "Startup": {
-    "StartupType": "Proposal",
+    "StartupType": "Providers",
     "DisplayProposalCount": "10"
+  },
+  "Performace": {
+    "EnableCDN": "True",
+    "UseStore": "False"
   }
 }

@@ -1,46 +1,42 @@
-import { RedirectRequest} from './models'
+type handler=(req:Request)=>Promise<Response> ;
+
+interface RoutePart{
+    route:string;
+    handle:handler;
+}
+
+
+const getRouteMap:RoutePart[]=[
+    {
+        route:"get-searchs",
+        handle:handleGetSerach
+    }
+];
 export async function handleRequest(request: Request): Promise<Response> {
-  const url=new URL(request.url);
-  if (url.searchParams.keys().next().done) {
-    var query=await fetch('https://anfw.pages.dev/'+url.pathname);
-    return query;
-  } 
-  const dataProm:Promise<RedirectRequest>=(request.method=='GET'||request.method=='get')?analysisGet(request):analysisPost(request);
-  const data=await dataProm;
-  const reqInit:RequestInit={
-    method:data.method,
-    headers:new Headers(data.headers)
-  };
-  if (data.method!='GET'&&data.method!='get') {
-    reqInit.body=data.body;
-  }
-  return await fetch(data.url,reqInit);
-}
-async function analysisGet(request:Request):Promise<RedirectRequest> {
-  const rurl=new URL(request.url);
-  const url=rurl.searchParams.get('url');
-  const method=rurl.searchParams.get('method');
-  const body=rurl.searchParams.get('body');
-  const req:RedirectRequest={
-    url:url||'',
-    method:method||'',
-    body:body||'',
-  };
-  const usedInfo:Set<string>=new Set<string>(['url','method','body','headers']);
-    var m=new Map<string,string>();
-    for (const key in rurl.searchParams) {
-      const ele = rurl.searchParams.get(key);
-      if (!usedInfo.has(key)) {
-        m.set(key,ele||'');
-      }
+    const url=new URL(request.url);
+    const pathName=url.pathname.split('/').filter(x=>x!='');
+    const method=request.method.toLowerCase();
+    if (method=='get') {
+        const route=getHandler(pathName,getRouteMap);
+        if (route) {
+            return await route(request);
+        }
     }
-    if (m.size!=0) {
-      req.headers=m;
-    }
-  return req;
+    return new Response(null,{
+        status:404
+    });
 }
-async function analysisPost(request:Request):Promise<RedirectRequest> {
-  const dts=await request.text();
-  const data=<RedirectRequest>JSON.parse(dts);
-  return data;
+function getHandler(parts:string[],routes:RoutePart[]):handler|null {
+    let eqRoutes=routes;
+    for (let i = 0; i < parts.length; i++) {
+        const ele = parts[i];
+        eqRoutes=eqRoutes.filter((x,y)=>x.route==ele);
+    }
+    if (eqRoutes.length==0) {
+        return null;
+    }
+    return eqRoutes[0].handle;
+}
+function handleGetSerach(request:Request) : Promise<Response>{
+    return new Promise<Response>(()=> new Response(null));
 }

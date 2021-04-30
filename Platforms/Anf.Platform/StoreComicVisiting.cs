@@ -1,9 +1,8 @@
 ﻿using Anf.Easy.Store;
 using Anf.Easy.Visiting;
+using Anf.Engine;
 using Anf.Platform.Services;
 using Microsoft.IO;
-using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -64,7 +63,7 @@ namespace Anf.Platform
             {
                 try
                 {
-                    var data = JsonConvert.SerializeObject(value);
+                    var data = JsonHelper.Serialize(value);
                     using (var mem = recyclableMemoryStreamManager.GetStream())
                     {
                         var buffer = Encoding.UTF8.GetBytes(data);
@@ -105,13 +104,15 @@ namespace Anf.Platform
                     var str = sr.ReadToEnd();
                     if (str.StartsWith("{"))
                     {
-                        var obj = JObject.Parse(str);
-                        if (string.Equals(obj["success"]?.ToString(), "false", StringComparison.OrdinalIgnoreCase))
+                        using (var obj = JsonVisitor.FromString(str))
                         {
-                            return default;
+                            if (string.Equals(obj["success"]?.ToString(), "false", StringComparison.OrdinalIgnoreCase))
+                            {
+                                return default;
+                            }
                         }
                     }
-                    return JsonConvert.DeserializeObject<TValue>(str);
+                    return JsonHelper.Deserialize<TValue>(str);
                 }
             }
             catch (Exception) 
@@ -129,7 +130,7 @@ namespace Anf.Platform
                     using (var sr = new StreamReader(stream))
                     {
                         var str = sr.ReadToEnd();
-                        return JsonConvert.DeserializeObject<TValue>(str);
+                        return JsonHelper.Deserialize<TValue>(str);
                     }
                 }
                 catch (Exception) { }

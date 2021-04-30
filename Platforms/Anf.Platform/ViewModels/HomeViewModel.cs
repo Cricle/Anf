@@ -34,6 +34,8 @@ namespace Anf.ViewModels
 
             SearchCommand = new RelayCommand(() => _ = SearchAsync());
             GoSourceCommand = new RelayCommand(GoSource);
+            SetAndSearchCommand = new RelayCommand<string>(x => _ = SetAndSearchAsync(x));
+
             scope = AppEngine.CreateScope();
             var type = SearchEngine.FirstOrDefault();
             if (type != null)
@@ -58,7 +60,22 @@ namespace Anf.ViewModels
         private IComicSourceCondition avaliableCondition;
         private bool hasAvaliableCondition;
         private bool proposalLoading;
+        private IProposalDescription selectedProposal;
 
+        public IProposalDescription SelectedProposal
+        {
+            get { return selectedProposal; }
+            set
+            {
+                var old = selectedProposal;
+                Set(ref selectedProposal, value);
+                if (old!=value)
+                {
+                    OnSelectedProposalChanged(value);
+                }
+            }
+        }
+        
         public bool ProposalLoading
         {
             get { return proposalLoading; }
@@ -184,6 +201,7 @@ namespace Anf.ViewModels
         /// </summary>
         public ICommand SearchCommand { get; }
         public ICommand GoSourceCommand { get; }
+        public RelayCommand<string> SetAndSearchCommand { get; }
         /// <summary>
         /// 漫画快照
         /// </summary>
@@ -191,16 +209,22 @@ namespace Anf.ViewModels
         public IList<ComicSnapshotInfo<TSourceInfo>> ProposalSnapshots { get; }
         public ProposalEngine ProposalEngine { get; }
         private readonly IObservableCollectionFactory observableCollectionFactory;
+
+        public Task SetAndSearchAsync(string keywork)
+        {
+            Keyword = keywork;
+            return SearchAsync();
+        }
         public async Task UpdateProposalAsync(int count)
         {
-            if (ProposalLoading)
+            if (ProposalLoading || SelectedProposal is null) 
             {
                 return;
             }
             ProposalLoading = true;
             try
             {
-                var proposal = ProposalEngine.Active(0);
+                var proposal = ProposalEngine.Active(SelectedProposal.ProviderType);
                 var datas = await proposal.Provider.GetProposalAsync(count);
                 observableCollectionFactory.AddRange(ProposalSnapshots, datas.Select(x => CreateSnapshotInfo(x)));
             }
@@ -208,6 +232,10 @@ namespace Anf.ViewModels
             {
                 ProposalLoading = false;
             }
+        }
+        protected virtual void OnSelectedProposalChanged(IProposalDescription description)
+        {
+
         }
         public async Task LoadEngineIcons(Action<IComicSourceCondition,Exception> eceptionHandler=null)
         {

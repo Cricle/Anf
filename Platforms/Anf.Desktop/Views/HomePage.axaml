@@ -10,6 +10,7 @@
              xmlns:s="using:Anf.Desktop.Settings"
              mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
              Background="Transparent"
+             x:Name="HomePg"
              x:Class="Anf.Desktop.Views.HomePage">
   <Design.DataContext>
     <vm:AvalonHomeViewModel></vm:AvalonHomeViewModel>
@@ -25,6 +26,7 @@
               <MenuItem Header="从文件夹"/>
             </MenuItem>
             <MenuItem Header="复制"></MenuItem>
+            <MenuItem Header="从标题搜索" Command="{Binding DataContext.SetAndSearchCommand,Source={Binding ElementName=HomePg}}" CommandParameter="{Binding Name}"></MenuItem>
           </ContextMenu>
         </Grid.ContextMenu>
         <ToolTip.Tip>
@@ -90,12 +92,13 @@
     <ProgressBar Grid.Row="2" IsVisible="{Binding Searching}" IsIndeterminate="True">
 
     </ProgressBar>
-    <Grid Grid.RowSpan="5" IsVisible="{Binding EmptySet}">
-      <Grid VerticalAlignment="Center"
-            HorizontalAlignment="Center"
-            IsVisible="{Binding StartupSettings.StartupType,ConverterParameter={x:Static s:StartupTypes.Providers}, Converter={StaticResource StartupTypeBoolConverter}}">
+    <Grid Grid.RowSpan="5">
+      <Grid VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            IsVisible="{Binding EmptySet}">
         <!--favicon.ico-->
-        <Grid VerticalAlignment="Center">
+        <Grid VerticalAlignment="Center"
+              IsVisible="{Binding StartupSettings.StartupType,ConverterParameter={x:Static s:StartupTypes.Providers}, Converter={StaticResource StartupTypeBoolConverter}}">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="Auto"/>
@@ -112,7 +115,8 @@
           <TextBlock Grid.Row="1" FontSize="24" FontWeight="Bold" Margin="0,10" HorizontalAlignment="Center">
             可用引擎
           </TextBlock>
-          <ItemsControl Grid.Row="2" Items="{Binding EngineIcons}"
+          <ItemsControl Grid.Row="2"
+                        Items="{Binding EngineIcons}"
                         HorizontalAlignment="Center">
             <ItemsControl.ItemsPanel>
               <ItemsPanelTemplate>
@@ -143,47 +147,63 @@
             </ItemsControl.ItemTemplate>
           </ItemsControl>
         </Grid>
-        <ScrollViewer Grid.Row="3"
-                      HorizontalScrollBarVisibility="Auto"
-                      Margin="0,20,0,0"
-                      IsVisible="{Binding StartupSettings.StartupType,ConverterParameter={x:Static s:StartupTypes.Proposal}, Converter={StaticResource StartupTypeBoolConverter}}">
-          <ListBox Background="{x:Null}"
-                   Items="{Binding ProposalSnapshots}"
-                   SelectionMode="Single"
-                   VirtualizationMode="Simple"
-                   ItemTemplate="{StaticResource CsiDt}"
-                   SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}"
-                   IsVisible="{Binding EmptySet}">
-            <ListBox.ItemsPanel>
-              <ItemsPanelTemplate>
-                <StackPanel Orientation="Horizontal"/>
-              </ItemsPanelTemplate>
-            </ListBox.ItemsPanel>
-          </ListBox>
-        </ScrollViewer>
+        <Grid HorizontalAlignment="Stretch"
+              VerticalAlignment="Center"
+              IsVisible="{Binding StartupSettings.StartupType,ConverterParameter={x:Static s:StartupTypes.Proposal}, Converter={StaticResource StartupTypeBoolConverter}}">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+          </Grid.RowDefinitions>
+          <Border HorizontalAlignment="Left"
+                  VerticalAlignment="Center">
+            <ComboBox SelectedIndex="0"
+                      Items="{Binding ProposalEngine}"
+                      SelectedItem="{Binding SelectedProposal,Mode=TwoWay}">
+              <ComboBox.ItemTemplate>
+                <DataTemplate>
+                  <TextBlock Text="{Binding Name}"/>
+                </DataTemplate>
+              </ComboBox.ItemTemplate>
+            </ComboBox>
+          </Border>
+          <StackPanel IsVisible="{Binding ProposalLoading}"
+                      Orientation="Vertical"
+                      Grid.Row="1"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center">
+            <ProgressBar IsIndeterminate="{Binding ProposalLoading}" MaxWidth="200"/>
+            <TextBlock>正在加载推介</TextBlock>
+          </StackPanel>
+          <Border IsVisible="{Binding ProposalLoading,Converter={StaticResource RevBoolConverter}}">
+            <ScrollViewer Grid.Row="3"
+                          HorizontalScrollBarVisibility="Auto"
+                          Margin="0,20,0,0">
+              <ListBox Background="{x:Null}"
+                       Items="{Binding ProposalSnapshots}"
+                       SelectionMode="Single"
+                       VirtualizationMode="Simple"
+                       ItemTemplate="{StaticResource CsiDt}"
+                       SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}">
+                <ListBox.ItemsPanel>
+                  <ItemsPanelTemplate>
+                    <StackPanel Orientation="Horizontal"/>
+                  </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+              </ListBox>
+            </ScrollViewer>
+          </Border>
 
+        </Grid>
       </Grid>
 
-      <Grid HorizontalAlignment="Center"
-            VerticalAlignment="Center"
-            IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
-        <Grid.RowDefinitions>
-          <RowDefinition Height="*"/>
-          <RowDefinition Height="Auto"/>
-        </Grid.RowDefinitions>
-        <StackPanel IsVisible="{Binding ProposalLoading}"
-                    Orientation="Vertical"
-                    HorizontalAlignment="Center">
-          <ProgressBar IsIndeterminate="{Binding ProposalLoading}" MaxWidth="200"/>
-          <TextBlock>正在加载推介</TextBlock>
-        </StackPanel>
-        <ListBox Background="{x:Null}"
+      <Grid IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
+        <ListBox Grid.Row="1"
+                 Background="{x:Null}"
                  Items="{Binding Snapshots}"
                  SelectionMode="Single"
                  VirtualizationMode="Simple"
                  ItemTemplate="{StaticResource CsiDt}"
-                 SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}"
-                 IsVisible="{Binding ProposalLoading,Converter={StaticResource RevBoolConverter}}">
+                 SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}">
           <ListBox.ItemsPanel>
             <ItemsPanelTemplate>
               <WrapPanel Orientation="Horizontal"/>

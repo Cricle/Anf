@@ -1,8 +1,8 @@
-﻿using Anf.Platform.Models;
+﻿using Anf.Engine;
+using Anf.Platform.Models;
 using Anf.Services;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using Newtonsoft.Json;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -56,7 +56,7 @@ namespace Anf.Platform.Services
         }
 
         public FileInfo TargetFile { get; }
-        public string AttackModelJson => JsonConvert.SerializeObject(AttackModel);
+        public string AttackModelJson => JsonHelper.Serialize(AttackModel);
 
         public RelayCommand ToggleSuperFavoriteCommand { get; protected set; }
         public RelayCommand RemoveCommand { get; protected set; }
@@ -185,7 +185,7 @@ namespace Anf.Platform.Services
         public void UpdateModelFromFile()
         {
             var str = File.ReadAllText(TargetFile.FullName);
-            attackModel = JsonConvert.DeserializeObject<ComicStoreModel>(str);
+            attackModel = JsonHelper.Deserialize<ComicStoreModel>(str);
             attackModel.PropertyChanged += OnAttackModelPropertyChanged;
         }
 
