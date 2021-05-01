@@ -5,7 +5,7 @@
     <TargetFrameworks>$(ComicEngineFrameworks)</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="HtmlAgilityPack" Version="1.11.32" />
+    <PackageReference Include="HtmlAgilityPack" Version="1.11.33" />
     <PackageReference Include="JavaScriptEngineSwitcher.Jint" Version="3.1.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'!='netstandard1.3'">

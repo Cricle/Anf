@@ -25,9 +25,6 @@
   <PropertyGroup Condition="'$(UseD2D)' == 'true'">
     <DefineConstants>$(DefineConstants);RENDER_D2D</DefineConstants>
   </PropertyGroup>
-  <!--<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Release|net472|AnyCPU'">
-    <PlatformTarget>x86</PlatformTarget>
-  </PropertyGroup>-->
   <ItemGroup>
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
@@ -35,13 +32,12 @@
     <PackageReference Include="Ao.SavableConfig" Version="2.2.3" />
     <PackageReference Include="Ao.SavableConfig.Binder" Version="2.2.3" />
     <PackageReference Include="Ao.SavableConfig.Json" Version="2.2.3" />
-    <PackageReference Include="Avalonia" Version="0.10.2" />
-    <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.0.0" />
+    <PackageReference Include="Avalonia" Version="0.10.3" />
+    <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.3.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
-    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.2" />
@@ -53,11 +49,11 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.2" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.3" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseD2D)' == 'true'">
-    <PackageReference Include="Avalonia.Win32" Version="0.10.2" />
-    <PackageReference Include="Avalonia.Direct2D1" Version="0.10.2" />
+    <PackageReference Include="Avalonia.Win32" Version="0.10.3" />
+    <PackageReference Include="Avalonia.Direct2D1" Version="0.10.3" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseD2D)' != 'true'">

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using System.Linq;
 using Anf;
 
-namespace Anf.KnowEngines
+namespace Anf.KnowEngines.SearchProviders
 {
     public class SomanSearchProvider : ISearchProvider
     {

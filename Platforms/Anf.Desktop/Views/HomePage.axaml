@@ -16,17 +16,15 @@
     <vm:AvalonHomeViewModel></vm:AvalonHomeViewModel>
   </Design.DataContext>
   <UserControl.Resources>
+    <conv:SearchProviderConverter x:Key="SearchProviderConverter"/>
     <conv:StartupTypeBoolConverter x:Key="StartupTypeBoolConverter"/>
     <DataTemplate x:Key="CsiDt" DataType="{x:Type m:AvalonComicSnapshotInfo}">
       <Grid>
         <Grid.ContextMenu>
           <ContextMenu>
-            <MenuItem Header="打开">
-              <MenuItem Header="从浏览器"/>
-              <MenuItem Header="从文件夹"/>
-            </MenuItem>
-            <MenuItem Header="复制"></MenuItem>
-            <MenuItem Header="从标题搜索" Command="{Binding DataContext.SetAndSearchCommand,Source={Binding ElementName=HomePg}}" CommandParameter="{Binding Name}"></MenuItem>
+            <MenuItem Header="详细" Command="{Binding DataContext.SetCurrentCommand,ElementName=HomePg}" CommandParameter="{Binding}"/>
+            <MenuItem Header="用此标题搜索" Command="{Binding DataContext.SetAndSearchCommand,ElementName=HomePg}" CommandParameter="{Binding Snapshot.Name}"/>
+            <MenuItem Header="清除结果" Command="{Binding DataContext.ResetCommand,ElementName=HomePg}"/>
           </ContextMenu>
         </Grid.ContextMenu>
         <ToolTip.Tip>
@@ -66,12 +64,22 @@
     </Grid.RowDefinitions>
     <Grid Margin="20,0,20,6">
       <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="*"/>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="Auto"/>
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
-      <AutoCompleteBox HorizontalAlignment="Stretch"
+      <ComboBox Items="{Binding SearchProviders}"
+                SelectedItem="{Binding CurrentSearchProvider,Mode=TwoWay}">
+        <ComboBox.ItemTemplate>
+          <DataTemplate>
+            <TextBlock Text="{Binding EngineName}"/>
+          </DataTemplate>
+        </ComboBox.ItemTemplate>
+      </ComboBox>
+      <AutoCompleteBox Grid.Column="1"
+                       HorizontalAlignment="Stretch"
                        Watermark="Search"
                        IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}"
                        Text="{Binding Keyword,Mode=TwoWay}"
@@ -80,10 +88,10 @@
           <KeyBinding Command="{Binding SearchCommand}" Gesture="Enter"/>
         </AutoCompleteBox.KeyBindings>
       </AutoCompleteBox>
-      <Button Grid.Column="1" VerticalAlignment="Stretch" Background="Transparent" Padding="16,8" Command="{Binding SearchCommand}" IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}" >
+      <Button Grid.Column="2" VerticalAlignment="Stretch" Background="Transparent" Padding="16,8" Command="{Binding SearchCommand}" IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}" >
         <TextBlock Text="&#xE71E;" Classes="segoblock" VerticalAlignment="Center"></TextBlock>
       </Button>
-      <Border Grid.Column="2" IsVisible="{Binding HasAvaliableCondition}" Padding="3,0,0,0">
+      <Border Grid.Column="3" IsVisible="{Binding HasAvaliableCondition}" Padding="3,0,0,0">
         <Button Background="{x:Null}" HorizontalAlignment="Center" Command="{Binding GoSourceCommand}" ToolTip.Tip="此地址可能可以被直接解析">
           <TextBlock Classes="segoblock" VerticalAlignment="Center" Text="&#xE707;"></TextBlock>
         </Button>
@@ -183,7 +191,7 @@
                        SelectionMode="Single"
                        VirtualizationMode="Simple"
                        ItemTemplate="{StaticResource CsiDt}"
-                       SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}">
+                       SelectedItem="{Binding CurrentComicSnapshot,Mode=OneWay}">
                 <ListBox.ItemsPanel>
                   <ItemsPanelTemplate>
                     <StackPanel Orientation="Horizontal"/>
@@ -195,22 +203,23 @@
 
         </Grid>
       </Grid>
-
-      <Grid IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
-        <ListBox Grid.Row="1"
-                 Background="{x:Null}"
-                 Items="{Binding Snapshots}"
-                 SelectionMode="Single"
-                 VirtualizationMode="Simple"
-                 ItemTemplate="{StaticResource CsiDt}"
-                 SelectedItem="{Binding CurrentComicSnapshot,Mode=TwoWay}">
-          <ListBox.ItemsPanel>
-            <ItemsPanelTemplate>
-              <WrapPanel Orientation="Horizontal"/>
-            </ItemsPanelTemplate>
-          </ListBox.ItemsPanel>
-        </ListBox>
-      </Grid>
     </Grid>
+    <Grid Grid.Row="3"
+          IsVisible="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
+      <ListBox Grid.Row="1"
+               Background="{x:Null}"
+               Items="{Binding Snapshots}"
+               SelectionMode="Single"
+               VirtualizationMode="Simple"
+               ItemTemplate="{StaticResource CsiDt}"
+               SelectedItem="{Binding CurrentComicSnapshot,Mode=OneWay}">
+        <ListBox.ItemsPanel>
+          <ItemsPanelTemplate>
+            <WrapPanel Orientation="Horizontal"/>
+          </ItemsPanelTemplate>
+        </ListBox.ItemsPanel>
+      </ListBox>
+    </Grid>
+
   </Grid>
 </UserControl>

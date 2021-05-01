@@ -49,7 +49,7 @@ namespace Anf.Desktop
         private void InitServices()
         {
             AppEngine.Reset();
-            AppEngine.AddServices(NetworkAdapterTypes.WebRequest);
+            AppEngine.AddServices(NetworkAdapterTypes.HttpClient);
             //var store = new GzipFileStoreService(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName)), MD5AddressToFileNameProvider.Instance);
             var store = FileStoreService.FromMd5Default(Path.Combine(Workstation, XComicConst.CacheFolderName));
             var hp = new Lazy<HomePage>(() => new HomePage());

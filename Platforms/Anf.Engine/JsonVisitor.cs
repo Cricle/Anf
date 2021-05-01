@@ -15,6 +15,12 @@ namespace Anf
         private readonly JsonElement doc;
         private readonly JsonDocument docx;
 
+        public JsonVisitor(object obj)
+        {
+            var str = JsonSerializer.Serialize(obj);
+            this.docx = JsonDocument.Parse(str);
+            this.doc = this.docx.RootElement;
+        }
         public JsonVisitor(JsonElement doc, JsonDocument docx)
         {
             this.doc = doc;
@@ -57,6 +63,21 @@ namespace Anf
         public JsonVisitor(JToken @object)
         {
             this.@object = @object ?? throw new ArgumentNullException(nameof(@object));
+        }
+        public JsonVisitor(object @object)
+        {
+            if (@object is null)
+            {
+                this.@object = JObject.FromObject(null);
+            }
+            else if (@object.GetType().IsArray)
+            {
+                this.@object = JArray.FromObject(@object);
+            }
+            else
+            {
+                this.@object = JObject.FromObject(@object);
+            }
         }
 
         public IJsonVisitor this[string key]

@@ -1,4 +1,4 @@
-﻿using Newtonsoft.Json;
+﻿using Anf.Engine;
 using System;
 using System.IO;
 
@@ -14,13 +14,13 @@ namespace Anf.Easy.Test.Resources
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ResourceFolder, EntityFolder, "monvzhilv.txt");
             var str = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<ComicEntity>(str);
+            return JsonHelper.Deserialize<ComicEntity>(str);
         }
         public static ChapterWithPage GetMonvzhilvChatper(int index)
         {
             var path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, ResourceFolder, ChapterFolder, $"monvzhilv-{index}.txt");
             var str = File.ReadAllText(path);
-            return JsonConvert.DeserializeObject<ChapterWithPage>(str);
+            return JsonHelper.Deserialize<ChapterWithPage>(str);
         }
         public static ChapterWithPage GetMonvzhilvChatper0()
         {
