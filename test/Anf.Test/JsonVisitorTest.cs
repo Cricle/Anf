@@ -11,18 +11,13 @@ namespace Anf.Test
     public class JsonVisitorTest
     {
         [TestMethod]
-        public void GivenNull_MustException()
-        {
-            Assert.ThrowsException<ArgumentNullException>(()=>new JsonVisitor(null));
-        }
-        [TestMethod]
         public void GivenObject_GetProperty_MustGotValue()
         {
-            var obj = JObject.FromObject(new
+            var obj = new
             {
                 Name = "Joke",
                 Email = "joke@well.com"
-            });
+            };
             var visitor = new JsonVisitor(obj);
             var val = visitor["Name"];
             Assert.AreEqual("Joke", val.ToString());
@@ -30,23 +25,23 @@ namespace Anf.Test
         [TestMethod]
         public void GivenArray_GetProperty_MustGotArray()
         {
-            var obj = JArray.FromObject(new[] { 1,2,3,4,5,6});
+            var obj = new[] { 1, 2, 3, 4, 5, 6 };
             var visitor = new JsonVisitor(obj);
             var arr = visitor.ToArray();
             var count = arr.Count();
-            Assert.AreEqual(obj.Count, count);
+            Assert.AreEqual(obj.Length, count);
             Assert.AreEqual("1", arr.First().ToString());
         }
         [TestMethod]
         public void GivenObject_GetPropertyWithInnder_MustGotValue()
         {
-            var obj = JObject.FromObject(new
+            var obj = new
             {
                 Car = new
                 {
-                    Owner="Joke"
+                    Owner = "Joke"
                 }
-            });
+            };
             var visitor = new JsonVisitor(obj);
             var value = visitor["Car"]["Owner"].ToString();
             Assert.AreEqual("Joke", value);
@@ -54,7 +49,7 @@ namespace Anf.Test
         [TestMethod]
         public void GivenObject_DisposeIt()
         {
-            var obj = new JObject();
+            var obj = new object();
             var visitor = new JsonVisitor(obj);
             visitor.Dispose();
         }

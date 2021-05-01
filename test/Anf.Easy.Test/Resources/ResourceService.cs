@@ -1,5 +1,4 @@
-﻿using Newtonsoft.Json;
-using SimpleService;
+﻿using SimpleService;
 using System;
 using System.Collections.Generic;
 using System.IO;
