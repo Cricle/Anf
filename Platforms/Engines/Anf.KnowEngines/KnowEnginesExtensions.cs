@@ -4,6 +4,7 @@ using System.Text;
 using Anf;
 using Anf.Engine;
 using Anf.KnowEngines.ProposalProviders;
+using Anf.KnowEngines.SearchProviders;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Anf.KnowEngines
@@ -16,7 +17,6 @@ namespace Anf.KnowEngines
             services.AddScoped<DmzjComicOperator>();
             services.AddScoped<KuaikanComicOperator>();
             services.AddScoped<JisuComicOperator>();
-            services.AddScoped<SomanSearchProvider>();
             services.AddScoped<TencentComicOperator>();
             services.AddScoped<BilibiliComicOperator>();
             services.AddScoped<QimiaoComicOperator>();
@@ -24,6 +24,9 @@ namespace Anf.KnowEngines
             services.AddScoped<XmanhuaComicOperator>();
             services.AddScoped<BikabikaComicOperator>();
 
+            services.AddScoped<SomanSearchProvider>();
+            services.AddScoped<Dm5SearchProvider>();
+            services.AddScoped<BilibiliSearchProvider>();
 
             services.AddScoped<Dm5ProposalProvider>();
             services.AddScoped<BilibiliProposalProvider>();
@@ -41,8 +44,11 @@ namespace Anf.KnowEngines
             eng.Add(new MangabzComicCondition());
             eng.Add(new XmanhuaComicCondition());
             eng.Add(new BikabikaComicCondition());
+
             var searchEng = provider.GetRequiredService<SearchEngine>();
             searchEng.Add(typeof(SomanSearchProvider));
+            searchEng.Add(typeof(Dm5SearchProvider));
+            searchEng.Add(typeof(BilibiliSearchProvider));
 
             var proEng = provider.GetRequiredService<ProposalEngine>();
             proEng.Add(new Dm5ProposalDescrition());

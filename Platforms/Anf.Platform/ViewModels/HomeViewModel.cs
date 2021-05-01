@@ -35,14 +35,19 @@ namespace Anf.ViewModels
             SearchCommand = new RelayCommand(() => _ = SearchAsync());
             GoSourceCommand = new RelayCommand(GoSource);
             SetAndSearchCommand = new RelayCommand<string>(x => _ = SetAndSearchAsync(x));
-
+            ResetCommand = new RelayCommand(Reset);
+            SetCurrentCommand = new RelayCommand<ComicSnapshotInfo<TSourceInfo>>(SetCurrent);
             scope = AppEngine.CreateScope();
-            var type = SearchEngine.FirstOrDefault();
-            if (type != null)
-            {
-                CurrentSearchProvider = (ISearchProvider)scope.ServiceProvider.GetRequiredService(type);
-            }
+
             observableCollectionFactory = AppEngine.GetRequiredService<IObservableCollectionFactory>();
+            SearchProviders = observableCollectionFactory.Create<ISearchProvider>();
+            foreach (var item in SearchEngine)
+            {
+                var sp = (ISearchProvider)scope.ServiceProvider.GetRequiredService(item);
+                SearchProviders.Add(sp);
+            }
+            CurrentSearchProvider = SearchProviders.FirstOrDefault();
+
             Snapshots = observableCollectionFactory.Create<ComicSnapshotInfo<TSourceInfo>>();
             ProposalSnapshots = observableCollectionFactory.Create<ComicSnapshotInfo<TSourceInfo>>();
             EngineIcons = observableCollectionFactory.Create<EngineInfo<TImage>>();
@@ -201,12 +206,15 @@ namespace Anf.ViewModels
         /// </summary>
         public ICommand SearchCommand { get; }
         public ICommand GoSourceCommand { get; }
+        public ICommand ResetCommand { get; }
+        public RelayCommand<ComicSnapshotInfo<TSourceInfo>> SetCurrentCommand { get; }
         public RelayCommand<string> SetAndSearchCommand { get; }
         /// <summary>
         /// 漫画快照
         /// </summary>
         public IList<ComicSnapshotInfo<TSourceInfo>> Snapshots { get; }
         public IList<ComicSnapshotInfo<TSourceInfo>> ProposalSnapshots { get; }
+        public IList<ISearchProvider> SearchProviders { get; }
         public ProposalEngine ProposalEngine { get; }
         private readonly IObservableCollectionFactory observableCollectionFactory;
 
@@ -214,6 +222,10 @@ namespace Anf.ViewModels
         {
             Keyword = keywork;
             return SearchAsync();
+        }
+        public void SetCurrent(ComicSnapshotInfo<TSourceInfo> info)
+        {
+            CurrentComicSnapshot = info;
         }
         public async Task UpdateProposalAsync(int count)
         {
@@ -301,7 +313,7 @@ namespace Anf.ViewModels
                 OnBeginSearch();
                 Snapshots.Clear();
                 var keyword = Keyword;
-                SearchResult=await CurrentSearchProvider.SearchAsync(keyword, Skip,Take);
+                SearchResult = await CurrentSearchProvider.SearchAsync(keyword, Skip, Take);
                 InsertDatas();
                 OnEndSearch();
                 if (HistoryService != null)
@@ -313,6 +325,10 @@ namespace Anf.ViewModels
             {
                 Searching = false;
             }
+        }
+        public void Reset()
+        {
+            Snapshots.Clear();
         }
         public void GoSource()
         {

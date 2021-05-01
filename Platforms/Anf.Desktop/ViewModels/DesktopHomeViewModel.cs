@@ -4,13 +4,8 @@ using Anf.Desktop.Views;
 using Anf.Models;
 using Anf.ViewModels;
 using System;
-using System.Collections.ObjectModel;
 using System.Net.Http;
 using Avalonia.Media.Imaging;
-using Anf.Platform.Models;
-using Avalonia.Collections;
-using System.Threading.Tasks;
-using Anf.Platform.Services;
 using Anf.Desktop.Settings;
 using System.ComponentModel;
 using System.Collections.Generic;
@@ -20,6 +15,10 @@ namespace Anf.Desktop.ViewModels
 {
     public class DesktopHomeViewModel : HomeViewModel<AvalonStorableComicSourceInfo, Bitmap>
     {
+        private readonly List<IDisposable> subscribes = new List<IDisposable>();
+
+        public StartupSettings StartupSettings { get; }
+
         public DesktopHomeViewModel()
         {
             StartupSettings = AppEngine.GetRequiredService<AnfSettings>().Startup;
@@ -44,9 +43,7 @@ namespace Anf.Desktop.ViewModels
             return new AvalonComicSnapshotInfo(info, httpClient);
         }
 
-        public StartupSettings StartupSettings { get; }
 
-        private readonly List<IDisposable> subscribes=new List<IDisposable>();
         public override void Dispose()
         {
             base.Dispose();

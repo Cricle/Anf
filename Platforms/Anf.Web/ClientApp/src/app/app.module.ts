@@ -22,6 +22,8 @@ import { environment } from '../environments/environment';
 import { WatchingComponent } from './watching/watching/watching.component'
 import { ComicManager } from './comic-api/comic-mgr';
 import { RelayComicComponent } from './relay-comic/relay-comic/relay-comic.component';
+import {TimeThrowComponent} from './time-throw/time-throw.component'
+
 
 @NgModule({
   declarations: [
@@ -35,7 +37,8 @@ import { RelayComicComponent } from './relay-comic/relay-comic/relay-comic.compo
     AnalysisStatusComponent,
     AnalysisSearchComponent,
     WatchingComponent,
-    RelayComicComponent
+    RelayComicComponent,
+    TimeThrowComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

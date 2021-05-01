@@ -10,6 +10,5 @@ namespace Anf.Web.Controllers
     [Route(AnfConst.ApiPrefx + "[controller]")]
     public class HomeController : ControllerBase
     {
-
     }
 }
