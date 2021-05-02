@@ -22,5 +22,7 @@ namespace Anf.Desktop.Settings
         public WindowSettings Window { get; set; }
 
         public PerformaceSettings Performace { get; set; }
+
+        public virtual bool DotShowException { get; set; }
     }
 }

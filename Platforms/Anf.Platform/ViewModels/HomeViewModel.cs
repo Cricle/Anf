@@ -37,6 +37,7 @@ namespace Anf.ViewModels
             SetAndSearchCommand = new RelayCommand<string>(x => _ = SetAndSearchAsync(x));
             ResetCommand = new RelayCommand(Reset);
             SetCurrentCommand = new RelayCommand<ComicSnapshotInfo<TSourceInfo>>(SetCurrent);
+            CopyCommand = new RelayCommand<string>(Copy);
             scope = AppEngine.CreateScope();
 
             observableCollectionFactory = AppEngine.GetRequiredService<IObservableCollectionFactory>();
@@ -207,6 +208,7 @@ namespace Anf.ViewModels
         public ICommand SearchCommand { get; }
         public ICommand GoSourceCommand { get; }
         public ICommand ResetCommand { get; }
+        public RelayCommand<string> CopyCommand { get; }
         public RelayCommand<ComicSnapshotInfo<TSourceInfo>> SetCurrentCommand { get; }
         public RelayCommand<string> SetAndSearchCommand { get; }
         /// <summary>
@@ -217,6 +219,11 @@ namespace Anf.ViewModels
         public IList<ISearchProvider> SearchProviders { get; }
         public ProposalEngine ProposalEngine { get; }
         private readonly IObservableCollectionFactory observableCollectionFactory;
+        private IPlatformService PlatformService { get; } = AppEngine.GetRequiredService<IPlatformService>();
+        public void Copy(string data)
+        {
+            PlatformService.Copy(data);
+        }
 
         public Task SetAndSearchAsync(string keywork)
         {
