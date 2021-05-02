@@ -39,6 +39,7 @@
             <RowDefinition/>
             <RowDefinition/>
             <RowDefinition/>
+            <RowDefinition/>
           </Grid.RowDefinitions>
           <TextBlock Text="亚克力" VerticalAlignment="Center"/>
           <ToggleSwitch Classes="control part forcehover"
@@ -70,6 +71,13 @@
                         IsChecked="{Binding PerformaceSettings.EnableStore,Mode=TwoWay}"
                         Grid.Column="1"
                         Grid.Row="4"/>
+          <TextBlock Grid.Row="5" Text="不显示异常" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding DotShowException,Mode=TwoWay}"
+                        Grid.Column="1"
+                        Grid.Row="5"/>
+
         </Grid>
       </Border>
     </Popup>
