@@ -42,7 +42,7 @@ namespace Anf.Desktop
         internal void RunInitAll()
         {
 
-            navSer = (MainNavigationService)AppEngine.GetRequiredService<MainNavigationService>();
+            navSer = AppEngine.GetRequiredService<MainNavigationService>();
             var titleSer = AppEngine.GetRequiredService<TitleService>();
             exSer = AppEngine.GetRequiredService<ExceptionService>();
             var settings = AppEngine.GetRequiredService<AnfSettings>();
@@ -71,6 +71,8 @@ namespace Anf.Desktop
             {
                 Source = settings.Window
             });
+            this.Get<Border>("WraperExcetionBorder")
+                .DataContext = settings;
         }
 
         private void InitializeComponent()

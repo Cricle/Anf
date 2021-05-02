@@ -22,6 +22,10 @@
       <Grid>
         <Grid.ContextMenu>
           <ContextMenu>
+            <MenuItem Header="复制">
+              <MenuItem Header="标题" Command="{Binding DataContext.CopyCommand,ElementName=HomePg}" CommandParameter="{Binding Snapshot.Name}"/>
+            </MenuItem>
+            <MenuItem Header="-" IsEnabled="False"/>
             <MenuItem Header="详细" Command="{Binding DataContext.SetCurrentCommand,ElementName=HomePg}" CommandParameter="{Binding}"/>
             <MenuItem Header="用此标题搜索" Command="{Binding DataContext.SetAndSearchCommand,ElementName=HomePg}" CommandParameter="{Binding Snapshot.Name}"/>
             <MenuItem Header="清除结果" Command="{Binding DataContext.ResetCommand,ElementName=HomePg}"/>

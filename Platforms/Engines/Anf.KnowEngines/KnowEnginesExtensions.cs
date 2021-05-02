@@ -27,6 +27,7 @@ namespace Anf.KnowEngines
             services.AddScoped<SomanSearchProvider>();
             services.AddScoped<Dm5SearchProvider>();
             services.AddScoped<BilibiliSearchProvider>();
+            services.AddScoped<KuaikanSearchProvider>();
 
             services.AddScoped<Dm5ProposalProvider>();
             services.AddScoped<BilibiliProposalProvider>();
@@ -49,6 +50,7 @@ namespace Anf.KnowEngines
             searchEng.Add(typeof(SomanSearchProvider));
             searchEng.Add(typeof(Dm5SearchProvider));
             searchEng.Add(typeof(BilibiliSearchProvider));
+            searchEng.Add(typeof(KuaikanSearchProvider));
 
             var proEng = provider.GetRequiredService<ProposalEngine>();
             proEng.Add(new Dm5ProposalDescrition());
