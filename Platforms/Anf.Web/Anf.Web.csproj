@@ -18,12 +18,14 @@
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.0.2" />
     <PackageReference Include="Azure.Identity" Version="1.3.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.17.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="5.0.5" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.8.1" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
@@ -77,6 +79,9 @@
     <Compile Include="..\Anf.Platform\Services\CloudflareCDNOptions.cs" Link="Services\CloudflareCDNOptions.cs" />
     <Compile Include="..\Anf.Platform\StoreComicVisiting.cs" />
     <Compile Include="..\Anf.Platform\AppEngine.cs" />
+    <Compile Include="..\Anf.Platform\StoreFetchHelper.cs" />
+    <Compile Include="..\Anf.Platform\StoreFetchSettings.cs" />
+    <Compile Include="..\Anf.Platform\IStreamImageConverter.cs" />
     <Compile Include="..\Anf.Platform\PlatformResourceCreator.cs" />
     <Compile Include="..\Anf.Platform\PlatformResourceCreatorFactory.cs" />
   </ItemGroup>

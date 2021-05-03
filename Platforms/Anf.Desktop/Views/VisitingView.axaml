@@ -23,7 +23,7 @@
   </UserControl.Styles>
   <UserControl.Resources>
     <ContextMenu x:Key="ControlMenu">
-      <MenuItem Header="{Binding DataContext.CurrentChapter.Title,ElementName=Rep,Mode=OneTime}" IsEnabled="False"/>
+      <MenuItem Header="{Binding DataContext.CurrentChapter.Title,ElementName=Rep}" IsEnabled="False"/>
       <MenuItem Header="复制">
         <MenuItem Header="实体" Command="{Binding DataContext.CopyComicEntityCommand,ElementName=Rep,Mode=OneTime}"/>
         <MenuItem Header="地址" Command="{Binding DataContext.CopyComicCommand,ElementName=Rep,Mode=OneTime}"/>
@@ -97,7 +97,6 @@
       </SplitView.Pane>
       <SplitView.Content>
         <Grid>
-
           <Carousel x:Name="Car"
               Items="{Binding Resources}"
               Background="{x:Null}"
