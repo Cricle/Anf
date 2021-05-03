@@ -25,10 +25,13 @@ namespace Anf.Platform
                 defaultStoreFetchSettings = value;
             }
         }
-
-        public static async Task<Stream> GetOrFromCacheAsync(string address, Func<Task<Stream>> streamCreator, StoreFetchSettings settings = null)
+        public static Task<Stream> GetOrFromCacheAsync(string address, Func<Task<Stream>> streamCreator, StoreFetchSettings settings = null)
         {
             var storeService = AppEngine.GetService<IStoreService>();
+            return GetOrFromCacheAsync(storeService, address, streamCreator, settings);
+        }
+        public static async Task<Stream> GetOrFromCacheAsync(IStoreService storeService,string address, Func<Task<Stream>> streamCreator, StoreFetchSettings settings = null)
+        {
             Stream stream = null;
             if (settings is null)
             {

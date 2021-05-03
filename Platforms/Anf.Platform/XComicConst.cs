@@ -11,6 +11,8 @@ namespace Anf
 
         public static string CacheFolderName = "Caches";
 
+        public static string BookFolderName = "Books";
+
         public static string StoreFolderName = "Stores";
 
         public static string SettingFileName = "anf.json";

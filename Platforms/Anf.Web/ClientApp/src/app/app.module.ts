@@ -23,7 +23,7 @@ import { WatchingComponent } from './watching/watching/watching.component'
 import { ComicManager } from './comic-api/comic-mgr';
 import { RelayComicComponent } from './relay-comic/relay-comic/relay-comic.component';
 import {TimeThrowComponent} from './time-throw/time-throw.component'
-
+import {BookMgrComponent} from './book-mgr/book-mgr.component'
 
 @NgModule({
   declarations: [
@@ -38,7 +38,8 @@ import {TimeThrowComponent} from './time-throw/time-throw.component'
     AnalysisSearchComponent,
     WatchingComponent,
     RelayComicComponent,
-    TimeThrowComponent
+    TimeThrowComponent,
+    BookMgrComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),

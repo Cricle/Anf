@@ -139,7 +139,7 @@ namespace Anf.KnowEngines
                 {
                     var imgs = jobj["data"]["images"].ToArray();
                     var paths = imgs.Select(x => x["path"].ToString()+$"@{width}w.jpg").ToArray();
-                    targetObjStr = "{urls:\"[\"" + string.Join(",", paths) + "\"]\"}";
+                    targetObjStr = "{\"urls\":\"[" + string.Join(",", paths.Select(x=>$"\\\"{x}\\\""))+ "]\"}";
                     //targetObj = JObject.FromObject(new
                     //{
                     //    urls="[\""+string.Join(",",paths)+"\"]"

@@ -34,12 +34,13 @@
       </Panel>
     </Grid>
     <Border x:Name="WraperExcetionBorder" VerticalAlignment="Stretch"
-        HorizontalAlignment="Stretch"
-        Padding="16"
-            IsVisible="{Binding DotShowException,Converter={StaticResource RevBoolConverter},Mode=TwoWay}">
+            HorizontalAlignment="Stretch"
+            IsVisible="{Binding DotShowException,Converter={StaticResource RevBoolConverter},Mode=TwoWay}"
+            >
       <Border x:Name="ExcetionBorder"
-        IsVisible="{Binding HasException}"
-        Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}">
+              IsVisible="{Binding HasException}"
+              Padding="16"
+              Background="{DynamicResource SystemControlBackgroundAltMediumHighBrush}">
         <Border.ContextMenu>
           <ContextMenu>
             <MenuItem Command="{Binding CopyExceptionCommand}" Header="Copy"/>
