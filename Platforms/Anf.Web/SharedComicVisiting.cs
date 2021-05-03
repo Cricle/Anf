@@ -1,4 +1,5 @@
-﻿using Anf.Easy.Visiting;
+﻿using Anf.Easy.Store;
+using Anf.Easy.Visiting;
 using Anf.Platform;
 using Microsoft.Extensions.DependencyInjection;
 using System;
@@ -17,7 +18,6 @@ namespace Anf.Web
         {
             private readonly IServiceScope scope;
             private readonly Task loadingTask;
-            private int refCount;
 
             public VisitingBox(string address,bool useStore,bool useCDN)
             {
@@ -32,18 +32,8 @@ namespace Anf.Web
                 loadingTask = Visiting.LoadAsync(Address);
             }
 
-            public int RefCount => Volatile.Read(ref refCount);
             public string Address { get; }
             public StoreComicVisiting<Stream> Visiting { get; }
-
-            public void AddRef()
-            {
-                Interlocked.Increment(ref refCount);
-            }
-            public void ReleaseRef()
-            {
-                Interlocked.Decrement(ref refCount);
-            }
 
             public Task InitAsync()
             {
@@ -60,16 +50,14 @@ namespace Anf.Web
                 Visiting.Dispose();
             }
         }
-        private readonly object locker;
-        private readonly ConcurrentDictionary<string, VisitingBox> visitings;
+        private readonly LruCacher<string, VisitingBox> visitings;
 
-        public SharedComicVisiting()
+        public SharedComicVisiting(int max)
         {
-            locker = new object();
-            visitings = new ConcurrentDictionary<string, VisitingBox>();
+            visitings = new LruCacher<string, VisitingBox>(max);
         }
 
-        public IReadOnlyCollection<string> IncludeAddress => visitings.Keys.ToArray();
+        public IReadOnlyCollection<string> IncludeAddress => visitings.Datas.Keys.ToArray();
 
         public int Count => visitings.Count;
 
@@ -77,31 +65,11 @@ namespace Anf.Web
 
         public bool UseStore { get; set; }
 
-        public async Task<StoreComicVisiting<Stream>> JoinAsync(string address)
+        public async Task<StoreComicVisiting<Stream>> GetAsync(string address)
         {
-            VisitingBox box;
-            lock (locker)
-            {
-                box = visitings.GetOrAdd(address, addr => new VisitingBox(addr,UseStore,UseCDN));
-                box.AddRef();
-            }
+            var box = visitings.GetOrAdd(address, () => new VisitingBox(address, UseStore, UseCDN));
             await box.InitAsync();
             return box.Visiting;
-        }
-        public void Leave(string address)
-        {
-            lock (locker)
-            {
-                if (visitings.TryGetValue(address, out var box))
-                {
-                    box.ReleaseRef();
-                    if (box.RefCount <= 0)
-                    {
-                        box.Dispose();
-                        visitings.Remove(address, out _);
-                    }
-                }
-            }
         }
     }
 }

@@ -33,6 +33,8 @@
                 <MenuItem Header="刷新" Command="{Binding DataContext.FlushCommand,ElementName=Bv}"/>
                 <MenuItem Header="更新全部" Command="{Binding DataContext.UpdateCommand,ElementName=Bv}"/>
                 <MenuItem Header="-" IsEnabled="False"/>
+                <!--<MenuItem Header="保存为Zip" Command="{Binding StoreZipCommand}"/>
+                <MenuItem Header="-" IsEnabled="False"/>-->
                 <MenuItem Header="删除" Foreground="Red" Command="{Binding RemoveCommand}"/>
               </ContextMenu>
             </Grid.ContextMenu>

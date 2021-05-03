@@ -1,12 +1,18 @@
 ﻿using Anf.Desktop.Services;
+using Anf.Easy.Store;
 using Anf.Platform;
+using Anf.Platform.Books;
 using Anf.Platform.Models;
 using Anf.Platform.Services;
+using Anf.Platform.Stores;
+using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using GalaSoft.MvvmLight.Command;
+using Microsoft.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Net.Http;
 using System.Text;
@@ -32,6 +38,7 @@ namespace Anf.Desktop.Models
             get { return image; }
             private set => Set(ref image, value);
         }
+        public RelayCommand StoreZipCommand { get; protected set; }
 
         private async Task LoadLogoAsync()
         {

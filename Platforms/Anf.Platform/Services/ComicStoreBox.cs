@@ -18,8 +18,6 @@ namespace Anf.Platform.Services
         public ComicStoreBox(FileInfo targetFile)
         {
             TargetFile = targetFile ?? throw new ArgumentNullException(nameof(targetFile));
-            RemoveCommand = new RelayCommand(Remove);
-            UpdateCommand = new RelayCommand(() => _ = UpdateAsync());
             UpdateModelFromFile();
             Init();
         }
@@ -64,6 +62,7 @@ namespace Anf.Platform.Services
         public RelayCommand GoSourceCommand { get; protected set; }
 
         public event Action<ComicStoreBox> Removed;
+
 
         public void ToggleSuperFavorite()
         {
@@ -120,6 +119,7 @@ namespace Anf.Platform.Services
                 IsUpdating = false;
             }
         }
+
         public async Task<bool> LazyWriteAsync(TimeSpan delayTime)
         {
             var tk = updateToken;

@@ -7,6 +7,7 @@ using GalaSoft.MvvmLight.Command;
 using System.IO;
 using System.Threading.Tasks;
 using System.Threading;
+using Anf.Platform;
 
 namespace Anf.ViewModels
 {
@@ -90,6 +91,7 @@ namespace Anf.ViewModels
         public RelayCommand FlushCommand { get; }
         public RelayCommand RemoveCommand { get; }
         public RelayCommand UpdateCommand { get; }
+
 
         public void Remove()
         {

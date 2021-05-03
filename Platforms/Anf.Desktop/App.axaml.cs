@@ -32,6 +32,8 @@ using Ao.SavableConfig.Binder;
 using Anf.Desktop.Settings;
 using Anf.Engine;
 using System.Reactive.PlatformServices;
+using Anf.Platform.Books;
+using Microsoft.IO;
 
 namespace Anf.Desktop
 {
@@ -62,6 +64,7 @@ namespace Anf.Desktop
                 [typeof(BookshelfView)] = () => bv.Value
             };
             var nav = new MainNavigationService(new Border(), va);
+            AppEngine.Services.AddSingleton(x => new BookManager(new DirectoryInfo(Path.Combine(Workstation, XComicConst.BookFolderName)), x.GetRequiredService<RecyclableMemoryStreamManager>()));
             AppEngine.Services.AddSingleton<IViewActiver<IControl>>(va);
             AppEngine.Services.AddSingleton<ThemeService>();
             AppEngine.Services.AddSingleton<TitleService>();

@@ -51,7 +51,8 @@
         <ListBox SelectedItem="{Binding TrulyCurrentComicChapter,Mode=TwoWay}"
                  Items="{Binding ComicEntity.Chapters}"
                  MaxHeight="200"
-                 Grid.Row="1">
+                 Grid.Row="1"
+                 AutoScrollToSelectedItem="True">
           <ListBox.ItemTemplate>
             <DataTemplate DataType="{x:Type kwc:ComicChapter}">
               <TextBlock ToolTip.Tip="{Binding TargetUrl}" Text="{Binding Title}"/>

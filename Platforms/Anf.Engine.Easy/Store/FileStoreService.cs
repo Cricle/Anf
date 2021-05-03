@@ -131,7 +131,7 @@ namespace Anf.Easy.Store
         public Task<Stream> GetStreamAsync(string address)
         {
             var fileInfo = GetFile(address);
-            if (fileInfo is null)
+            if (fileInfo is null||!fileInfo.Exists)
             {
                 return Task.FromResult<Stream>(null);
             }
