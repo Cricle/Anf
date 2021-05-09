@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Anf.Desktop.Settings
+namespace Anf.Platform.Settings
 {
     public class ReadingSettings : ObservableObject
     {

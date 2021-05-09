@@ -19,7 +19,7 @@ namespace Anf
 #if NETSTANDARD1_4
         public static string SettingFileFolder = Path.Combine(Directory.GetCurrentDirectory(), SettingFileName);
 #else
-        public static string SettingFileFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,SettingFileName);
+        public static string SettingFileFolder = Path.Combine(AppDomain.CurrentDomain.BaseDirectory??Environment.GetFolderPath( Environment.SpecialFolder.LocalApplicationData),SettingFileName);
 #endif
     }
 }

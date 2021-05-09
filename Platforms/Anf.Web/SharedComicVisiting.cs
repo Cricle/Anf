@@ -55,6 +55,7 @@ namespace Anf.Web
         public SharedComicVisiting(int max)
         {
             visitings = new LruCacher<string, VisitingBox>(max);
+            visitings.Removed += OnVisitingsRemoved;
         }
 
         public IReadOnlyCollection<string> IncludeAddress => visitings.Datas.Keys.ToArray();
@@ -63,13 +64,17 @@ namespace Anf.Web
 
         public bool UseCDN { get; set; } = true;
 
-        public bool UseStore { get; set; }
+        public bool UseStore { get; set; } = false;
 
         public async Task<StoreComicVisiting<Stream>> GetAsync(string address)
         {
             var box = visitings.GetOrAdd(address, () => new VisitingBox(address, UseStore, UseCDN));
             await box.InitAsync();
             return box.Visiting;
+        }
+        private void OnVisitingsRemoved(string arg1, VisitingBox arg2)
+        {
+            arg2.Dispose();
         }
     }
 }

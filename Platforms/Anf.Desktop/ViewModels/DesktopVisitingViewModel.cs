@@ -16,6 +16,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Anf.Platform;
 using Anf.Desktop.Settings;
 using System.ComponentModel;
+using Anf.Platform.Settings;
 
 namespace Anf.Desktop.ViewModels
 {
@@ -258,6 +259,8 @@ namespace Anf.Desktop.ViewModels
             base.Dispose();
             TitleService.Title = string.Empty;
             readingSubscriber.Dispose();
+            PageCursorMoved-= AvalonVisitingViewModel_PageCursorMoved;
+
         }
     }
 }

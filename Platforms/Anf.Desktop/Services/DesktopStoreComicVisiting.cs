@@ -1,4 +1,5 @@
-﻿using Anf.Desktop.Settings;
+﻿using Anf.CDN;
+using Anf.Desktop.Settings;
 using Anf.Easy.Visiting;
 using Anf.Platform;
 using Anf.Platform.Services;
