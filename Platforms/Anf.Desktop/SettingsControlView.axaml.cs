@@ -1,6 +1,7 @@
 using Anf.Desktop.Converters;
 using Anf.Desktop.Services;
 using Anf.Desktop.Settings;
+using Anf.Platform.Settings;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Data;

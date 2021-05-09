@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Anf.Desktop.Settings
+namespace Anf.Platform.Settings
 {
     [Flags]
     public enum StartupTypes

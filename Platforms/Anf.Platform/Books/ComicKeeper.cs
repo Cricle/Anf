@@ -41,6 +41,7 @@ namespace Anf.Platform
             }
             this.storeService = storeService ?? scope.ServiceProvider.GetRequiredService<IStoreService>();
             this.fetchService = fetchService ?? this.storeService;
+            tokenSource = new CancellationTokenSource();
         }
 
         public bool NotSupport { get; }

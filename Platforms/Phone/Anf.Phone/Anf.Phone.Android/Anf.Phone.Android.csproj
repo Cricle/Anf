@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
@@ -87,10 +87,35 @@
     <AndroidResource Include="Resources\drawable\icon_feed.png" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Anf.Engine.Easy\Anf.Easy.csproj">
+      <Project>{e8ef1cc0-fcf0-4e38-86b4-fc8555d2127d}</Project>
+      <Name>Anf.Easy</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Anf.Engine\Anf.Engine.csproj">
+      <Project>{523134d4-4b2f-427b-a500-22d9f2ab435e}</Project>
+      <Name>Anf.Engine</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Anf.Platform\Anf.Platform.csproj">
+      <Project>{a66dde86-1c21-4331-ab44-588728e30334}</Project>
+      <Name>Anf.Platform</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\..\..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj">
+      <Project>{ae2509fd-190b-4c8d-b36f-1b531b9f57bc}</Project>
+      <Name>Anf.KnowEngines</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Anf.Phone\Anf.Phone.csproj">
       <Project>{D73AAF02-6813-4128-914C-3B4320B78900}</Project>
       <Name>Anf.Phone</Name>
     </ProjectReference>
   </ItemGroup>
- <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
+  <ItemGroup>
+    <None Include="..\..\..\..\assets\Anf.ico" Link="Anf.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <AndroidAsset Include="..\..\..\..\assets\NLog.config" Link="Assets\NLog.config" />
+    <None Update="anf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <Import Project="$(MSBuildExtensionsPath)\Xamarin\Android\Xamarin.Android.CSharp.targets" />
 </Project>
