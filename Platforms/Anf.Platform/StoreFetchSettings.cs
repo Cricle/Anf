@@ -19,5 +19,7 @@ namespace Anf.Platform
         public bool ForceNoCache { get; }
 
         public TimeSpan? ExpiresTime { get; }
+
+        public bool DisposeStream { get; set; } = true;
     }
 }

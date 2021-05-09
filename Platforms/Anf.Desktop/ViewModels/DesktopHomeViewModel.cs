@@ -10,6 +10,7 @@ using Anf.Desktop.Settings;
 using System.ComponentModel;
 using System.Collections.Generic;
 using Anf.Engine;
+using Anf.Platform.Settings;
 
 namespace Anf.Desktop.ViewModels
 {

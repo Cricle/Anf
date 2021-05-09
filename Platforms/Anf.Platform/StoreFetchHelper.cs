@@ -70,29 +70,37 @@ namespace Anf.Platform
         }
         public static Task<T> GetOrFromCacheAsync<T>(string address,
             Func<Task<Stream>> streamCreator,
-            Func<Stream, T> converter)
+            Func<Stream, T> converter,
+            StoreFetchSettings settings = null)
         {
-            return GetOrFromCacheAsync(address, streamCreator, x => Task.FromResult(converter(x)));
+            return GetOrFromCacheAsync(address, streamCreator, x => Task.FromResult(converter(x)), settings);
         }
-        public static Task<T> GetOrFromCacheAsync<T>(string address)
+        public static Task<T> GetOrFromCacheAsync<T>(string address,
+            StoreFetchSettings settings = null)
         {
             return GetOrFromCacheAsync<T>(address, async () =>
             {
                 var rep = await AppEngine.GetRequiredService<HttpClient>().GetAsync(address);
                 return await rep.Content.ReadAsStreamAsync();
-            });
+            },settings);
         }
         public static Task<T> GetOrFromCacheAsync<T>(string address,
-            Func<Task<Stream>> streamCreator)
+            Func<Task<Stream>> streamCreator,
+            StoreFetchSettings settings = null)
         {
             var convert = AppEngine.GetRequiredService<IStreamImageConverter<T>>();
-            return GetOrFromCacheAsync(address, streamCreator, x => convert.ToImageAsync(x));
+            return GetOrFromCacheAsync(address, streamCreator, x => convert.ToImageAsync(x), settings);
         }
         public static async Task<T> GetOrFromCacheAsync<T>(string address,
             Func<Task<Stream>> streamCreator,
-            Func<Stream,Task<T>> converter)
+            Func<Stream,Task<T>> converter,
+            StoreFetchSettings settings = null)
         {
-            var stream = await GetOrFromCacheAsync(address, streamCreator);
+            if (settings is null)
+            {
+                settings = DefaultStoreFetchSettings;
+            }
+            var stream = await GetOrFromCacheAsync(address, streamCreator, settings);
             if (stream is null)
             {
                 return default;
@@ -115,7 +123,10 @@ namespace Anf.Platform
             }
             finally
             {
-                stream?.Dispose();
+                if (settings.DisposeStream)
+                {
+                    stream?.Dispose();
+                }
             }
         }
 

@@ -1,6 +1,6 @@
 ﻿using Anf.Platform.Services;
 
-namespace Anf.Desktop
+namespace Anf.CDN
 {
     internal static class CloudflareCDNController
     {

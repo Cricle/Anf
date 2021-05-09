@@ -1,7 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netcoreapp3.1;net461</TargetFrameworks>
+    <TargetFrameworks>netcoreapp3.1;net461;net452</TargetFrameworks>
 
     <IsPackable>false</IsPackable>
   </PropertyGroup>
@@ -18,10 +18,12 @@
     <Folder Include="Services\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Results\" />
+    <Folder Include="Resources\" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\Platforms\Anf.Platform\Anf.Platform.csproj" />
+    <ProjectReference Include="..\SimpleService\SimpleService.csproj" />
   </ItemGroup>
 
 </Project>

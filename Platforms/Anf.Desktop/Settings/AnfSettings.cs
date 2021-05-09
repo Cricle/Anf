@@ -1,4 +1,5 @@
 ﻿using Anf.Desktop.Services;
+using Anf.Platform.Settings;
 using Ao.SavableConfig.Binder.Annotations;
 using Avalonia.Themes.Fluent;
 using GalaSoft.MvvmLight;

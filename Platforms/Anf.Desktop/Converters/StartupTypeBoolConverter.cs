@@ -1,4 +1,5 @@
 ﻿using Anf.Desktop.Settings;
+using Anf.Platform.Settings;
 using Avalonia.Data.Converters;
 using System;
 using System.Collections.Generic;
