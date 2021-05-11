@@ -1,7 +1,9 @@
 ﻿using Anf.Engine;
 using Anf.Models;
+using Anf.Networks;
 using Anf.Phone.Models;
 using Anf.Phone.Settings;
+using Anf.Platform.Models.Impl;
 using Anf.Platform.Settings;
 using Anf.ViewModels;
 using System;
@@ -13,7 +15,7 @@ using Xamarin.Forms;
 
 namespace Anf.Phone.ViewModels
 {
-    public class PhoneHomeViewModel : HomeViewModel<PhoneStorableComicSourceInfo, ImageSource>
+    public class PhoneHomeViewModel : HomeViewModel<WithImageStorableComicSourceInfo<ImageSource>, ImageSource>
     {
         private readonly List<IDisposable> subscribes = new List<IDisposable>();
 
@@ -26,7 +28,7 @@ namespace Anf.Phone.ViewModels
             Take = 5;
         }
 
-        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<PhoneStorableComicSourceInfo> info)
+        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<WithImageStorableComicSourceInfo<ImageSource>> info)
         {
             //if (info is PhoneComicSnapshotInfo sn)
             //{
@@ -38,10 +40,10 @@ namespace Anf.Phone.ViewModels
             //}
         }
 
-        protected override ComicSnapshotInfo<PhoneStorableComicSourceInfo> CreateSnapshotInfo(ComicSnapshot info)
+        protected override ComicSnapshotInfo<WithImageStorableComicSourceInfo<ImageSource>> CreateSnapshotInfo(ComicSnapshot info)
         {
-            var httpClient = AppEngine.GetRequiredService<HttpClient>();
-            return new PhoneComicSnapshotInfo(info, httpClient);
+            var httpClient = AppEngine.GetRequiredService<INetworkAdapter>();
+            return new WithImageComicSnapshotInfo<ImageSource>(info, httpClient);
         }
 
 

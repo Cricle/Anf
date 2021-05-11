@@ -10,17 +10,17 @@ using System.Net.Http;
 using System.Threading.Tasks;
 using Avalonia.Controls.PanAndZoom;
 using Anf.Desktop.Services;
-using Anf.Desktop.Models;
 using Anf.Platform.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Anf.Platform;
 using Anf.Desktop.Settings;
 using System.ComponentModel;
 using Anf.Platform.Settings;
+using Anf.Platform.Models.Impl;
 
 namespace Anf.Desktop.ViewModels
 {
-    public class DesktopVisitingViewModel : StoreBoxVisitingViewModel<Bitmap, Bitmap,AvalonComicStoreBox>
+    public class DesktopVisitingViewModel : StoreBoxVisitingViewModel<Bitmap, Bitmap,WithImageComicStoreBox<Bitmap>>
     {
         public static async Task<DesktopVisitingViewModel> CreateAsync(string address,bool usingStore=false)
         {

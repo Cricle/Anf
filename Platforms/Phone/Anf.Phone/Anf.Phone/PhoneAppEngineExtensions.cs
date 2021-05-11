@@ -12,7 +12,9 @@ using Anf.Phone.Models;
 using Anf.Phone.Services;
 using Anf.Phone.Settings;
 using Anf.Platform;
+using Anf.Platform.Models.Impl;
 using Anf.Platform.Services;
+using Anf.Platform.Services.Impl;
 using Anf.Services;
 using Ao.SavableConfig;
 using Ao.SavableConfig.Binder;
@@ -43,10 +45,10 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IResourceFactoryCreator<ImageSource>, PlatformResourceCreatorFactory<ImageSource>>();
             services.AddSingleton<ExceptionService>();
 
-            var storeSer = new PhoneComicStoreService(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
+            var storeSer = new WithImageComicStoreService<ImageSource>(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
             services.AddSingleton(storeSer);
             services.AddSingleton<IObservableCollectionFactory>(new DefaultObservableCollectionFactory());
-            services.AddSingleton<ComicStoreService<PhoneComicStoreBox>>(storeSer);
+            services.AddSingleton<ComicStoreService<WithImageComicStoreBox<ImageSource>>>(storeSer);
 
             var configRoot = BuildConfiguration();
             services.AddSingleton(CreateSettings);

@@ -2,7 +2,8 @@
 <ContentPage xmlns="http://xamarin.com/schemas/2014/forms"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml" 
              xmlns:viewmodels="clr-namespace:Anf.Phone.ViewModels" 
-             xmlns:pm="clr-namespace:Anf.Phone.Models"
+             xmlns:f="clr-namespace:Xamarin.Forms;assembly=Xamarin.Forms.Core"
+             xmlns:pm="clr-namespace:Anf.Platform.Models.Impl;assembly=Anf.Platform"
              x:DataType="viewmodels:PhoneHomeViewModel"
              x:Class="Anf.Phone.Views.HomePage">
     <ContentPage.Content>
@@ -24,7 +25,7 @@
                             ItemsSource="{Binding Snapshots,Mode=OneWay}"
                             Margin="10,0">
                 <CollectionView.ItemTemplate>
-                    <DataTemplate x:DataType="{x:Type pm:PhoneComicSnapshotInfo}">
+                    <DataTemplate x:DataType="pm:WithImageComicSnapshotInfo" x:TypeArguments="f:ImageSource">
                         <SwipeView>
                             <SwipeView.RightItems>
                                 <SwipeItem Text="come" BackgroundColor="Blue"/>

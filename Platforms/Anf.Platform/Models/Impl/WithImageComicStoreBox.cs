@@ -1,42 +1,42 @@
-﻿using Anf.Phone.Services;
-using Anf.Platform;
-using Anf.Platform.Models;
-using Anf.Platform.Services;
+﻿using Anf.Platform.Services;
+using Anf.Platform.Services.Impl;
 using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
-using Xamarin.Forms;
 
-namespace Anf.Phone.Models
+namespace Anf.Platform.Models.Impl
 {
-    public class PhoneComicStoreBox : ComicStoreBox
+    public class WithImageComicStoreBox<TImage> : ComicStoreBox
     {
-        public PhoneComicStoreBox(FileInfo targetFile) : base(targetFile)
+        public WithImageComicStoreBox(FileInfo targetFile) : base(targetFile)
         {
             _ = LoadLogoAsync();
         }
 
-        public PhoneComicStoreBox(FileInfo targetFile, ComicStoreModel attackModel) : base(targetFile, attackModel)
+        public WithImageComicStoreBox(FileInfo targetFile, ComicStoreModel attackModel) : base(targetFile, attackModel)
         {
             _ = LoadLogoAsync();
         }
-        private ImageSource image;
+        private TImage image;
 
-        public ImageSource Image
+        public TImage Image
         {
             get { return image; }
             private set => Set(ref image, value);
         }
+
+        public bool DoNotDisposeImage { get; set; }
+
         public RelayCommand StoreZipCommand { get; protected set; }
 
         private async Task LoadLogoAsync()
         {
             try
             {
-                Image = await StoreFetchHelper.GetOrFromCacheAsync<ImageSource>(AttackModel.ImageUrl);
+                Image = await StoreFetchHelper.GetOrFromCacheAsync<TImage>(AttackModel.ImageUrl);
             }
             catch (Exception) { }
         }
@@ -44,7 +44,7 @@ namespace Anf.Phone.Models
         public override void Dispose()
         {
             base.Dispose();
-            if (Image is IDisposable disposable)
+            if (!DoNotDisposeImage && image is IDisposable disposable)
             {
                 disposable.Dispose();
             }
@@ -52,7 +52,7 @@ namespace Anf.Phone.Models
 
         protected override void CoreRemove()
         {
-            var storeSer = AppEngine.GetRequiredService<PhoneComicStoreService>();
+            var storeSer = AppEngine.GetRequiredService<WithImageComicStoreService<TImage>>();
             storeSer.Remove(AttackModel.ComicUrl);
         }
     }

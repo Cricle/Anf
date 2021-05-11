@@ -3,6 +3,7 @@ using Anf.Models;
 using Anf.Phone.Models;
 using Anf.Phone.Settings;
 using Anf.Platform;
+using Anf.Platform.Models.Impl;
 using Anf.Platform.Services;
 using Anf.Platform.Settings;
 using Anf.ViewModels;
@@ -18,7 +19,7 @@ using Xamarin.Forms;
 
 namespace Anf.Phone.ViewModels
 {
-    public class PhoneVisitingViewModel : StoreBoxVisitingViewModel<ImageSource, ImageSource, PhoneComicStoreBox>
+    public class PhoneVisitingViewModel : StoreBoxVisitingViewModel<ImageSource, ImageSource, WithImageComicStoreBox<ImageSource>>
     {
         public static async Task<PhoneVisitingViewModel> CreateAsync(string address, bool usingStore = false)
         {
