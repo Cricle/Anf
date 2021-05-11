@@ -1,5 +1,4 @@
-﻿using Anf.Desktop.Models;
-using Anf.Desktop.Services;
+﻿using Anf.Desktop.Services;
 using Anf.Desktop.Views;
 using Anf.Models;
 using Anf.ViewModels;
@@ -11,10 +10,12 @@ using System.ComponentModel;
 using System.Collections.Generic;
 using Anf.Engine;
 using Anf.Platform.Settings;
+using Anf.Platform.Models.Impl;
+using Anf.Networks;
 
 namespace Anf.Desktop.ViewModels
 {
-    public class DesktopHomeViewModel : HomeViewModel<AvalonStorableComicSourceInfo, Bitmap>
+    public class DesktopHomeViewModel : HomeViewModel<WithImageStorableComicSourceInfo<Bitmap>, Bitmap>
     {
         private readonly List<IDisposable> subscribes = new List<IDisposable>();
 
@@ -26,9 +27,9 @@ namespace Anf.Desktop.ViewModels
             InitDatas();
         }
 
-        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<AvalonStorableComicSourceInfo> info)
+        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<WithImageStorableComicSourceInfo<Bitmap>> info)
         {
-            if (info is AvalonComicSnapshotInfo sn)
+            if (info is WithImageComicSnapshotInfo<Bitmap> sn)
             {
                 var vm = new DesktopComicViewModel(info.Snapshot, sn.LogoImage);
                 var navSer = AppEngine.GetRequiredService<MainNavigationService>();
@@ -38,10 +39,10 @@ namespace Anf.Desktop.ViewModels
             }
         }
 
-        protected override ComicSnapshotInfo<AvalonStorableComicSourceInfo> CreateSnapshotInfo(ComicSnapshot info)
+        protected override ComicSnapshotInfo<WithImageStorableComicSourceInfo<Bitmap>> CreateSnapshotInfo(ComicSnapshot info)
         {
-            var httpClient = AppEngine.GetRequiredService<HttpClient>();
-            return new AvalonComicSnapshotInfo(info, httpClient);
+            var httpClient = AppEngine.GetRequiredService<INetworkAdapter>();
+            return new WithImageComicSnapshotInfo<Bitmap>(info, httpClient);
         }
 
 

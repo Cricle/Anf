@@ -8,13 +8,13 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using Anf.Desktop.Models;
 using GalaSoft.MvvmLight.Command;
 using Anf.Platform;
+using Anf.Platform.Models.Impl;
 
 namespace Anf.Desktop.ViewModels
 {
-    public class DesktopComicViewModel : AvalonStorableComicSnapshotInfo, IDisposable
+    public class DesktopComicViewModel : WithImageStorableComicSnapshotInfo<Bitmap>, IDisposable
     {
         public DesktopComicViewModel(ComicSnapshot snapshot)
             : base(snapshot)
