@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using Anf;
 using Anf.Engine;
@@ -32,9 +33,8 @@ namespace Anf.KnowEngines
             services.AddScoped<Dm5ProposalProvider>();
             services.AddScoped<BilibiliProposalProvider>();
         }
-        public static void UseKnowEngines(this IServiceProvider provider)
+        public static void AddComicSource(this ComicEngine eng)
         {
-            var eng = provider.GetRequiredService<ComicEngine>();
             eng.Add(new Dm5ComicSourceCondition());
             eng.Add(new DmzjComicSourceCondition());
             eng.Add(new JisuComicSourceCondition());
@@ -45,16 +45,27 @@ namespace Anf.KnowEngines
             eng.Add(new MangabzComicCondition());
             eng.Add(new XmanhuaComicCondition());
             eng.Add(new BikabikaComicCondition());
-
-            var searchEng = provider.GetRequiredService<SearchEngine>();
+        }
+        public static void AddSearchProvider(this SearchEngine searchEng)
+        {
             searchEng.Add(typeof(SomanSearchProvider));
             searchEng.Add(typeof(Dm5SearchProvider));
             searchEng.Add(typeof(BilibiliSearchProvider));
             searchEng.Add(typeof(KuaikanSearchProvider));
-
-            var proEng = provider.GetRequiredService<ProposalEngine>();
+        }
+        public static void AddProposalEngine(this ProposalEngine proEng)
+        {
             proEng.Add(new Dm5ProposalDescrition());
             proEng.Add(new BilibiliProposalDescription());
+        }
+        public static void UseKnowEngines(this IServiceProvider provider)
+        {
+            var eng = provider.GetRequiredService<ComicEngine>();
+            AddComicSource(eng);
+            var searchEng = provider.GetRequiredService<SearchEngine>();
+            AddSearchProvider(searchEng);
+            var proEng = provider.GetRequiredService<ProposalEngine>();
+            AddProposalEngine(proEng);
         }
     }
 }

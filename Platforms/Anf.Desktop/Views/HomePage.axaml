@@ -3,7 +3,6 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
              xmlns:vm="using:Anf.Desktop.ViewModels"
-             xmlns:m="using:Anf.Desktop.Models"
              xmlns:kwce="using:Anf"
              xmlns:paz="using:Avalonia.Controls.PanAndZoom"
              xmlns:conv="using:Anf.Desktop.Converters"
@@ -18,7 +17,7 @@
   <UserControl.Resources>
     <conv:SearchProviderConverter x:Key="SearchProviderConverter"/>
     <conv:StartupTypeBoolConverter x:Key="StartupTypeBoolConverter"/>
-    <DataTemplate x:Key="CsiDt" DataType="{x:Type m:AvalonComicSnapshotInfo}">
+    <DataTemplate x:Key="CsiDt">
       <Grid>
         <Grid.ContextMenu>
           <ContextMenu>

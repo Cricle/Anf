@@ -1,6 +1,7 @@
 ﻿using Anf.Easy;
 using Anf.Phone.Models;
 using Anf.Platform;
+using Anf.Platform.Models.Impl;
 using GalaSoft.MvvmLight.Command;
 using System;
 using System.Collections.Generic;
@@ -11,7 +12,7 @@ using Xamarin.Forms;
 
 namespace Anf.Phone.ViewModels
 {
-    public class PhoneComicViewModel : PhoneStorableComicSnapshotInfo, IDisposable
+    public class PhoneComicViewModel : WithImageStorableComicSnapshotInfo<ImageSource>, IDisposable
     {
         public PhoneComicViewModel(ComicSnapshot snapshot)
             : base(snapshot)

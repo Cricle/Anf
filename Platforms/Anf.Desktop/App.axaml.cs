@@ -19,7 +19,6 @@ using Avalonia.Input;
 using System.Threading.Tasks;
 using Anf.Desktop.ViewModels;
 using Anf.Platform.Services;
-using Anf.Desktop.Models;
 using Anf.Platform;
 using Microsoft.Extensions.Logging;
 using NLog.Extensions.Logging;
@@ -34,6 +33,8 @@ using Anf.Engine;
 using System.Reactive.PlatformServices;
 using Anf.Platform.Books;
 using Microsoft.IO;
+using Anf.Platform.Models.Impl;
+using Anf.Platform.Services.Impl;
 
 namespace Anf.Desktop
 {
@@ -76,10 +77,10 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton<IStreamImageConverter<Bitmap>, StreamImageConverter>();
             AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, PlatformResourceCreatorFactory<Bitmap>>();
             AppEngine.Services.AddSingleton<ExceptionService>();
-            var storeSer = new DesktopComicStoreService(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
+            var storeSer = new WithImageComicStoreService<Bitmap>(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
             AppEngine.Services.AddSingleton(storeSer);
             AppEngine.Services.AddSingleton<IObservableCollectionFactory>(new AvaloniaObservableCollectionFactory());
-            AppEngine.Services.AddSingleton<ComicStoreService<AvalonComicStoreBox>>(storeSer);
+            AppEngine.Services.AddSingleton<ComicStoreService<WithImageComicStoreBox<Bitmap>>>(storeSer);
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(Workstation, HistoryService.HistoryFileName)));
             AppEngine.Services.AddSingleton<ProposalEngine>();
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, DesktopStoreComicVisiting>();
