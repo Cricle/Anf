@@ -16,6 +16,16 @@ using Anf.Easy.Visiting;
 using Anf.Platform;
 using Anf.Engine;
 using StackExchange.Redis;
+using Anf.Web.Hubs;
+using System.Reflection;
+using Microsoft.OpenApi.Models;
+using MongoDB.Driver;
+using System.Threading.Tasks;
+using Anf.ChannelModel.Mongo;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Microsoft.Extensions.Caching.Distributed;
+using Anf.ResourceFetcher;
+using Anf.ChannelModel.Entity;
 
 namespace Anf.Web
 {
@@ -42,7 +52,7 @@ namespace Anf.Web
             services.AddScoped<IComicVisiting<Stream>, StoreComicVisiting<Stream>>();
             services.AddKnowEngines();
             services.AddControllersWithViews();
-            services.AddSingleton<SharedComicVisiting>();
+            services.AddSingleton(new SharedComicVisiting(40));
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -58,23 +68,49 @@ namespace Anf.Web
             services.AddSignalR()
                 .AddAzureSignalR();
             services.AddScoped(x => x.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
-            services.AddDistributedRedisCache(option =>
-            {
-                option.Configuration = Configuration["ConnectionStrings:CacheConnection"];
-            });
             services.AddDbContext<AnfDbContext>((x, y) =>
             {
                 var config = x.GetRequiredService<IConfiguration>();
                 y.UseSqlServer(config["ConnectionStrings:anfdb"]);
-            });
-            services.AddDistributedRedisCache(option =>
+            }).AddIdentity<AnfUser,AnfRole>(x=> 
             {
-                option.Configuration = Configuration["ConnectionStrings:CacheConnection"];
+                x.Password.RequireDigit = false;
+                x.Password.RequiredUniqueChars = 0;
+                x.Password.RequireLowercase = false;
+                x.Password.RequireNonAlphanumeric = false;
+                x.Password.RequireUppercase = false;
+            })
+            .AddEntityFrameworkStores<AnfDbContext>();
+            services.AddScoped<IDistributedCache, RedisCache>();
+            services.AddOptions<RedisCacheOptions>()
+                .Configure(x => x.Configuration = Configuration["ConnectionStrings:CacheConnection"]);
+            services.AddResponseCompression();
+            services.AddScoped<UserService>();
+            services.AddScoped<UserIdentityService>();
+            services.AddSwaggerGen(c=> 
+            {
+                c.SwaggerDoc("Anf", new OpenApiInfo
+                {
+                    Version = "v1",
+                    Title = "Anf API"
+                });
+
+                // Set the comments path for the Swagger JSON and UI.
+                var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+                var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+                c.IncludeXmlComments(xmlPath);
             });
-
-
-            services.AddSession();
-            services.AddSingleton<UserService>();
+            services.AddAuthorization();
+            services.AddAuthentication(options => 
+            {
+                options.AddScheme<AnfAuthenticationHandler>(AnfAuthenticationHandler.SchemeName, "default scheme");
+                options.DefaultAuthenticateScheme = AnfAuthenticationHandler.SchemeName;
+                options.DefaultChallengeScheme = AnfAuthenticationHandler.SchemeName;
+            });
+            services.AddScoped<AnfAuthenticationHandler>();
+            var settings = MongoClientSettings.FromConnectionString(Configuration["ConnectionStrings:MongoDb"]);
+            var mongoClient = new MongoClient(settings);
+            services.AddSingleton<IMongoClient>(mongoClient);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -92,6 +128,7 @@ namespace Anf.Web
             }
 
             app.UseHttpsRedirection();
+            app.UseResponseCompression();
             app.UseStaticFiles();
             if (!env.IsDevelopment())
             {
@@ -99,9 +136,16 @@ namespace Anf.Web
             }
 
             app.UseRouting();
+            app.UseAuthentication();
+            app.UseAuthorization();
             app.UseAzureSignalR(builder =>
             {
-
+                builder.MapHub<ReadingHub>("/hubs/v1/reading");
+            });
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/Anf/swagger.json", "Anf API");
             });
             app.UseEndpoints(endpoints =>
             {
@@ -119,11 +163,18 @@ namespace Anf.Web
 
                 if (env.IsDevelopment())
                 {
-                    spa.UseAngularCliServer(npmScript: "start");
+                    //spa.UseAngularCliServer(npmScript: "start");
                 }
             });
 
             app.ApplicationServices.UseKnowEngines();
+            //using (var scope=app.ApplicationServices.GetServiceScope())
+            //{
+            //    var db = scope.ServiceProvider.GetRequiredService<AnfDbContext>();
+            //    db.Database.EnsureCreated();
+            //}
+            var scope = app.ApplicationServices.CreateScope();
+            _ = AnfMongoDbExtensions.InitMongoAsync(scope);
         }
     }
 }

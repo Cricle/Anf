@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 
-namespace Anf.Web.Models
+namespace Anf.ChannelModel.Entity
 {
     public class AnfRole : IdentityRole<long>
     {

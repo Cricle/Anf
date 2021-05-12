@@ -11,7 +11,7 @@ namespace Anf.ChannelModel.KeyGenerator
         /// <summary>
         /// 分布式锁获取超时时间
         /// </summary>
-        public static readonly TimeSpan RedKeyOutTime = TimeSpan.FromSeconds(10);
+        public static readonly TimeSpan RedKeyOutTime = TimeSpan.FromSeconds(20);
         /// <summary>
         /// 输入错误缓存时间
         /// </summary>
@@ -30,54 +30,43 @@ namespace Anf.ChannelModel.KeyGenerator
         public const string DefaultSplit = "_";
 
         public const string NullString = "(Null)";
-        //NOTE: 多重载是为了加速生成
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Concat(string header, params object[] parts)
         {
             return ConcatWithSplit(header, DefaultSplit, parts);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Concat(string header, object part1)
         {
             return ConcatWithSplit(header, DefaultSplit, part1);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Concat(string header, object part1,object part2)
         {
             return ConcatWithSplit(header, DefaultSplit, part1, part2);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Concat(string header, object part1,object part2,object part3)
         {
             return ConcatWithSplit(header, DefaultSplit, part1,part2,part3);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string Concat(string header, object part1, object part2, object part3, object part4)
         {
             return ConcatWithSplit(header, DefaultSplit, part1, part2, part3, part4);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ConcatWithSplit(string header, string split, object part1)
         {
             return string.Concat(header, split, part1 ?? NullString);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ConcatWithSplit(string header, string split, object part1, object part2)
         {
             return string.Concat(header, split, part1 ?? NullString, split, part2 ?? NullString);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ConcatWithSplit(string header, string split, object part1, object part2, object part3)
         {
             return string.Concat(header, split, part1 ?? NullString, split, part2 ?? NullString, split, part3 ?? NullString);
         }
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static string ConcatWithSplit(string header, string split, object part1, object part2, object part3, object part4)
         {
             return string.Concat(header, split, part1 ?? NullString, split, part2 ?? NullString, split, part3 ?? NullString, split, part4 ?? NullString);
         }
         
-        [MethodImpl(MethodImplOptions.NoInlining)]
         public static string ConcatWithSplit(string header, string split, params object[] parts)
         {
             if (parts is null)

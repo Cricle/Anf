@@ -1,6 +1,7 @@
-﻿using Anf.ChannelModel.Results;
-using Anf.Web.Models;
+﻿using Anf.ChannelModel.Helpers;
+using Anf.ChannelModel.Results;
 using Anf.Web.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -20,28 +21,41 @@ namespace Anf.Web.Controllers
         {
             this.userService = userService;
         }
-
+        [Authorize]
         [HttpGet("[action]")]
-        public async Task<IActionResult> FlushKey()
+        public async Task<IActionResult> Go()
         {
-            var key = await userService.FlushRSAKey(HttpContext.Session.Id);
-            var res = new EntityResult<string> { Data = key };
+            return Ok(11);
+        }
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> FlushKey([FromQuery]string name)
+        {
+            if (string.IsNullOrEmpty(name))
+            {
+                return BadRequest();
+            }
+            var key = await userService.FlushRSAKey(name);
+            var res = new EntityResult<RSAKeyIdentity> { Data = key };
             return Ok(res);
         }
+        [AllowAnonymous]
         [HttpPost("[action]")]
-        public async Task<IActionResult> Login([FromForm]string userName, [FromForm] string passwordHash)
+        public async Task<IActionResult> Login([FromForm]string userName, [FromForm] string passwordHash,[FromForm] string connectId)
         {
-            var succeed = await userService.LoginAsync(HttpContext.Session.Id, userName, passwordHash);
+            var tk = await userService.LoginAsync(connectId, userName, passwordHash);
+            var res = new EntityResult<string> { Data = tk };
+            return Ok(res);
+        }
+        [AllowAnonymous]
+        [HttpPost("[action]")]
+        public async Task<IActionResult> Registe([FromForm] string userName, [FromForm] string passwordHash, [FromForm] string connectId)
+        {
+            var succeed = await userService.RegisteAsync(connectId, userName, passwordHash);
             var res = new EntityResult<bool> { Data = succeed };
             return Ok(res);
         }
-        [HttpPost("[action]")]
-        public async Task<IActionResult> Registe([FromForm] string userName, [FromForm] string passwordHash)
-        {
-            var succeed = await userService.RegisteAsync(HttpContext.Session.Id, userName, passwordHash);
-            var res = new EntityResult<bool> { Data = succeed };
-            return Ok(res);
-        }
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<IActionResult> ResetPwd(string userName, string tk, string pwd)
         {
@@ -49,6 +63,7 @@ namespace Anf.Web.Controllers
             var res = new EntityResult<bool> { Data = resetRes };
             return Ok(res);
         }
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<IActionResult> ResetPwdWithOld(string userName, string old, string pwd)
         {
@@ -56,6 +71,7 @@ namespace Anf.Web.Controllers
             var res = new EntityResult<bool> { Data = resetRes };
             return Ok(res);
         }
+        [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<IActionResult> GenerateResetToken(string userName)
         {
