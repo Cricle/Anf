@@ -86,7 +86,6 @@ namespace Anf.ChannelModel.Results
         /// <summary>
         /// 抛出，当是只读模式时
         /// </summary>
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         protected void ThrowIfReadOnly()
         {
             if (readOnly)

@@ -14,7 +14,7 @@ namespace Anf.Platform
 {
     public class StoreComicVisiting<T> : ComicVisiting<T>
     {
-        public StoreComicVisiting(IServiceProvider host, IResourceFactoryCreator<T> resourceFactoryCreator) 
+        public StoreComicVisiting(IServiceProvider host, IResourceFactoryCreator<T> resourceFactoryCreator)
             : base(host, resourceFactoryCreator)
         {
             storeService = AppEngine.GetRequiredService<IStoreService>();
@@ -36,7 +36,7 @@ namespace Anf.Platform
             if (EnableCDNCache)
             {
                 var val = await FetchCDNAsAsync<ComicPage[]>(chapter.TargetUrl);
-                if (val!=null)
+                if (val != null)
                 {
                     return val;
                 }
@@ -50,14 +50,14 @@ namespace Anf.Platform
             {
                 res = await base.GetPagesAsync(chapter);
             }
-            if (res !=null&&EnableCDNCache)
+            if (res != null && EnableCDNCache)
             {
                 await StoreCDNAsync(chapter.TargetUrl, res);
             }
             return res;
         }
         private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
-        private async Task StoreCDNAsync<TValue>(string address,TValue value)
+        private async Task StoreCDNAsync<TValue>(string address, TValue value)
         {
             var remoteCacheFetcher = GetCDNFetcher();
             if (remoteCacheFetcher != null)
@@ -75,12 +75,12 @@ namespace Anf.Platform
                 }
                 catch (Exception) { }
             }
-            
+
         }
         private async Task<Stream> FetchCDNAsync(string address)
         {
             var remoteCacheFetcher = GetCDNFetcher();
-            if (EnableCDNCache&& remoteCacheFetcher!=null)
+            if (EnableCDNCache && remoteCacheFetcher != null)
             {
                 try
                 {
@@ -93,7 +93,7 @@ namespace Anf.Platform
         private async Task<TValue> FetchCDNAsAsync<TValue>(string address)
         {
             var stream = await FetchCDNAsync(address);
-            if (stream is null||!stream.CanRead)
+            if (stream is null || !stream.CanRead)
             {
                 return default;
             }
@@ -116,7 +116,7 @@ namespace Anf.Platform
                     return JsonHelper.Deserialize<TValue>(str);
                 }
             }
-            catch (Exception) 
+            catch (Exception)
             {
                 return default;
             }

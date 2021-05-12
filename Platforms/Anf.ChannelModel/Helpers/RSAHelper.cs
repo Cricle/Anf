@@ -7,9 +7,10 @@ namespace Anf.ChannelModel.Helpers
 {
     public static class RSAHelper
     {
-        public static RSASecretKey GenerateRSASecretKey(int keySize)
+        public const int RSAKeyLen = 2048;
+        public static RSASecretKey GenerateRSASecretKey()
         {
-            using (var rsa = new RSACryptoServiceProvider(keySize))
+            using (var rsa = new RSACryptoServiceProvider(RSAKeyLen))
             {
                 return new RSASecretKey(rsa.ToXmlString(true), rsa.ToXmlString(false));
             }
@@ -17,7 +18,7 @@ namespace Anf.ChannelModel.Helpers
         public static string RSAEncrypt(string xmlPublicKey, string content)
         {
             string encryptedContent = string.Empty;
-            using (var rsa = new RSACryptoServiceProvider())
+            using (var rsa = new RSACryptoServiceProvider(RSAKeyLen))
             {
                 rsa.FromXmlString(xmlPublicKey);
                 var encryptedData = rsa.Encrypt(Encoding.Default.GetBytes(content), false);
@@ -27,14 +28,21 @@ namespace Anf.ChannelModel.Helpers
         }
         public static string RSADecrypt(string xmlPrivateKey, string content)
         {
-            string decryptedContent = string.Empty;
-            using (var rsa = new RSACryptoServiceProvider())
+            try
             {
-                rsa.FromXmlString(xmlPrivateKey);
-                var decryptedData = rsa.Decrypt(Convert.FromBase64String(content), false);
-                decryptedContent = Encoding.UTF8.GetString(decryptedData);
+                string decryptedContent = string.Empty;
+                using (var rsa = new RSACryptoServiceProvider(RSAKeyLen))
+                {
+                    rsa.FromXmlString(xmlPrivateKey);
+                    var decryptedData = rsa.Decrypt(Convert.FromBase64String(content), false);
+                    decryptedContent = Encoding.UTF8.GetString(decryptedData);
+                }
+                return decryptedContent;
             }
-            return decryptedContent;
+            catch (Exception)
+            {
+                return null;
+            }
         }
     }
 }

@@ -19,6 +19,10 @@
     "mssql1": {
       "type": "mssql",
       "connectionId": "anfdb"
+    },
+    "secrets2": {
+      "type": "secrets",
+      "connectionId": "VaultUri"
     }
   }
 }

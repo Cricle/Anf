@@ -15,6 +15,8 @@ using Microsoft.Extensions.Configuration;
 using Azure.Identity;
 using StackExchange.Redis;
 using Anf.AzureFunc.Services;
+using Microsoft.Extensions.Caching.StackExchangeRedis;
+using Microsoft.Extensions.Caching.Distributed;
 
 [assembly: FunctionsStartup(typeof(Startup))]
 
@@ -52,10 +54,9 @@ namespace Anf.AzureFunc
             services.AddScoped<INetworkAdapter, HttpClientAdapter>();
             services.AddScoped<IJsEngine, JintJsEngine>();
             var ctx = builder.GetContext();
-            services.AddDistributedRedisCache(option =>
-            {
-                option.Configuration = ctx.Configuration["ConnectionStrings:CacheConnection"];
-            });
+            services.AddScoped<IDistributedCache, RedisCache>();
+            services.AddOptions<RedisCacheOptions>()
+                .Configure(x => x.Configuration = ctx.Configuration["ConnectionStrings:CacheConnection"]);
             var conn = ConnectionMultiplexer.Connect(ctx.Configuration["ConnectionStrings:CacheConnection"]);
             services.AddSingleton<IConnectionMultiplexer>(conn);
             services.AddScoped(x => x.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
