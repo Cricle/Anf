@@ -62,7 +62,7 @@ namespace Anf.Web
 
         public int Count => visitings.Count;
 
-        public bool UseCDN { get; set; } = true;
+        public bool UseCDN { get; set; } = false;
 
         public bool UseStore { get; set; } = false;
 
