@@ -30,6 +30,10 @@ namespace Anf.ResourceFetcher
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<AnfBookshelfItem>(x =>
+            {
+                x.HasKey(y => new { y.Address, y.BookshelfId });
+            });
             builder.Entity<KvComicEntity>(x =>
             {
                 x.HasIndex(y => y.ComicUrl).IsUnique(true);

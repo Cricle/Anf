@@ -16,13 +16,13 @@
       "type": "signalr",
       "connectionId": "Azure__SignalR__ConnectionString"
     },
-    "mssql1": {
-      "type": "mssql",
-      "connectionId": "anfdb"
-    },
     "secrets2": {
       "type": "secrets",
       "connectionId": "VaultUri"
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "anfdb"
     }
   }
 }

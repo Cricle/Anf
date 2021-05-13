@@ -26,6 +26,7 @@ using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Caching.Distributed;
 using Anf.ResourceFetcher;
 using Anf.ChannelModel.Entity;
+using Anf.ResourceFetcher.Fetchers;
 
 namespace Anf.Web
 {
@@ -60,14 +61,8 @@ namespace Anf.Web
                 configuration.RootPath = "ClientApp/dist";
             });
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
-            services.AddSingleton<IConnectionMultiplexer>(x =>
-            {
-                var config = x.GetRequiredService<IConfiguration>()["ConnectionStrings:CacheConnection"];
-                return ConnectionMultiplexer.Connect(config);
-            });
             services.AddSignalR()
                 .AddAzureSignalR();
-            services.AddScoped(x => x.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
             services.AddDbContext<AnfDbContext>((x, y) =>
             {
                 var config = x.GetRequiredService<IConfiguration>();
@@ -81,7 +76,7 @@ namespace Anf.Web
                 x.Password.RequireUppercase = false;
             })
             .AddEntityFrameworkStores<AnfDbContext>();
-            services.AddScoped<IDistributedCache, RedisCache>();
+            services.AddSingleton<IDistributedCache, RedisCache>();
             services.AddOptions<RedisCacheOptions>()
                 .Configure(x => x.Configuration = Configuration["ConnectionStrings:CacheConnection"]);
             services.AddResponseCompression();
@@ -108,9 +103,9 @@ namespace Anf.Web
                 options.DefaultChallengeScheme = AnfAuthenticationHandler.SchemeName;
             });
             services.AddScoped<AnfAuthenticationHandler>();
-            var settings = MongoClientSettings.FromConnectionString(Configuration["ConnectionStrings:MongoDb"]);
-            var mongoClient = new MongoClient(settings);
-            services.AddSingleton<IMongoClient>(mongoClient);
+            services.AddOptions<FetchOptions>();
+            services.AddDefaultFetcher();
+            services.AddResourceFetcher();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -168,13 +163,13 @@ namespace Anf.Web
             });
 
             app.ApplicationServices.UseKnowEngines();
-            //using (var scope=app.ApplicationServices.GetServiceScope())
+            //using (var s = app.ApplicationServices.GetServiceScope())
             //{
-            //    var db = scope.ServiceProvider.GetRequiredService<AnfDbContext>();
+            //    var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();
             //    db.Database.EnsureCreated();
             //}
-            var scope = app.ApplicationServices.CreateScope();
-            _ = AnfMongoDbExtensions.InitMongoAsync(scope);
+            //var scope = app.ApplicationServices.CreateScope();
+            //_ = AnfMongoDbExtensions.InitMongoAsync(scope);
         }
     }
 }

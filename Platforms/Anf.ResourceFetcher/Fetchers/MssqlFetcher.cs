@@ -1,7 +1,9 @@
 ﻿using Anf.ChannelModel.Entity;
 using Anf.ChannelModel.Mongo;
+using Anf.ResourceFetcher.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +18,8 @@ namespace Anf.ResourceFetcher.Fetchers
         private readonly IOptions<FetchOptions> fetchOptions;
         private readonly AnfDbContext anfDbContext;
 
-        public MssqlFetcher(IOptions<FetchOptions> fetchOptions, AnfDbContext anfDbContext)
+        public MssqlFetcher(IOptions<FetchOptions> fetchOptions,
+            AnfDbContext anfDbContext)
         {
             this.fetchOptions = fetchOptions;
             this.anfDbContext = anfDbContext;
@@ -24,7 +27,7 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public async Task DoneFetchChapterAsync(IValueResourceMonitorContext<WithPageChapter> context)
         {
-            if (context.ProviderFetcher != this)
+            if (context.ProviderFetcher != this && !context.FetchContext.IsFromCache)
             {
                 var exists = await anfDbContext.ComicChapters.AsNoTracking()
                     .Where(x => x.TargetUrl == context.Url)
@@ -47,7 +50,7 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public async Task DoneFetchEntityAsync(IValueResourceMonitorContext<AnfComicEntityTruck> context)
         {
-            if (context.ProviderFetcher!=this)
+            if (context.ProviderFetcher!=this && !context.FetchContext.IsFromCache)
             {
                 var val = context.Value;
                 var now = DateTime.Now.Ticks;

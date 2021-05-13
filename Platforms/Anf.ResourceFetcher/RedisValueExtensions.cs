@@ -63,7 +63,7 @@ namespace StackExchange.Redis
             }
             else if (type.IsEnum)
             {
-                if (Enum.TryParse(type, value.ToString(), out var enu))
+                if (TryParseEnum(type, value.ToString(), out var enu))
                 {
                     return enu;
                 }
@@ -75,6 +75,23 @@ namespace StackExchange.Redis
                 return obj;
             }
             return default;
+        }
+        private static bool TryParseEnum(Type type,string val,out object res)
+        {
+#if NETSTANDARD2_0
+            try
+            {
+                res = Enum.Parse(type, val);
+                return true;
+            }
+            catch (Exception)
+            {
+                res = null;
+                return false;
+            }
+#else
+            return Enum.TryParse(type, val, out res);
+#endif
         }
         /// <summary>
         /// 从目标结构体制作类型<typeparamref name="T"/>的实例
@@ -129,7 +146,7 @@ namespace StackExchange.Redis
             }
             else if (type.IsEnum)
             {
-                if (Enum.TryParse(type, value.ToString(), out var enu))
+                if (TryParseEnum(type, value.ToString(), out var enu))
                 {
                     return (T)enu;
                 }

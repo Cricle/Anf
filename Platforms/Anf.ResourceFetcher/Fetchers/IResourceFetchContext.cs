@@ -11,9 +11,15 @@ namespace Anf.ResourceFetcher.Fetchers
 
         IResourceFinder Root { get; }
 
+        string EntityUrl { get; }
+
         bool RequireReloop { get; }
 
+        bool IsFromCache { get; }
+
         void SetRequireReloop();
+
+        void SetIsCache();
 
         Task<IRedLock> CreateEntityLockerAsync();
 

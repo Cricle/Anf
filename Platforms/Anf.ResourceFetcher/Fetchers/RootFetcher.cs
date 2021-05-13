@@ -27,9 +27,9 @@ namespace Anf.ResourceFetcher.Fetchers
             this.distributeLockFactory = distributeLockFactory;
         }
 
-        public async Task<WithPageChapter> FetchChapterAsync(string url)
+        public async Task<WithPageChapter> FetchChapterAsync(string url,string entityUrl)
         {
-            var val = await FetchAsync(url, (x, y) => x.FetchChapterAsync(y));
+            var val = await FetchAsync(url, (x, y) => x.FetchChapterAsync(y), entityUrl);
             if (val.Value != null)
             {
                 var ctx = new ChapterResourceMonitorContext
@@ -40,14 +40,16 @@ namespace Anf.ResourceFetcher.Fetchers
                     Value = val.Value
                 };
                 await DoneFetchChapterAsync(ctx);
+                return val.Value;
             }
             return null;
         }
         private async Task<FetchResult<T>> FetchAsync<T>(string url,
             Func<IResourceFetcher,IResourceFetchContext, Task<T>> map,
+            string entityUrl,
             IResourceFetcher requiredReloopFetcher=null)
         {
-            var ctx = new ResourceFetchContext(distributeLockFactory, url, requiredReloopFetcher, this);
+            var ctx = new ResourceFetchContext(distributeLockFactory, url, requiredReloopFetcher, this, entityUrl);
             for (int i = 0; i < Count; i++)
             {
                 var fetcher = this[i];
@@ -58,7 +60,7 @@ namespace Anf.ResourceFetcher.Fetchers
                 }
                 if (ctx.RequireReloop)
                 {
-                    return await FetchAsync(url,map, fetcher);
+                    return await FetchAsync(url,map, entityUrl,fetcher);
                 }
             }
             return default;
@@ -66,7 +68,7 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public async Task<AnfComicEntityTruck> FetchEntityAsync(string url)
         {
-            var val = await FetchAsync(url, (x, y) => x.FetchEntityAsync(y));
+            var val = await FetchAsync(url, (x, y) => x.FetchEntityAsync(y),url);
             if (val.Value != null)
             {
                 var ctx = new EntityResourceMonitorContext
@@ -77,6 +79,7 @@ namespace Anf.ResourceFetcher.Fetchers
                     Value = val.Value
                 };
                 await DoneFetchEntityAsync(ctx);
+                return val.Value;
             }
             return null;
         }

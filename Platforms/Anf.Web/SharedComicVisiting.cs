@@ -1,6 +1,7 @@
 ﻿using Anf.Easy.Store;
 using Anf.Easy.Visiting;
 using Anf.Platform;
+using Anf.ResourceFetcher.Fetchers;
 using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Concurrent;
@@ -19,21 +20,18 @@ namespace Anf.Web
             private readonly IServiceScope scope;
             private readonly Task loadingTask;
 
-            public VisitingBox(string address,bool useStore,bool useCDN)
+            public VisitingBox(string address)
             {
                 Address = address;
                 scope = AppEngine.CreateScope();
                 var creator = scope.ServiceProvider.GetRequiredService<IResourceFactoryCreator<Stream>>();
-                Visiting = new StoreComicVisiting<Stream>(scope.ServiceProvider, creator)
-                {
-                    UseStore = useStore,
-                    EnableCDNCache = useCDN
-                };
+                var rootFetcher = scope.ServiceProvider.GetRequiredService<IRootFetcher>();
+                Visiting = new WebComicVisiting(scope.ServiceProvider, creator, rootFetcher);
                 loadingTask = Visiting.LoadAsync(Address);
             }
 
             public string Address { get; }
-            public StoreComicVisiting<Stream> Visiting { get; }
+            public WebComicVisiting Visiting { get; }
 
             public Task InitAsync()
             {
@@ -62,13 +60,9 @@ namespace Anf.Web
 
         public int Count => visitings.Count;
 
-        public bool UseCDN { get; set; } = false;
-
-        public bool UseStore { get; set; } = false;
-
-        public async Task<StoreComicVisiting<Stream>> GetAsync(string address)
+        public async Task<ComicVisiting<Stream>> GetAsync(string address)
         {
-            var box = visitings.GetOrAdd(address, () => new VisitingBox(address, UseStore, UseCDN));
+            var box = visitings.GetOrAdd(address, () => new VisitingBox(address));
             await box.InitAsync();
             return box.Visiting;
         }

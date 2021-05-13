@@ -1,34 +1,28 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using Microsoft.Azure.Functions.Extensions.DependencyInjection;
+﻿using Microsoft.Azure.Functions.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
 using Anf.AzureFunc;
 using Anf.Engine;
 using Anf.KnowEngines;
 using Microsoft.IO;
 using Anf.Networks;
-using System.IO;
 using JavaScriptEngineSwitcher.Core;
 using JavaScriptEngineSwitcher.Jint;
 using Microsoft.Extensions.Configuration;
-using Azure.Identity;
 using StackExchange.Redis;
-using Anf.AzureFunc.Services;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Caching.Distributed;
-
-[assembly: FunctionsStartup(typeof(Startup))]
+using Anf.ResourceFetcher;
+using Anf.ChannelModel.Entity;
 
 namespace Anf.AzureFunc
 {
-    public class Startup : FunctionsStartup
+    public static class Startup
     {
-        public override void Configure(IFunctionsHostBuilder builder)
+        public static void AddServices(IServiceCollection services, IConfiguration config)
         {
-            var services = builder.Services;
             services.AddKnowEngines();
-            services.AddSingleton(x=> 
+            services.AddSingleton(x =>
             {
                 var eng = new ComicEngine();
                 eng.AddComicSource();
@@ -41,7 +35,7 @@ namespace Anf.AzureFunc
                 eng.AddSearchProvider();
                 return eng;
             });
-            services.AddSingleton(x=> 
+            services.AddSingleton(x =>
             {
                 var factory = x.GetRequiredService<IServiceScopeFactory>();
                 var eng = new ProposalEngine(factory);
@@ -53,20 +47,18 @@ namespace Anf.AzureFunc
             services.AddHttpClient();
             services.AddScoped<INetworkAdapter, HttpClientAdapter>();
             services.AddScoped<IJsEngine, JintJsEngine>();
-            var ctx = builder.GetContext();
             services.AddScoped<IDistributedCache, RedisCache>();
             services.AddOptions<RedisCacheOptions>()
-                .Configure(x => x.Configuration = ctx.Configuration["ConnectionStrings:CacheConnection"]);
-            var conn = ConnectionMultiplexer.Connect(ctx.Configuration["ConnectionStrings:CacheConnection"]);
-            services.AddSingleton<IConnectionMultiplexer>(conn);
-            services.AddScoped(x => x.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
-            services.AddScoped<AnalysisService>();
-        }
-        public override void ConfigureAppConfiguration(IFunctionsConfigurationBuilder builder)
-        {
-            base.ConfigureAppConfiguration(builder);
-            //var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
-            //builder.ConfigurationBuilder.AddAzureKeyVault(keyVaultEndpoint, new DefaultAzureCredential());
+                .Configure(x => x.Configuration = config["ConnectionStrings:CacheConnection"]);
+            services.AddDbContext<AnfDbContext>((x, y) =>
+            {
+                var config = x.GetRequiredService<IConfiguration>();
+                y.UseSqlServer(config["ConnectionStrings:anfdb"]);
+            });
+            services.AddOptions<FetchOptions>();
+            services.AddDefaultFetcher();
+            services.AddResourceFetcher();
+
         }
     }
 }
