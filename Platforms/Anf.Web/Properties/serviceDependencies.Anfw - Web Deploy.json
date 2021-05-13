@@ -17,12 +17,6 @@
       "type": "redis.azure",
       "connectionId": "CacheConnection",
       "secretStore": "AzureKeyVault"
-    },
-    "mssql1": {
-      "resourceId": null,
-      "type": "mssql.onprem",
-      "connectionId": "anfdb",
-      "secretStore": "AzureKeyVault"
     }
   }
 }

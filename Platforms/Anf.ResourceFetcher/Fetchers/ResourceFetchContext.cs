@@ -13,13 +13,16 @@ namespace Anf.ResourceFetcher.Fetchers
 
         private readonly IDistributedLockFactory distributedLockFactory;
 
+        private bool isFromCache;
         private bool requireReloop;
 
         public ResourceFetchContext(IDistributedLockFactory distributedLockFactory, 
             string url,
             IResourceFetcher requireReloopFetcher,
-            IResourceFinder root)
+            IResourceFinder root,
+            string entityUrl)
         {
+            EntityUrl = entityUrl;
             this.distributedLockFactory = distributedLockFactory;
             Root = root;
             Url = url;
@@ -30,9 +33,13 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public IResourceFetcher RequireReloopFetcher { get; }
 
+        public bool IsFromCache => isFromCache;
+
         public bool RequireReloop => requireReloop;
 
         public IResourceFinder Root { get; }
+
+        public string EntityUrl { get; }
 
         public Task<IRedLock> CreateEntityLockerAsync() => CreateLockerAsync(EntityKey);
         public Task<IRedLock> CreateChapterLockerAsync() => CreateLockerAsync(ChapterKey);
@@ -49,7 +56,12 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public IResourceFetchContext Copy(string url)
         {
-            return new ResourceFetchContext(distributedLockFactory, url, RequireReloopFetcher, Root);
+            return new ResourceFetchContext(distributedLockFactory, url, RequireReloopFetcher, Root,EntityUrl);
+        }
+
+        public void SetIsCache()
+        {
+            isFromCache = true;
         }
     }
 }
