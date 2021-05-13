@@ -1,6 +1,7 @@
 ﻿using Anf.ChannelModel.Mongo;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -8,20 +9,14 @@ namespace Anf.ResourceFetcher.Fetchers
 {
     public class ResourceFetchGroup : List<IResourceFetcher>,IResourceFetcher
     {
-        public async Task DoneFetchChapterAsync(IValueResourceMonitorContext<WithPageChapter> context)
+        public Task DoneFetchChapterAsync(IValueResourceMonitorContext<WithPageChapter> context)
         {
-            foreach (var item in this)
-            {
-                await item.DoneFetchChapterAsync(context);
-            }
+            return Task.WhenAll(this.Select(x => x.DoneFetchChapterAsync(context)).ToArray());
         }
 
-        public async Task DoneFetchEntityAsync(IValueResourceMonitorContext<AnfComicEntityTruck> context)
+        public Task DoneFetchEntityAsync(IValueResourceMonitorContext<AnfComicEntityTruck> context)
         {
-            foreach (var item in this)
-            {
-                await item.DoneFetchEntityAsync(context);
-            }
+            return Task.WhenAll(this.Select(x => x.DoneFetchEntityAsync(context)).ToArray());
         }
 
         public async Task<WithPageChapter> FetchChapterAsync(IResourceFetchContext context)

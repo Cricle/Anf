@@ -47,7 +47,11 @@ namespace Anf.ResourceFetcher.Fetchers
                 var titleName = await inRedisComicService.GetChapterNameAsync(context.Url);
                 if (string.IsNullOrEmpty(titleName))
                 {
-                    var ctx = context.Copy(context.Url);
+                    if (string.IsNullOrEmpty(context.EntityUrl))
+                    {
+                        return null;
+                    }
+                    var ctx = context.Copy(context.EntityUrl);
                     var ent = await context.Root.FetchEntityAsync(ctx);
                     var chp = ent?.Chapters.FirstOrDefault(x => x.TargetUrl == context.Url);
                     if (chp is null)

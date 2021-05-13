@@ -3,6 +3,7 @@ using Anf.ChannelModel.Mongo;
 using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -23,7 +24,7 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public async Task DoneFetchChapterAsync(IValueResourceMonitorContext<WithPageChapter> context)
         {
-            if (context.ProviderFetcher != this)
+            if (context.ProviderFetcher != this&&!context.FetchContext.IsFromCache)
             {
                 var uri = context.Value.TargetUrl;
                 var coll = mongoClient.GetComicEntityCollection();
@@ -35,7 +36,7 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public async Task DoneFetchEntityAsync(IValueResourceMonitorContext<AnfComicEntityTruck> context)
         {
-            if (context.ProviderFetcher != this)
+            if (context.ProviderFetcher != this && !context.FetchContext.IsFromCache)
             {
                 var coll = mongoClient.GetComicEntityCollection();
                 var filter = Builders<AnfComicEntity>.Filter.Eq(x => x.ComicUrl, context.Value.ComicUrl);
@@ -88,7 +89,7 @@ namespace Anf.ResourceFetcher.Fetchers
             }
             return entity;
         }
-        private UpdateDefinition<AnfComicEntity> MakeUpdater(AnfComicEntityTruck entity)
+        private UpdateDefinition<AnfComicEntity> MakeUpdater(AnfComicEntityInfoOnly entity)
         {
             var now = DateTime.Now.Ticks;
             return Builders<AnfComicEntity>.Update
@@ -102,25 +103,11 @@ namespace Anf.ResourceFetcher.Fetchers
             var coll = mongoClient.GetComicEntityCollection();
             var filter = Builders<AnfComicEntity>.Filter.Eq(x => x.ComicUrl, context.Url);
             var entity = await coll.Find(filter)
-                .Project(x => new AnfComicEntityTruck
-                {
-                    ComicUrl = x.ComicUrl,
-                    CreateTime = x.CreateTime,
-                    Descript = x.Descript,
-                    ImageUrl = x.ImageUrl,
-                    Name = x.Name,
-                    RefCount = x.RefCount,
-                    UpdateTime = x.UpdateTime,
-                    Chapters = x.WithPageChapters.Select(y => new ComicChapter
-                    {
-                        TargetUrl = y.TargetUrl,
-                        Title = y.Title
-                    }).ToArray()
-                }).FirstOrDefaultAsync();
+                .FirstOrDefaultAsync();
             var now = DateTime.Now.Ticks;
             var isUpdate = entity != null;
             var needUpdate = entity != null && (now - entity.UpdateTime) >= fetchOptions.Value.DataTimeout.Ticks;
-
+            AnfComicEntityTruck truck = null;
             if (entity is null || needUpdate)
             {
                 using (var locker =await context.CreateEntityLockerAsync())
@@ -133,32 +120,75 @@ namespace Anf.ResourceFetcher.Fetchers
                         }
                         return null;
                     }
-                    entity = await remoteFetcher.FetchEntityAsync(context);
-                    if (entity != null)
+                    truck = await remoteFetcher.FetchEntityAsync(context);
+                    if (truck != null)
                     {
                         if (needUpdate)
                         {
                             var updater = MakeUpdater(entity);
-                            var res = await coll.UpdateOneAsync(filter, updater);
+                            var chps = truck.Chapters.Select(x => new WithPageChapter
+                            {
+                                TargetUrl = x.TargetUrl,
+                                CreateTime = now,
+                                Title = x.Title
+                            }).ToArray();
+                            var originMap = entity.WithPageChapters.GroupBy(x=>x.TargetUrl)
+                                .ToDictionary(x => x.Key,x=>x.First());
+                            foreach (var item in chps)
+                            {
+                                if (originMap.TryGetValue(item.TargetUrl,out var origin))
+                                {
+                                    item.Pages = origin.Pages;
+                                    item.UpdateTime = origin.UpdateTime;
+                                    item.RefCount = origin.RefCount;
+                                    item.CreateTime = origin.CreateTime;
+                                }
+                            }
+                            updater = updater.Set(x => x.WithPageChapters, chps);
+                            var r = await coll.UpdateOneAsync(filter, updater);
                         }
                         else
                         {
                             var val = new AnfComicEntity
                             {
-                                ComicUrl = entity.ComicUrl,
-                                CreateTime = entity.CreateTime,
-                                Descript = entity.Descript,
-                                ImageUrl = entity.ImageUrl,
-                                Name = entity.Name,
-                                RefCount = entity.RefCount,
-                                UpdateTime = entity.UpdateTime
+                                ComicUrl = truck.ComicUrl,
+                                CreateTime = truck.CreateTime,
+                                Descript = truck.Descript,
+                                ImageUrl = truck.ImageUrl,
+                                Name = truck.Name,
+                                RefCount = truck.RefCount,
+                                UpdateTime = truck.UpdateTime,
+                                WithPageChapters = truck.Chapters.Select(x => new WithPageChapter
+                                {
+                                    CreateTime = now,
+                                    Title = x.Title,
+                                    TargetUrl = x.TargetUrl
+                                }).ToArray()
                             };
                             await coll.InsertOneAsync(val);
                         }
                     }
                 }
             }
-            return entity;
+            if (truck is null&&entity!=null)
+            {
+                truck = new AnfComicEntityTruck
+                {
+                    CreateTime = entity.CreateTime,
+                    ComicUrl = entity.ComicUrl,
+                    Descript = entity.Descript,
+                    ImageUrl = entity.ImageUrl,
+                    Name = entity.Name,
+                    RefCount = entity.RefCount,
+                    UpdateTime = entity.UpdateTime,
+                    Chapters = entity.WithPageChapters.Select(x => new ComicChapter
+                    {
+                        TargetUrl = x.TargetUrl,
+                        Title = x.Title
+                    }).ToArray()
+                };
+            }
+            return truck;
         }
     }
 }

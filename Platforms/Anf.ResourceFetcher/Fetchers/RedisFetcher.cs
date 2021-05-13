@@ -34,14 +34,24 @@ namespace Anf.ResourceFetcher.Fetchers
             }
             return Task.CompletedTask;
         }
-        public Task<WithPageChapter> FetchChapterAsync(IResourceFetchContext context)
+        public async Task<WithPageChapter> FetchChapterAsync(IResourceFetchContext context)
         {
-            return inRedisComicService.GetChapterAsync(context.Url);
+            var chp=await inRedisComicService.GetChapterAsync(context.Url);
+            if (chp!=null)
+            {
+                context.SetIsCache();
+            }
+            return chp;
         }
 
-        public Task<AnfComicEntityTruck> FetchEntityAsync(IResourceFetchContext context)
+        public async Task<AnfComicEntityTruck> FetchEntityAsync(IResourceFetchContext context)
         {
-            return inRedisComicService.GetEntityAsync(context.Url);
+            var entity=await inRedisComicService.GetEntityAsync(context.Url);
+            if (entity!=null)
+            {
+                context.SetIsCache();
+            }
+            return entity;
         }
     }
 }

@@ -79,7 +79,7 @@ namespace Anf.ResourceFetcher.Services
         }
         private HashEntry[] AsHash(AnfComicEntityTruck value)
         {
-            var chapterBytes = JsonSerializer.SerializeToUtf8Bytes(value);
+            var chapterBytes = JsonSerializer.SerializeToUtf8Bytes(value.Chapters);
             return new HashEntry[]
             {
                 new HashEntry(nameof(AnfComicEntityTruck.ComicUrl),value.ComicUrl),

@@ -1,81 +1,110 @@
 using System;
-using System.IO;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
-using Microsoft.Azure.WebJobs.Extensions.Http;
-using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IO;
-using Anf.AzureFunc.Services;
+using Anf.ResourceFetcher.Fetchers;
+
+using Microsoft.Azure.Functions.Worker;
+using Microsoft.Azure.Functions.Worker.Http;
+using System.Web;
+using System.Net;
+using System.Text;
+using System.Text.Json;
+using Azure.Core.Serialization;
 
 namespace Anf.AzureFunc
 {
-    public class Analysis
+    public static class Analysis
     {
-        private readonly AnalysisService analysisSerivce;
-        private readonly ComicEngine eng;
-        public Analysis(AnalysisService analysisSerivce, ComicEngine eng)
+        [Function("GetPage")]
+        public static async Task<HttpResponseData> GetPage([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req)
         {
-            this.eng = eng;
-            this.analysisSerivce = analysisSerivce;
+            var map = HttpUtility.ParseQueryString(req.Url.Query);
+            var url = map["url"];
+            var rep = req.CreateResponse();
+            if (string.IsNullOrEmpty(url))
+            {
+                rep.StatusCode = HttpStatusCode.BadRequest;
+                return rep;
+            }
+            var engurl = map["engurl"];
+            if (string.IsNullOrEmpty(engurl))
+            {
+                rep.StatusCode = HttpStatusCode.BadRequest;
+                return rep;
+            }
+            var eng = req.FunctionContext.InstanceServices.GetRequiredService<ComicEngine>();
+            var type = eng.GetComicSourceProviderType(engurl);
+            if (type is null)
+            {
+                rep.StatusCode = HttpStatusCode.NotFound;
+                rep.WriteString(engurl);
+                return rep;
+            }
+            var provider = (IComicSourceProvider)req.FunctionContext.InstanceServices.GetRequiredService(type.ProviderType);
+            var res = await provider.GetImageStreamAsync(url);
+            rep.Body = res;
+            rep.Headers.Add("Content-Type", "application/octet-stream");
+            return rep;
         }
-        [FunctionName("GetPage")]
-        public async Task<IActionResult> GetPage([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
+        [Function("GetChapters")]
+        public static async Task<HttpResponseData> GetChapters([HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req)
         {
-            var url = req.Query["url"];
-            if (url.Count == 0)
+            var map = HttpUtility.ParseQueryString(req.Url.Query);
+            var url = map["url"];
+            var rep = req.CreateResponse();
+            if (string.IsNullOrEmpty(url))
             {
-                return new BadRequestResult();
+                rep.StatusCode = HttpStatusCode.BadRequest;
+                return rep;
             }
-            var engurl = req.Query["engurl"];
-            if (engurl.Count == 0)
+            var engurl = map["engurl"];
+            if (string.IsNullOrEmpty(engurl))
             {
-                return new BadRequestResult();
+                rep.StatusCode = HttpStatusCode.BadRequest;
+                return rep;
             }
-            var res = await analysisSerivce.GetPageAsync(engurl, url);
-            var r= new FileStreamResult(res, "application/octet-stream")
-            {
-                FileDownloadName = Guid.NewGuid().ToString()+".png"
-            };
-            return r;
+
+            var fetcher = req.FunctionContext.InstanceServices.GetRequiredService<IRootFetcher>();
+            var chapters = await fetcher.FetchChapterAsync(url, engurl);
+            var bytes = JsonSerializer.Serialize(chapters, JsonOptions.DefaultOption);
+            rep.WriteString(bytes,JsonOptions.Gb231);
+            return rep;
         }
-        [FunctionName("GetChapters")]
-        public async Task<IActionResult> GetChapters([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
+        [Function("GetEntity")]
+        public static async Task<HttpResponseData> GetEntity([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequestData req)
         {
-            var url = req.Query["url"];
-            if (url.Count == 0)
+            var map = HttpUtility.ParseQueryString(req.Url.Query);
+            var url = map["url"];
+            var rep = req.CreateResponse();
+            if (string.IsNullOrEmpty(url))
             {
-                return new BadRequestResult();
+                rep.StatusCode = HttpStatusCode.BadRequest;
+                return rep;
             }
-            var chapters = await analysisSerivce.GetChaptersAsync(url);
-            return new OkObjectResult(chapters);
-        }
-        [FunctionName("GetEntity")]
-        public async Task<IActionResult> GetEntity([HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
-        {
-            var url = req.Query["url"];
-            if (url.Count == 0)
-            {
-                return new BadRequestResult();
-            }
-            var res = await analysisSerivce.GetEntityAsync(url);
-            return new OkObjectResult(res);
+            var fetcher = req.FunctionContext.InstanceServices.GetRequiredService<IRootFetcher>();
+            var chapters = await fetcher.FetchEntityAsync(url);
+            var bytes = JsonSerializer.Serialize(chapters, JsonOptions.DefaultOption);
+            rep.WriteString(bytes, JsonOptions.Gb231);
+            return rep;
         }
 
-        [FunctionName("CanParse")]
-        public IActionResult CanParse(
-            [HttpTrigger(AuthorizationLevel.Function, "get", Route = null)] HttpRequest req)
+        [Function("CanParse")]
+        public static HttpResponseData CanParse(
+            [HttpTrigger(AuthorizationLevel.Anonymous, "get", Route = null)] HttpRequestData req)
         {
-            var url = req.Query["url"];
-            if (url.Count==0)
+            var eng = req.FunctionContext.InstanceServices.GetRequiredService<ComicEngine>();
+            var map = HttpUtility.ParseQueryString(req.Url.Query);
+            var rep = req.CreateResponse();
+            var url = map["url"];
+            if (string.IsNullOrEmpty(url))
             {
-                return new BadRequestResult();
+                rep.StatusCode = HttpStatusCode.BadRequest;
+                return rep;
             }
-            var condition=eng.GetComicSourceProviderType(url);
-
-            return new OkObjectResult(condition != null);
+            var condition = eng.GetComicSourceProviderType(url);
+            rep.WriteString(condition.ProviderType.Name, Encoding.UTF8);
+            return rep;
         }
     }
 }
