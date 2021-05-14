@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace Anf.ResourceFetcher.Services
+namespace Anf.WebService
 {
     public class ComicRankService
     {

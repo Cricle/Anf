@@ -14,6 +14,9 @@ using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Caching.Distributed;
 using Anf.ResourceFetcher;
 using Anf.ChannelModel.Entity;
+using Anf.ResourceFetcher.Redis;
+using Anf.ResourceFetcher.Fetchers;
+using Anf.WebService;
 
 namespace Anf.AzureFunc
 {
@@ -54,11 +57,27 @@ namespace Anf.AzureFunc
             {
                 var config = x.GetRequiredService<IConfiguration>();
                 y.UseSqlServer(config["ConnectionStrings:anfdb"]);
-            });
-            services.AddOptions<FetchOptions>();
-            services.AddDefaultFetcher();
-            services.AddResourceFetcher();
+            }).AddIdentityCore<AnfUser>(x =>
+            {
+                x.Password.RequireDigit = false;
+                x.Password.RequiredUniqueChars = 0;
+                x.Password.RequireLowercase = false;
+                x.Password.RequireNonAlphanumeric = false;
+                x.Password.RequireUppercase = false;
+            })
+            .AddEntityFrameworkStores<AnfDbContext>();
 
+            services.AddOptions<FetchOptions>();
+            services.AddOptions<ResourceLockOptions>();
+            services.AddFetcherProvider()
+                .AddRedisFetcherProvider()
+                .AddMssqlResourceFetcher()
+                .AddDefaultFetcherProvider();
+            services.AddResourceFetcher()
+                .AddMssqlResourceFetcher()
+                .AddRedisFetcherProvider();
+            services.AddScoped<IDbContextTransfer, AnfDbContextTransfer>();
+            services.AddRedis();
         }
     }
 }
