@@ -1,5 +1,5 @@
 ﻿using Anf.ChannelModel.KeyGenerator;
-using RedLockNet;
+using System;
 using System.Threading.Tasks;
 
 namespace Anf.ResourceFetcher.Fetchers
@@ -11,19 +11,19 @@ namespace Anf.ResourceFetcher.Fetchers
         private const string EntityKey = "Entity";
         private const string ChapterKey = "Chapter";
 
-        private readonly IDistributedLockFactory distributedLockFactory;
+        private readonly IResourceLockerFactory resourceLockerFactory;
 
         private bool isFromCache;
         private bool requireReloop;
 
-        public ResourceFetchContext(IDistributedLockFactory distributedLockFactory, 
+        public ResourceFetchContext(IResourceLockerFactory resourceLockerFactory, 
             string url,
             IResourceFetcher requireReloopFetcher,
             IResourceFinder root,
             string entityUrl)
         {
             EntityUrl = entityUrl;
-            this.distributedLockFactory = distributedLockFactory;
+            this.resourceLockerFactory = resourceLockerFactory;
             Root = root;
             Url = url;
             RequireReloopFetcher = requireReloopFetcher;
@@ -41,13 +41,19 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public string EntityUrl { get; }
 
-        public Task<IRedLock> CreateEntityLockerAsync() => CreateLockerAsync(EntityKey);
-        public Task<IRedLock> CreateChapterLockerAsync() => CreateLockerAsync(ChapterKey);
+        public bool SupportLocker => resourceLockerFactory != null;
 
-        private Task<IRedLock> CreateLockerAsync(string part)
+        public Task<IResourceLocker> CreateEntityLockerAsync() => CreateLockerAsync(EntityKey);
+        public Task<IResourceLocker> CreateChapterLockerAsync() => CreateLockerAsync(ChapterKey);
+
+        private Task<IResourceLocker> CreateLockerAsync(string part)
         {
+            if (resourceLockerFactory is null)
+            {
+                throw new NotSupportedException("The IResourceLockerFactory is not provided, the function is not support");
+            }
             var key = RedisKeyGenerator.Concat(FetckKey, part, Url);
-            return distributedLockFactory.CreateLockAsync(key,RedisKeyGenerator.RedKeyOutTime);
+            return resourceLockerFactory.CreateLockerAsync(key);
         }
         public void SetRequireReloop()
         {
@@ -56,7 +62,7 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public IResourceFetchContext Copy(string url)
         {
-            return new ResourceFetchContext(distributedLockFactory, url, RequireReloopFetcher, Root,EntityUrl);
+            return new ResourceFetchContext(resourceLockerFactory, url, RequireReloopFetcher, Root,EntityUrl);
         }
 
         public void SetIsCache()

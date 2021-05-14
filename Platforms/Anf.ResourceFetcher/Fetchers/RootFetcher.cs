@@ -1,5 +1,4 @@
 ﻿using Anf.ChannelModel.Mongo;
-using RedLockNet;
 using System;
 using System.Threading.Tasks;
 
@@ -20,11 +19,11 @@ namespace Anf.ResourceFetcher.Fetchers
                 Value = value;
             }
         }
-        private readonly IDistributedLockFactory distributeLockFactory;
+        private readonly IResourceLockerFactory resourceLockerFactory;
 
-        public RootFetcher(IDistributedLockFactory distributeLockFactory)
+        public RootFetcher(IResourceLockerFactory resourceLockerFactory)
         {
-            this.distributeLockFactory = distributeLockFactory;
+            this.resourceLockerFactory = resourceLockerFactory;
         }
 
         public async Task<WithPageChapter> FetchChapterAsync(string url,string entityUrl)
@@ -49,7 +48,7 @@ namespace Anf.ResourceFetcher.Fetchers
             string entityUrl,
             IResourceFetcher requiredReloopFetcher=null)
         {
-            var ctx = new ResourceFetchContext(distributeLockFactory, url, requiredReloopFetcher, this, entityUrl);
+            var ctx = new ResourceFetchContext(resourceLockerFactory, url, requiredReloopFetcher, this, entityUrl);
             for (int i = 0; i < Count; i++)
             {
                 var fetcher = this[i];

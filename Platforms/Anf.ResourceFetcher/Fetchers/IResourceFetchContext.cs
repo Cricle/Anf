@@ -1,5 +1,4 @@
-﻿using RedLockNet;
-using System.Threading.Tasks;
+﻿using System.Threading.Tasks;
 
 namespace Anf.ResourceFetcher.Fetchers
 {
@@ -17,13 +16,15 @@ namespace Anf.ResourceFetcher.Fetchers
 
         bool IsFromCache { get; }
 
+        bool SupportLocker { get; }
+
         void SetRequireReloop();
 
         void SetIsCache();
 
-        Task<IRedLock> CreateEntityLockerAsync();
+        Task<IResourceLocker> CreateEntityLockerAsync();
 
-        Task<IRedLock> CreateChapterLockerAsync();
+        Task<IResourceLocker> CreateChapterLockerAsync();
 
         IResourceFetchContext Copy(string url);
     }

@@ -1,9 +1,7 @@
 ﻿using Anf.ChannelModel.Entity;
 using Anf.ChannelModel.Mongo;
-using Anf.ResourceFetcher.Services;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
-using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,27 +14,28 @@ namespace Anf.ResourceFetcher.Fetchers
     public class MssqlFetcher : IResourceFetcher
     {
         private readonly IOptions<FetchOptions> fetchOptions;
-        private readonly AnfDbContext anfDbContext;
+        private readonly IDbContextTransfer dbContextTransfer;
 
         public MssqlFetcher(IOptions<FetchOptions> fetchOptions,
-            AnfDbContext anfDbContext)
+            IDbContextTransfer dbContextTransfer)
         {
             this.fetchOptions = fetchOptions;
-            this.anfDbContext = anfDbContext;
+            this.dbContextTransfer = dbContextTransfer;
         }
 
         public async Task DoneFetchChapterAsync(IValueResourceMonitorContext<WithPageChapter> context)
         {
             if (context.ProviderFetcher != this && !context.FetchContext.IsFromCache)
             {
-                var exists = await anfDbContext.ComicChapters.AsNoTracking()
+                var chpSet = dbContextTransfer.GetComicChapterSet();
+                var exists = await chpSet.AsNoTracking()
                     .Where(x => x.TargetUrl == context.Url)
                     .AnyAsync();
                 var now = DateTime.Now.Ticks;
                 if (exists)
                 {
                     var pageJson = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(context.Value.Pages));
-                    await anfDbContext.ComicChapters.Where(x => x.TargetUrl == context.Url)
+                    await chpSet.Where(x => x.TargetUrl == context.Url)
                         .Take(1)
                         .UpdateFromQueryAsync(x => new KvComicChapter
                         {
@@ -52,9 +51,10 @@ namespace Anf.ResourceFetcher.Fetchers
         {
             if (context.ProviderFetcher!=this && !context.FetchContext.IsFromCache)
             {
+                var set = dbContextTransfer.GetComicEntitySet();
                 var val = context.Value;
                 var now = DateTime.Now.Ticks;
-                var upRes = await anfDbContext.ComicEntities.AsNoTracking()
+                var upRes = await set.AsNoTracking()
                     .Where(x => x.ComicUrl == context.Url)
                     .Take(1)
                     .UpdateFromQueryAsync(x => new KvComicEntity
@@ -67,8 +67,9 @@ namespace Anf.ResourceFetcher.Fetchers
                     });
                 if (upRes != 0)
                 {
+                    var chpSet = dbContextTransfer.GetComicChapterSet();
                     var includeUrls = val.Chapters.Select(x => x.TargetUrl).Distinct().ToArray();
-                    var query = anfDbContext.ComicChapters.AsNoTracking();
+                    var query = chpSet.AsNoTracking();
                     if (includeUrls.Length > 50)
                     {
                         var urlEntity = includeUrls.Select(x => new { TargetUrl=x }).ToArray();
@@ -83,7 +84,7 @@ namespace Anf.ResourceFetcher.Fetchers
                     var notExists = val.Chapters.Where(x => !existsHash.Contains(x.TargetUrl)).ToArray();
                     if (notExists.Length != 0)
                     {
-                        var id =await anfDbContext.ComicEntities.AsNoTracking()
+                        var id =await set.AsNoTracking()
                             .Where(x => x.ComicUrl == context.Url)
                             .Select(x => x.Id)
                             .FirstOrDefaultAsync();
@@ -94,7 +95,7 @@ namespace Anf.ResourceFetcher.Fetchers
                             Title = x.Title,
                             TargetUrl = x.TargetUrl,
                         });
-                        await anfDbContext.ComicChapters.BulkInsertAsync(chps);
+                        await chpSet.BulkInsertAsync(chps);
                     }
                 }
                 else
@@ -113,14 +114,15 @@ namespace Anf.ResourceFetcher.Fetchers
                             Title = x.Title,
                         }).ToArray(),
                     };
-                    await anfDbContext.ComicEntities.SingleInsertAsync(entity);
+                    await set.SingleInsertAsync(entity);
                 }
             }
         }
 
         public async Task<WithPageChapter> FetchChapterAsync(IResourceFetchContext context)
         {
-            var data = await anfDbContext.ComicChapters.AsNoTracking()
+            var chpSet = dbContextTransfer.GetComicChapterSet();
+            var data = await chpSet.AsNoTracking()
                 .Where(x => x.TargetUrl == context.Url)
                 .FirstOrDefaultAsync();
             if (data is null)
@@ -147,7 +149,8 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public async Task<AnfComicEntityTruck> FetchEntityAsync(IResourceFetchContext context)
         {
-            var data = await anfDbContext.ComicEntities.AsNoTracking()
+            var set = dbContextTransfer.GetComicEntitySet();
+            var data = await set.AsNoTracking()
                 .Include(x=>x.Chapters)
                 .Where(x => x.ComicUrl == context.Url)
                 .FirstOrDefaultAsync();

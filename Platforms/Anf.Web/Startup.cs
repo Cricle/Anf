@@ -27,6 +27,8 @@ using Microsoft.Extensions.Caching.Distributed;
 using Anf.ResourceFetcher;
 using Anf.ChannelModel.Entity;
 using Anf.ResourceFetcher.Fetchers;
+using Anf.WebService;
+using Anf.ResourceFetcher.Redis;
 
 namespace Anf.Web
 {
@@ -50,10 +52,9 @@ namespace Anf.Web
             services.AddSingleton<IStoreService>(store);
             services.AddSingleton<IResourceFactoryCreator<Stream>, PlatformResourceCreatorFactory<Stream>>();
             services.AddSingleton<ProposalEngine>();
-            services.AddScoped<IComicVisiting<Stream>, StoreComicVisiting<Stream>>();
+            services.AddScoped<IComicVisiting<Stream>, WebComicVisiting>();
             services.AddKnowEngines();
             services.AddControllersWithViews();
-            services.AddSingleton(new SharedComicVisiting(40));
 
             // In production, the Angular files will be served from this directory
             services.AddSpaStaticFiles(configuration =>
@@ -104,8 +105,16 @@ namespace Anf.Web
             });
             services.AddScoped<AnfAuthenticationHandler>();
             services.AddOptions<FetchOptions>();
-            services.AddDefaultFetcher();
-            services.AddResourceFetcher();
+            services.AddOptions<ResourceLockOptions>();
+            services.AddFetcherProvider()
+                .AddRedisFetcherProvider()
+                .AddMssqlResourceFetcher()
+                .AddDefaultFetcherProvider();
+            services.AddResourceFetcher()
+                .AddMssqlResourceFetcher()
+                .AddRedisFetcherProvider();
+            services.AddScoped<IDbContextTransfer, AnfDbContextTransfer>();
+            services.AddRedis();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
