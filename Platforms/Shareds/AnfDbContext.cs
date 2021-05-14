@@ -6,7 +6,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Anf.ResourceFetcher
+namespace Anf.WebService
 {
     public class AnfDbContext : IdentityDbContext<AnfUser, AnfRole, long>
     {

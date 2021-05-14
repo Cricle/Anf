@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="RedLock.net" Version="2.2.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\Shareds\RedisValueExtensions.cs"></Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\Anf.ResourceFetcher\Anf.ResourceFetcher.csproj" />
+  </ItemGroup>
+</Project>

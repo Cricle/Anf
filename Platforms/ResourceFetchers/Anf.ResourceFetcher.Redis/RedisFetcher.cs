@@ -1,12 +1,12 @@
 ﻿using Anf.ChannelModel.KeyGenerator;
 using Anf.ChannelModel.Mongo;
-using Anf.ResourceFetcher.Services;
+using Anf.ResourceFetcher.Fetchers;
 using StackExchange.Redis;
 using System;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Anf.ResourceFetcher.Fetchers
+namespace Anf.ResourceFetcher.Redis
 {
     public class RedisFetcher : IResourceFetcher
     {

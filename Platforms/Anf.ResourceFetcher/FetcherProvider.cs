@@ -10,7 +10,16 @@ namespace Anf.ResourceFetcher
     {
         private static readonly string FetcherInterface = typeof(IResourceFetcher).FullName;
 
-        private readonly List<Type> types=new List<Type>();
+        private readonly List<Type> types;
+
+        public FetcherProvider()
+        {
+            types = new List<Type>();
+        }
+        public FetcherProvider(IEnumerable<Type> types)
+        {
+            this.types = new List<Type>(types);
+        }
 
         public IReadOnlyCollection<Type> Types => types;
 
@@ -31,23 +40,6 @@ namespace Anf.ResourceFetcher
         IEnumerator IEnumerable.GetEnumerator()
         {
             return GetEnumerator();
-        }
-
-        public static FetcherProvider CreateDefault()
-        {
-            var provider= new FetcherProvider();
-            var includeTypes = new Type[]
-            {
-                typeof(RedisFetcher),
-                typeof(MongoFetcher),
-                typeof(MssqlFetcher),
-                typeof(RemoteFetcher)
-            };
-            foreach (var item in includeTypes)
-            {
-                provider.Add(item);
-            }
-            return provider;
         }
     }
 }

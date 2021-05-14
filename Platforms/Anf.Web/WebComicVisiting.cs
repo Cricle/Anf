@@ -11,21 +11,29 @@ namespace Anf.Web
     internal class WebComicVisiting : ComicVisiting<Stream>
     {
         private readonly IRootFetcher rootFetcher;
-        public WebComicVisiting(IServiceProvider host, 
+        public WebComicVisiting(IServiceProvider host,
             IResourceFactoryCreator<Stream> resourceFactoryCreator,
-            IRootFetcher rootFetcher) 
+            IRootFetcher rootFetcher)
             : base(host, resourceFactoryCreator)
         {
             this.rootFetcher = rootFetcher;
         }
         protected override async Task<ComicPage[]> GetPagesAsync(ComicChapter chapter)
         {
-            var entity=await rootFetcher.FetchChapterAsync(chapter.TargetUrl);
+            if (Entity is null)
+            {
+                return null;
+            }
+            var entity = await rootFetcher.FetchChapterAsync(Entity.ComicUrl, chapter.TargetUrl);
             return entity?.Pages;
         }
         protected override async Task<ComicEntity> MakeEntityAsync(string address)
         {
             var entity = await rootFetcher.FetchEntityAsync(address);
+            if (entity is null)
+            {
+                return null;
+            }
             return new ComicEntity
             {
                 Chapters = entity.Chapters,

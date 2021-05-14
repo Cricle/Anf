@@ -1,8 +1,5 @@
-﻿#pragma warning disable CS0251
-using Anf.ChannelModel.Mongo;
-using Anf.ResourceFetcher.Services;
+﻿using Anf.ChannelModel.Mongo;
 using Microsoft.Extensions.DependencyInjection;
-using MongoDB.Driver;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,13 +10,11 @@ namespace Anf.ResourceFetcher.Fetchers
     {
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly ComicEngine eng;
-        private readonly InRedisComicService inRedisComicService;
 
-        public RemoteFetcher(IServiceScopeFactory serviceScopeFactory, ComicEngine eng, InRedisComicService inRedisComicService)
+        public RemoteFetcher(IServiceScopeFactory serviceScopeFactory, ComicEngine eng)
         {
             this.serviceScopeFactory = serviceScopeFactory;
             this.eng = eng;
-            this.inRedisComicService = inRedisComicService;
         }
 
         public Task DoneFetchChapterAsync(IValueResourceMonitorContext<WithPageChapter> context)
@@ -44,21 +39,12 @@ namespace Anf.ResourceFetcher.Fetchers
                 var ser = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(type.ProviderType);
                 var entity = await ser.GetPagesAsync(context.Url);
                 var now = DateTime.Now.Ticks;
-                var titleName = await inRedisComicService.GetChapterNameAsync(context.Url);
-                if (string.IsNullOrEmpty(titleName))
+                var ctx = context.Copy(context.EntityUrl);
+                var ent = await context.Root.FetchEntityAsync(ctx);
+                var chp = ent?.Chapters.FirstOrDefault(x => x.TargetUrl == context.Url);
+                if (chp is null)
                 {
-                    if (string.IsNullOrEmpty(context.EntityUrl))
-                    {
-                        return null;
-                    }
-                    var ctx = context.Copy(context.EntityUrl);
-                    var ent = await context.Root.FetchEntityAsync(ctx);
-                    var chp = ent?.Chapters.FirstOrDefault(x => x.TargetUrl == context.Url);
-                    if (chp is null)
-                    {
-                        return null;
-                    }
-                    titleName = chp.Title;
+                    return null;
                 }
                 return new WithPageChapter
                 {
@@ -66,7 +52,7 @@ namespace Anf.ResourceFetcher.Fetchers
                     CreateTime = now,
                     UpdateTime = now,
                     TargetUrl = context.Url,
-                    Title = titleName
+                    Title = chp.Title
                 };
             }
         }
@@ -97,5 +83,3 @@ namespace Anf.ResourceFetcher.Fetchers
         }
     }
 }
-
-#pragma warning restore CS0251

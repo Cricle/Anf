@@ -7,7 +7,7 @@ using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
 
-namespace Anf.Web.Services
+namespace Anf.WebService
 {
     public class UserIdentityService
     {
