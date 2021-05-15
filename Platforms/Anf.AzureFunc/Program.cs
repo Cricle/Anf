@@ -5,6 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Azure.Extensions.AspNetCore.Configuration.Secrets;
+using Azure.Security.KeyVault.Secrets;
+using Azure.Identity;
 
 namespace Anf.AzureFunc
 {
@@ -20,8 +23,12 @@ namespace Anf.AzureFunc
                 })
                 .ConfigureAppConfiguration(x =>
                 {
-                    x.AddUserSecrets(typeof(Program).Assembly);
                     x.AddEnvironmentVariables();
+                    var keyVaultEndpoint = new Uri("https://anfwebvault.vault.azure.net/");
+                    x.AddAzureKeyVault(
+                    keyVaultEndpoint,
+                    new DefaultAzureCredential());
+                    //x.AddUserSecrets(typeof(Program).Assembly);
                 })
                 .ConfigureFunctionsWorkerDefaults()
                 .Build();

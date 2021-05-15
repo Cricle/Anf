@@ -40,6 +40,7 @@
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.1.4" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.1.4" />
     <PackageReference Include="RedLock.net" Version="2.2.0" />
+    <PackageReference Include="Quartz" Version="3.3.2" />
   </ItemGroup>
 
   <ItemGroup>
@@ -89,15 +90,7 @@
     </ItemGroup>
   </Target>
   <ItemGroup>
-    <Compile Include="..\Anf.Platform\Services\CloudflareCDNCacheFetcher.cs" Link="Services\CloudflareCDNCacheFetcher.cs" />
-    <Compile Include="..\Anf.Platform\Services\CloudflareCDNOptions.cs" Link="Services\CloudflareCDNOptions.cs" />
-    <Compile Include="..\Anf.Platform\StoreComicVisiting.cs" />
     <Compile Include="..\Anf.Platform\AppEngine.cs" />
-    <Compile Include="..\Anf.Platform\StoreFetchHelper.cs" />
-    <Compile Include="..\Anf.Platform\StoreFetchSettings.cs" />
-    <Compile Include="..\Anf.Platform\IStreamImageConverter.cs" />
-    <Compile Include="..\Anf.Platform\PlatformResourceCreator.cs" />
-    <Compile Include="..\Anf.Platform\PlatformResourceCreatorFactory.cs" />
     <Compile Include="..\Anf.Platform\XComicConst.cs" />
     <Compile Include="..\Shareds\AnfDbContextTransfer.cs"></Compile>
   </ItemGroup>

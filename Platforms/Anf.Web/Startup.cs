@@ -1,8 +1,6 @@
 using Anf.Easy;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.SpaServices.AngularCli;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -11,17 +9,11 @@ using Anf.KnowEngines;
 using System.IO;
 using Anf.Easy.Store;
 using System;
-using Anf.Web.Services;
 using Anf.Easy.Visiting;
-using Anf.Platform;
 using Anf.Engine;
-using StackExchange.Redis;
 using Anf.Web.Hubs;
 using System.Reflection;
 using Microsoft.OpenApi.Models;
-using MongoDB.Driver;
-using System.Threading.Tasks;
-using Anf.ChannelModel.Mongo;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using Microsoft.Extensions.Caching.Distributed;
 using Anf.ResourceFetcher;
@@ -29,6 +21,10 @@ using Anf.ChannelModel.Entity;
 using Anf.ResourceFetcher.Fetchers;
 using Anf.WebService;
 using Anf.ResourceFetcher.Redis;
+using Quartz.Impl;
+using System.Threading.Tasks;
+using Quartz;
+using Anf.Web.Jobs;
 
 namespace Anf.Web
 {
@@ -50,7 +46,7 @@ namespace Anf.Web
 
             services.AddSingleton<IComicSaver>(store);
             services.AddSingleton<IStoreService>(store);
-            services.AddSingleton<IResourceFactoryCreator<Stream>, PlatformResourceCreatorFactory<Stream>>();
+            services.AddSingleton<IResourceFactoryCreator<Stream>, WebResourceFactoryCreator>();
             services.AddSingleton<ProposalEngine>();
             services.AddScoped<IComicVisiting<Stream>, WebComicVisiting>();
             services.AddKnowEngines();
@@ -104,6 +100,12 @@ namespace Anf.Web
                 options.DefaultChallengeScheme = AnfAuthenticationHandler.SchemeName;
             });
             services.AddScoped<AnfAuthenticationHandler>();
+            services.AddScoped<ComicRankService>();
+            services.AddScoped<ComicRankSaver>();
+            services.AddScoped<BookshelfService>();
+
+            services.AddOptions<BookshelfOptions>();
+            services.AddOptions<ComicRankOptions>();
             services.AddOptions<FetchOptions>();
             services.AddOptions<ResourceLockOptions>();
             services.AddFetcherProvider()
@@ -115,6 +117,21 @@ namespace Anf.Web
                 .AddRedisFetcherProvider();
             services.AddScoped<IDbContextTransfer, AnfDbContextTransfer>();
             services.AddRedis();
+            services.AddScoped<ReadingManager>();
+            AddQuartzAsync(services).GetAwaiter().GetResult();
+        }
+        private async Task AddQuartzAsync(IServiceCollection services)
+        {
+            var factory = new StdSchedulerFactory();
+            var schedule =await factory.GetScheduler();
+            await schedule.Start();
+            services.AddSingleton<ISchedulerFactory>(factory);
+            services.AddSingleton<ISingletonJobFactory>(x=> 
+            {
+                var fc = x.GetRequiredService<IServiceScopeFactory>();
+                var w = x.GetRequiredService<ISchedulerFactory>();
+                return new SingletonJobFactory(fc,w);
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -172,13 +189,85 @@ namespace Anf.Web
             });
 
             app.ApplicationServices.UseKnowEngines();
-            //using (var s = app.ApplicationServices.GetServiceScope())
-            //{
-            //    var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();
-            //    db.Database.EnsureCreated();
-            //}
-            //var scope = app.ApplicationServices.CreateScope();
+            using (var s = app.ApplicationServices.GetServiceScope())
+            {
+                var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();
+                db.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+                db.Database.EnsureCreated();
+            }
+            var scope = app.ApplicationServices.CreateScope();
             //_ = AnfMongoDbExtensions.InitMongoAsync(scope);
+            InitJobAsync(scope).GetAwaiter().GetResult();
+        }
+        private async Task InitJobAsync(IServiceScope scope)
+        {
+            using (scope)
+            {
+                var f = scope.ServiceProvider.GetRequiredService<ISingletonJobFactory>();
+
+                var now = DateTime.Now;
+                async Task ScheduleSaveRankeAsync(RankLevels level)
+                {
+                    var jobIdentity = JobBuilder.Create<SaveRankJob>()
+                        .WithIdentity(nameof(SaveRankJob)+ level.ToString())
+                        .RequestRecovery()
+                        .Build();
+                    TimeSpan rep = default;
+                    DateTime startTime = default;
+                    if (level == RankLevels.Hour)
+                    {
+                        rep = TimeSpan.FromHours(1);
+                        startTime = new DateTime(now.Year, now.Month, now.Day, now.Hour + 1, 1, 0);
+                    }
+                    else if (level == RankLevels.Day)
+                    {
+                        rep = TimeSpan.FromDays(1);
+                        startTime = new DateTime(now.Year, now.Month, now.Day + 1, 0, 30, 0);
+                    }
+                    else if (level == RankLevels.Month)
+                    {
+                        rep = TimeSpan.FromDays(32);
+                        startTime = new DateTime(now.Year, now.Month + 1, 1, 1, 0, 0);
+                    }
+
+                    var trigger = TriggerBuilder.Create()
+                        .StartAt(new DateTimeOffset(startTime))
+                        .WithSimpleSchedule(b =>
+                        {
+                            b.WithInterval(rep).RepeatForever();
+                        })
+                        .Build();
+                    var scheduler = await f.GetSchedulerAsync();
+                    var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
+                }
+
+                await ScheduleSaveRankeAsync(RankLevels.Hour);
+                await ScheduleSaveRankeAsync(RankLevels.Day);
+                await ScheduleSaveRankeAsync(RankLevels.Month);
+
+                var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+
+                var syncInterval = config.GetValue<int>("BookshelfSync:IntervalS");
+
+                if (syncInterval<=0)
+                {
+                    syncInterval = 60 * 5;
+                }
+
+                var jobIdentity = JobBuilder.Create<StoreBookshelfJob>()
+                        .WithIdentity(nameof(StoreBookshelfJob))
+                        .RequestRecovery()
+                        .Build();
+                var trigger = TriggerBuilder.Create()
+                    .StartNow()
+                    .WithSimpleSchedule(b =>
+                    {
+                        b.WithIntervalInSeconds(syncInterval).RepeatForever();
+                    })
+                    .Build();
+                var scheduler = await f.GetSchedulerAsync();
+                var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
+            }
         }
     }
 }

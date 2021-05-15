@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Anf.ResourceFetcher.Fetchers
 {
-    public class MongoFetcher : IResourceFetcher
+    public class MongoFetcher : ISingleResourceFetcher
     {
         private readonly IMongoClient mongoClient;
         private readonly RemoteFetcher remoteFetcher;

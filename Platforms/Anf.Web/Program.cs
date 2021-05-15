@@ -27,6 +27,7 @@ namespace Anf.Web
                     //config.AddAzureKeyVault(
                     //keyVaultEndpoint,
                     //new DefaultAzureCredential());
+                    config.AddUserSecrets<Program>();
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {

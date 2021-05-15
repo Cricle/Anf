@@ -1,28 +1,28 @@
 {
   "dependencies": {
-    "storage1": {
-      "type": "storage",
-      "connectionId": "AzureWebJobsStorage"
-    },
-    "appInsights1": {
-      "type": "appInsights",
-      "connectionId": "APPINSIGHTS_CONNECTIONSTRING"
-    },
     "redis1": {
       "type": "redis",
       "connectionId": "CacheConnection"
     },
-    "secrets1": {
+    "storage1": {
+      "type": "storage",
+      "connectionId": "AzureWebJobsStorage"
+    },
+    "secrets2": {
       "type": "secrets",
       "connectionId": "VaultUri"
+    },
+    "appInsights1": {
+      "type": "appInsights",
+      "connectionId": null
     },
     "mssql1": {
       "type": "mssql",
       "connectionId": "anfdb"
     },
-    "secrets2": {
-      "type": "secrets",
-      "connectionId": "VaultUri"
+    "storage2": {
+      "type": "storage",
+      "connectionId": "Anfs"
     }
   }
 }

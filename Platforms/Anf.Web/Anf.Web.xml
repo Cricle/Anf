@@ -4,5 +4,123 @@
         <name>Anf.Web</name>
     </assembly>
     <members>
+        <member name="T:Anf.Web.Jobs.ServicingJobBase">
+            <summary>
+            表示使用服务的基本任务
+            </summary>
+        </member>
+        <member name="M:Anf.Web.Jobs.ServicingJobBase.Execute(Quartz.IJobExecutionContext)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Anf.Web.Jobs.ServicingJobBase.OnExecute(Quartz.IJobExecutionContext,System.IServiceProvider)">
+            <summary>
+            执行任务
+            </summary>
+            <param name="context">任务执行上下文</param>
+            <param name="serviceProvider">服务提供者</param>
+            <returns></returns>
+        </member>
+        <member name="M:Anf.Web.Jobs.ServicingJobBase.CanExecuteAsync(Quartz.IJobExecutionContext,System.IServiceProvider)">
+            <summary>
+            是否可以执行任务
+            </summary>
+            <param name="context"></param>
+            <param name="serviceProvider"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Anf.Web.ISingletonJobFactory">
+            <summary>
+            表示单一的任务工厂
+            </summary>
+        </member>
+        <member name="P:Anf.Web.ISingletonJobFactory.SchedulerFactory">
+            <summary>
+            计划工厂
+            </summary>
+        </member>
+        <member name="M:Anf.Web.ISingletonJobFactory.GetSchedulerAsync">
+            <summary>
+            获取计划器
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:Anf.Web.QuartzConst">
+            <summary>
+            表示Quartz模块的常数
+            </summary>
+        </member>
+        <member name="F:Anf.Web.QuartzConst.ServiceScopeFactoryKey">
+            <summary>
+            表示范围范围工厂的键
+            </summary>
+        </member>
+        <member name="F:Anf.Web.QuartzConst.ServiceProviderKey">
+            <summary>
+            表示服务提供者的键
+            </summary>
+        </member>
+        <member name="F:Anf.Web.QuartzConst.SchedulerKey">
+            <summary>
+            表示此任务的计划器的键
+            </summary>
+        </member>
+        <member name="P:Anf.Web.SingletonJobFactory.SchedulerFactory">
+            <inheritdoc/>
+        </member>
+        <member name="M:Anf.Web.SingletonJobFactory.#ctor(Microsoft.Extensions.DependencyInjection.IServiceScopeFactory,Quartz.ISchedulerFactory)">
+            <summary>
+            初始化类型<see cref="T:Anf.Web.SingletonJobFactory"/>
+            </summary>
+            <param name="serviceScopeFactory">区域服务工厂</param>
+        </member>
+        <member name="M:Anf.Web.SingletonJobFactory.GetSchedulerAsync">
+            <inheritdoc/>
+        </member>
+        <member name="M:Anf.Web.SingletonJobFactory.NewJob(Quartz.Spi.TriggerFiredBundle,Quartz.IScheduler)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Anf.Web.SingletonJobFactory.OnNewJob(Quartz.Spi.TriggerFiredBundle,Quartz.IScheduler,Quartz.IJob)">
+            <summary>
+            准备任务
+            </summary>
+            <param name="bundle">触发器包</param>
+            <param name="scheduler">计划器</param>
+            <param name="job">目标任务</param>
+        </member>
+        <member name="M:Anf.Web.SingletonJobFactory.ReturnJob(Quartz.IJob)">
+            <inheritdoc/>
+        </member>
+        <member name="M:Anf.Web.SingletonJobFactory.OnReturnJob(Quartz.IJob)">
+            <summary>
+            归还任务
+            </summary>
+            <param name="job">目标任务</param>
+        </member>
+        <member name="T:Quartz.JobMapExtensions">
+            <summary>
+            对类型<see cref="T:Quartz.JobDataMap"/>的扩展
+            </summary>
+        </member>
+        <member name="M:Quartz.JobMapExtensions.GetServiceProvider(Quartz.JobDataMap)">
+            <summary>
+            从任务数据图中获取类型<see cref="T:System.IServiceProvider"/>
+            </summary>
+            <param name="map">任务数据图</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.JobMapExtensions.GetServiceScopeFactory(Quartz.JobDataMap)">
+            <summary>
+            从任务数据图中获取类型<see cref="T:Microsoft.Extensions.DependencyInjection.IServiceScopeFactory"/>
+            </summary>
+            <param name="map">任务数据图</param>
+            <returns></returns>
+        </member>
+        <member name="M:Quartz.JobMapExtensions.GetScheduler(Quartz.JobDataMap)">
+            <summary>
+            从任务数据图中获取类型<see cref="T:Quartz.IScheduler"/>
+            </summary>
+            <param name="map">任务数据图</param>
+            <returns></returns>
+        </member>
     </members>
 </doc>

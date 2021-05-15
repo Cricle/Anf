@@ -18,8 +18,8 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public ResourceFetchContext(IResourceLockerFactory resourceLockerFactory, 
             string url,
-            IResourceFetcher requireReloopFetcher,
-            IResourceFinder root,
+            ISingleResourceFetcher requireReloopFetcher,
+            ISingleResourceFinder root,
             string entityUrl)
         {
             EntityUrl = entityUrl;
@@ -31,13 +31,13 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public string Url { get; }
 
-        public IResourceFetcher RequireReloopFetcher { get; }
+        public ISingleResourceFetcher RequireReloopFetcher { get; }
 
         public bool IsFromCache => isFromCache;
 
         public bool RequireReloop => requireReloop;
 
-        public IResourceFinder Root { get; }
+        public ISingleResourceFinder Root { get; }
 
         public string EntityUrl { get; }
 

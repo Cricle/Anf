@@ -4,6 +4,7 @@ using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -112,29 +113,61 @@ namespace Anf.ResourceFetcher.Redis
             var res = await redisDatabase.StringGetAsync(mkey);
             return res.Get<string>();
         }
-        public Task UpdateEntityAsync(AnfComicEntityTruck value)
+        public Task UpdateEntityAsync(IEnumerable<AnfComicEntityTruck> values)
         {
-            var key = RedisKeyGenerator.Concat(EntityKey, value.ComicUrl);
-            var hashs = AsHash(value);
-
             var batch = redisDatabase.CreateBatch();
-            var tasks = new List<Task>(2 + value.Chapters.Length);
-            tasks.Add(batch.HashSetAsync(key, hashs));
-            tasks.Add(batch.KeyExpireAsync(key, fetchOptions.Value.CacheTimeout));
-            foreach (var item in value.Chapters)
+            var tasks = new List<Task>(2*values.Count() + values.Sum(x=>x.Chapters.Length));
+            foreach (var value in values)
             {
-                var mkey = RedisKeyGenerator.Concat(ChapterMapKey, item.TargetUrl);
-                tasks.Add(batch.StringSetAsync(mkey,item.Title,fetchOptions.Value.ChapterMapTimeout));
+                var key = RedisKeyGenerator.Concat(EntityKey, value.ComicUrl);
+                var hashs = AsHash(value);
+                tasks.Add(batch.HashSetAsync(key, hashs));
+                tasks.Add(batch.KeyExpireAsync(key, fetchOptions.Value.CacheTimeout));
+                foreach (var item in value.Chapters)
+                {
+                    var mkey = RedisKeyGenerator.Concat(ChapterMapKey, item.TargetUrl);
+                    tasks.Add(batch.StringSetAsync(mkey, item.Title, fetchOptions.Value.ChapterMapTimeout));
+                }
             }
             batch.Execute();
             return Task.WhenAll(tasks.ToArray());
         }
-        public async Task UpdateChapterAsync(WithPageChapter value)
+        public Task UpdateEntityAsync(AnfComicEntityTruck value)
         {
-            var key = RedisKeyGenerator.Concat(ChapterKey, value.TargetUrl);
-            var hashs = AsHash(value);
-            await redisDatabase.HashSetAsync(key, hashs);
-            await redisDatabase.KeyExpireAsync(key, fetchOptions.Value.CacheTimeout);
+            return UpdateEntityAsync(new[] { value });
+        }
+        public Task UpdateChapterAsync(IEnumerable<WithPageChapter> values)
+        {
+            var batch = redisDatabase.CreateBatch();
+            var tasks = new List<Task>(values.Count() * 2);
+            foreach (var value in values)
+            {
+
+                var key = RedisKeyGenerator.Concat(ChapterKey, value.TargetUrl);
+                var hashs = AsHash(value);
+                tasks.Add(batch.HashSetAsync(key, hashs));
+                tasks.Add(batch.KeyExpireAsync(key, fetchOptions.Value.CacheTimeout));
+            }
+            batch.Execute();
+            return Task.WhenAll(tasks);
+        }
+        public Task UpdateChapterAsync(WithPageChapter value)
+        {
+            return UpdateChapterAsync(new[] { value });
+        }
+        public async Task<AnfComicEntityTruck[]> BatchGetEntityAsync(string[] urls)
+        {
+            if (urls.Length==0)
+            {
+                return Array.Empty<AnfComicEntityTruck>();
+            }
+            var batch = redisDatabase.CreateBatch();
+            var tasks = urls.Select(x => batch.HashGetAllAsync(RedisKeyGenerator.Concat(EntityKey, x)))
+                .ToArray();
+            batch.Execute();
+            await Task.WhenAll(tasks);
+            return tasks.Where(x => x.Result.Length != 0)
+                .Select(x => AsEntity(x.Result)).ToArray();
         }
         public async Task<AnfComicEntityTruck> GetEntityAsync(string url)
         {
@@ -147,6 +180,20 @@ namespace Anf.ResourceFetcher.Redis
             var key = RedisKeyGenerator.Concat(ChapterKey, url);
             var val = await redisDatabase.HashGetAllAsync(key);
             return AsChapter(val);
+        }
+        public async Task<WithPageChapter[]> BatchGetChapterAsync(string[] urls)
+        {
+            if (urls.Length == 0)
+            {
+                return Array.Empty<WithPageChapter>();
+            }
+            var batch = redisDatabase.CreateBatch();
+            var tasks = urls.Select(x => batch.HashGetAllAsync(RedisKeyGenerator.Concat(ChapterKey, x)))
+                .ToArray();
+            batch.Execute();
+            await Task.WhenAll(tasks);
+            return tasks.Where(x => x.Result.Length != 0)
+                .Select(x => AsChapter(x.Result)).ToArray();
         }
     }
 }
