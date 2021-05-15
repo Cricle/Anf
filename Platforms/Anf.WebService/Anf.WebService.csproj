@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="RedLock.net" Version="2.2.0" />
+    <PackageReference Include="StackExchange.Redis" Version="2.2.4" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.15" />
@@ -23,6 +24,9 @@
   <ItemGroup>
     <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
     <ProjectReference Include="..\Anf.ResourceFetcher\Anf.ResourceFetcher.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

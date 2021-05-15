@@ -3,7 +3,8 @@ using System.Text;
 
 namespace Anf.ResourceFetcher.Fetchers
 {
-    public interface IResourceFetcher : IResourceFinder, IResourceMonitor
+    public interface IResourceFetcher : ISingleResourceFetcher, IBatchResourceFetcher
     {
+
     }
 }

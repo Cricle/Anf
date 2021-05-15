@@ -15,7 +15,7 @@ namespace Anf.Networks
     {
         Task<Stream> GetStreamAsync(RequestSettings settings);
     }
-#if !NETSTANDARD1_3
+#if !NETSTANDARD1_3&&!NETSTANDARD1_1
     public class WebRequestAdapter : INetworkAdapter
     {
         public async Task<Stream> GetStreamAsync(RequestSettings settings)

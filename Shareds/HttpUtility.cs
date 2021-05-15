@@ -47,7 +47,8 @@ namespace System.Web
         public static string UrlDecode(string str, Encoding e) 
         {
             var bytes = e.GetBytes(str);
-            return e.GetString(UrlDecode(bytes, 0, bytes.Length));
+            var buffer = UrlDecode(bytes, 0, bytes.Length);
+            return e.GetString(buffer,0,buffer.Length);
         }
         public static string UrlDecode(string str) => UrlDecode(str, Encoding.UTF8);
 

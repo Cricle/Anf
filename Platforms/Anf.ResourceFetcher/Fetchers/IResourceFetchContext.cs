@@ -6,9 +6,9 @@ namespace Anf.ResourceFetcher.Fetchers
     {
         string Url { get; }
 
-        IResourceFetcher RequireReloopFetcher { get; }
+        ISingleResourceFetcher RequireReloopFetcher { get; }
 
-        IResourceFinder Root { get; }
+        ISingleResourceFinder Root { get; }
 
         string EntityUrl { get; }
 

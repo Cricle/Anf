@@ -4,7 +4,7 @@
     {
         string Url { get; }
 
-        IResourceFetcher ProviderFetcher { get; }
+        ISingleResourceFetcher ProviderFetcher { get; }
 
         IResourceFetchContext FetchContext { get; }
     }

@@ -27,6 +27,12 @@ namespace Anf.WebService
 
         public DbSet<KvComicChapter> ComicChapters { get; set; }
 
+        public DbSet<AnfDayComicRank> DayRanks { get; set; }
+        
+        public DbSet<AnfHourComicRank> HourRanks { get; set; }
+
+        public DbSet<AnfMonthComicRank> MonthRanks { get; set; }
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
@@ -44,6 +50,16 @@ namespace Anf.WebService
                 x.HasKey(y => new { y.TargetUrl, y.EnitityId });
                 x.HasIndex(y => y.UpdateTime);
             });
+            InitRank<AnfHourComicRank>();
+            InitRank<AnfDayComicRank>();
+            InitRank<AnfMonthComicRank>();
+            void InitRank<T>()
+                where T:AnfComicRank
+            {
+                var entityBuilder = builder.Entity<AnfComicRank>();
+                entityBuilder.HasKey(nameof(AnfComicRank.Time), nameof(AnfComicRank.No));
+                entityBuilder.HasIndex(nameof(AnfComicRank.Address));
+            }
         }
     }
 }
