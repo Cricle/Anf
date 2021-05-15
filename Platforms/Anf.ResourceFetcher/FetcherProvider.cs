@@ -8,7 +8,7 @@ namespace Anf.ResourceFetcher
 {
     public class FetcherProvider : IEnumerable<Type>
     {
-        private static readonly string FetcherInterface = typeof(IResourceFetcher).FullName;
+        private static readonly string FetcherInterface = typeof(ISingleResourceFetcher).FullName;
 
         private readonly List<Type> types;
 

@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 
 namespace Anf.ResourceFetcher.Fetchers
 {
-    public interface IResourceFinder
+    public interface ISingleResourceFinder
     {
         Task<AnfComicEntityTruck> FetchEntityAsync(IResourceFetchContext context);
         Task<WithPageChapter> FetchChapterAsync(IResourceFetchContext context);

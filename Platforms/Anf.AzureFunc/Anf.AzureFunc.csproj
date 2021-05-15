@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk;Microsoft.NET.Sdk.Publish">
   <PropertyGroup>
     <TargetFramework>net5.0</TargetFramework>
     <LangVersion>preview</LangVersion>
@@ -8,19 +8,19 @@
     <_FunctionsSkipCleanOutput>true</_FunctionsSkipCleanOutput>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Azure.Identity" Version="1.4.0" />
     <PackageReference Include="Microsoft.AspNetCore.AzureKeyVault.HostingStartup" Version="2.0.4" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Sdk" Version="1.0.1" OutputItemType="Analyzer" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker" Version="1.0.0" />
     <PackageReference Include="Microsoft.Azure.Functions.Worker.Extensions.Http" Version="3.0.12" />
-    
     <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.0.2" />
     <PackageReference Include="Microsoft.ApplicationInsights.WorkerService" Version="2.18.0-beta1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.UserSecrets" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.1" />
     <PackageReference Include="Microsoft.Azure.Functions.Extensions" Version="1.1.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="5.0.0" />
-     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
-   <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="5.0.6" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="5.0.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
@@ -30,7 +30,8 @@
     <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
     <ProjectReference Include="..\ResourceFetchers\Anf.ResourceFetcher.Redis\Anf.ResourceFetcher.Redis.csproj" />
     <ProjectReference Include="..\ResourceFetchers\Anf.ResourceFetcher.Sql\Anf.ResourceFetcher.Sql.csproj" />
-    <Compile Include="..\Shareds\AnfDbContextTransfer.cs"></Compile>
+    <Compile Include="..\Shareds\AnfDbContextTransfer.cs">
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Update="host.json">
@@ -40,5 +41,11 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
       <CopyToPublishDirectory>Never</CopyToPublishDirectory>
     </None>
+    <None Update="Settings.job">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\PublishProfiles\" />
   </ItemGroup>
 </Project>

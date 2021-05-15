@@ -9,5 +9,7 @@ namespace Anf.WebService
         public TimeSpan BookshelfTimeout { get; set; } = DefaultCacheTimeout;
 
         public TimeSpan BookshelfItemTimeout { get; set; } = DefaultCacheTimeout;
+
+        public TimeSpan BookshelfCreateCacheTimeout { get; set; } = DefaultCacheTimeout;
     }
 }

@@ -29,6 +29,8 @@ namespace Microsoft.Extensions.DependencyInjection
                 rootFetcher.AddRange(fetchers);
                 return rootFetcher;
             });
+            services.AddScoped<ISingleResourceFetcher>(x => x.GetRequiredService<IRootFetcher>());
+            services.AddScoped<IBatchResourceFetcher>(x => x.GetRequiredService<IRootFetcher>());
             return services;
         }
     }
