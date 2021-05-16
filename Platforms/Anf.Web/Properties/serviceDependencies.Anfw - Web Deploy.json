@@ -17,6 +17,12 @@
       "type": "redis.azure",
       "connectionId": "CacheConnection",
       "secretStore": "AzureKeyVault"
+    },
+    "mssql1": {
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/anfsqlservice/databases/anfdb",
+      "type": "mssql.azure",
+      "connectionId": "anfdb",
+      "secretStore": "AzureKeyVault"
     }
   }
 }

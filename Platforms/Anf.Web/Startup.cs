@@ -64,6 +64,11 @@ namespace Anf.Web
             {
                 var config = x.GetRequiredService<IConfiguration>();
                 y.UseSqlServer(config["ConnectionStrings:anfdb"]);
+            }, optionsLifetime: ServiceLifetime.Singleton)
+            .AddDbContextPool<AnfDbContext>((x,y)=> 
+            {
+                var config = x.GetRequiredService<IConfiguration>();
+                y.UseSqlServer(config["ConnectionStrings:anfdb"]);
             }).AddIdentity<AnfUser,AnfRole>(x=> 
             {
                 x.Password.RequireDigit = false;
@@ -92,6 +97,7 @@ namespace Anf.Web
                 var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
                 c.IncludeXmlComments(xmlPath);
             });
+            services.AddMemoryCache();
             services.AddAuthorization();
             services.AddAuthentication(options => 
             {
@@ -122,6 +128,9 @@ namespace Anf.Web
         }
         private async Task AddQuartzAsync(IServiceCollection services)
         {
+            services.AddScoped<StoreBookshelfJob>();
+            services.AddScoped<SaveRankJob>();
+
             var factory = new StdSchedulerFactory();
             var schedule =await factory.GetScheduler();
             await schedule.Start();
@@ -184,17 +193,18 @@ namespace Anf.Web
 
                 if (env.IsDevelopment())
                 {
+                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                     //spa.UseAngularCliServer(npmScript: "start");
                 }
             });
 
             app.ApplicationServices.UseKnowEngines();
-            using (var s = app.ApplicationServices.GetServiceScope())
-            {
-                var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();
-                db.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
-                db.Database.EnsureCreated();
-            }
+            //using (var s = app.ApplicationServices.GetServiceScope())
+            //{
+            //    var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();
+            //    db.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+            //    db.Database.EnsureCreated();
+            //}
             var scope = app.ApplicationServices.CreateScope();
             //_ = AnfMongoDbExtensions.InitMongoAsync(scope);
             InitJobAsync(scope).GetAwaiter().GetResult();

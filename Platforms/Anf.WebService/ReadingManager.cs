@@ -15,9 +15,14 @@ namespace Anf.WebService
         private const string ReadingKeysKey = "Anf.WebService.ReadingManager.ReadingKeys";
         private const string ReadingKey = "Anf.WebService.ReadingManager.Reading";
 
-        private readonly IConnectionMultiplexer connection;
         private readonly IDatabase database;
         private readonly IOptions<ReadingOptions> readingOptions;
+
+        public ReadingManager(IDatabase database, IOptions<ReadingOptions> readingOptions)
+        {
+            this.database = database;
+            this.readingOptions = readingOptions;
+        }
 
         public async Task<AnfBookshelfItem> GetAsync(ulong bookshelfId, string address)
         {

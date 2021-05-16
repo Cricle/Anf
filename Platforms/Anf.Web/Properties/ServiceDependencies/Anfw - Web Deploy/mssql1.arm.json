@@ -4,7 +4,7 @@
   "parameters": {
     "resourceGroupName": {
       "type": "string",
-      "defaultValue": "Anf",
+      "defaultValue": "cloud-shell-storage-centralindia",
       "metadata": {
         "_parameterType": "resourceGroup",
         "description": "资源的资源组名称。建议将资源放在同一个资源组中，以便更好地进行跟踪。"
@@ -12,7 +12,7 @@
     },
     "resourceGroupLocation": {
       "type": "string",
-      "defaultValue": "centralus",
+      "defaultValue": "centralindia",
       "metadata": {
         "_parameterType": "location",
         "description": "资源组的位置。资源组的位置可能与资源不同。"
@@ -36,7 +36,7 @@
     },
     {
       "type": "Microsoft.Resources/deployments",
-      "name": "[concat(parameters('resourceGroupName'), 'Deployment', uniqueString(concat('AnfWebvault', subscription().subscriptionId)))]",
+      "name": "[concat(parameters('resourceGroupName'), 'Deployment', uniqueString(concat('anfdb', subscription().subscriptionId)))]",
       "resourceGroup": "[parameters('resourceGroupName')]",
       "apiVersion": "2019-10-01",
       "dependsOn": [
@@ -49,21 +49,26 @@
           "contentVersion": "1.0.0.0",
           "resources": [
             {
-              "name": "AnfWebvault",
-              "type": "Microsoft.KeyVault/vaults",
+              "kind": "v12.0",
               "location": "[parameters('resourceLocation')]",
-              "properties": {
-                "sku": {
-                  "family": "A",
-                  "name": "Standard"
-                },
-                "tenantId": "d2b31027-8f6c-4fc3-97d9-751fa4657fa1",
-                "accessPolicies": [],
-                "enabledForDeployment": true,
-                "enabledForDiskEncryption": true,
-                "enabledForTemplateDeployment": true
+              "name": "anfsqlservice",
+              "type": "Microsoft.Sql/servers",
+              "apiVersion": "2017-10-01-preview"
+            },
+            {
+              "sku": {
+                "name": "Standard",
+                "tier": "Standard",
+                "capacity": 10
               },
-              "apiVersion": "2016-10-01"
+              "kind": "v12.0,user",
+              "location": "[parameters('resourceLocation')]",
+              "name": "anfsqlservice/anfdb",
+              "type": "Microsoft.Sql/servers/databases",
+              "apiVersion": "2017-10-01-preview",
+              "dependsOn": [
+                "anfsqlservice"
+              ]
             }
           ]
         }
@@ -71,6 +76,6 @@
     }
   ],
   "metadata": {
-    "_dependencyType": "secrets.keyVault"
+    "_dependencyType": "mssql.azure"
   }
 }
