@@ -11,6 +11,13 @@ namespace Anf.Platform.Settings
     {
         private bool enableCDN;
         private bool useStore;
+        private bool enableRemoteFetch;
+
+        public virtual bool EnableRemoteFetch
+        {
+            get { return enableRemoteFetch; }
+            set => Set(ref enableRemoteFetch, value);
+        }
 
         public virtual bool UseStore
         {

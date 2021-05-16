@@ -35,6 +35,7 @@ using Anf.Platform.Books;
 using Microsoft.IO;
 using Anf.Platform.Models.Impl;
 using Anf.Platform.Services.Impl;
+using Anf.Platform.Engines;
 
 namespace Anf.Desktop
 {
@@ -71,6 +72,7 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton<TitleService>();
             AppEngine.Services.AddSingleton<IComicTurnPageService>(nav);
             AppEngine.Services.AddSingleton(nav);
+            AppEngine.Services.AddScoped<RemoteEngine>();
             AppEngine.Services.AddSingleton<IComicSaver>(store);
             AppEngine.Services.AddSingleton<IStoreService>(store);
             AppEngine.Services.AddSingleton<IPlatformService, PlatformService>();
