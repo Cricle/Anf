@@ -57,7 +57,7 @@
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseD2D)' != 'true'">
-    <PackageReference Include="Avalonia.Desktop" Version="0.10.0" />
+    <PackageReference Include="Avalonia.Desktop" Version="0.10.4" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Assets\" />
