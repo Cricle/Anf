@@ -53,6 +53,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<INetworkAdapter, HttpClientAdapter>();
 #else
             services.AddHttpClient();
+            services.AddScoped(x => x.GetRequiredService<IHttpClientFactory>().CreateClient());
             if (networkAdapterType == NetworkAdapterTypes.HttpClient)
             {
                 services.AddScoped<INetworkAdapter, HttpClientAdapter>();

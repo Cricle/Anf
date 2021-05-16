@@ -1,6 +1,7 @@
 ﻿using Anf.Easy.Store;
 using Anf.Easy.Visiting;
 using Anf.Engine;
+using Anf.Platform.Engines;
 using Anf.Platform.Services;
 using Microsoft.IO;
 using System;
@@ -14,6 +15,7 @@ namespace Anf.Platform
 {
     public class StoreComicVisiting<T> : ComicVisiting<T>
     {
+        public static readonly TimeSpan DelayTime = TimeSpan.FromSeconds(1.5);
         public StoreComicVisiting(IServiceProvider host, IResourceFactoryCreator<T> resourceFactoryCreator)
             : base(host, resourceFactoryCreator)
         {
@@ -25,6 +27,8 @@ namespace Anf.Platform
         public virtual bool UseStore { get; set; }
 
         public virtual bool EnableCDNCache { get; set; }
+
+        public virtual bool EnableRemote { get; set; }
 
         protected virtual CloudflareCDNCacheFetcher GetCDNFetcher()
         {
@@ -48,7 +52,30 @@ namespace Anf.Platform
             }
             if (res is null)
             {
-                res = await base.GetPagesAsync(chapter);
+                var remoteFetch = AppEngine.GetService<RemoteEngine>();
+                if (remoteFetch != null&&EnableRemote)
+                {
+                    var delayTask = Task.Delay(DelayTime);
+                    var remoteFetchTask = remoteFetch.GetPagesAsync(chapter.TargetUrl, Entity.ComicUrl);
+                    var tasks = new Task[]
+                    {
+                        delayTask,
+                        remoteFetchTask
+                    };
+                    var t =await Task.WhenAny(tasks);
+                    if (t!= delayTask&& remoteFetchTask.Result!=null)
+                    {
+                        res = remoteFetchTask.Result;
+                    }
+                    else
+                    {
+                        res= await base.GetPagesAsync(chapter);
+                    }
+                }
+                else
+                {
+                    res = await base.GetPagesAsync(chapter);
+                }
             }
             if (res != null && EnableCDNCache)
             {
@@ -155,7 +182,30 @@ namespace Anf.Platform
             }
             if (res is null)
             {
-                res = await base.MakeEntityAsync(address);
+                var remoteFetch = AppEngine.GetService<RemoteEngine>();
+                if (remoteFetch != null && EnableRemote)
+                {
+                    var delayTask = Task.Delay(DelayTime);
+                    var remoteFetchTask = remoteFetch.GetChaptersAsync(address);
+                    var tasks = new Task[]
+                    {
+                        delayTask,
+                        remoteFetchTask
+                    };
+                    var t =await Task.WhenAny(tasks);
+                    if (t != delayTask && remoteFetchTask.Result != null)
+                    {
+                        res = remoteFetchTask.Result;
+                    }
+                    else
+                    {
+                        res = await base.MakeEntityAsync(address);
+                    }
+                }
+                else
+                {
+                    res = await base.MakeEntityAsync(address);
+                }
             }
             if (res != null && EnableCDNCache)
             {

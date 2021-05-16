@@ -16,7 +16,7 @@
     "DisplayProposalCount": "10"
   },
   "Performace": {
-    "EnableCDN": "True",
+    "EnableCDN": "False",
     "UseStore": "False"
   }
 }

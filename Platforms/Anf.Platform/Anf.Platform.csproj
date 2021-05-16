@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;net452;net461;netstandard1.4</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0;net461</TargetFrameworks>
     <ProduceReferenceAssembly>true</ProduceReferenceAssembly>
   </PropertyGroup>
   
@@ -21,6 +21,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
     <ProjectReference Include="..\Anf.Engine.Easy\Anf.Easy.csproj" />
     <ProjectReference Include="..\Anf.Engine\Anf.Engine.csproj" />
     <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
