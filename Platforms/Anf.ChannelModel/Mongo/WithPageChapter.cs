@@ -1,7 +1,4 @@
-﻿using MongoDB.Bson;
-using MongoDB.Bson.Serialization.Attributes;
-
-namespace Anf.ChannelModel.Mongo
+﻿namespace Anf.ChannelModel.Mongo
 {
     public class WithPageChapterInfoOnly: ComicChapter, IUpdatableData, IRefableData
     {

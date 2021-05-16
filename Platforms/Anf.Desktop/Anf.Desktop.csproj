@@ -71,6 +71,7 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
     <ProjectReference Include="..\Anf.Engine.Easy\Anf.Easy.csproj" />
     <ProjectReference Include="..\Anf.Platform\Anf.Platform.csproj" />
     <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
