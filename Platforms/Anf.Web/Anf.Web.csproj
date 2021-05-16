@@ -15,7 +15,7 @@
     <ApplicationInsightsResourceId>/subscriptions/99a95d96-c9ef-433f-bffd-0dfc7d373245/resourcegroups/Anf/providers/Microsoft.Insights/components/Anf.Web</ApplicationInsightsResourceId>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+  <PropertyGroup>
     <DocumentationFile>Anf.Web.xml</DocumentationFile>
   </PropertyGroup>
 
@@ -72,7 +72,7 @@
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
   </Target>-->
 
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition="true">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
     <Exec WorkingDirectory="$(SpaRoot)" Command="cnpm install" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build.prod" />
@@ -93,8 +93,5 @@
     <Compile Include="..\Anf.Platform\AppEngine.cs" />
     <Compile Include="..\Anf.Platform\XComicConst.cs" />
     <Compile Include="..\Shareds\AnfDbContextTransfer.cs"></Compile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 </Project>

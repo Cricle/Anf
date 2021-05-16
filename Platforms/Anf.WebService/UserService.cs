@@ -7,6 +7,7 @@ using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -30,16 +31,15 @@ namespace Anf.WebService
             this.userManager = userManager;
         }
 
-        public async Task<RSAKeyIdentity> FlushRSAKey(string userName)
+        public async Task<RSAKeyIdentity> FlushRSAKey()
         {
             var rsaKey = RSAHelper.GenerateRSASecretKey();
             var identity = Guid.NewGuid().ToString();
-            var key = RedisKeyGenerator.Concat(RSAKey, userName,identity);
+            var key = RedisKeyGenerator.Concat(RSAKey,identity);
             await database.StringSetAsync(key, rsaKey.PrivateKey, RSAKeyCacheTime);
-            var base64Key = Convert.ToBase64String(Encoding.UTF8.GetBytes(rsaKey.PublicKey));
             return new RSAKeyIdentity
             {
-                Key = base64Key,
+                Key = rsaKey.PublicKey,
                 Identity = identity
             };
         }
@@ -50,7 +50,7 @@ namespace Anf.WebService
         }
         public async Task<bool> RestPasswordAsync(string connectId, string userName, string resetToken, string @new)
         {
-            var privateKey = await GetPrivateKeyAsync(connectId, userName);
+            var privateKey = await GetPrivateKeyAsync(connectId);
             if (privateKey is null)
             {
                 return false;
@@ -66,7 +66,7 @@ namespace Anf.WebService
         }
         public async Task<bool> RestPasswordWithOldAsync(string connectId, string userName, string old, string @new)
         {
-            var privateKey = await GetPrivateKeyAsync(connectId, userName);
+            var privateKey = await GetPrivateKeyAsync(connectId);
             if (privateKey is null)
             {
                 return false;
@@ -87,7 +87,7 @@ namespace Anf.WebService
         }
         public async Task<bool> RegisteAsync(string connectId, string userName, string passwordHash)
         {
-            var privateKey = await GetPrivateKeyAsync(connectId, userName);
+            var privateKey = await GetPrivateKeyAsync(connectId);
             if (privateKey is null)
             {
                 return false;
@@ -101,9 +101,9 @@ namespace Anf.WebService
             var identity = await userManager.CreateAsync(user, pwd);
             return identity.Succeeded;
         }
-        private async Task<string> GetPrivateKeyAsync(string connectId,string userName)
+        private async Task<string> GetPrivateKeyAsync(string connectId)
         {
-            var key = RedisKeyGenerator.Concat(RSAKey, userName, connectId);
+            var key = RedisKeyGenerator.Concat(RSAKey, connectId);
             var privateKeyValue = await database.StringGetAsync(key);
             if (!privateKeyValue.HasValue)
             {
@@ -113,7 +113,7 @@ namespace Anf.WebService
         }
         public async Task<string> LoginAsync(string connectId, string userName, string passwordHash)
         {
-            var privateKey = await GetPrivateKeyAsync(connectId,userName);
+            var privateKey = await GetPrivateKeyAsync(connectId);
             if (privateKey is null)
             {
                 return null;

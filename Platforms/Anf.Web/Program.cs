@@ -23,11 +23,18 @@ namespace Anf.Web
             Host.CreateDefaultBuilder(args)
                 .ConfigureAppConfiguration((context, config) =>
                 {
-                    //var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
-                    //config.AddAzureKeyVault(
-                    //keyVaultEndpoint,
-                    //new DefaultAzureCredential());
-                    config.AddUserSecrets<Program>();
+                    if (context.HostingEnvironment.IsDevelopment())
+                    {
+                        config.AddUserSecrets<Program>();
+
+                    }
+                    else
+                    {
+                        var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
+                        config.AddAzureKeyVault(
+                        keyVaultEndpoint,
+                        new DefaultAzureCredential());
+                    }
                 })
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
