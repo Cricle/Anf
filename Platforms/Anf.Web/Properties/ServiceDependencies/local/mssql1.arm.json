@@ -57,11 +57,11 @@
             },
             {
               "sku": {
-                "name": "ElasticPool",
+                "name": "Standard",
                 "tier": "Standard",
-                "capacity": 0
+                "capacity": 10
               },
-              "kind": "v12.0,user,pool",
+              "kind": "v12.0,user",
               "location": "[parameters('resourceLocation')]",
               "name": "anfsqlservice/anfdb",
               "type": "Microsoft.Sql/servers/databases",

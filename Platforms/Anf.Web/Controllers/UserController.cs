@@ -21,21 +21,11 @@ namespace Anf.Web.Controllers
         {
             this.userService = userService;
         }
-        [Authorize]
-        [HttpGet("[action]")]
-        public async Task<IActionResult> Go()
-        {
-            return Ok(11);
-        }
         [AllowAnonymous]
         [HttpGet("[action]")]
-        public async Task<IActionResult> FlushKey([FromQuery]string name)
+        public async Task<IActionResult> FlushKey()
         {
-            if (string.IsNullOrEmpty(name))
-            {
-                return BadRequest();
-            }
-            var key = await userService.FlushRSAKey(name);
+            var key = await userService.FlushRSAKey();
             var res = new EntityResult<RSAKeyIdentity> { Data = key };
             return Ok(res);
         }
@@ -44,6 +34,13 @@ namespace Anf.Web.Controllers
         public async Task<IActionResult> Login([FromForm]string userName, [FromForm] string passwordHash,[FromForm] string connectId)
         {
             var tk = await userService.LoginAsync(connectId, userName, passwordHash);
+            if (!string.IsNullOrEmpty(tk))
+            {
+                HttpContext.Response.Cookies.Append(AnfAuthenticationHandler.AuthenticateHeader, tk, new Microsoft.AspNetCore.Http.CookieOptions
+                {
+                    MaxAge = UserIdentityService.ExpireTime
+                });
+            }
             var res = new EntityResult<string> { Data = tk };
             return Ok(res);
         }

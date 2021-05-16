@@ -19,7 +19,7 @@ namespace Anf.WebService
             this.redisDatabase = redisDatabase;
         }
 
-        public Task<SortedSetEntry[]> RangeAsync(int start=0,int stop=-1,Order order= Order.Ascending)
+        public Task<SortedSetEntry[]> RangeAsync(int start = 0, int stop = -1, Order order = Order.Ascending)
         {
             return redisDatabase.SortedSetRangeByRankWithScoresAsync(RankKey, start, stop, order);
         }

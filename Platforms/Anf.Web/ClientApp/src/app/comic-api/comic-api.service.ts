@@ -2,69 +2,62 @@ import { Injectable } from '@angular/core';
 
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs';
-import { IComicApiService } from './comic-api.service.def'
-import {EntityResult,ComicDetail,ChapterWithPage,ComicRef,Position, ProcessInfo, ComicSnapshot, SetResult, Bookshelf, Result, ComicEntityRef} from './model'
 
-const part: string = "https://www.bing.com/api/v1/";
-const comivPart: string = part + "Visiting";
-const bookPart:string =part + 'Bookshelf';
+import {AnfComicEntityTruck, ComicRankItem, EntityResult, RSAKeyIdentity, WithPageChapter} from './model'
+
+import * as JsEncryptModule from 'jsencrypt';
+
+
+const part: string = "/api/v1/";
+const rankPart:string=part+'rank';
+const readingPart:string=part+'reading';
+const userPart:string=part+'user';
 
 @Injectable({
   providedIn: 'root'
 })
-export class ComicApiService implements IComicApiService{
+export class ComicApiService{
   
-  constructor(private http: HttpClient) {
-  }
-  public getComic(address:string):Observable<EntityResult<ComicEntityRef>>{
-    return this.http.get<EntityResult<ComicEntityRef>>(`${comivPart}/GetComic?address=${encodeURIComponent(address)}`);
-  }
-  public search(keywork:string):Observable<EntityResult<ComicSnapshot[]>>{
-    return this.http.get<EntityResult<ComicSnapshot[]>>(`${comivPart}/Search?keywork=${keywork}`);
-  }
-  public getChapter(address:string,index:number):Observable<EntityResult<ChapterWithPage>>{
-    return this.http.get<EntityResult<ChapterWithPage>>(`${comivPart}/GetChapter?address=${encodeURIComponent(address)}&index=${index}`);
-  }
-  public getEngine(address:string):Observable<EntityResult<string>>{
-    return this.http.get<EntityResult<string>>(`${comivPart}/GetEngine?address=${encodeURIComponent(address)}`);
-  }
-  public makePageUrl(address:string,engineName:string):string{
-    return `${comivPart}/GetPage?address=${encodeURIComponent(address)}&engineName=${engineName}`;
-  }
 
-  public findBookShelf(skip?:number,take?:number):Observable<SetResult<Bookshelf>>{
-    let queryStr='';
-    if (skip) {
-      queryStr='skip='+skip;
-    }
-    if (take) {
-      let str='take='+take;
-      if (queryStr='') {
-        queryStr=str;
-      }else{
-        queryStr=queryStr+'&'+str;
-      }
-    }
-    return this.http.get<SetResult<Bookshelf>>(`${bookPart}/Find?`+queryStr);
+  constructor(private http: HttpClient) {
+    let enc=new JsEncryptModule.JSEncrypt({});
+    enc.setPublicKey(`-----BEGIN PUBLIC KEY-----
+    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5Xhq77HqGObzpBR7ajty\\nRG/iZ2SrqAS7/5OF8HBg/tCSMQSXw48MhUvWjy6lQMYu4DDnAm1GM+hBPWMLKhK2\\ngMMDJ83bc5DbEqIbAWnw//kYjPsaMuNr8f5+G//RzGPA4ZbsSdZwHYAQGGDgQ+aa\\ngjBVSUXwiRmdwEvVglenwWYwlsI53LEycorBnSsjgCDVjYWhHXoNyztztcaI/I26\\n9A973bAkFJhOpl+T2FMUGhDdG3BFRSwvYlxqsDg8rt3LV1zpZRSXLjp4ELYvp5aV\\nKV4GtwCru5RyGJrme8L3fwk8JedHkj0u9UPSPh721pyQq6QovpgbvBySlGTR+LS4\\naQIDAQAB
+    -----END PUBLIC KEY-----`)
+    let w=enc.encrypt("Asdfg123456");
+    console.log(w);
   }
-  public updateIndex(address:string,chapterIndex:number,pageIndex?:number):Observable<Result>{
-    let queryStr='chapterIndex='+chapterIndex;
-    if (pageIndex) {
-      queryStr=queryStr+'&pageIndex='+pageIndex;
-    }
-    return this.http.get<Result>(`${bookPart}/UpdateIndex?address=${encodeURIComponent(address)}?${queryStr}`);
+  public getTop50():Observable<ComicRankItem[]>{
+    return this.http.get<ComicRankItem[]>(`${rankPart}/GetRank50`);
   }
-  public removeBookShelf(address:string):Observable<Result>{
+  public getChapter(url:string,entityUrl:string):Observable<WithPageChapter>{
+    return this.http.get<WithPageChapter>(`${readingPart}/GetChapter?url=${url}&entityUrl=${entityUrl}`); 
+  }
+  public getEntity(url:string,entityUrl:string):Observable<AnfComicEntityTruck>{
+    return this.http.get<AnfComicEntityTruck>(`${readingPart}/GetEntity?url=${url}&entityUrl=${entityUrl}`); 
+  }
+  public flushKey():Observable<EntityResult<RSAKeyIdentity>>{
+    const r=Math.random();
+    return this.http.get<EntityResult<RSAKeyIdentity>>(`${userPart}/FlushKey?r=${r}`); 
+  }
+  public encrypt(publicKey:string,data:string,keyLen:string='2048'):string|false{
+    const enc=new JsEncryptModule.JSEncrypt({default_key_size:keyLen});
+    enc.setPublicKey(publicKey)
+    const w=enc.encrypt(data);
+    return w;
+  }
+  public login(userName:string,passwordHash:string,connectId:string):Observable<EntityResult<string>>{
     const form=new FormData();
-    form.append('address',address);
-    return this.http.post<Result>(`${bookPart}/Remove`,form);
+    form.set("userName",userName);
+    form.set("passwordHash",passwordHash);
+    form.set("connectId",connectId);
+    return this.http.post<EntityResult<string>>(`${userPart}/Login`,form);
   }
-  public clearBookShelf():Observable<Result>{
-    return this.http.post<Result>(`${bookPart}/Clear`,null);
-  }
-  public addBookShelf(address:string):Observable<Result>{
+  public registe(userName:string,passwordHash:string,connectId:string):Observable<EntityResult<boolean>>{
     const form=new FormData();
-    form.append('address',address);
-    return this.http.post<Result>(`${bookPart}/Add`,form);
+    form.set("userName",userName);
+    form.set("passwordHash",passwordHash);
+    form.set("connectId",connectId);
+    return this.http.post<EntityResult<boolean>>(`${userPart}/Registe`,form);
   }
 }

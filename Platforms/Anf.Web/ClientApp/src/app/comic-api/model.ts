@@ -39,22 +39,9 @@ export interface ChapterWithPage {
     chapter: ComicChapter;
     pages: ComicPage[];
 }
-export interface Position{
-    current:number;
-    total:number;
-}
 export interface ComicDetail{
     entity:ComicEntity;
     chapters:ChapterWithPage[];
-}
-export interface ProcessChangedInfo{
-    sign:string;
-    current:number;
-    total:number;
-}
-export interface ProcessInfo extends ProcessChangedInfo{
-    detail:ComicDetail;
-    engineName:string;
 }
 export interface ComicSource extends ComicRef{
     name:string;
@@ -65,18 +52,31 @@ export interface ComicSnapshot extends ComicSource{
     sources:ComicSource[];
     descript:string;
 }
-export interface ComicEntityRef {
-    entity:ComicEntity;
-    engineName:string; 
-}
-export interface Bookshelf{
-    comicUrl:string
-    readChapter:number;
-    readPage:number;
+export interface AnfComicEntityInfoOnly extends ComicInfo{
+    refCount:number;
     createTime:number;
-    entity:ComicEntity;
+    updateTime:number;
 }
-export interface BookshelfInfo{
-    bookshelf:Bookshelf;
-    append:boolean;
+export interface ComicRankItem{
+    address:string;
+    scope:number;
+}
+export interface AnfComicEntityTruck extends AnfComicEntityInfoOnly{
+    chapters:ComicChapter[];
+}
+export interface WithPageChapterInfoOnly extends ComicChapter{
+    refCount:number;
+    createTime:number;
+    updateTime:number;
+}
+export interface WithPageChapter extends WithPageChapterInfoOnly{
+    pages:ComicPage[];
+}
+export interface RSAKeyIdentity{
+    key:string;
+    identity:string;
+}
+export function convertCsharpDate(time:number):Date{
+    const t=(time-621356256000000000)/10000;
+    return new Date(t);
 }
