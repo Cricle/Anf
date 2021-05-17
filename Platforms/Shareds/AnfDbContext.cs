@@ -66,7 +66,7 @@ namespace Anf.WebService
             void InitRank<T>()
                 where T:AnfComicRank
             {
-                var entityBuilder = builder.Entity<AnfComicRank>();
+                var entityBuilder = builder.Entity<T>();
                 entityBuilder.HasKey(nameof(AnfComicRank.Time), nameof(AnfComicRank.No));
                 entityBuilder.HasIndex(nameof(AnfComicRank.Address));
             }

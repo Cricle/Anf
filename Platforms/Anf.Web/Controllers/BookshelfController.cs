@@ -1,4 +1,5 @@
 ﻿using Anf.ChannelModel;
+using Anf.ChannelModel.Results;
 using Anf.WebService;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,29 +16,43 @@ namespace Anf.Web.Controllers
     {
         private readonly BookshelfService bookshelfService;
 
+        public BookshelfController(BookshelfService bookshelfService)
+        {
+            this.bookshelfService = bookshelfService;
+        }
+
         [Authorize]
         [HttpPost("[action]")]
-        public async Task<IActionResult> CreateBookshelf([FromForm]string name)
+        [ProducesResponseType(typeof(Result),200)]
+        public async Task<IActionResult> CreateBookshelf([FromForm] string name)
         {
             var user = HttpContext.Features.Get<UserSnapshot>();
-            await bookshelfService.CreateBookshelfAsync(user.Id,name);
-            return Ok();
+            await bookshelfService.CreateBookshelfAsync(user.Id, name);
+            return Ok(Result.SucceedResult);
         }
         [Authorize]
         [HttpPost("[action]")]
-        public async Task<IActionResult> CreateBookshelfItem([FromForm] long bookshelfId,[FromForm]string address)
+        [ProducesResponseType(typeof(EntityResult<bool>), 200)]
+        public async Task<IActionResult> UpdateBookshelfItem([FromForm] long bookshelfId,
+            [FromForm] string address,
+            [FromForm] int? chapter,
+            [FromForm] int? page,
+            [FromForm] bool? like)
         {
             var user = HttpContext.Features.Get<UserSnapshot>();
-            await bookshelfService.UpdateBookshelfItemAsync(user.Id, bookshelfId, address, null, null, null);
-            return Ok();
+            var res = await bookshelfService.UpdateBookshelfItemAsync(user.Id, bookshelfId, address, chapter, page, like);
+            var r = new EntityResult<bool> { Data = res };
+            return Ok(r);
         }
         [Authorize]
         [HttpPost("[action]")]
+        [ProducesResponseType(typeof(EntityResult<bool>), 200)]
         public async Task<IActionResult> DeleteBookshelf([FromForm] long id)
         {
             var user = HttpContext.Features.Get<UserSnapshot>();
-            await bookshelfService.DeleteBookshelfAsync(user.Id,id);
-            return Ok();
+            var res = await bookshelfService.DeleteBookshelfAsync(user.Id, id);
+            var r = new EntityResult<bool> { Data = res };
+            return Ok(r);
         }
     }
 }
