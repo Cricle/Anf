@@ -36,7 +36,6 @@ namespace Anf.Easy.Test.Downloading
             return val;
         }
         [TestMethod]
-        [DataRow(0, 0)]
         [DataRow(10, 10)]
         [DataRow(10, 0)]
         [DataRow(10, 1)]
@@ -48,7 +47,6 @@ namespace Anf.Easy.Test.Downloading
             Assert.AreEqual(taskCount * preCount, val);
         }
         [TestMethod]
-        [DataRow(0, 0)]
         [DataRow(10, 10)]
         [DataRow(10, 0)]
         [DataRow(10, 1)]
