@@ -11,7 +11,7 @@ namespace Anf.ChannelModel.Entity
 
         [Required]
         [ForeignKey(nameof(Entity))]
-        public ulong EnitityId { get; set; }
+        public long EnitityId { get; set; }
 
         public virtual KvComicEntity Entity { get; set; }
     }

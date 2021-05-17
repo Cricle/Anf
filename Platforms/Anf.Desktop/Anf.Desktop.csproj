@@ -6,7 +6,7 @@
     <UseD2D>true</UseD2D>
     <EnableCache>true</EnableCache>
     <ApplicationIcon>..\..\assets\Anf.ico</ApplicationIcon>
-    <MSIXBuild>false</MSIXBuild>
+    <MSIXBuild>true</MSIXBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSIXBuild)'!='true'">
     <TargetFrameworks>net472;net5.0;</TargetFrameworks>

@@ -15,5 +15,9 @@ namespace Anf.ChannelModel.Entity
         public AnfUser(string userName) : base(userName)
         {
         }
+
+        public virtual ICollection<AnfBookshelfItem> BookshelfItems { get; set; }
+
+        public virtual ICollection<AnfBookshelf> Bookshelves { get; set; }
     }
 }

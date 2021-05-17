@@ -15,13 +15,17 @@ namespace Anf.Platform
 {
     public class StoreComicVisiting<T> : ComicVisiting<T>
     {
-        public static readonly TimeSpan DelayTime = TimeSpan.FromSeconds(1.5);
+        public static readonly TimeSpan DefaultDelayTime = TimeSpan.FromSeconds(1.5);
+        
         public StoreComicVisiting(IServiceProvider host, IResourceFactoryCreator<T> resourceFactoryCreator)
             : base(host, resourceFactoryCreator)
         {
             storeService = AppEngine.GetRequiredService<IStoreService>();
+            recyclableMemoryStreamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
+            DelayTime = DefaultDelayTime;
         }
 
+        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         private readonly IStoreService storeService;
 
         public virtual bool UseStore { get; set; }
@@ -29,6 +33,8 @@ namespace Anf.Platform
         public virtual bool EnableCDNCache { get; set; }
 
         public virtual bool EnableRemote { get; set; }
+
+        public virtual TimeSpan DelayTime { get; set; }
 
         protected virtual CloudflareCDNCacheFetcher GetCDNFetcher()
         {
@@ -53,23 +59,12 @@ namespace Anf.Platform
             if (res is null)
             {
                 var remoteFetch = AppEngine.GetService<RemoteEngine>();
-                if (remoteFetch != null&&EnableRemote)
+                if (remoteFetch != null && EnableRemote)
                 {
-                    var delayTask = Task.Delay(DelayTime);
-                    var remoteFetchTask = remoteFetch.GetPagesAsync(chapter.TargetUrl, Entity.ComicUrl);
-                    var tasks = new Task[]
+                    res = await RemoteFetchPagesAsync(remoteFetch, chapter.TargetUrl);
+                    if(res is null)
                     {
-                        delayTask,
-                        remoteFetchTask
-                    };
-                    var t =await Task.WhenAny(tasks);
-                    if (t!= delayTask&& remoteFetchTask.Result!=null)
-                    {
-                        res = remoteFetchTask.Result;
-                    }
-                    else
-                    {
-                        res= await base.GetPagesAsync(chapter);
+                        res = await base.GetPagesAsync(chapter);
                     }
                 }
                 else
@@ -83,7 +78,6 @@ namespace Anf.Platform
             }
             return res;
         }
-        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
         private async Task StoreCDNAsync<TValue>(string address, TValue value)
         {
             var remoteCacheFetcher = GetCDNFetcher();
@@ -102,7 +96,30 @@ namespace Anf.Platform
                 }
                 catch (Exception) { }
             }
-
+        }
+        private Task<ComicEntity> RemoteFetchChapterAsync(RemoteEngine remote,string url)
+        {
+            return RemoteFetchAsync(remote, r => r.GetChaptersAsync(url));
+        }
+        private async Task<TEntity> RemoteFetchAsync<TEntity>(RemoteEngine remote,Func<RemoteEngine,Task<TEntity>> fetch)
+        {
+            var delayTask = Task.Delay(DelayTime);
+            var remoteFetchTask = fetch(remote);
+            var tasks = new Task[]
+            {
+                delayTask,
+                remoteFetchTask
+            };
+            var t = await Task.WhenAny(tasks);
+            if (t != delayTask && remoteFetchTask.Result != null)
+            {
+                return remoteFetchTask.Result;
+            }
+            return default;
+        }
+        private Task<ComicPage[]> RemoteFetchPagesAsync(RemoteEngine remote,string url)
+        {
+            return RemoteFetchAsync(remote, r =>r.GetPagesAsync(url, Entity.ComicUrl));
         }
         private async Task<Stream> FetchCDNAsync(string address)
         {
@@ -185,19 +202,8 @@ namespace Anf.Platform
                 var remoteFetch = AppEngine.GetService<RemoteEngine>();
                 if (remoteFetch != null && EnableRemote)
                 {
-                    var delayTask = Task.Delay(DelayTime);
-                    var remoteFetchTask = remoteFetch.GetChaptersAsync(address);
-                    var tasks = new Task[]
-                    {
-                        delayTask,
-                        remoteFetchTask
-                    };
-                    var t =await Task.WhenAny(tasks);
-                    if (t != delayTask && remoteFetchTask.Result != null)
-                    {
-                        res = remoteFetchTask.Result;
-                    }
-                    else
+                    res = await RemoteFetchChapterAsync(remoteFetch, address);
+                    if (res is null)
                     {
                         res = await base.MakeEntityAsync(address);
                     }
