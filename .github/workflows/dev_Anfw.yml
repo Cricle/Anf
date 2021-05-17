@@ -45,7 +45,13 @@ jobs:
       uses: actions/download-artifact@v2
       with:
         name: .net-app
-
+        
+    - name: Add credentials Azure action
+      with: # Set Azure credentials secret as an input
+        credentials: ${{ secrets.AZURE_CREDENTIALS }}
+      env: # Or as an environment variable
+        credentials: ${{ secrets.AZURE_CREDENTIALS }}
+  
     - name: Deploy to Azure Web App
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
