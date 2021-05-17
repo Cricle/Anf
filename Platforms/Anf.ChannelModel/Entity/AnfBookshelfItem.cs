@@ -7,8 +7,7 @@ namespace Anf.ChannelModel.Entity
     public class AnfBookshelfItem
     {
         [Required]
-        [ForeignKey(nameof(Bookshelf))]
-        public ulong BookshelfId { get; set; }
+        public long BookshelfId { get; set; }
 
         public string Address { get; set; }
 
@@ -26,6 +25,11 @@ namespace Anf.ChannelModel.Entity
 
         public DateTime? UpdateTime { get; set; }
 
+        [Required]
+        public long UserId { get; set; }
+
         public virtual AnfBookshelf Bookshelf { get; set; }
+
+        public virtual AnfUser User { get; set; }
     }
 }

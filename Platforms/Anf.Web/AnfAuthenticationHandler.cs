@@ -32,9 +32,12 @@ namespace Anf.Web
             {
                 var authToken = context.Request.Headers[AuthenticateHeader];
                 var authTk = authToken.ToString();
-                if (string.IsNullOrEmpty(authTk)||!Guid.TryParse(authTk,out _))
+                if (string.IsNullOrEmpty(authTk) || !Guid.TryParse(authTk, out _))
                 {
-                    return AuthenticateResult.Fail("No authenticate!");
+                    if (!context.Request.Cookies.TryGetValue(AuthenticateHeader, out authTk))
+                    {
+                        return AuthenticateResult.Fail("No authenticate!");
+                    }
                 }
                 var tk = await userIdentityService.GetTokenInfoAsync(authTk);
                 if (tk is null)
@@ -42,7 +45,7 @@ namespace Anf.Web
                     return AuthenticateResult.Fail("No authenticate!");
                 }
                 context.Features.Set(tk);
-                var t=GetAuthTicket(tk.Name);
+                var t = GetAuthTicket(tk.Name);
                 return AuthenticateResult.Success(t);
             }
             var tick = GetAuthTicket(string.Empty);

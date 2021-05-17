@@ -336,6 +336,7 @@ namespace Anf.ViewModels
         public void Reset()
         {
             Snapshots.Clear();
+            EmptySet = true;
         }
         public void GoSource()
         {

@@ -36,14 +36,24 @@ namespace Anf.WebService
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
+            builder.Entity<AnfBookshelf>(x =>
+            {
+                x.Property(y => y.Id).ValueGeneratedOnAdd();
+            });
             builder.Entity<AnfBookshelfItem>(x =>
             {
                 x.HasKey(y => new { y.Address, y.BookshelfId });
+                x.HasOne(y => y.User)
+                    .WithMany(y => y.BookshelfItems)
+                    .HasForeignKey(nameof(AnfBookshelfItem.UserId))
+                    .IsRequired(true)
+                    .OnDelete(DeleteBehavior.NoAction);
             });
             builder.Entity<KvComicEntity>(x =>
             {
                 x.HasIndex(y => y.ComicUrl).IsUnique(true);
                 x.HasIndex(y => y.UpdateTime);
+                x.Property(y => y.Id).ValueGeneratedOnAdd();
             });
             builder.Entity<KvComicChapter>(x =>
             {

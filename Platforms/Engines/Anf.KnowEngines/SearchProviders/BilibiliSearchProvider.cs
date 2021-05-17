@@ -92,7 +92,7 @@ namespace Anf.KnowEngines.SearchProviders
                         var title = item["org_title"].ToString();
                         var id = item["id"].ToString();
                         var auth = string.Join(",", item["author_name"].ToArray());
-                        var url = "https://manga.bilibili.com/mc" + id;
+                        var url = "https://manga.bilibili.com/detail/mc" + id;
                         var sn = new ComicSnapshot
                         {
                             Author = auth,

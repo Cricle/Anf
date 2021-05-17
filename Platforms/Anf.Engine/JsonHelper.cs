@@ -4,13 +4,13 @@ namespace Anf.Engine
 {
     public static class JsonHelper
     {
-        public static string Serialize<T>(T value)
+        public static string Serialize<T>(T value, JsonSerializerOptions options = null)
         {
-            return JsonSerializer.Serialize(value);
+            return JsonSerializer.Serialize(value, options);
         }
-        public static T Deserialize<T>(string str)
+        public static T Deserialize<T>(string str, JsonSerializerOptions options = null)
         {
-            return JsonSerializer.Deserialize<T>(str);
+            return JsonSerializer.Deserialize<T>(str, options);
         }
     }
 }

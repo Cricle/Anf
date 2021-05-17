@@ -23,6 +23,7 @@ namespace Anf.Desktop.Services
         public override bool EnableCDNCache { get => anfSettings.Performace.EnableCDN; set => anfSettings.Performace.EnableCDN = value; }
         public override bool UseStore { get => anfSettings.Performace.UseStore; set => anfSettings.Performace.UseStore = value; }
         public override bool EnableRemote { get => anfSettings.Performace.EnableRemoteFetch; set => anfSettings.Performace.EnableRemoteFetch = value; }
+        
         protected override CloudflareCDNCacheFetcher GetCDNFetcher()
         {
             return CloudflareCDNController.GetChapterCDN();
