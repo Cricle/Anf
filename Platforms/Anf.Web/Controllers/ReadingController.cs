@@ -7,6 +7,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using Anf.ChannelModel.KeyGenerator;
 using Anf.ChannelModel.Mongo;
+using Anf.Web.Models;
+using Anf.ChannelModel.Results;
 
 namespace Anf.Web.Controllers
 {
@@ -34,6 +36,7 @@ namespace Anf.Web.Controllers
 
         [AllowAnonymous]
         [HttpGet("[action]")]
+        [ProducesResponseType(typeof(WithPageChapter), 200)]
         public async Task<IActionResult> GetChapter([FromQuery] string url, [FromQuery] string entityUrl)
         {
             var key = RedisKeyGenerator.Concat(ChapterKey, url);
@@ -54,6 +57,7 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
+        [ProducesResponseType(typeof(AnfComicEntityTruck), 200)]
         public async Task<IActionResult> GetEntity([FromQuery] string url)
         {
             var key = RedisKeyGenerator.Concat(EntityKey, url);
@@ -63,7 +67,7 @@ namespace Anf.Web.Controllers
                 await comicRankService.AddScopeAsync(url);
                 return Ok(res);
             }
-            res = await rootFetcher.FetchEntityAsync(url);
+            var r = await rootFetcher.FetchEntityAsync(url);
             if (res != null)
             {
                 await comicRankService.AddScopeAsync(url);

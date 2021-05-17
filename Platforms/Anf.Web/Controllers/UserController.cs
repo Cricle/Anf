@@ -23,6 +23,7 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<RSAKeyIdentity>),200)]
         public async Task<IActionResult> FlushKey()
         {
             var key = await userService.FlushRSAKey();
@@ -31,6 +32,7 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpPost("[action]")]
+        [ProducesResponseType(typeof(EntityResult<string>), 200)]
         public async Task<IActionResult> Login([FromForm]string userName, [FromForm] string passwordHash,[FromForm] string connectId)
         {
             var tk = await userService.LoginAsync(connectId, userName, passwordHash);
@@ -46,6 +48,7 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpPost("[action]")]
+        [ProducesResponseType(typeof(EntityResult<bool>), 200)]
         public async Task<IActionResult> Registe([FromForm] string userName, [FromForm] string passwordHash, [FromForm] string connectId)
         {
             var succeed = await userService.RegisteAsync(connectId, userName, passwordHash);
@@ -54,6 +57,7 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<bool>), 200)]
         public async Task<IActionResult> ResetPwd(string userName, string tk, string pwd)
         {
             var resetRes = await userService.RestPasswordAsync(HttpContext.Session.Id, userName, tk, pwd);
@@ -62,6 +66,7 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<bool>), 200)]
         public async Task<IActionResult> ResetPwdWithOld(string userName, string old, string pwd)
         {
             var resetRes = await userService.RestPasswordWithOldAsync(HttpContext.Session.Id, userName, old, pwd);
@@ -70,6 +75,7 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<string>), 200)]
         public async Task<IActionResult> GenerateResetToken(string userName)
         {
             //TODO:发邮件

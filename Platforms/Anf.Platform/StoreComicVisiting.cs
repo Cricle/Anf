@@ -15,7 +15,7 @@ namespace Anf.Platform
 {
     public class StoreComicVisiting<T> : ComicVisiting<T>
     {
-        public static readonly TimeSpan DefaultDelayTime = TimeSpan.FromSeconds(1.5);
+        public static readonly TimeSpan DefaultDelayTime = TimeSpan.FromSeconds(2.5);
         
         public StoreComicVisiting(IServiceProvider host, IResourceFactoryCreator<T> resourceFactoryCreator)
             : base(host, resourceFactoryCreator)
