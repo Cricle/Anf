@@ -50,8 +50,7 @@ jobs:
       id: deploy-to-webapp
       uses: azure/webapps-deploy@v2
       with:
-        credentials: ${{ secrets.AZURE_CREDENTIALS }}
         app-name: 'Anfw'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_b84c67668915456a809a3011883f5128 }}
+        publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3EEBFA1A4B5A4EDA85F1CE6B37A3BFD0 }}
         package: .
