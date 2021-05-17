@@ -48,11 +48,6 @@ namespace Anf.Easy.Visiting
 
         public event Action<BlockSlots<TValue>, int, TValue> PageLoaded;
 
-        ~BlockSlots()
-        {
-            Dispose();
-        }
-
         public virtual void Dispose()
         {
             try
