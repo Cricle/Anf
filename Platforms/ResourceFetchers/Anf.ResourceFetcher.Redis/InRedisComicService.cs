@@ -83,10 +83,10 @@ namespace Anf.ResourceFetcher.Redis
             var chapterBytes = JsonSerializer.SerializeToUtf8Bytes(value.Chapters);
             return new HashEntry[]
             {
-                new HashEntry(nameof(AnfComicEntityTruck.ComicUrl),value.ComicUrl),
-                new HashEntry(nameof(AnfComicEntityTruck.Name),value.Name),
-                new HashEntry(nameof(AnfComicEntityTruck.Descript),value.Descript),
-                new HashEntry(nameof(AnfComicEntityTruck.ImageUrl),value.ImageUrl),
+                new HashEntry(nameof(AnfComicEntityTruck.ComicUrl),value.ComicUrl??RedisValue.EmptyString),
+                new HashEntry(nameof(AnfComicEntityTruck.Name),value.Name??RedisValue.EmptyString),
+                new HashEntry(nameof(AnfComicEntityTruck.Descript),value.Descript??RedisValue.EmptyString),
+                new HashEntry(nameof(AnfComicEntityTruck.ImageUrl),value.ImageUrl??RedisValue.EmptyString),
                 new HashEntry(nameof(AnfComicEntityTruck.Chapters),chapterBytes),
 
                 new HashEntry(nameof(AnfComicEntityTruck.RefCount),value.RefCount),

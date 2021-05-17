@@ -24,7 +24,7 @@ namespace Anf.WebService
             this.readingOptions = readingOptions;
         }
 
-        public async Task<AnfBookshelfItem> GetAsync(ulong bookshelfId, string address)
+        public async Task<AnfBookshelfItem> GetAsync(long bookshelfId, string address)
         {
             var key = RedisKeyGenerator.Concat(ReadingKey, bookshelfId, address);
             var entities = await database.HashGetAllAsync(key);
@@ -47,9 +47,10 @@ namespace Anf.WebService
             }
             return new AnfBookshelfItem
             {
+                UserId = Find<long>(nameof(AnfBookshelfItem.UserId)),
                 Address = Find<string>(nameof(AnfBookshelfItem.Address)),
                 CreateTime = new DateTime(Find<long>(nameof(AnfBookshelfItem.CreateTime))),
-                BookshelfId = Find<ulong>(nameof(AnfBookshelfItem.BookshelfId)),
+                BookshelfId = Find<long>(nameof(AnfBookshelfItem.BookshelfId)),
                 Like = Find<bool>(nameof(AnfBookshelfItem.Like)),
                 ReadChatper = Find<int?>(nameof(AnfBookshelfItem.ReadChatper)),
                 ReadPage = Find<int?>(nameof(AnfBookshelfItem.ReadPage)),
@@ -66,6 +67,7 @@ namespace Anf.WebService
                  new HashEntry(nameof(AnfBookshelfItem.ReadChatper),bookshelf.ReadChatper??RedisValue.EmptyString),
                  new HashEntry(nameof(AnfBookshelfItem.ReadPage),bookshelf.ReadPage??RedisValue.EmptyString),
                  new HashEntry(nameof(AnfBookshelfItem.UpdateTime),bookshelf.UpdateTime?.Ticks??0),
+                 new HashEntry(nameof(AnfBookshelfItem.UserId),bookshelf.UserId),
             };
         }
 
@@ -112,13 +114,13 @@ namespace Anf.WebService
                 }
             }
         }
-        public async Task RemoveAsync(ulong bookshelfId, string address)
+        public async Task RemoveAsync(long bookshelfId, string address)
         {
             var key = RedisKeyGenerator.Concat(ReadingKey, bookshelfId, address);
             await database.SetRemoveAsync(ReadingKeysKey,key);
             await database.KeyDeleteAsync(key);
         }
-        public async Task SetAsync(ulong bookshelfId, string address, int? chapter, int? page,bool? like)
+        public async Task SetAsync(long userId, long bookshelfId, string address, int? chapter, int? page,bool? like)
         {
             var key = RedisKeyGenerator.Concat(ReadingKey, bookshelfId, address);
             var exists = await database.KeyExistsAsync(key);
@@ -167,7 +169,8 @@ namespace Anf.WebService
                     CreateTime = now,
                     UpdateTime = now,
                     BookshelfId = bookshelfId,
-                    Like = like ?? false
+                    Like = like ?? false,
+                    UserId= userId
                 };
                 var hashs = AsEntities(model);
                 await database.HashSetAsync(key, hashs);

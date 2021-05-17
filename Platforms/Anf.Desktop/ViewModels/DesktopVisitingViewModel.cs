@@ -1,22 +1,22 @@
-﻿using Avalonia.Media.Imaging;
-using GalaSoft.MvvmLight.Command;
+﻿using Anf.Desktop.Services;
+using Anf.Desktop.Settings;
 using Anf.Easy;
 using Anf.Easy.Visiting;
 using Anf.Models;
+using Anf.Platform;
+using Anf.Platform.Models.Impl;
+using Anf.Platform.Services;
+using Anf.Platform.Settings;
 using Anf.ViewModels;
+using Avalonia.Controls.PanAndZoom;
+using Avalonia.Media.Imaging;
+using GalaSoft.MvvmLight.Command;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
 using System;
+using System.ComponentModel;
 using System.Net.Http;
 using System.Threading.Tasks;
-using Avalonia.Controls.PanAndZoom;
-using Anf.Desktop.Services;
-using Anf.Platform.Services;
-using Microsoft.Extensions.DependencyInjection;
-using Anf.Platform;
-using Anf.Desktop.Settings;
-using System.ComponentModel;
-using Anf.Platform.Settings;
-using Anf.Platform.Models.Impl;
 
 namespace Anf.Desktop.ViewModels
 {

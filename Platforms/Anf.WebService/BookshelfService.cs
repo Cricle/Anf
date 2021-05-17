@@ -55,8 +55,8 @@ namespace Anf.WebService
             {
                 CreateTime = new DateTime(Find<long>(nameof(AnfBookshelf.CreateTime))),
                 Like = Find<bool>(nameof(AnfBookshelf.Like)),
-                Id = Find<ulong>(nameof(AnfBookshelf.Id)),
-                LinkId = Find<ulong?>(nameof(AnfBookshelf.LinkId)),
+                Id = Find<long>(nameof(AnfBookshelf.Id)),
+                LinkId = Find<long?>(nameof(AnfBookshelf.LinkId)),
                 Name = Find<string>(nameof(AnfBookshelf.Name)),
                 UserId = Find<long>(nameof(AnfBookshelf.UserId)),
             };
@@ -74,13 +74,13 @@ namespace Anf.WebService
             };
         }
 
-        private async Task<AnfBookshelf> GetBookshelfFromCahceAsync(ulong id)
+        private async Task<AnfBookshelf> GetBookshelfFromCahceAsync(long id)
         {
             var key = RedisKeyGenerator.Concat(BookshelfKey, id);
             var entities = await redisDatabase.HashGetAllAsync(key);
             return ToBookself(entities);
         }
-        public async Task<bool> DeleteBookshelfAsync(ulong id)
+        public async Task<bool> DeleteBookshelfAsync(long userId, long id)
         {
             var lockKey = RedisKeyGenerator.Concat(RedBookshelfOpKey, id);
             using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedisKeyGenerator.RedKeyOutTime))
@@ -90,7 +90,7 @@ namespace Anf.WebService
                     return false;
                 }
                 await dbContext.Bookshelves.AsNoTracking()
-                    .Where(x => x.Id == id)
+                    .Where(x => x.Id == id&&x.UserId==userId)
                     .Take(1)
                     .DeleteFromQueryAsync();
                 var bkkey = RedisKeyGenerator.Concat(BookshelfKey, id);
@@ -98,7 +98,7 @@ namespace Anf.WebService
                 return true;
             }
         }
-        public async Task<bool> DeleteBookshelfItemAsync(ulong bookshelfId, string address)
+        public async Task<bool> DeleteBookshelfItemAsync(long bookshelfId, string address)
         {
             var lockKey = RedisKeyGenerator.Concat(RedBookshelfItemOpKey, bookshelfId, address);
             using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedisKeyGenerator.RedKeyOutTime))
@@ -146,7 +146,7 @@ namespace Anf.WebService
             });
             return true;
         }
-        public async Task<bool> UpdateBookshelfAsync(ulong id, string name, bool like)
+        public async Task<bool> UpdateBookshelfAsync(long id, string name, bool like)
         {
             var lockKey = RedisKeyGenerator.Concat(RedLoadBookshelfKey, id);
             using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedisKeyGenerator.RedKeyOutTime))
@@ -171,7 +171,7 @@ namespace Anf.WebService
                 return count != 0;
             }
         }
-        public async Task<bool> UpdateBookshelfItemAsync(ulong bookshelfId, string address, int? chapter, int? page, bool? like)
+        public async Task<bool> UpdateBookshelfItemAsync(long userId, long bookshelfId, string address, int? chapter, int? page, bool? like)
         {
             var createKey = RedisKeyGenerator.Concat(BookshelfItemCreateKey, bookshelfId, address);
             var exists = await redisDatabase.KeyExistsAsync(createKey);
@@ -201,7 +201,8 @@ namespace Anf.WebService
                                 ReadPage = page,
                                 ReadChatper = chapter,
                                 Like = like ?? false,
-                                UpdateTime = now
+                                UpdateTime = now,
+                                UserId = userId
                             };
                             await dbContext.BookshelfItems.SingleInsertAsync(item);
                         }
@@ -209,10 +210,10 @@ namespace Anf.WebService
                     }
                 }
             }
-            await readingManager.SetAsync(bookshelfId, address, chapter, page, like);
+            await readingManager.SetAsync(userId,bookshelfId, address, chapter, page, like);
             return true;
         }
-        public async Task<AnfBookshelfItem> GetBookshelfItemAsync(ulong bookshelfId, string address)
+        public async Task<AnfBookshelfItem> GetBookshelfItemAsync(long userId, long bookshelfId, string address)
         {
             var res = await readingManager.GetAsync(bookshelfId, address);
             if (res is null)
@@ -234,13 +235,13 @@ namespace Anf.WebService
                         .FirstOrDefaultAsync();
                     if (res != null)
                     {
-                        await readingManager.SetAsync(res.BookshelfId, res.Address, res.ReadChatper, res.ReadPage, res.Like);
+                        await readingManager.SetAsync(userId,res.BookshelfId, res.Address, res.ReadChatper, res.ReadPage, res.Like);
                     }
                 }
             }
             return res;
         }
-        public async Task<AnfBookshelf> GetBookshelfAsync(ulong id)
+        public async Task<AnfBookshelf> GetBookshelfAsync(long id)
         {
             var res = await GetBookshelfFromCahceAsync(id);
             if (res is null)

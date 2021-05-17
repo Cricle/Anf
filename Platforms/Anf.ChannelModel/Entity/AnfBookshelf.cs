@@ -10,7 +10,7 @@ namespace Anf.ChannelModel.Entity
     public class AnfBookshelf
     {
         [Key]
-        public ulong Id { get; set; }
+        public long Id { get; set; }
 
         [MaxLength(64)]
         public string Name { get; set; }
@@ -21,7 +21,7 @@ namespace Anf.ChannelModel.Entity
         public bool Like { get; set; }
 
         [ForeignKey(nameof(LinkBookshelf))]
-        public ulong? LinkId { get; set; }
+        public long? LinkId { get; set; }
 
         [Required]
         public DateTime CreateTime { get; set; }
