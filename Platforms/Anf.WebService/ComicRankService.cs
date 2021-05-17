@@ -23,7 +23,10 @@ namespace Anf.WebService
         {
             return redisDatabase.SortedSetRangeByRankWithScoresAsync(RankKey, start, stop, order);
         }
-
+        public Task<long> SizeAsync()
+        {
+            return redisDatabase.SortedSetLengthAsync(RankKey);
+        }
         public async Task AddScopeAsync(string address)
         {
             await redisDatabase.SortedSetIncrementAsync(RankKey, address, 1);
