@@ -29,7 +29,7 @@ namespace Anf.Desktop.Services
                 }
                 else
                 {
-                    using (var mem= recyclableMemoryStreamManager.GetStream())
+                    using (var mem = recyclableMemoryStreamManager.GetStream())
                     {
                         await stream.CopyToAsync(mem);
                         mem.Seek(0, SeekOrigin.Begin);
