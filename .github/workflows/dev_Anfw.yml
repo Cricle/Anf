@@ -52,5 +52,5 @@ jobs:
       with:
         app-name: 'Anfw'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AzureAppService_PublishProfile_c6446f47e32c489da988e781d78d83bd }}
+        publish-profile: ${{ secrets.AZURE_PUBLISH }}
         package: .
