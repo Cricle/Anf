@@ -67,7 +67,7 @@ namespace Anf.Web.Controllers
                 await comicRankService.AddScopeAsync(url);
                 return Ok(res);
             }
-            var r = await rootFetcher.FetchEntityAsync(url);
+            res = await rootFetcher.FetchEntityAsync(url);
             if (res != null)
             {
                 await comicRankService.AddScopeAsync(url);
