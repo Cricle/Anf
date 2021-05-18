@@ -25,6 +25,23 @@ namespace Anf.Test
             Assert.AreEqual(set.Count, inSetCount);
         }
         [TestMethod]
+        public void InitWithData_CollectionMustContains()
+        {
+            var dt = new int[] { 1, 2, 3 };
+            var coll = new SilentObservableCollection<int>(dt);
+            Check();
+            var lst = new List<int> { 1, 2, 3 };
+            coll = new SilentObservableCollection<int>(lst);
+            Check();
+            void Check()
+            {
+                Assert.AreEqual(3, coll.Count);
+                Assert.AreEqual(1, coll[0]);
+                Assert.AreEqual(2, coll[1]);
+                Assert.AreEqual(3, coll[2]);
+            }
+        }
+        [TestMethod]
         public void AddRange_EventMustBeFired()
         {
             var coll=new SilentObservableCollection<int>();

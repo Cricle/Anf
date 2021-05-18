@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs';
 
-import {AnfComicEntityTruck, ComicRankItem, EntityResult, RSAKeyIdentity, WithPageChapter} from './model'
+import {AnfComicEntityTruck, ComicRankItem, EntityResult, RSAKeyIdentity, SetResult, WithPageChapter} from './model'
 
 import * as JsEncryptModule from 'jsencrypt';
 
@@ -27,14 +27,14 @@ export class ComicApiService{
     let w=enc.encrypt("Asdfg123456");
     console.log(w);
   }
-  public getTop50():Observable<ComicRankItem[]>{
-    return this.http.get<ComicRankItem[]>(`${rankPart}/GetRank50`);
+  public getTop50():Observable<SetResult<ComicRankItem>>{
+    return this.http.get<SetResult<ComicRankItem>>(`${rankPart}/GetRank50`);
   }
   public getChapter(url:string,entityUrl:string):Observable<WithPageChapter>{
     return this.http.get<WithPageChapter>(`${readingPart}/GetChapter?url=${url}&entityUrl=${entityUrl}`); 
   }
-  public getEntity(url:string,entityUrl:string):Observable<AnfComicEntityTruck>{
-    return this.http.get<AnfComicEntityTruck>(`${readingPart}/GetEntity?url=${url}&entityUrl=${entityUrl}`); 
+  public getEntity(url:string):Observable<AnfComicEntityTruck>{
+    return this.http.get<AnfComicEntityTruck>(`${readingPart}/GetEntity?url=${url}`); 
   }
   public flushKey():Observable<EntityResult<RSAKeyIdentity>>{
     const r=Math.random();
