@@ -12,6 +12,7 @@ namespace Anf.Test.Providers
 
         public DataProviderComicSourceCondition(string engineName,Uri address,Uri faviconAddress, Func<ComicSourceContext, bool> conditionAction)
         {
+            EngineName = engineName;
             Address = address;
             ConditionAction = conditionAction;
             FaviconAddress = faviconAddress;
