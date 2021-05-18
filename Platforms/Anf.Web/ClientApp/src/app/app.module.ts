@@ -23,8 +23,6 @@ import {BookMgrComponent} from './book-mgr/book-mgr.component'
 import { UserManager } from './comic-api/usermanager';
 import { TopRankComponent } from './top-rank/top-rank.component'
 
-import { ClipboardModule } from 'ngx-clipboard';
-
 @NgModule({
   declarations: [
     AppComponent,
@@ -44,7 +42,6 @@ import { ClipboardModule } from 'ngx-clipboard';
     FormsModule,
     NgZorroAntdModule,
     NzListModule,
-    ClipboardModule,
     BrowserAnimationsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
