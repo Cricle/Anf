@@ -7,9 +7,6 @@ import { UserManager } from '../comic-api/usermanager';
   templateUrl: './home.component.html',
 })
 export class HomeComponent {
-  constructor(um:UserManager){
-    um.login("hello","Asdfg123456").subscribe(x=>{
-      console.log(x);
-    });
+  constructor(){
   }
 }

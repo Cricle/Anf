@@ -28,14 +28,11 @@ namespace Anf.ResourceFetcher.Fetchers
             if (context.ProviderFetcher != this && !context.FetchContext.IsFromCache)
             {
                 var chpSet = dbContextTransfer.GetComicChapterSet();
-                var exists = await chpSet.AsNoTracking()
-                    .Where(x => x.TargetUrl == context.Url)
-                    .AnyAsync();
+                var pageJson = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(context.Value.Pages));
                 var now = DateTime.Now.Ticks;
-                if (exists)
+                Task<int> UpdateChapterAsync()
                 {
-                    var pageJson = Encoding.UTF8.GetString(JsonSerializer.SerializeToUtf8Bytes(context.Value.Pages));
-                    await chpSet.Where(x => x.TargetUrl == context.Url)
+                    return chpSet.Where(x => x.TargetUrl == context.Url)
                         .Take(1)
                         .UpdateFromQueryAsync(x => new KvComicChapter
                         {
@@ -44,6 +41,17 @@ namespace Anf.ResourceFetcher.Fetchers
                             UpdateTime = now
                         });
                 }
+                var c = await UpdateChapterAsync();
+                if (c == 0 && !string.IsNullOrEmpty(context.FetchContext.EntityUrl))
+                {
+                    var ctx = context.FetchContext.Copy(context.FetchContext.EntityUrl);
+                    var truck = await context.FetchContext.Root.FetchEntityAsync(ctx);
+                    if (truck != null)
+                    {
+                        await CoreDoneFetchEntityAsync(ctx, truck);
+                        await UpdateChapterAsync();
+                    }
+                }
             }
         }
 
@@ -51,77 +59,83 @@ namespace Anf.ResourceFetcher.Fetchers
         {
             return Task.WhenAll(context.Select(x => DoneFetchChapterAsync(x)).ToArray());
         }
-
-        public async Task DoneFetchEntityAsync(IValueResourceMonitorContext<AnfComicEntityTruck> context)
+        private async Task CoreDoneFetchEntityAsync(IResourceFetchContext ctx,AnfComicEntityTruck val)
         {
-            if (context.ProviderFetcher != this && !context.FetchContext.IsFromCache)
-            {
-                var set = dbContextTransfer.GetComicEntitySet();
-                var val = context.Value;
-                var now = DateTime.Now.Ticks;
-                var upRes = await set.AsNoTracking()
-                    .Where(x => x.ComicUrl == context.Url)
-                    .Take(1)
-                    .UpdateFromQueryAsync(x => new KvComicEntity
-                    {
-                        ComicUrl = val.ComicUrl,
-                        Name = val.Name,
-                        Descript = val.Descript,
-                        ImageUrl = val.ImageUrl,
-                        UpdateTime = now
-                    });
-                if (upRes != 0)
+            var set = dbContextTransfer.GetComicEntitySet();
+            var now = DateTime.Now.Ticks;
+            var upRes = await set.AsNoTracking()
+                .Where(x => x.ComicUrl == ctx.Url)
+                .Take(1)
+                .UpdateFromQueryAsync(x => new KvComicEntity
                 {
-                    var chpSet = dbContextTransfer.GetComicChapterSet();
-                    var includeUrls = val.Chapters.Select(x => x.TargetUrl).Distinct().ToArray();
-                    var query = chpSet.AsNoTracking();
-                    if (includeUrls.Length > 50)
-                    {
-                        var urlEntity = includeUrls.Select(x => new { TargetUrl = x }).ToArray();
-                        query = query.WhereBulkContains(urlEntity, nameof(KvComicChapter.TargetUrl));
-                    }
-                    else
-                    {
-                        query = query.Where(x => includeUrls.Contains(x.TargetUrl));
-                    }
-                    var exists = await query.Select(x => x.TargetUrl).ToArrayAsync();
-                    var existsHash = new HashSet<string>(exists);
-                    var notExists = val.Chapters.Where(x => !existsHash.Contains(x.TargetUrl)).ToArray();
-                    if (notExists.Length != 0)
-                    {
-                        var id = await set.AsNoTracking()
-                            .Where(x => x.ComicUrl == context.Url)
-                            .Select(x => x.Id)
-                            .FirstOrDefaultAsync();
-                        var chps = notExists.Select(x => new KvComicChapter
-                        {
-                            EnitityId = id,
-                            CreateTime = now,
-                            Title = x.Title,
-                            TargetUrl = x.TargetUrl,
-                        });
-                        await chpSet.BulkInsertAsync(chps);
-                    }
+                    ComicUrl = val.ComicUrl,
+                    Name = val.Name,
+                    Descript = val.Descript,
+                    ImageUrl = val.ImageUrl,
+                    UpdateTime = now
+                });
+            if (upRes != 0)
+            {
+                var chpSet = dbContextTransfer.GetComicChapterSet();
+                var includeUrls = val.Chapters.Select(x => x.TargetUrl).Distinct().ToArray();
+                var query = chpSet.AsNoTracking();
+                if (includeUrls.Length > 50)
+                {
+                    var urlEntity = includeUrls.Select(x => new { TargetUrl = x }).ToArray();
+                    query = query.WhereBulkContains(urlEntity, nameof(KvComicChapter.TargetUrl));
                 }
                 else
                 {
-                    var entity = new KvComicEntity
+                    query = query.Where(x => includeUrls.Contains(x.TargetUrl));
+                }
+                var exists = await query.Select(x => x.TargetUrl).ToArrayAsync();
+                var existsHash = new HashSet<string>(exists);
+                var notExists = val.Chapters.Where(x => !existsHash.Contains(x.TargetUrl)).ToArray();
+                if (notExists.Length != 0)
+                {
+                    var id = await set.AsNoTracking()
+                        .Where(x => x.ComicUrl == ctx.Url)
+                        .Select(x => x.Id)
+                        .FirstOrDefaultAsync();
+                    var chps = notExists.Select(x => new KvComicChapter
                     {
-                        ComicUrl = context.Value.ComicUrl,
-                        Descript = context.Value.Descript,
-                        ImageUrl = context.Value.ImageUrl,
-                        Name = context.Value.Name,
-                        UpdateTime = now,
+                        EnitityId = id,
                         CreateTime = now,
-                        Chapters = context.Value.Chapters.Select(x => new KvComicChapter
-                        {
-                            CreateTime = now,
-                            Title = x.Title,
-                        }).ToArray(),
-                    };
-                    await set.SingleInsertAsync(entity);
+                        Title = x.Title,
+                        TargetUrl = x.TargetUrl,
+                    });
+                    await chpSet.BulkInsertAsync(chps);
                 }
             }
+            else
+            {
+                var entity = new KvComicEntity
+                {
+                    ComicUrl = val.ComicUrl,
+                    Descript = val.Descript,
+                    ImageUrl = val.ImageUrl,
+                    Name = val.Name,
+                    UpdateTime = now,
+                    CreateTime = now,
+                    Chapters = val.Chapters.Select(x => new KvComicChapter
+                    {
+                        CreateTime = now,
+                        Title = x.Title,
+                    }).ToArray(),
+                };
+                await set.SingleInsertAsync(entity);
+                var chpSet = dbContextTransfer.GetComicChapterSet();
+                await chpSet.BulkInsertAsync(entity.Chapters);
+            }
+        }
+
+        public Task DoneFetchEntityAsync(IValueResourceMonitorContext<AnfComicEntityTruck> context)
+        {
+            if (context.ProviderFetcher != this && !context.FetchContext.IsFromCache)
+            {
+                return CoreDoneFetchEntityAsync(context.FetchContext, context.Value);
+            }
+            return Task.CompletedTask;
         }
 
         public Task DoneFetchEntityAsync(IValueResourceMonitorContext<AnfComicEntityTruck>[] context)
@@ -143,7 +157,7 @@ namespace Anf.ResourceFetcher.Fetchers
             var data = await query
                 .ToArrayAsync();
             var now = DateTime.Now.Ticks;
-            return data.Where(x => (now - x.UpdateTime) >= fetchOptions.Value.DataTimeout.Ticks)
+            return data.Where(x => (now - x.UpdateTime) >= fetchOptions.Value.DataTimeout.Ticks&&!string.IsNullOrEmpty(x.Pages))
                 .Select(x => new WithPageChapter
                 {
                     Pages = JsonSerializer.Deserialize<ComicPage[]>(x.Pages),

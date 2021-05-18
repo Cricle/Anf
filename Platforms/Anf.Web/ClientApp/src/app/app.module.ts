@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
 import { NgZorroAntdModule} from 'ng-zorro-antd';
+import {NzListModule} from 'ng-zorro-antd/list'
 
 import { ComicApiService } from './comic-api/comic-api.service';
 import { AppComponent } from './app.component';
@@ -20,6 +21,9 @@ import { environment } from '../environments/environment';
 import {TimeThrowComponent} from './time-throw/time-throw.component'
 import {BookMgrComponent} from './book-mgr/book-mgr.component'
 import { UserManager } from './comic-api/usermanager';
+import { TopRankComponent } from './top-rank/top-rank.component'
+
+import { ClipboardModule } from 'ngx-clipboard';
 
 @NgModule({
   declarations: [
@@ -31,13 +35,16 @@ import { UserManager } from './comic-api/usermanager';
     ReferenceComponent,
     GiantScreenComponent,
     TimeThrowComponent,
-    BookMgrComponent
+    BookMgrComponent,
+    TopRankComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
     NgZorroAntdModule,
+    NzListModule,
+    ClipboardModule,
     BrowserAnimationsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
