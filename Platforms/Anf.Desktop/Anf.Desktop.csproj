@@ -17,7 +17,7 @@
   <PropertyGroup Condition="'$(TargetFramework.Trim(`0123456789`))'=='net'">
     <DefineConstants>$(DefineConstants);NETFX;</DefineConstants>
     <UsingNetFramework>true</UsingNetFramework>
-    <PlatformTarget>AnyCpu</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition="'$(EnableCache)'=='true'">
     <DefineConstants>$(DefineConstants);ENABLE_CACHE;</DefineConstants>
