@@ -3,17 +3,58 @@
 </div>
 
 <div align='center' >
-	<h5>Redefine comic reader</h5>
+	<h5>A cross platforms comic reader</h5>
 </div>
 
 [![](https://img.shields.io/appveyor/build/Cricle/Anf)](https://github.com/Cricle/Anf)
 [![codecov](https://codecov.io/gh/Cricle/Anf/branch/dev/graph/badge.svg?token=XMIT1MFLDZ)](https://codecov.io/gh/Cricle/Anf)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a2248df890a242b081e6719bb795f6c6)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Cricle/Anf&amp;utm_campaign=Badge_Grade)
-[![GitHub language count](https://img.shields.io/github/languages/count/Cricle/Anf)](https://github.com/Cricle/Anf)
 [![Code Climate issues](https://img.shields.io/codeclimate/issues/Cricle/Anf)](https://github.com/Cricle/Anf)
-[![GitHub search hit counter](https://img.shields.io/github/search/Cricle/Anf/comic)](https://github.com/Cricle/Anf)
-[![GitHub top language](https://img.shields.io/github/languages/top/Cricle/Anf)](https://github.com/Cricle/Anf)
-[![GitHub repo size](https://img.shields.io/github/languages/code-size/Cricle/Anf)](https://github.com/Cricle/Anf)
-[![GitHub lines](https://img.shields.io/tokei/lines/github/Cricle/Anf)](https://github.com/Cricle/Anf)
 
+# What is this
 
+This is a cross platforms comic reader, it support any platforms client, and a web service.
+
+To easyly watch comic at desktop, phone or web, and it can run at standalone, or shared.
+
+# Support platoforms
+
+|OS|Version|
+|:-:|:-:|
+|Windows|win7/8.1/10 x86/x64|
+|Microsoft Store|win10(Using Application Bridge)|
+|Linux|To see .NET 5.0 support platforms|
+|MacOS|To see .NET 5.0 support platforms|
+|Android|To see MAUI support platforms|
+|iOS|To see MAUI support platforms|
+|Angular(PWA)|To see Angular support platforms|
+
+# Render System
+
+|OS|Render Engine|
+|:-:|:-:|
+|Windows x86|DirectX(SharpDX)|
+|Windows x64|SkiaSharp(See Avalonia.Desktop)|
+|Linux/MacOS|SkiaSharp/X11(See Avalonia.Desktop)|
+|Android/iOS|MAUI|
+|Web/PWA|Angular|
+
+# How to accelerated comic analysis
+
+- Using fast network
+- Using internal CDN shared parse
+- Using Web analysis
+
+# How to build it
+
+## Build desktop
+
+```powershell
+dotnet build Platforms\Anf.Desktop\Anf.Desktop.csproj -f net472
+```
+
+# What's Next
+
+- [ ] Make all logic unification
+- [ ] Add test to conver code
+- [ ] Accelerate start-up speed
