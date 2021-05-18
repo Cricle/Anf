@@ -46,7 +46,7 @@ namespace Anf.Networks
             }
             if (!string.IsNullOrEmpty(settings.Referrer))
             {
-                req.Referer=settings.Referrer;
+                req.Referer = settings.Referrer;
             }
             if (settings.Timeout > 0)
             {
@@ -67,11 +67,11 @@ namespace Anf.Networks
                     {
                         req.UserAgent = item.Value;
                     }
-                    else if (string.Equals("Accept",item.Key, StringComparison.OrdinalIgnoreCase))
+                    else if (string.Equals("Accept", item.Key, StringComparison.OrdinalIgnoreCase))
                     {
                         req.Accept = item.Value;
                     }
-                    else if (string.Equals("Content-Type",item .Key , StringComparison.OrdinalIgnoreCase))
+                    else if (string.Equals("Content-Type", item.Key, StringComparison.OrdinalIgnoreCase))
                     {
                         req.ContentType = item.Value;
                     }

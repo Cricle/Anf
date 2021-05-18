@@ -1,0 +1,67 @@
+<div style="margin-top:4%;margin-left: 5%;margin-right:5%;">
+    <div *ngIf="!loading&&rank">
+        <article nz-typography>
+            <h1 nz-typography>Hot top <strong>{{this.rank.take}}</strong>
+                <a style="margin-left:8px;" nz-tooltip nzTooltipTitle="Flush the rank" nz-button nzType="text">
+                    <i nz-icon nzType="redo"></i>
+                </a>
+            </h1>
+            <h3>In rank <strong>{{this.rank.total}}</strong>
+            </h3>
+        </article>
+        <nz-list>
+            <nz-list-item *ngFor="let dt of this.rank.datas">
+                <ng-container>
+                    <div>
+                        <nz-badge nzStandalone [nzCount]="dt.scope" style="margin-right: 8px;"></nz-badge>
+                        <a [href]="dt.address" target="_blank">{{dt.address}}</a>
+                    </div>
+                    <ul nz-list-item-actions style="display: inline-block;">
+                        <nz-list-item><a (click)="loadEntity(dt)"><i nz-icon nzType="switcher"
+                                    nzTheme="outline"></i></a></nz-list-item>
+                    </ul>
+                </ng-container>
+            </nz-list-item>
+        </nz-list>
+        <nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="true" [nzWidth]="drawerWidth"
+            [(nzVisible)]="showVisit" [nzTitle]="this.visitComic?.name" (nzOnClose)="close()">
+            <nz-spin nzSimple [nzIndicator]="indicatorTemplate" [nzSpinning]='loadingVisit'>
+            </nz-spin>
+            <div *ngIf="this.visitComic&&!loadingVisit">
+                <article nz-typography>
+                    <h1 nz-typography><a>{{this.visitComic.name}}</a></h1>
+                    <p nz-typography nzEllipsis nzExpandable [nzEllipsisRows]="4">
+                        {{this.visitComic.descript}}
+                    </p>
+                    <h2>Chapters ({{this.visitComic.chapters.length}})</h2>
+                </article>
+                <nz-list>
+                    <nz-list-item *ngFor="let dt of this.visitComic.chapters">
+                        <ng-container>
+                            <div>
+                                <a [href]="dt.targetUrl" target="_blank">{{dt.title}}</a>
+                            </div>
+                            <div>
+                                <ul nz-list-item-actions>
+                                    <nz-list-item>
+                                        <div>
+                                            <input nz-input [(ngModel)]="dt.targetUrl" readonly="true"/>
+                                        </div>
+                                    </nz-list-item>
+                                </ul>
+                            </div>
+                        </ng-container>
+                    </nz-list-item>
+                </nz-list>
+            </div>
+        </nz-drawer>
+        <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+    </div>
+    <div *ngIf="loading">
+        <div style="text-align: center;">
+            <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+            <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
+            <span>Now loading rank...</span>
+        </div>
+    </div>
+</div>
