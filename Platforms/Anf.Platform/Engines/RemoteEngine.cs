@@ -11,7 +11,7 @@ namespace Anf.Platform.Engines
 {
     public class RemoteEngine
     {
-        private const string Host = "https://anf.azureedge.net/";
+        private const string Host = "https://anfw.azurewebsites.net/";
         private const string EntityAddress = Host + "api/v1/reading/GetEntity?url=";
         private const string ChapterAddress = Host + "api/v1/reading/GetChapter";
         private readonly INetworkAdapter networkAdapter;
