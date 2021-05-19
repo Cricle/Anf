@@ -17,30 +17,55 @@ namespace Anf.Web.Controllers
         private const string Top50Key = "Anf.Web.Controllers.RankController.Top50";
         private readonly ComicRankService comicRankService;
         private readonly IMemoryCache memoryCache;
+        private readonly HotSearchService hotSearchService;
 
-        public RankController(ComicRankService comicRankService, IMemoryCache memoryCache)
+        public RankController(ComicRankService comicRankService, 
+            IMemoryCache memoryCache,
+            HotSearchService hotSearchService)
         {
+            this.hotSearchService = hotSearchService;
             this.memoryCache = memoryCache;
             this.comicRankService = comicRankService;
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(SetResult<ComicRankItem>),200)]
+        [ProducesResponseType(typeof(SetResult<SortedItem>), 200)]
+        public async Task <IActionResult> GetHotSearch30()
+        {
+            var res = await hotSearchService.GetHotSearchAsync(0, 30);
+            var size = await hotSearchService.SizeAsync();
+            var items = res.Select(x => new SortedItem
+            {
+                Address = x.Element.ToString(),
+                Scope = x.Score
+            }).ToArray();
+            var ds = new SetResult<SortedItem>
+            {
+                Skip = 0,
+                Take = 50,
+                Total = size,
+                Datas = items,
+            };
+            return Ok(ds);
+        }
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(SetResult<SortedItem>),200)]
         public async Task<IActionResult> GetRank50()
         {
-            var ds = memoryCache.Get<SetResult<ComicRankItem>>(Top50Key);
+            var ds = memoryCache.Get<SetResult<SortedItem>>(Top50Key);
             if (ds!=null)
             {
                 return Ok(ds);
             }
             var res = await comicRankService.RangeAsync(0, 50);
             var size = await comicRankService.SizeAsync();
-            var items = res.Select(x => new ComicRankItem
+            var items = res.Select(x => new SortedItem
             {
                 Address = x.Element.ToString(),
                 Scope = x.Score
             }).ToArray();
-            ds = new SetResult<ComicRankItem>
+            ds = new SetResult<SortedItem>
             {
                 Skip = 0,
                 Take = 50,

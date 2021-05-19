@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ComicApiService } from '../comic-api/comic-api.service';
-import { AnfComicEntityTruck, ComicRankItem, SetResult } from '../comic-api/model';
+import { AnfComicEntityTruck,SortedItem, SetResult, SearchComicResult } from '../comic-api/model';
 
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
@@ -13,8 +13,8 @@ const coff:number=0.6;
 })
 export class TopRankComponent implements OnInit {
   loading:boolean;
-  rank:SetResult<ComicRankItem>;
-  selectedItem:ComicRankItem;
+  rank:SetResult<SortedItem>;
+  selectedItem:SortedItem;
   visitComic:AnfComicEntityTruck;
   loadingVisit:boolean;
   emptyEntity:boolean;
@@ -24,9 +24,10 @@ export class TopRankComponent implements OnInit {
   constructor(private api: ComicApiService,
     private notify:NzNotificationService) {
     this.loading=true;
+    
   }
 
-  loadEntity(item:ComicRankItem){
+  loadEntity(item:SortedItem){
     const locItem=item;
     this.selectedItem=item;
     this.showVisit=true;
@@ -49,13 +50,18 @@ export class TopRankComponent implements OnInit {
   }
   copy(event:MouseEvent){
   }
-  ngOnInit() {
+  flushRank(notify:boolean=false){
     this.api.getTop50().subscribe(x=>{
       this.rank=x;
-      console.log(x);
+      if(notify){
+        this.notify.success('Flush hot rank succeed','Alreadly flush the relay hot rank!');
+      }
     },err=>{
       this.notify.error('Loading rank fail!',err);
     },()=>this.loading=false);
+  }
+  ngOnInit() {
+    this.flushRank(false);
   }
 
 }

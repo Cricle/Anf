@@ -21,7 +21,7 @@ This is a cross platforms comic reader, it support any platforms client, and a w
 
 To easyly watch comic at desktop, phone or web, and it can run at standalone, or shared.
 
-# Support platoforms
+# Support platforms
 
 |OS|Version|
 |:-:|:-:|

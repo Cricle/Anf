@@ -1,0 +1,22 @@
+<div class="m-container">
+    <div style="margin-top: 70px;">
+        <div *ngIf="this.loading" style="text-align: center;margin:auto;">
+            <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+            <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
+            <span>Now loading...</span>
+        </div>
+        <div *ngIf="this.entity">
+            <article nz-typography style="margin-top: 20px;text-align: center;">
+                <h2 nz-typography>{{this.entity.name}}({{this.watchingChapter.title}})</h2>
+            </article>
+        </div>
+        <div *ngIf="this.wcp" style="margin-left: 8px;margin-right: 8px;">
+            <div *ngFor="let pg of this.wcp.pages" style="text-align: center;">
+                <img nz-image [nzSrc]="pg.targetUrl" [alt]="pg.name" style="display:inline-block;max-width:100%;overflow:hidden;"/>
+            </div>
+        </div>
+        <div *ngIf="this.entity" style="text-align: center;margin: 30px 0px;">
+            <nz-pagination [(nzPageIndex)]="chapter" [nzTotal]="this.entity.chapters.length" (nzPageIndexChange)="this.loadChapter($event)"></nz-pagination>
+        </div>
+    </div>
+</div>
