@@ -9,6 +9,8 @@ using Anf.ChannelModel.KeyGenerator;
 using Anf.ChannelModel.Mongo;
 using Anf.Web.Models;
 using Anf.ChannelModel.Results;
+using System.Linq;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Anf.Web.Controllers
 {
@@ -20,20 +22,92 @@ namespace Anf.Web.Controllers
 
         private const string EntityKey = "Anf.Web.Controllers.ReadingController.Entity";
         private const string ChapterKey = "Anf.Web.Controllers.ReadingController.Chapter";
+        private const string SearchKey = "Anf.Web.Controllers.ReadingController.Search";
 
+        private readonly IServiceScopeFactory scopeFactory;
         private readonly ComicRankService comicRankService;
         private readonly IRootFetcher rootFetcher;
         private readonly IMemoryCache memoryCache;
-
+        private readonly SearchEngine searchEngine;
+        private readonly ComicEngine comicEngine;
+        private readonly HotSearchService hotSearchService;
         public ReadingController(ComicRankService comicRankService,
             IRootFetcher rootFetcher,
-            IMemoryCache memoryCache)
+            IMemoryCache memoryCache,
+            SearchEngine searchEngine,
+            ComicEngine comicEngine,
+            HotSearchService hotSearchService,
+            IServiceScopeFactory scopeFactory)
         {
+            this.scopeFactory = scopeFactory;
+            this.comicEngine = comicEngine;
+            this.hotSearchService = hotSearchService;
+            this.searchEngine = searchEngine;
             this.memoryCache = memoryCache;
             this.comicRankService = comicRankService;
             this.rootFetcher = rootFetcher;
         }
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<string[]>), 200)]
+        public IActionResult GetProviders()
+        {
+            var names = searchEngine.Select(x => x.Name).ToArray();
+            var r = new EntityResult<string[]> { Data = names };
+            return Ok(r);
+        }
 
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<SearchComicResult>), 200)]
+        public async Task<IActionResult> Search([FromQuery] string provider, [FromQuery] string keyword, [FromQuery] int skip = 0, [FromQuery] int take = 20)
+        {
+            if (searchEngine.Count == 0)
+            {
+                return base.Problem("The search engine nothing");
+            }
+            var prov = searchEngine[0];
+            if (!string.IsNullOrEmpty(provider))
+            {
+                prov = searchEngine.FirstOrDefault(x => x.Name == provider);
+                if (prov is null)
+                {
+                    prov = searchEngine[0];
+                }
+            }
+            var key = RedisKeyGenerator.Concat(SearchKey, provider, keyword);
+            var ds = memoryCache.Get(key);
+            if (ds != null)
+            {
+                await hotSearchService.AddSearch(keyword);
+                return Ok(ds);
+            }
+            using var scope = searchEngine.ServiceScopeFactory.CreateScope();
+            var eng = (ISearchProvider)scope.ServiceProvider.GetService(prov);
+            var data = await eng.SearchAsync(keyword, skip, take);
+            await hotSearchService.AddSearch(keyword);
+            var r = new EntityResult<SearchComicResult> { Data = data };
+            memoryCache.Set(key, r, new MemoryCacheEntryOptions
+            {
+                SlidingExpiration = CacheTime
+            });
+            return Ok(r);
+        }
+        //[AllowAnonymous]
+        //[HttpGet("[action]")]
+        //public async Task<IActionResult> GetImage([FromQuery] string entityUrl,[FromQuery]string url)
+        //{
+        //    var prov = comicEngine.GetComicSourceProviderType(entityUrl);
+        //    if (prov is null)
+        //    {
+        //        return NotFound(url);
+        //    }
+        //    using var scope = scopeFactory.CreateScope();
+        //    var provider = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(prov.ProviderType);
+        //    var stream = await provider.GetImageStreamAsync(url);
+        //    HttpContext.Response.RegisterForDispose(stream);
+        //    return File(stream, "application/octet-stream");
+        //}
         [AllowAnonymous]
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(WithPageChapter), 200)]
@@ -55,6 +129,7 @@ namespace Anf.Web.Controllers
             }
             return Ok(res);
         }
+
         [AllowAnonymous]
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(AnfComicEntityTruck), 200)]

@@ -1,0 +1,53 @@
+<div class="m-container">
+    <div style="margin-top: 60px;margin-bottom:10px;margin-left:5%;margin-right: 5%;">
+        <div>
+            <nz-input-group [nzSuffix]="this.loading?indicatorTemplateSpin:suffixIcon"
+                (keydown)="searchKeydown($event)">
+                <input placeholder="Input some keywork to search" nz-input [style.disabled]="!this.loading"
+                    [(ngModel)]="keyword" (focus)="searchForce()" [nzAutocomplete]="auto" />
+            </nz-input-group>
+            <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+            <ng-template #indicatorTemplateSpin>
+                <nz-spin nzSimple [nzIndicator]="indicatorTemplate"></nz-spin>
+            </ng-template>
+            <ng-template #suffixIcon>
+                <i nz-icon nzType="search" (click)="search()"></i>
+            </ng-template>
+            <nz-autocomplete #auto>
+                <nz-auto-option *ngFor="let option of hotSearch.datas" [nzValue]="option.address">{{ option.address }}
+                </nz-auto-option>
+            </nz-autocomplete>
+        </div>
+        <nz-list *ngIf="this.result">
+            <article nz-typography style="margin-top: 20px;">
+                <h2 nz-typography>Searched <strong>{{this.searchedText}}</strong> has {{this.result.total}} results</h2>
+            </article>  
+            <nz-list nzItemLayout="vertical">
+                <nz-list-item *ngFor="let item of this.result.snapshots">
+                    <ng-template #resultSnapshotTitle>
+                        <a [href]="item.targetUrl">{{ item.name }}</a>
+                    </ng-template>
+                    <ng-template #resultSnapshotDescript>
+                        <span>{{item.author}}</span>
+                    </ng-template>
+                    <nz-list-item-meta [nzTitle]="resultSnapshotTitle" [nzDescription]="resultSnapshotDescript">
+                    </nz-list-item-meta>
+                    <article nz-typography>
+                        <p nz-typography nzEllipsis nzExpandable [nzEllipsisRows]="4">
+                            {{ item.descript }}
+                        </p>
+                    </article>
+                    <ul nz-list-item-actions>
+                        <nz-list-item-action *ngFor="let provider of item.sources">
+                            <i nz-icon nzType="cloud" nzTheme="outline" style="margin-right:8px;"></i>
+                            <a (click)="goVisit(provider)">{{provider.name}}</a>
+                        </nz-list-item-action>
+                    </ul>
+                    <div nz-list-item-extra>
+                        <img nz-image width="180" [alt]="item.name" [nzSrc]="item.imageUri" />
+                    </div>
+                </nz-list-item>
+            </nz-list>
+        </nz-list>
+    </div>
+</div>

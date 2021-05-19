@@ -10,7 +10,7 @@ namespace Anf.ResourceFetcher
 
         public TimeSpan DataTimeout { get; set; } = DefaultDataTimeout;
 
-        public TimeSpan CacheTimeout { get; set; } = TimeSpan.FromDays(1);
+        public TimeSpan CacheTimeout { get; set; } = TimeSpan.FromMinutes(30);
 
         public TimeSpan ChapterMapTimeout { get; set; } = TimeSpan.FromMinutes(30);
     }

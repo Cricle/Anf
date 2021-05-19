@@ -4,8 +4,20 @@ import { FormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
 
-import { NgZorroAntdModule} from 'ng-zorro-antd';
 import {NzListModule} from 'ng-zorro-antd/list'
+import {NzButtonModule} from 'ng-zorro-antd/button'
+import {NzSpinModule} from 'ng-zorro-antd/spin'
+import {NzIconModule} from 'ng-zorro-antd/icon'
+import {NzNotificationModule} from 'ng-zorro-antd/notification'
+import {NzBadgeModule} from 'ng-zorro-antd/badge'
+import {NzDrawerModule} from 'ng-zorro-antd/drawer'
+import {NzTypographyModule} from 'ng-zorro-antd/typography'
+import {NzAutocompleteModule} from 'ng-zorro-antd/auto-complete'
+import {NzInputModule} from 'ng-zorro-antd/input'
+import {NzTagModule} from 'ng-zorro-antd/tag'
+import {NzImageModule} from 'ng-zorro-antd/image'
+import {NzSpaceModule} from 'ng-zorro-antd/space'
+import {NzPaginationModule} from 'ng-zorro-antd/pagination'
 
 import { ComicApiService } from './comic-api/comic-api.service';
 import { AppComponent } from './app.component';
@@ -18,10 +30,10 @@ import { GiantScreenComponent } from './giant-screen/giant-screen/giant-screen.c
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
-import {TimeThrowComponent} from './time-throw/time-throw.component'
-import {BookMgrComponent} from './book-mgr/book-mgr.component'
 import { UserManager } from './comic-api/usermanager';
 import { TopRankComponent } from './top-rank/top-rank.component'
+import { DetailComponent} from './detail/detail.component'
+import { VisitComponent} from './visit/visit.component'
 
 @NgModule({
   declarations: [
@@ -32,22 +44,37 @@ import { TopRankComponent } from './top-rank/top-rank.component'
     DownloadComponent,
     ReferenceComponent,
     GiantScreenComponent,
-    TimeThrowComponent,
-    BookMgrComponent,
-    TopRankComponent
+    DetailComponent,
+    TopRankComponent,
+    VisitComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
-    NgZorroAntdModule,
+    
+    NzButtonModule,
     NzListModule,
+    NzSpinModule,
+    NzIconModule,
+    NzNotificationModule,
+    NzBadgeModule,
+    NzDrawerModule,
+    NzTypographyModule,
+    NzAutocompleteModule,
+    NzInputModule,
+    NzTagModule,
+    NzImageModule,
+    NzSpaceModule,
+    NzPaginationModule,
+
     BrowserAnimationsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'download', component: DownloadComponent },
       { path: 'about', component: AboutComponent },
-      { path: 'ref', component: ReferenceComponent },
+      { path: 'detail', component: DetailComponent },
+      { path: 'visit/:url',component:VisitComponent}
     ]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],
