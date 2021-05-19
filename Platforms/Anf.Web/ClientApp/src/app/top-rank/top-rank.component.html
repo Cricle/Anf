@@ -1,24 +1,25 @@
 <div style="margin-top:4%;margin-left: 5%;margin-right:5%;">
     <div *ngIf="!loading&&rank">
         <article nz-typography>
-            <h1 nz-typography>Hot top <strong>{{this.rank.take}}</strong>
-                <a style="margin-left:8px;" nz-tooltip nzTooltipTitle="Flush the rank" nz-button nzType="text">
+            <h3 nz-typography>Hot top <strong>{{this.rank.take}}</strong>
+                (In rank <strong>{{this.rank.total}}</strong>)
+                <a style="margin-left:8px;" nz-tooltip nzTooltipTitle="Flush the rank" nz-button nzType="text"
+                    (click)="flushRank(true)">
                     <i nz-icon nzType="redo"></i>
                 </a>
-            </h1>
-            <h3>In rank <strong>{{this.rank.total}}</strong>
             </h3>
         </article>
         <nz-list>
             <nz-list-item *ngFor="let dt of this.rank.datas">
                 <ng-container>
                     <div>
-                        <nz-badge nzStandalone [nzCount]="dt.scope" style="margin-right: 8px;"></nz-badge>
-                        <a [href]="dt.address" target="_blank">{{dt.address}}</a>
+                        <nz-badge nzStandalone [nzCount]="dt.scope" [nzStyle]="{ backgroundColor: 'transparent', color: '#999', boxShadow: '0 0 0 0.8px #d9d9d9 inset' }" style="margin-right: 8px;"></nz-badge>
+                        <a [routerLink]="['/visit',dt.address]">{{dt.address}}</a>
                     </div>
+                    
                     <ul nz-list-item-actions style="display: inline-block;">
-                        <nz-list-item><a (click)="loadEntity(dt)"><i nz-icon nzType="switcher"
-                                    nzTheme="outline"></i></a></nz-list-item>
+                        <nz-list-item-action><a (click)="loadEntity(dt)"><i nz-icon nzType="switcher"
+                            nzTheme="outline"></i></a></nz-list-item-action>
                     </ul>
                 </ng-container>
             </nz-list-item>
@@ -36,18 +37,16 @@
                     <h2>Chapters ({{this.visitComic.chapters.length}})</h2>
                 </article>
                 <nz-list>
-                    <nz-list-item *ngFor="let dt of this.visitComic.chapters">
+                    <nz-list-item *ngFor="let dt of this.visitComic.chapters;let index=index">
                         <ng-container>
                             <div>
-                                <a [href]="dt.targetUrl" target="_blank">{{dt.title}}</a>
+                                <a [routerLink]="['/visit',this.visitComic.comicUrl]" [queryParams]="{c:index}">{{dt.title}}</a>
                             </div>
                             <div>
                                 <ul nz-list-item-actions>
-                                    <nz-list-item>
-                                        <div>
-                                            <input nz-input [(ngModel)]="dt.targetUrl" readonly="true"/>
-                                        </div>
-                                    </nz-list-item>
+                                    <nz-list-item-action>
+                                        <input nz-input [(ngModel)]="dt.targetUrl" readonly="true" />
+                                    </nz-list-item-action>
                                 </ul>
                             </div>
                         </ng-container>
@@ -58,7 +57,7 @@
         <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
     </div>
     <div *ngIf="loading">
-        <div style="text-align: center;">
+        <div style="text-align: center;margin:auto;">
             <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
             <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
             <span>Now loading rank...</span>

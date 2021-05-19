@@ -5,10 +5,10 @@ using System.Threading.Tasks;
 
 namespace Anf.Web.Models
 {
-    public class SortedItem
+    public class SearchProvider
     {
-        public string Address { get; set; }
+        public string EngineName { get; set; }
 
-        public double Scope { get; set; }
+        public string Provider { get; set; }
     }
 }

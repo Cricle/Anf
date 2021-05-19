@@ -105,10 +105,12 @@ namespace Anf.Web
                 options.DefaultAuthenticateScheme = AnfAuthenticationHandler.SchemeName;
                 options.DefaultChallengeScheme = AnfAuthenticationHandler.SchemeName;
             });
+
             services.AddScoped<AnfAuthenticationHandler>();
             services.AddScoped<ComicRankService>();
             services.AddScoped<ComicRankSaver>();
             services.AddScoped<BookshelfService>();
+            services.AddScoped<HotSearchService>();
 
             services.AddOptions<BookshelfOptions>();
             services.AddOptions<ComicRankOptions>();
@@ -172,11 +174,13 @@ namespace Anf.Web
             {
                 builder.MapHub<ReadingHub>("/hubs/v1/reading");
             });
+#if DEBUG
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/Anf/swagger.json", "Anf API");
             });
+#endif
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(
@@ -227,17 +231,17 @@ namespace Anf.Web
                     if (level == RankLevels.Hour)
                     {
                         rep = TimeSpan.FromHours(1);
-                        startTime = new DateTime(now.Year, now.Month, now.Day, now.Hour + 1, 1, 0);
+                        startTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, 1, 0).AddHours(1);
                     }
                     else if (level == RankLevels.Day)
                     {
                         rep = TimeSpan.FromDays(1);
-                        startTime = new DateTime(now.Year, now.Month, now.Day + 1, 0, 30, 0);
+                        startTime = new DateTime(now.Year, now.Month, now.Day, 0, 30, 0).AddDays(1);;
                     }
                     else if (level == RankLevels.Month)
                     {
                         rep = TimeSpan.FromDays(32);
-                        startTime = new DateTime(now.Year, now.Month + 1, 1, 1, 0, 0);
+                        startTime = new DateTime(now.Year, now.Month, 1, 1, 0, 0).AddMonths(1);
                     }
 
                     var trigger = TriggerBuilder.Create()

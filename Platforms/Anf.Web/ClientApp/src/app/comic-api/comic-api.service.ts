@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs';
 
-import {AnfComicEntityTruck, ComicRankItem, EntityResult, RSAKeyIdentity, SetResult, WithPageChapter} from './model'
+import {AnfComicEntityTruck, SortedItem as SortedItem, EntityResult, RSAKeyIdentity, SearchComicResult, SetResult, WithPageChapter} from './model'
 
 import * as JsEncryptModule from 'jsencrypt';
 
@@ -20,15 +20,9 @@ export class ComicApiService{
   
 
   constructor(private http: HttpClient) {
-    let enc=new JsEncryptModule.JSEncrypt({});
-    enc.setPublicKey(`-----BEGIN PUBLIC KEY-----
-    MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEA5Xhq77HqGObzpBR7ajty\\nRG/iZ2SrqAS7/5OF8HBg/tCSMQSXw48MhUvWjy6lQMYu4DDnAm1GM+hBPWMLKhK2\\ngMMDJ83bc5DbEqIbAWnw//kYjPsaMuNr8f5+G//RzGPA4ZbsSdZwHYAQGGDgQ+aa\\ngjBVSUXwiRmdwEvVglenwWYwlsI53LEycorBnSsjgCDVjYWhHXoNyztztcaI/I26\\n9A973bAkFJhOpl+T2FMUGhDdG3BFRSwvYlxqsDg8rt3LV1zpZRSXLjp4ELYvp5aV\\nKV4GtwCru5RyGJrme8L3fwk8JedHkj0u9UPSPh721pyQq6QovpgbvBySlGTR+LS4\\naQIDAQAB
-    -----END PUBLIC KEY-----`)
-    let w=enc.encrypt("Asdfg123456");
-    console.log(w);
   }
-  public getTop50():Observable<SetResult<ComicRankItem>>{
-    return this.http.get<SetResult<ComicRankItem>>(`${rankPart}/GetRank50`);
+  public getTop50():Observable<SetResult<SortedItem>>{
+    return this.http.get<SetResult<SortedItem>>(`${rankPart}/GetRank50`);
   }
   public getChapter(url:string,entityUrl:string):Observable<WithPageChapter>{
     return this.http.get<WithPageChapter>(`${readingPart}/GetChapter?url=${url}&entityUrl=${entityUrl}`); 
@@ -59,5 +53,24 @@ export class ComicApiService{
     form.set("passwordHash",passwordHash);
     form.set("connectId",connectId);
     return this.http.post<EntityResult<boolean>>(`${userPart}/Registe`,form);
+  }
+  public getProviders():Observable<EntityResult<string[]>>{
+    return this.http.get<EntityResult<string[]>>(`${readingPart}/GetProviders`);
+  }
+  public search(provider:string,keyword:string,skip?:number,take?:number):Observable<EntityResult<SearchComicResult>>{
+    if (!skip) {
+      skip=0;
+    }
+    if (!take) {
+      take=20;
+    }
+    return this.http.get<EntityResult<SearchComicResult>>(`${readingPart}/search?provider=${provider}&keyword=${keyword}&skip=${skip}&take=${take}`);
+  }
+  public makeImgUrl(entityUrl:string,url:string):string{
+    return url;
+    // return `${readingPart}/GetImage?entityUrl=${entityUrl}&url=${url}`;
+  }
+  public getHotSearch30():Observable<SetResult<SortedItem>>{
+    return this .http.get<SetResult<SortedItem>>(`${rankPart}/GetHotSearch30`);
   }
 }

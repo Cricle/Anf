@@ -57,7 +57,7 @@ export interface AnfComicEntityInfoOnly extends ComicInfo{
     createTime:number;
     updateTime:number;
 }
-export interface ComicRankItem{
+export interface SortedItem{
     address:string;
     scope:number;
 }
@@ -75,6 +75,21 @@ export interface WithPageChapter extends WithPageChapterInfoOnly{
 export interface RSAKeyIdentity{
     key:string;
     identity:string;
+}
+export interface SearchComicResult{
+    support:boolean;
+    snapshots:ComicSnapshot[];
+    total?:number;
+}
+export interface ComicSnapshot{
+    name:string;
+    author:string;
+    imageUri:string;
+    sources:ComicSource[];
+    descript:string;
+}
+export interface ComicSource extends ComicRef{
+    name:string;
 }
 export function convertCsharpDate(time:number):Date{
     const t=(time-621356256000000000)/10000;
