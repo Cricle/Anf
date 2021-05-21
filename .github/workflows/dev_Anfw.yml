@@ -24,9 +24,6 @@ jobs:
     - name: Restore with dotnet
       run: dotnet restore "Platforms\Anf.sln"
       
-    - name: Test the web
-      run: dotnet test "Platforms\Anf.sln"
-      
     - name: dotnet publish
       run: dotnet publish "Platforms\Anf.sln" -f net5.0 -r linux-x64 /p:PublishReadyToRun=true -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
