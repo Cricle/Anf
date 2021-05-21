@@ -21,11 +21,14 @@ jobs:
       with:
         dotnet-version: '5.0.x'
 
-    - name: Build with dotnet
-      run: dotnet build "Platforms\Anf.sln" --configuration Release
-
+    - name: Restore with dotnet
+      run: dotnet restore "Platforms\Anf.sln"
+      
+    - name: Test the web
+      run: dotnet test "Platforms\Anf.sln"
+      
     - name: dotnet publish
-      run: dotnet publish "Platforms\Anf.sln" -r linux-x64 /p:PublishReadyToRun=true -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      run: dotnet publish "Platforms\Anf.sln" -f net5.0 -r linux-x64 /p:PublishReadyToRun=true -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v2
