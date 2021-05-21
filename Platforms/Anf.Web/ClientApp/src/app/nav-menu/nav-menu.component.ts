@@ -1,18 +1,16 @@
 import { Component } from '@angular/core';
-
+import { ThemeService } from '../theme.service'
 @Component({
   selector: 'app-nav-menu',
   templateUrl: './nav-menu.component.html',
   styleUrls: ['./nav-menu.component.css']
 })
 export class NavMenuComponent {
-  isExpanded = false;
-
-  collapse() {
-    this.isExpanded = false;
+  themeSer: ThemeService;
+  constructor(themeSer: ThemeService) {
+    this.themeSer = themeSer;
   }
-
-  toggle() {
-    this.isExpanded = !this.isExpanded;
+  public switchTheme() {
+    this.themeSer.toggleTheme();
   }
 }

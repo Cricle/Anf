@@ -5,9 +5,23 @@
             <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
             <span>Now loading...</span>
         </div>
+        <div *ngIf="!this.loading&&!this.entity">
+            <article nz-typography style="margin-top: 20px;text-align: center;">
+                <h2 nz-typography>Fail to load url <a [href]="this.url">{{url}}</a></h2>
+                <h2 nz-typography>You can clike <a (click)="loadEntity()">me to reload</a></h2>
+            </article>
+        </div>
         <div *ngIf="this.entity">
             <article nz-typography style="margin-top: 20px;text-align: center;">
-                <h2 nz-typography>{{this.entity.name}}({{this.watchingChapter.title}})</h2>
+                <h2 nz-typography>{{this.entity.name}}<span *ngIf="this.watchingChapter">({{this.watchingChapter.title}})</span></h2>
+                <div *ngIf="!this.entity.chapters||this.entity.chapters.length==0">
+                    <h4 nz-typography style="margin-top: 20px;">
+                        There is no chapters found!
+                    </h4>
+                    <h4 nz-typography style="margin-top: 20px;">
+                        If this is error result, you can click <a [href]="this.entity.comicUrl" target="_blank">me</a> to origin website.
+                    </h4>
+                </div>
             </article>
         </div>
         <div *ngIf="this.wcp" style="margin-left: 8px;margin-right: 8px;">
@@ -15,8 +29,10 @@
                 <img nz-image [nzSrc]="pg.targetUrl" [alt]="pg.name" style="display:inline-block;max-width:100%;overflow:hidden;"/>
             </div>
         </div>
-        <div *ngIf="this.entity" style="text-align: center;margin: 30px 0px;">
-            <nz-pagination [(nzPageIndex)]="chapter" [nzTotal]="this.entity.chapters.length" (nzPageIndexChange)="this.loadChapter($event)"></nz-pagination>
+        <div *ngIf="this.entity" style="text-align: center;margin: 30px 0px;margin-bottom: 8px;">
+            <!-- <nz-affix [nzOffsetBottom]="6">
+            </nz-affix> -->
+            <nz-pagination [(nzPageIndex)]="chapter" [nzPageSize]="1" [nzTotal]="this.totalChapterCount" (nzPageIndexChange)="this.loadChapter($event)"></nz-pagination>
         </div>
     </div>
 </div>
