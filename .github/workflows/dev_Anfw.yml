@@ -21,8 +21,8 @@ jobs:
       with:
         dotnet-version: '5.0.x'
 
-    - name: Restore with dotnet
-      run: dotnet restore "Platforms\Anf.sln"
+    - name: Build with dotnet
+      run: dotnet build "Platforms\Anf.sln" -c Release
       
     - name: dotnet publish
       run: dotnet publish "Platforms\Anf.sln" -f net5.0 -r linux-x64 /p:PublishReadyToRun=true -c Release -o ${{env.DOTNET_ROOT}}/myapp
