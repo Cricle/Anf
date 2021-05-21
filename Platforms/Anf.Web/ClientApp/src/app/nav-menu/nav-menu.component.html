@@ -1,24 +1,21 @@
 <div class="header">
-  <ul>
-      <li class="normal-li m-li">
-          <a class="nav-link" [routerLink]='["/"]'>
-              Home
-          </a>
-      </li>
-      <li class="normal-li m-li">
-          <a class="nav-link" [routerLink]='["/download"]'>
-              Download
-          </a>
-      </li>
-      <!-- <li class="normal-li m-li">
-          <a class="nav-link" [routerLink]='["/ref"]'>
-              Reference
-          </a>
-      </li> -->
-      <li class="normal-li m-li">
-          <a class="nav-link" [routerLink]='["/about"]'>
-              About
-          </a>
-      </li>
-  </ul>
+    <ul style="display:inline-block;">
+        <li class="normal-li m-li">
+            <a class="nav-link" [routerLink]='["/"]'>
+                Home
+            </a>
+        </li>
+        <li class="normal-li m-li">
+            <a class="nav-link" [routerLink]='["/download"]'>
+                Download
+            </a>
+        </li>
+    </ul>
+    <ul style="display:inline-block;float: right;">
+        <li class="normal-li m-li"  nz-tooltip nzTooltipTitle="Swith the theme">
+            <a (click)='switchTheme()'>
+                <i nz-icon nzType="bulb" nzTheme="outline" [style.color]="this.themeSer.actualIsDark?'white':'black'"></i>
+            </a>
+        </li>
+    </ul>
 </div>

@@ -18,6 +18,7 @@ import {NzTagModule} from 'ng-zorro-antd/tag'
 import {NzImageModule} from 'ng-zorro-antd/image'
 import {NzSpaceModule} from 'ng-zorro-antd/space'
 import {NzPaginationModule} from 'ng-zorro-antd/pagination'
+import {NzAffixModule } from 'ng-zorro-antd/affix'
 
 import { ComicApiService } from './comic-api/comic-api.service';
 import { AppComponent } from './app.component';
@@ -34,6 +35,7 @@ import { UserManager } from './comic-api/usermanager';
 import { TopRankComponent } from './top-rank/top-rank.component'
 import { DetailComponent} from './detail/detail.component'
 import { VisitComponent} from './visit/visit.component'
+import { ThemeService } from './theme.service'
 
 @NgModule({
   declarations: [
@@ -67,7 +69,8 @@ import { VisitComponent} from './visit/visit.component'
     NzImageModule,
     NzSpaceModule,
     NzPaginationModule,
-
+    NzAffixModule,
+    
     BrowserAnimationsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -80,7 +83,8 @@ import { VisitComponent} from './visit/visit.component'
   ],
   providers: [
     ComicApiService,
-    UserManager
+    UserManager,
+    ThemeService
   ],
   bootstrap: [AppComponent]
 })
