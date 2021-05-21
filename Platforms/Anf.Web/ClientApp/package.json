@@ -41,6 +41,7 @@
     "imagemin-zopfli": "^7.0.0",
     "jquery": "^3.6.0",
     "jsencrypt": "^3.2.0",
+    "ng-lazyload-image": "^9.1.0",
     "ng-zorro-antd": "^11.4.1",
     "oidc-client": "^1.11.5",
     "pidcrypt": "0.0.32",

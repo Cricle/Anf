@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 
 import { ActivatedRoute } from '@angular/router'
-import { NzNotificationService } from '_ng-zorro-antd@11.4.1@ng-zorro-antd/notification';
+import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { ComicApiService } from '../comic-api/comic-api.service';
 import { AnfComicEntityTruck, ComicChapter, WithPageChapter } from '../comic-api/model';
 
@@ -18,6 +18,7 @@ export class VisitComponent implements OnInit {
   entity: AnfComicEntityTruck;
   watchingChapter: ComicChapter;
   wcp: WithPageChapter;
+  totalChapterCount:number;
   constructor(private route: ActivatedRoute,
     private api: ComicApiService,
     private notif: NzNotificationService) {
@@ -45,6 +46,8 @@ export class VisitComponent implements OnInit {
     this.entity = null;
     this.api.getEntity(this.url).subscribe(y => {
       this.entity = y;
+      this.totalChapterCount=y?.chapters.length||0;
+      console.log(this.totalChapterCount);
       if (!y) {
         this.notif.error("Can't load comic entity!", this.url);
       } else {
@@ -56,6 +59,7 @@ export class VisitComponent implements OnInit {
       }
     }, err => {
       this.notif.error("Fail in load entity", this.url);
+      this.loading=false;
     }, () => this.loading = false);
   }
   loadChapter(index: number) {
@@ -66,6 +70,7 @@ export class VisitComponent implements OnInit {
       this.wcp = x;
     }, err => {
       this.notif.error("Fail in load chapter", this.watchingChapter.targetUrl);
+      this.loading=false;
     }, () => this.loading = false);
   }
 }

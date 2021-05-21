@@ -24,7 +24,7 @@ export interface ComicInfo {
     imageUrl: string;
 }
 export interface ComicRef {
-    targetUrl: string;
+    targetUrl?: string;
 }
 export interface ComicChapter extends ComicRef {
     title: string;
@@ -33,7 +33,7 @@ export interface ComicEntity extends ComicInfo {
     chapters: ComicChapter[];
 }
 export interface ComicPage extends ComicRef {
-    name: string;
+    name?: string;
 }
 export interface ChapterWithPage {
     chapter: ComicChapter;
