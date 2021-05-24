@@ -9,7 +9,6 @@ namespace Anf.Platform.Settings
 {
     public class PerformaceSettings : ObservableObject
     {
-        private bool enableCDN;
         private bool useStore;
         private bool enableRemoteFetch;
 
@@ -23,12 +22,6 @@ namespace Anf.Platform.Settings
         {
             get { return useStore; }
             set => Set(ref useStore, value);
-        }
-
-        public virtual bool EnableCDN
-        {
-            get { return enableCDN; }
-            set => Set(ref enableCDN, value);
         }
 
     }

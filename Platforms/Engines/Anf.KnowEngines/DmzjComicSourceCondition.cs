@@ -1,8 +1,10 @@
 ﻿using Anf;
+using Anf.Engine.Annotations;
 using System;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceCondition]
     public class DmzjComicSourceCondition : ComicSourceConditionBase<DmzjComicOperator>
     {
         public override string EngineName => ComicConst.EngineDMZJ;

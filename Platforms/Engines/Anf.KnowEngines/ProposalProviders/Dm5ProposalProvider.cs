@@ -1,4 +1,5 @@
 ﻿using Anf.Engine;
+using Anf.Engine.Annotations;
 using Anf.Networks;
 using HtmlAgilityPack;
 using System;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines.ProposalProviders
 {
+    [ProposalProvider]
     public class Dm5ProposalProvider : IProposalProvider
     {
         internal static readonly string Home = "http://www.dm5.com/";

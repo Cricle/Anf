@@ -1,4 +1,5 @@
-﻿using Anf.Networks;
+﻿using Anf.Engine.Annotations;
+using Anf.Networks;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -10,6 +11,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceProvider]
     public class BikabikaComicOperator : IComicSourceProvider
     {
         private static readonly Regex urlsRegex = new Regex(@"var qTcms_S_m_murl_e=(.*)?;", RegexOptions.Compiled);

@@ -1,4 +1,5 @@
-﻿using Anf.Networks;
+﻿using Anf.Engine.Annotations;
+using Anf.Networks;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -9,6 +10,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceProvider]
     public class QimiaoComicOperator : IComicSourceProvider
     {
         private static readonly string pagesUrl = "https://www.qimiaomh.com/Action/Play/AjaxLoadImgUrl?did={0}&sid={1}";

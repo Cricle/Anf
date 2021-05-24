@@ -19,6 +19,7 @@ import {NzImageModule} from 'ng-zorro-antd/image'
 import {NzSpaceModule} from 'ng-zorro-antd/space'
 import {NzPaginationModule} from 'ng-zorro-antd/pagination'
 import {NzAffixModule } from 'ng-zorro-antd/affix'
+import {NzDropDownModule } from 'ng-zorro-antd/dropdown'
 
 import { ComicApiService } from './comic-api/comic-api.service';
 import { AppComponent } from './app.component';
@@ -36,7 +37,11 @@ import { TopRankComponent } from './top-rank/top-rank.component'
 import { DetailComponent} from './detail/detail.component'
 import { VisitComponent} from './visit/visit.component'
 import { ThemeService } from './theme.service'
+import { BookshelfComponent } from './bookshelf/bookshelf.component'
+import { ComicListComponent } from './comic-list/comic-list.component'
 
+import { SearchService } from './comic-api/comic-search.service';
+import { VisitManager } from './comic-api/comic-visit.mgr'
 @NgModule({
   declarations: [
     AppComponent,
@@ -48,7 +53,9 @@ import { ThemeService } from './theme.service'
     GiantScreenComponent,
     DetailComponent,
     TopRankComponent,
-    VisitComponent
+    VisitComponent,
+    BookshelfComponent,
+    ComicListComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -70,13 +77,16 @@ import { ThemeService } from './theme.service'
     NzSpaceModule,
     NzPaginationModule,
     NzAffixModule,
+    NzDropDownModule,
     
     BrowserAnimationsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'download', component: DownloadComponent },
       { path: 'about', component: AboutComponent },
-      { path: 'detail', component: DetailComponent },
+      { path: 'rank', component: TopRankComponent },
+      { path: 'about', component: AboutComponent },
+      { path: 'bookshelf', component: BookshelfComponent },
       { path: 'visit/:url',component:VisitComponent}
     ]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
@@ -84,7 +94,9 @@ import { ThemeService } from './theme.service'
   providers: [
     ComicApiService,
     UserManager,
-    ThemeService
+    ThemeService,
+    SearchService,
+    VisitManager
   ],
   bootstrap: [AppComponent]
 })

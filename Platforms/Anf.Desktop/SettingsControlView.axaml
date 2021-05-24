@@ -59,12 +59,6 @@
                         Grid.Column="1"
                         Grid.Row="2"
                         ToolTip.Tip="加载时立即加载全部而不是被动加载(省内存省流量OvO"/>
-          <TextBlock Grid.Row="3" Text="CDN" VerticalAlignment="Center"/>
-          <ToggleSwitch Classes="control part forcehover"
-                        Margin="3,0"
-                        IsChecked="{Binding PerformaceSettings.EnableCDN,Mode=TwoWay}"
-                        Grid.Column="1"
-                        Grid.Row="3"/>
           <TextBlock Grid.Row="4" Text="本地存储" VerticalAlignment="Center"/>
           <ToggleSwitch Classes="control part forcehover"
                         Margin="3,0"

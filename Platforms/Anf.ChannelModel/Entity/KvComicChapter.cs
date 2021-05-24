@@ -6,6 +6,9 @@ namespace Anf.ChannelModel.Entity
 {
     public class KvComicChapter : WithPageChapterInfoOnly
     {
+        [Required]
+        public int Order { get; set; }
+
         [DataType(DataType.Text)]
         public string Pages { get; set; }
 

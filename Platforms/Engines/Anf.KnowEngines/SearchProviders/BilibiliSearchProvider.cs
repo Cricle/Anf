@@ -1,4 +1,5 @@
 ﻿using Anf.Engine;
+using Anf.Engine.Annotations;
 using Anf.Networks;
 #if !NETSTANDARD1_3
 using Microsoft.IO;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines.SearchProviders
 {
+    [ComicSearchProvider]
     public class BilibiliSearchProvider : ISearchProvider
     {
         private static readonly string url = "https://manga.bilibili.com/twirp/comic.v1.Comic/Search?device=pc&platform=web";

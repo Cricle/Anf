@@ -89,7 +89,4 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
-  <ItemGroup>
-    <Compile Include="..\..\Shareds\CloudflareCDNHelper.cs"></Compile>
-  </ItemGroup>
 </Project>

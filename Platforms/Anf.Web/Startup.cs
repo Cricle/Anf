@@ -25,6 +25,7 @@ using Quartz.Impl;
 using System.Threading.Tasks;
 using Quartz;
 using Anf.Web.Jobs;
+using System.Linq;
 
 namespace Anf.Web
 {
@@ -203,6 +204,12 @@ namespace Anf.Web
             });
 
             app.ApplicationServices.UseKnowEngines();
+            var eng = app.ApplicationServices.GetComicEngine();
+            var tx = eng.FirstOrDefault(x => x is TencentComicSourceCondition);
+            if (tx!=null)
+            {
+                eng.Remove(tx);
+            }
             //using (var s = app.ApplicationServices.GetServiceScope())
             //{
             //    var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();

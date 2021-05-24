@@ -1,10 +1,10 @@
 <div class="m-container">
     <div style="margin-top: 60px;margin-bottom:10px;margin-left:5%;margin-right: 5%;">
         <div>
-            <nz-input-group [nzSuffix]="this.loading?indicatorTemplateSpin:suffixIcon"
+            <nz-input-group [nzSuffix]="this.searcher.loading?indicatorTemplateSpin:suffixIcon"
                 (keydown)="searchKeydown($event)">
-                <input placeholder="Input some keywork to search" nz-input [style.disabled]="!this.loading"
-                    [(ngModel)]="keyword" (focus)="searchForce()" [nzAutocomplete]="auto" />
+                <input nzSize="large" placeholder="Input some keywork to search" nz-input [style.disabled]="!this.searcher.loading"
+                    [(ngModel)]="this.searcher.keyword" (focus)="searcher.searchForce()" [nzAutocomplete]="auto" />
             </nz-input-group>
             <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
             <ng-template #indicatorTemplateSpin>
@@ -14,16 +14,16 @@
                 <i nz-icon nzType="search" (click)="search()"></i>
             </ng-template>
             <nz-autocomplete #auto>
-                <nz-auto-option *ngFor="let option of hotSearch.datas" [nzValue]="option.address">{{ option.address }}
+                <nz-auto-option *ngFor="let option of searcher.acceptHotSearch" [nzValue]="option.address">{{ option.address }}
                 </nz-auto-option>
             </nz-autocomplete>
         </div>
-        <nz-list *ngIf="this.result">
+        <nz-list *ngIf="this.searcher.result">
             <article nz-typography style="margin-top: 20px;">
-                <h2 nz-typography>Searched <strong>{{this.searchedText}}</strong> has {{this.result.total}} results</h2>
+                <h2 nz-typography>Searched <strong>{{this.searchedText}}</strong> has {{this.searcher.result.total}} results</h2>
             </article>  
             <nz-list nzItemLayout="vertical">
-                <nz-list-item *ngFor="let item of this.result.snapshots">
+                <nz-list-item *ngFor="let item of this.searcher.result.snapshots">
                     <ng-template #resultSnapshotTitle>
                         <a [href]="item.targetUrl">{{ item.name }}</a>
                     </ng-template>

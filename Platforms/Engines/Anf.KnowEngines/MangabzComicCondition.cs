@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Anf.Engine.Annotations;
+using System;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceCondition]
     public class MangabzComicCondition : ComicSourceConditionBase<MangabzComicOperator>
     {
         public override string EngineName => "Mangabz";

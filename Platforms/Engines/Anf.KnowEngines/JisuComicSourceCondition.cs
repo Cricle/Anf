@@ -1,8 +1,10 @@
 ﻿using Anf;
+using Anf.Engine.Annotations;
 using System;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceCondition]
     public class JisuComicSourceCondition : ComicSourceConditionBase<JisuComicOperator>
     {
         public override string EngineName => ComicConst.EngineJisu;

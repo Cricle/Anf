@@ -1,4 +1,5 @@
 ﻿using Anf.Engine;
+using Anf.Engine.Annotations;
 using Anf.Networks;
 using System;
 using System.Collections.Generic;
@@ -9,14 +10,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines.ProposalProviders
 {
-    public class BilibiliProposalDescription : IProposalDescription
-    {
-        public Type ProviderType { get; } = typeof(BilibiliProposalProvider);
-
-        public string Name { get; } = "Bilibili";
-
-        public Uri DescritionUri { get; } = new Uri("https://manga.bilibili.com/");
-    }
+    [ProposalProvider]
     public class BilibiliProposalProvider : IProposalProvider
     {
         private static readonly string url = "https://manga.bilibili.com/twirp/comic.v1.Comic/HomeHot?device=pc&platform=web";

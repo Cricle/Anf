@@ -8,9 +8,11 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Web;
+using Anf.Engine.Annotations;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceProvider]
     public class DmzjComicOperator : IComicSourceProvider
     {
         private static readonly Regex regex = new Regex(@"eval\((.*?)\{.*?\}\)\)", RegexOptions.Compiled);

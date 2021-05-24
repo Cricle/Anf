@@ -90,25 +90,39 @@ namespace Anf.ResourceFetcher.Fetchers
                 }
                 var exists = await query.Select(x => x.TargetUrl).ToArrayAsync();
                 var existsHash = new HashSet<string>(exists);
-                var notExists = val.Chapters.Where(x => !existsHash.Contains(x.TargetUrl)).ToArray();
-                if (notExists.Length != 0)
+                var notExists = new List<KvComicChapter>();
+                long id = -1;
+                for (int i = 0; i < val.Chapters.Length; i++)
                 {
-                    var id = await set.AsNoTracking()
-                        .Where(x => x.ComicUrl == ctx.Url)
-                        .Select(x => x.Id)
-                        .FirstOrDefaultAsync();
-                    var chps = notExists.Select(x => new KvComicChapter
+                    var chp = val.Chapters[i];
+                    if (!existsHash.Contains(chp.TargetUrl))
                     {
-                        EnitityId = id,
-                        CreateTime = now,
-                        Title = x.Title,
-                        TargetUrl = x.TargetUrl,
-                    });
-                    await chpSet.BulkInsertAsync(chps);
+                        if (id==-1)
+                        {
+                            id = await set.AsNoTracking()
+                                .Where(x => x.ComicUrl == ctx.Url)
+                                .Select(x => x.Id)
+                                .FirstAsync();
+                        }
+                        var kvChp = new KvComicChapter
+                        {
+                            TargetUrl = chp.TargetUrl,
+                            Title = chp.Title,
+                            CreateTime = now,
+                            EnitityId = id,
+                            Order = existsHash.Count + notExists.Count + 1
+                        };
+                        notExists.Add(kvChp);
+                    }
+                }
+                if (notExists.Count != 0)
+                {
+                    await chpSet.BulkInsertAsync(notExists);
                 }
             }
             else
             {
+                var index = 1;
                 var entity = new KvComicEntity
                 {
                     ComicUrl = val.ComicUrl,
@@ -119,6 +133,7 @@ namespace Anf.ResourceFetcher.Fetchers
                     CreateTime = now,
                     Chapters = val.Chapters.Select(x => new KvComicChapter
                     {
+                        Order = index++,
                         CreateTime = now,
                         Title = x.Title,
                     }).ToArray(),
@@ -198,7 +213,7 @@ namespace Anf.ResourceFetcher.Fetchers
                     x.Name,
                     x.UpdateTime,
                     x.RefCount,
-                    Chapters = x.Chapters.Select(y => new ComicChapter
+                    Chapters = x.Chapters.OrderBy(y=>y.Order).Select(y => new ComicChapter
                     {
                         TargetUrl = y.TargetUrl,
                         Title = y.Title,
@@ -206,8 +221,8 @@ namespace Anf.ResourceFetcher.Fetchers
                 })
                 .ToArrayAsync();
             var now = DateTime.Now.Ticks;
-            return data.Where(x => (now - x.UpdateTime) >= fetchOptions.Value.DataTimeout.Ticks)
-                .Select(x=> new AnfComicEntityTruck
+            return data.Where(x => x.Chapters.Length != 0 || (now - x.UpdateTime) >= fetchOptions.Value.DataTimeout.Ticks)
+                .Select(x => new AnfComicEntityTruck
                 {
                     CreateTime = x.CreateTime,
                     RefCount = x.RefCount,

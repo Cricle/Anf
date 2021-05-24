@@ -1,0 +1,46 @@
+<nz-list>
+    <nz-list-item *ngFor="let dt of this.rank.datas">
+        <ng-container>
+            <div>
+                <nz-badge nzStandalone [nzCount]="dt.scope" [nzStyle]="{ backgroundColor: 'transparent', color: '#999', boxShadow: '0 0 0 0.8px #d9d9d9 inset' }" style="margin-right: 8px;"></nz-badge>
+                <a [routerLink]="['/visit',dt.address]">{{dt.address}}</a>
+            </div>
+            
+            <ul nz-list-item-actions style="display: inline-block;">
+                <nz-list-item-action><a (click)="loadEntity(dt)"><i nz-icon nzType="switcher"
+                    nzTheme="outline"></i></a></nz-list-item-action>
+            </ul>
+        </ng-container>
+    </nz-list-item>
+</nz-list>
+<nz-drawer [nzBodyStyle]="{ overflow: 'auto' }" [nzMaskClosable]="true" [nzWidth]="drawerWidth"
+    [(nzVisible)]="showVisit" [nzTitle]="this.visitComic?.name" (nzOnClose)="close()">
+    <nz-spin nzSimple [nzIndicator]="indicatorTemplate" [nzSpinning]='loadingVisit'>
+    </nz-spin>
+    <div *ngIf="this.visitComic&&!loadingVisit">
+        <article nz-typography>
+            <h1 nz-typography><a>{{this.visitComic.name}}</a></h1>
+            <p nz-typography nzEllipsis nzExpandable [nzEllipsisRows]="4">
+                {{this.visitComic.descript}}
+            </p>
+            <h2>Chapters ({{this.visitComic.chapters.length}})</h2>
+        </article>
+        <nz-list>
+            <nz-list-item *ngFor="let dt of this.visitComic.chapters;let index=index">
+                <ng-container>
+                    <div>
+                        <a [routerLink]="['/visit',this.visitComic.comicUrl]" [queryParams]="{c:index}">{{dt.title}}</a>
+                    </div>
+                    <div>
+                        <ul nz-list-item-actions>
+                            <nz-list-item-action>
+                                <input nz-input [(ngModel)]="dt.targetUrl" readonly="true" />
+                            </nz-list-item-action>
+                        </ul>
+                    </div>
+                </ng-container>
+            </nz-list-item>
+        </nz-list>
+    </div>
+</nz-drawer>
+<ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>

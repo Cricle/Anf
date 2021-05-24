@@ -1,9 +1,11 @@
-﻿using System;
+﻿using Anf.Engine.Annotations;
+using System;
 using System.Collections.Generic;
 using System.Text;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceCondition]
     public class BilibiliComicSourceCondition : ComicSourceConditionBase<BilibiliComicOperator>
     {
         public override string EngineName => "Bilibili";

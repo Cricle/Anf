@@ -1,4 +1,5 @@
-﻿using Anf.Networks;
+﻿using Anf.Engine.Annotations;
+using Anf.Networks;
 using HtmlAgilityPack;
 using System;
 using System.Collections.Generic;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines.SearchProviders
 {
+    [ComicSearchProvider]
     public class Dm5SearchProvider : ISearchProvider
     {
         private static readonly string url = "http://www.dm5.com/search?title={0}&language=1";
