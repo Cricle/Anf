@@ -23,11 +23,7 @@
     <ProjectReference Include="..\..\..\Anf.Platform\Anf.Platform.csproj" />
     <ProjectReference Include="..\..\..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\..\..\Shareds\CloudflareCDNHelper.cs"></Compile>
-  </ItemGroup>
-
+  
   <ItemGroup>
     <EmbeddedResource Update="Views\BookshelfPage.xaml">
       <Generator>MSBuild:UpdateDesignTimeXaml</Generator>
