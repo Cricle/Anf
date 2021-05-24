@@ -1,5 +1,4 @@
-﻿using Anf.CDN;
-using Anf.Easy.Visiting;
+﻿using Anf.Easy.Visiting;
 using Anf.Phone.Settings;
 using Anf.Platform;
 using Anf.Platform.Services;
@@ -17,11 +16,6 @@ namespace Anf.Phone.Services
             anfSettings = AppEngine.GetRequiredService<AnfSettings>();
         }
         private readonly AnfSettings anfSettings;
-        public override bool EnableCDNCache { get => anfSettings.Performace.EnableCDN; set => anfSettings.Performace.EnableCDN = value; }
         public override bool UseStore { get => anfSettings.Performace.UseStore; set => anfSettings.Performace.UseStore = value; }
-        protected override CloudflareCDNCacheFetcher GetCDNFetcher()
-        {
-            return CloudflareCDNController.GetChapterCDN();
-        }
     }
 }
