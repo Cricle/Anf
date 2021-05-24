@@ -1,7 +1,7 @@
 export interface Result {
-    code: number;
-    msg: string;
-    succeed: boolean;
+    code?: number;
+    msg?: string;
+    succeed?: boolean;
 }
 
 export interface EntityResult<T> extends Result {
@@ -10,8 +10,8 @@ export interface EntityResult<T> extends Result {
 export interface EntitySetResult<T> extends Result {
     datas: T;
     total: number;
-    skip: number | null;
-    take: number | null;
+    skip?: number;
+    take?: number;
 }
 export interface SetResult<T> extends EntitySetResult<T[]> {
 

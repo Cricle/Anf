@@ -1,4 +1,5 @@
-﻿using Anf.Networks;
+﻿using Anf.Engine.Annotations;
+using Anf.Networks;
 using HtmlAgilityPack;
 using JavaScriptEngineSwitcher.Core;
 using Jint.Native.Array;
@@ -16,6 +17,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceProvider]
     public class BilibiliComicOperator : IComicSourceProvider
     {
         private static readonly string detailUri = "https://manga.bilibili.com/twirp/comic.v1.Comic/ComicDetail?device=pc&platform=web";

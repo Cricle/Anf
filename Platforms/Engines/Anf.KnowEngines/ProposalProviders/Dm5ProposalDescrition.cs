@@ -1,8 +1,10 @@
 ﻿using Anf.Engine;
+using Anf.Engine.Annotations;
 using System;
 
 namespace Anf.KnowEngines.ProposalProviders
 {
+    [ProposalDescription]
     public class Dm5ProposalDescrition : IProposalDescription
     {
         public Type ProviderType { get; }= typeof(Dm5ProposalProvider);

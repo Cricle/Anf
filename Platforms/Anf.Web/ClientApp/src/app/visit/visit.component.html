@@ -22,6 +22,7 @@
                         If this is error result, you can click <a [href]="this.entity.comicUrl" target="_blank">me</a> to origin website.
                     </h4>
                 </div>
+                <h4 *ngIf="this.visitPos!=null&&this.visitIndex!=this.chapter nz-typography">Found last visited at {{this.visitIndex+1}} click <a (click)="this.loadChapter(this.visitIndex);this.visitPos=null">me</a> to go. <a (click)="this.visitPos=null">got it</a></h4>
             </article>
         </div>
         <div *ngIf="this.wcp" style="margin-left: 8px;margin-right: 8px;">

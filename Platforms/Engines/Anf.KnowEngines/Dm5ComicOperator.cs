@@ -10,9 +10,11 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Anf.Engine.Annotations;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceProvider]
     public class Dm5ComicOperator : IComicSourceProvider
     {
         private static readonly Regex cidRegex = new Regex(@"var DM5_CID=(.*)?;", RegexOptions.Compiled);

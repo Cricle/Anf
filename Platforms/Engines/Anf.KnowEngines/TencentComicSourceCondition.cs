@@ -1,4 +1,5 @@
 ﻿using Anf;
+using Anf.Engine.Annotations;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceCondition]
     public class TencentComicSourceCondition : ComicSourceConditionBase<TencentComicOperator>
     {
         public override string EngineName => "Tencent";
