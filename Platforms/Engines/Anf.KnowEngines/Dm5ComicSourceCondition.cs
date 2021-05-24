@@ -1,8 +1,9 @@
 ﻿using Anf;
-
+using Anf.Engine.Annotations;
 using System;
 namespace Anf.KnowEngines
 {
+    [ComicSourceCondition]
     public class Dm5ComicSourceCondition : ComicSourceConditionBase<Dm5ComicOperator>
     {
         public override string EngineName => ComicConst.EngineDM5;

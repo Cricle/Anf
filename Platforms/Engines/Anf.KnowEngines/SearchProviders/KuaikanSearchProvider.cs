@@ -1,4 +1,5 @@
-﻿using Anf.Networks;
+﻿using Anf.Engine.Annotations;
+using Anf.Networks;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines.SearchProviders
 {
+    [ComicSearchProvider]
     public class KuaikanSearchProvider : ISearchProvider
     {
         private readonly static string url = "https://www.kuaikanmanhua.com/v1/search/topic?q={0}&f={1}&size={2}";

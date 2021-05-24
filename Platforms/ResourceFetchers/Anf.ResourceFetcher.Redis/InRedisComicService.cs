@@ -35,7 +35,7 @@ namespace Anf.ResourceFetcher.Redis
             var map = entries.ToDictionary();
             T Find<T>(string name)
             {
-                if (map.TryGetValue(name,out var val))
+                if (map.TryGetValue(name, out var val))
                 {
                     return val.Get<T>();
                 }
@@ -116,13 +116,13 @@ namespace Anf.ResourceFetcher.Redis
         public Task UpdateEntityAsync(IEnumerable<AnfComicEntityTruck> values)
         {
             var batch = redisDatabase.CreateBatch();
-            var tasks = new List<Task>(2*values.Count() + values.Sum(x=>x.Chapters.Length));
+            var tasks = new List<Task>(2 * values.Count() + values.Sum(x => x.Chapters.Length));
             foreach (var value in values)
             {
                 var key = RedisKeyGenerator.Concat(EntityKey, value.ComicUrl);
                 var hashs = AsHash(value);
                 tasks.Add(batch.HashSetAsync(key, hashs));
-                tasks.Add(batch.KeyExpireAsync(key, fetchOptions.Value.CacheTimeout));
+                tasks.Add(batch.KeyExpireAsync(key, value.Chapters.Length == 0 ? TimeSpan.FromSeconds(5) : fetchOptions.Value.CacheTimeout));
                 foreach (var item in value.Chapters)
                 {
                     var mkey = RedisKeyGenerator.Concat(ChapterMapKey, item.TargetUrl);
@@ -142,7 +142,6 @@ namespace Anf.ResourceFetcher.Redis
             var tasks = new List<Task>(values.Count() * 2);
             foreach (var value in values)
             {
-
                 var key = RedisKeyGenerator.Concat(ChapterKey, value.TargetUrl);
                 var hashs = AsHash(value);
                 tasks.Add(batch.HashSetAsync(key, hashs));
@@ -157,7 +156,7 @@ namespace Anf.ResourceFetcher.Redis
         }
         public async Task<AnfComicEntityTruck[]> BatchGetEntityAsync(string[] urls)
         {
-            if (urls.Length==0)
+            if (urls.Length == 0)
             {
                 return Array.Empty<AnfComicEntityTruck>();
             }

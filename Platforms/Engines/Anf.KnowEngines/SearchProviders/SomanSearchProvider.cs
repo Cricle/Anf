@@ -5,9 +5,11 @@ using System.IO;
 using System.Threading.Tasks;
 using System.Linq;
 using Anf;
+using Anf.Engine.Annotations;
 
 namespace Anf.KnowEngines.SearchProviders
 {
+    [ComicSearchProvider]
     public class SomanSearchProvider : ISearchProvider
     {
         public const string SeachUrl = "https://api.soman.com/soman.ashx?action=getsomancomics2&pageindex={0}&pagesize={1}&keyword={2}";

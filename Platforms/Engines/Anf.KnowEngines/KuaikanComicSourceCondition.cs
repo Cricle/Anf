@@ -1,8 +1,10 @@
 ﻿using Anf;
+using Anf.Engine.Annotations;
 using System;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceCondition]
     public class KuaikanComicSourceCondition : ComicSourceConditionBase<KuaikanComicOperator>
     {
         public override string EngineName => ComicConst.EngineKuaiKan;

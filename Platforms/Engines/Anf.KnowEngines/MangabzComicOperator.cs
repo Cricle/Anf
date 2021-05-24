@@ -1,4 +1,5 @@
-﻿using Anf.Networks;
+﻿using Anf.Engine.Annotations;
+using Anf.Networks;
 using HtmlAgilityPack;
 using JavaScriptEngineSwitcher.Core;
 using Jint.Native.Array;
@@ -12,6 +13,7 @@ using System.Threading.Tasks;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceProvider]
     public class MangabzComicOperator : IComicSourceProvider
     {
         private static readonly Regex cidRegex = new Regex(@"var MANGABZ_CID=(.*)?;", RegexOptions.Compiled);

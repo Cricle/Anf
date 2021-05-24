@@ -11,9 +11,11 @@ using System.IO;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Anf.Engine.Annotations;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceProvider]
     public class TencentComicOperator : IComicSourceProvider
     {
         private static Regex dataRegex = new Regex(@"var ?DATA ?= ?'(.+)',", RegexOptions.Compiled);

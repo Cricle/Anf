@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 
-enum ThemeType {
+export enum ThemeType {
   dark = 'dark',
   default = 'default',
   followSystem = 'followSystem'
@@ -53,7 +53,7 @@ export class ThemeService {
   }
 
   private reverseTheme(theme: string): ThemeType {
-    if (this.currentTheme==ThemeType.followSystem) {
+    if (this.currentTheme == ThemeType.followSystem) {
       return ThemeType.followSystem;
     }
     return theme === ThemeType.dark ? ThemeType.default : ThemeType.dark;
@@ -117,7 +117,23 @@ export class ThemeService {
     }
   }
   public toggleTheme(): Promise<Event> {
+    if(this.currentTheme==ThemeType.followSystem){
+      this.currentTheme=ThemeType.default;
+    }
     this.currentTheme = this.reverseTheme(this.currentTheme);
     return this.loadTheme(false);
+  }
+  public switchTo(type: ThemeType) {
+    this.currentTheme = type;
+    return this.loadTheme(false);
+  }
+  public switchToDark() {
+    this.switchTo(ThemeType.dark);
+  } 
+  public switchToLight() {
+    this.switchTo(ThemeType.default);
+  }
+   public switchToSystem() {
+    this.switchTo(ThemeType.followSystem);
   }
 }

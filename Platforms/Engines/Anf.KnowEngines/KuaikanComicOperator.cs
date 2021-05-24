@@ -10,9 +10,11 @@ using System.Net;
 using System.Net.Http;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using Anf.Engine.Annotations;
 
 namespace Anf.KnowEngines
 {
+    [ComicSourceProvider]
     public class KuaikanComicOperator : IComicSourceProvider
     {
         private static readonly Regex regex = new Regex(@"<script>window.__NUXT__=(.*)?;</script>", RegexOptions.Compiled);
