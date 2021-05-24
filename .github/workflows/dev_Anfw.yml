@@ -22,10 +22,10 @@ jobs:
         dotnet-version: '5.0.x'
 
     - name: Build with dotnet
-      run: dotnet build "Platforms\Anf.Web\Anf.Web.csproj" --configuration Release
-
+      run: dotnet build "Platforms\Anf.Web\Anf.Web.csproj" -c Release
+      
     - name: dotnet publish
-      run: dotnet publish "Platforms\Anf.Web\Anf.Web.csproj" /p:PublishReadyToRun=true -r linux-x64 -c Release -o ${{env.DOTNET_ROOT}}/myapp
+      run: dotnet publish "Platforms\Anf.Web\Anf.Web.csproj" -r linux-x64 /p:PublishReadyToRun=true -c Release -o ${{env.DOTNET_ROOT}}/myapp
 
     - name: Upload artifact for deployment job
       uses: actions/upload-artifact@v2
@@ -52,5 +52,5 @@ jobs:
       with:
         app-name: 'Anfw'
         slot-name: 'production'
-        publish-profile: ${{ secrets.AZURE_PUBLISH }}
+        publish-profile: ${{ secrets.AzureAppService_PublishProfile_d91020b57cde40e68614fb812302c274 }}
         package: .
