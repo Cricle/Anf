@@ -12,19 +12,20 @@ namespace Anf.Desktop.Converters
 {
     public class StartupTypeStringConverter : IValueConverter
     {
-        private static IReadOnlyDictionary<StartupTypes, string> nameForModels = new Dictionary<StartupTypes, string>
+        public static IReadOnlyCollection<StartupTypes> IncludeTypes = Enum.GetValues(typeof(StartupTypes)).OfType<StartupTypes>().ToArray();
+        public static IReadOnlyDictionary<StartupTypes, string> NameForModels = new Dictionary<StartupTypes, string>
         {
             [StartupTypes.None] = "空白",
             [StartupTypes.Proposal] = "推介",
             [StartupTypes.Providers] = "提供者"
         };
-        private static IReadOnlyDictionary<string, StartupTypes> modelForNames = nameForModels.ToDictionary(x => x.Value, x => x.Key);
+        private static IReadOnlyDictionary<string, StartupTypes> modelForNames = NameForModels.ToDictionary(x => x.Value, x => x.Key);
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is StartupTypes type)
             {
-                return nameForModels[type];
+                return NameForModels[type];
             }
             return null;
         }
@@ -36,6 +37,7 @@ namespace Anf.Desktop.Converters
                 return modelForNames[str];
             }
             return null;
+
         }
     }
     public class StartupTypeBoolConverter : IValueConverter

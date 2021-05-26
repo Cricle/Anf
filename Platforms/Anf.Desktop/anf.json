@@ -13,7 +13,7 @@
   },
   "Startup": {
     "StartupType": "Providers",
-    "DisplayProposalCount": "10"
+    "DisplayProposalCount": "20"
   },
   "Performace": {
     "EnableCDN": "False",

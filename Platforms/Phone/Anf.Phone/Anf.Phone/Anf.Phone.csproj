@@ -6,9 +6,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Ao.SavableConfig" Version="2.2.3" />
-    <PackageReference Include="Ao.SavableConfig.Binder" Version="2.2.3" />
-    <PackageReference Include="Ao.SavableConfig.Json" Version="2.2.3" />
+    <PackageReference Include="Ao.SavableConfig" Version="2.3.0" />
+    <PackageReference Include="Ao.SavableConfig.Binder" Version="2.3.0" />
+    <PackageReference Include="Ao.SavableConfig.Json" Version="2.3.0" />
     <PackageReference Include="Xamarin.Essentials" Version="1.6.1" />
     <PackageReference Include="Xamarin.Forms" Version="5.0.0.2012" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
