@@ -8,12 +8,17 @@
 
 <div align='center'>
 
-[![](https://img.shields.io/appveyor/build/Cricle/Anf)](https://github.com/Cricle/Anf)
 [![codecov](https://codecov.io/gh/Cricle/Anf/branch/dev/graph/badge.svg?token=XMIT1MFLDZ)](https://codecov.io/gh/Cricle/Anf)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/a2248df890a242b081e6719bb795f6c6)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Cricle/Anf&amp;utm_campaign=Badge_Grade)
-[![Code Climate issues](https://img.shields.io/codeclimate/issues/Cricle/Anf)](https://github.com/Cricle/Anf)
-[![Build Status](https://hcricle.visualstudio.com/Kw.Comic/_apis/build/status/Cricle.Anf?branchName=dev)](https://hcricle.visualstudio.com/Kw.Comic/_build/latest?definitionId=7&branchName=dev)
+
 </div>
+
+# Build Status
+
+|Provider|Status|
+|:-:|:-|
+|Github|[![.NET](https://github.com/Cricle/Anf/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.yml)|
+|Azure Pipelines|[![Build Status](https://hcricle.visualstudio.com/Kw.Comic/_apis/build/status/Cricle.Anf?branchName=dev)](https://hcricle.visualstudio.com/Kw.Comic/_build/latest?definitionId=7&branchName=dev)|
 
 # What is this
 
