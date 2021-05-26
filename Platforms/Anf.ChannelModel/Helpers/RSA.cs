@@ -15,7 +15,7 @@ namespace Anf.ChannelModel.Helpers
 {
     public partial class RSA
     {
-        private static readonly Encoding Encoding_UTF8 = Encoding.UTF8;
+        private static readonly Encoding UTF8 = Encoding.UTF8;
 
         public RSAKey GetKey(int keyLen = 1024)
         {
@@ -83,7 +83,7 @@ namespace Anf.ChannelModel.Helpers
             var engine = new Pkcs1Encoding(new RsaEngine());
 
             engine.Init(true, GetPrivateKeyParameter(privateKey));
-            var byteData = Encoding_UTF8.GetBytes(data);
+            var byteData = UTF8.GetBytes(data);
             var ResultData = engine.ProcessBlock(byteData, 0, byteData.Length);
             return Convert.ToBase64String(ResultData);
         }
@@ -103,7 +103,7 @@ namespace Anf.ChannelModel.Helpers
             engine.Init(false, GetPrivateKeyParameter(privateKey));
             byte[] byteData = Convert.FromBase64String(data);
             var ResultData = engine.ProcessBlock(byteData, 0, byteData.Length);
-            return Encoding_UTF8.GetString(ResultData);
+            return UTF8.GetString(ResultData);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Anf.ChannelModel.Helpers
             var engine = new Pkcs1Encoding(new RsaEngine());
 
             engine.Init(true, GetPublicKeyParameter(publicKey));
-            byte[] byteData = Encoding_UTF8.GetBytes(data);
+            byte[] byteData = UTF8.GetBytes(data);
             var ResultData = engine.ProcessBlock(byteData, 0, byteData.Length);
             return Convert.ToBase64String(ResultData);
         }
@@ -136,9 +136,9 @@ namespace Anf.ChannelModel.Helpers
             var engine = new Pkcs1Encoding(new RsaEngine());
 
             engine.Init(false, GetPublicKeyParameter(publicKey));
-            byte[] byteData = Convert.FromBase64String(data);
+            var byteData = Convert.FromBase64String(data);
             var ResultData = engine.ProcessBlock(byteData, 0, byteData.Length);
-            return Encoding_UTF8.GetString(ResultData);
+            return UTF8.GetString(ResultData);
         }
     }
 }

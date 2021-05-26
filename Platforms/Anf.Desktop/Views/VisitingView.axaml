@@ -25,6 +25,7 @@
     <ContextMenu x:Key="ControlMenu">
       <MenuItem Header="{Binding DataContext.CurrentChapter.Title,ElementName=Rep}" IsEnabled="False"/>
       <MenuItem Header="复制">
+        <MenuItem Header="名字" Command="{Binding DataContext.CopyTitleCommand,ElementName=Rep,Mode=OneTime}"/>
         <MenuItem Header="实体" Command="{Binding DataContext.CopyComicEntityCommand,ElementName=Rep,Mode=OneTime}"/>
         <MenuItem Header="地址" Command="{Binding DataContext.CopyComicCommand,ElementName=Rep,Mode=OneTime}"/>
         <MenuItem Header="章节" Command="{Binding DataContext.CopyChapterCommand,ElementName=Rep,Mode=OneTime}"/>

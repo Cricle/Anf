@@ -6,7 +6,7 @@
     <UseD2D>true</UseD2D>
     <EnableCache>true</EnableCache>
     <ApplicationIcon>..\..\assets\Anf.ico</ApplicationIcon>
-    <MSIXBuild>true</MSIXBuild>
+    <MSIXBuild>false</MSIXBuild>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSIXBuild)'!='true'">
     <TargetFrameworks>net472;net5.0;</TargetFrameworks>
@@ -29,9 +29,9 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Ao.SavableConfig" Version="2.2.3" />
-    <PackageReference Include="Ao.SavableConfig.Binder" Version="2.2.3" />
-    <PackageReference Include="Ao.SavableConfig.Json" Version="2.2.3" />
+    <PackageReference Include="Ao.SavableConfig" Version="2.3.0" />
+    <PackageReference Include="Ao.SavableConfig.Binder" Version="2.3.0" />
+    <PackageReference Include="Ao.SavableConfig.Json" Version="2.3.0" />
     <PackageReference Include="Avalonia" Version="0.10.4" />
     <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.4.0" />
     <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
@@ -41,6 +41,7 @@
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.2" />
+    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseFody)'=='true'">
     <PackageReference Include="Costura.Fody" Version="5.1.0">

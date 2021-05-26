@@ -1,10 +1,14 @@
 ﻿using Anf.Engine;
 using Anf.Engine.Annotations;
 using Anf.Networks;
+#if !NETSTANDARD1_3
+using Microsoft.IO;
+#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -13,36 +17,57 @@ namespace Anf.KnowEngines.ProposalProviders
     [ProposalProvider]
     public class BilibiliProposalProvider : IProposalProvider
     {
-        private static readonly string url = "https://manga.bilibili.com/twirp/comic.v1.Comic/HomeHot?device=pc&platform=web";
+        private static readonly string url = "https://manga.bilibili.com/twirp/comic.v1.Comic/HomeRecommend?device=pc&platform=web";
         public string EngineName => "Bilibili";
 
         private readonly INetworkAdapter networkAdapter;
-
+#if NETSTANDARD1_3
         public BilibiliProposalProvider(INetworkAdapter networkAdapter)
         {
             this.networkAdapter = networkAdapter;
         }
+#else
+        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
 
-        protected virtual Task<Stream> GetStreamAsync(string address, string method = null)
+        public BilibiliProposalProvider(INetworkAdapter networkAdapter,
+            RecyclableMemoryStreamManager recyclableMemoryStreamManager)
         {
-            return networkAdapter.GetStreamAsync(new RequestSettings
-            {
-                Address = address,
-                Referrer = "https://manga.bilibili.com/",
-                Method = method
-            });
+            this.recyclableMemoryStreamManager = recyclableMemoryStreamManager;
+            this.networkAdapter = networkAdapter;
         }
+#endif
+
         public async Task<ComicSnapshot[]> GetProposalAsync(int take)
         {
-            var datas = await GetStreamAsync(url, "post");
             var str = string.Empty;
-            using (var sr = new StreamReader(datas))
+#if NETSTANDARD1_3
+            using(var mem=new MemoryStream())
+#else
+            using(var mem= recyclableMemoryStreamManager.GetStream())
+#endif
             {
-                str = sr.ReadToEnd();
+                var buffer = Encoding.UTF8.GetBytes("{\"page_num\":4,\"seed\":\"0\"}");
+                mem.Write(buffer,0,buffer.Length);
+                mem.Seek(0, SeekOrigin.Begin);
+                var datas = await networkAdapter.GetStreamAsync(new RequestSettings
+                {
+                    Address = url,
+                    Referrer = "https://manga.bilibili.com/",
+                    Method = "POST",
+                    Data = mem,
+                    Headers = new Dictionary<string, string>(1)
+                    {
+                        ["Content-Type"] = "application/json"
+                    }
+                });
+                using (var sr = new StreamReader(datas))
+                {
+                    str = sr.ReadToEnd();
+                }
             }
             using (var doc = JsonVisitor.FromString(str))
             {
-                var dataTk = doc["data"].ToArray().ToArray();
+                var dataTk = doc["data"]["list"].ToArray().ToArray();
                 var sns = new List<ComicSnapshot>(dataTk.Length);
                 for (int i = 0; i < dataTk.Length; i++)
                 {
@@ -51,7 +76,7 @@ namespace Anf.KnowEngines.ProposalProviders
                         break;
                     }
                     var tk = dataTk[i];
-                    var authTk = tk["author"].ToArray();
+                    var authTk = tk["authors"]?.ToArray();
                     var title = tk["title"]?.ToString();
                     var id = tk["comic_id"]?.ToString();
                     var conver = tk["vertical_cover"]?.ToString();

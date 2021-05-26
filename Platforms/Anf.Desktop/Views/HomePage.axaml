@@ -15,6 +15,7 @@
     <vm:AvalonHomeViewModel></vm:AvalonHomeViewModel>
   </Design.DataContext>
   <UserControl.Resources>
+    <conv:StartupTypeStringConverter x:Key="StartupTypeStringConverter"/>
     <conv:SearchProviderConverter x:Key="SearchProviderConverter"/>
     <conv:StartupTypeBoolConverter x:Key="StartupTypeBoolConverter"/>
     <DataTemplate x:Key="CsiDt">
@@ -27,6 +28,7 @@
             <MenuItem Header="-" IsEnabled="False"/>
             <MenuItem Header="复制">
               <MenuItem Header="标题" Command="{Binding DataContext.CopyCommand,ElementName=HomePg}" CommandParameter="{Binding Snapshot.Name}"/>
+              <MenuItem Header="封面" Command="{Binding DataContext.CopyCommand,ElementName=HomePg}" CommandParameter="{Binding Snapshot.ImageUri}"/>
             </MenuItem>
           </ContextMenu>
         </Grid.ContextMenu>
@@ -160,13 +162,18 @@
         </Grid>
         <Grid HorizontalAlignment="Stretch"
               VerticalAlignment="Center"
+              Margin="16,0"
               IsVisible="{Binding StartupSettings.StartupType,ConverterParameter={x:Static s:StartupTypes.Proposal}, Converter={StaticResource StartupTypeBoolConverter}}">
           <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
           </Grid.RowDefinitions>
-          <Border HorizontalAlignment="Left"
-                  VerticalAlignment="Center">
+          <StackPanel HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Orientation="Horizontal"
+                      Grid.Row="1">
+            <TextBlock VerticalAlignment="Center" Margin="0,0,8,0">推介引擎</TextBlock>
             <ComboBox SelectedIndex="0"
                       Items="{Binding ProposalEngine}"
                       SelectedItem="{Binding SelectedProposal,Mode=TwoWay}">
@@ -176,18 +183,18 @@
                 </DataTemplate>
               </ComboBox.ItemTemplate>
             </ComboBox>
-          </Border>
+          </StackPanel>
           <StackPanel IsVisible="{Binding ProposalLoading}"
                       Orientation="Vertical"
-                      Grid.Row="1"
+                      Grid.Row="2"
                       VerticalAlignment="Center"
                       HorizontalAlignment="Center">
             <ProgressBar IsIndeterminate="{Binding ProposalLoading}" MaxWidth="200"/>
             <TextBlock>正在加载推介</TextBlock>
           </StackPanel>
-          <Border IsVisible="{Binding ProposalLoading,Converter={StaticResource RevBoolConverter}}">
-            <ScrollViewer Grid.Row="3"
-                          HorizontalScrollBarVisibility="Auto"
+          <Border Grid.Row="2"
+                  IsVisible="{Binding ProposalLoading,Converter={StaticResource RevBoolConverter}}">
+            <ScrollViewer HorizontalScrollBarVisibility="Auto"
                           Margin="0,20,0,0">
               <ListBox Background="{x:Null}"
                        Items="{Binding ProposalSnapshots}"
@@ -203,8 +210,19 @@
               </ListBox>
             </ScrollViewer>
           </Border>
-
         </Grid>
+        <Border HorizontalAlignment="Left" 
+                VerticalAlignment="Bottom"
+                Margin="8,0,0,8">
+          <ComboBox SelectedItem="{Binding StartupSettings.StartupType}"
+                    Items="{x:Static conv:StartupTypeStringConverter.IncludeTypes}">
+            <ComboBox.ItemTemplate>
+              <DataTemplate>
+                <TextBlock Text="{Binding Converter={StaticResource StartupTypeStringConverter}}"></TextBlock>
+              </DataTemplate>
+            </ComboBox.ItemTemplate>
+          </ComboBox>
+        </Border>
       </Grid>
     </Grid>
     <Grid Grid.Row="3"

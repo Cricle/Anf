@@ -58,7 +58,7 @@ namespace Anf.Web
             {
                 configuration.RootPath = "ClientApp/dist";
             });
-            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTS_CONNECTIONSTRING"]);
+            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTSCONNECTIONSTRING"]);
             services.AddSignalR()
                 .AddAzureSignalR();
             services.AddDbContext<AnfDbContext>((x, y) =>
