@@ -100,16 +100,16 @@ namespace Anf.Desktop
             var root = provider.GetRequiredService<SavableConfigurationRoot>();
             var instType = ProxyHelper.Default.CreateComplexProxy<AnfSettings>(true);
             var inst = (AnfSettings)instType.Build(root);
-            var disposable = root.BindTwoWay(inst, JsonChangeTransferCondition.Instance);
+            _ = root.BindTwoWay(inst, JsonChangeTransferCondition.Instance);
             return inst;
         }
 
         private SavableConfigurationRoot BuildConfiguration()
         {
-            var configBuilder = new SavableConfiurationBuilder();
+            var configBuilder = new ConfigurationBuilder();
             configBuilder.SetBasePath(Workstation);
             configBuilder.AddJsonFile(XComicConst.SettingFileFolder, true, true);
-            return configBuilder.Build();
+            return configBuilder.BuildSavable();
         }
 
         public override void OnFrameworkInitializationCompleted()

@@ -12,6 +12,7 @@ using Anf.Engine;
 using Anf.Platform.Settings;
 using Anf.Platform.Models.Impl;
 using Anf.Networks;
+using System.Linq;
 
 namespace Anf.Desktop.ViewModels
 {
@@ -61,6 +62,10 @@ namespace Anf.Desktop.ViewModels
             {
                 case StartupTypes.Proposal:
                     ProposalSnapshots.Clear();
+                    if (SelectedProposal is null)
+                    {
+                        SelectedProposal = ProposalEngine.FirstOrDefault();
+                    }
                     await UpdateProposalAsync(StartupSettings.DisplayProposalCount);
                     break;
                 case StartupTypes.Providers:

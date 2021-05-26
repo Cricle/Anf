@@ -67,6 +67,13 @@ namespace Anf.ViewModels
         private bool hasAvaliableCondition;
         private bool proposalLoading;
         private IProposalDescription selectedProposal;
+        private bool hasSelectedProposal;
+
+        public bool HasSelectedProposal
+        {
+            get { return hasSelectedProposal; }
+            private set => Set(ref hasSelectedProposal, value);
+        }
 
         public IProposalDescription SelectedProposal
         {
@@ -79,6 +86,7 @@ namespace Anf.ViewModels
                 {
                     OnSelectedProposalChanged(value);
                 }
+                HasSelectedProposal = value != null;
             }
         }
         

@@ -225,6 +225,7 @@ namespace Anf.ViewModels
 
         public RelayCommand OpenComicCommand { get; protected set; }
         public RelayCommand OpenChapterCommand { get; protected set; }
+        public RelayCommand CopyTitleCommand { get; protected set; }
         public RelayCommand CopyComicCommand { get; protected set; }
         public RelayCommand CopyChapterCommand { get; protected set; }
         public RelayCommand CopyComicEntityCommand { get; protected set; }
@@ -253,6 +254,10 @@ namespace Anf.ViewModels
         public void CopyComic()
         {
             PlatformService.Copy(ComicEntity.ComicUrl);
+        }
+        public void CopyTitle()
+        {
+            PlatformService.Copy(ComicEntity.Name);
         }
         public void CopyComicEntity()
         {
@@ -440,6 +445,7 @@ namespace Anf.ViewModels
 
             OpenComicCommand = new RelayCommand(() => _ = OpenComicAsync());
             OpenChapterCommand = new RelayCommand(() => _ = OpenChapterAsync());
+            CopyTitleCommand = new RelayCommand(CopyTitle);
             CopyComicCommand = new RelayCommand(CopyComic);
             CopyComicEntityCommand = new RelayCommand(CopyComicEntity);
             CopyChapterCommand = new RelayCommand(CopyChapter);
