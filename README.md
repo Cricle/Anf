@@ -15,10 +15,23 @@
 
 # Build Status
 
+|Build Info|Status|
+|:-:|:-|
+|Web Linux|[![.NET Build Web Linux](https://github.com/Cricle/Anf/actions/workflows/dotnet.web.linux.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.web.linux.yml)|
+|Web Windows|[![.NET Build Web windows](https://github.com/Cricle/Anf/actions/workflows/dotnet.web.windows.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.web.windows.yml)|
+|Desktop Linux|[![.NET Build Linux](https://github.com/Cricle/Anf/actions/workflows/dotnet.desktop.linux.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.desktop.linux.yml)|
+|Desktop Windows|[![.NET Build Windows](https://github.com/Cricle/Anf/actions/workflows/dotnet.desktop.windows.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.desktop.windows.yml)|
+|Azure Pipelines|[![Build Status](https://hcricle.visualstudio.com/Kw.Comic/_apis/build/status/Cricle.Anf?branchName=dev)](https://hcricle.visualstudio.com/Kw.Comic/_build/latest?definitionId=7&branchName=dev)|
+
+# Test Status
+
 |Provider|Status|
 |:-:|:-|
-|Github|[![.NET](https://github.com/Cricle/Anf/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.yml)|
-|Azure Pipelines|[![Build Status](https://hcricle.visualstudio.com/Kw.Comic/_apis/build/status/Cricle.Anf?branchName=dev)](https://hcricle.visualstudio.com/Kw.Comic/_build/latest?definitionId=7&branchName=dev)|
+|Github|[![.NET Test](https://github.com/Cricle/Anf/actions/workflows/dotnet.test.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.test.yml)|
+
+# Publish Status
+
+[![Build and deploy ASP.Net Core app to Azure Web App - Anfw](https://github.com/Cricle/Anf/actions/workflows/azure_dev.yml/badge.svg)](https://anf.azureedge.net/)
 
 # What is this
 

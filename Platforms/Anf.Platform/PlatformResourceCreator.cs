@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace Anf.Platform
 {
-    public class PlatformResourceCreator<TImage>: IResourceFactory<TImage>
+    public class PlatformResourceCreator<TResource,TImage> : IResourceFactory<TImage>
     {
 
         private readonly IComicSourceProvider provider;
@@ -27,7 +27,7 @@ namespace Anf.Platform
         {
             if (EnableCache)
             {
-                var bitmap = await StoreFetchHelper.GetOrFromCacheAsync<TImage>(address, () => provider.GetImageStreamAsync(address));
+                var bitmap = await StoreFetchHelper.GetOrFromCacheAsync<TResource,TImage>(address, () => provider.GetImageStreamAsync(address));
                 return bitmap;
             }
             else

@@ -241,6 +241,13 @@ namespace Anf.WebService
             }
             return res;
         }
+        public Task<AnfBookshelf> GetBookshelfAndItemsAsync(long id)
+        {
+            return dbContext.Bookshelves.AsNoTracking()
+                .Where(x => x.Id == id)
+                .Include(x => x.Items)
+                .FirstOrDefaultAsync();
+        }
         public async Task<AnfBookshelf> GetBookshelfAsync(long id)
         {
             var res = await GetBookshelfFromCahceAsync(id);

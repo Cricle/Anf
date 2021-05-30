@@ -175,13 +175,11 @@ namespace Anf.Web
             {
                 builder.MapHub<ReadingHub>("/hubs/v1/reading");
             });
-#if DEBUG
             app.UseSwagger();
             app.UseSwaggerUI(c =>
             {
                 c.SwaggerEndpoint("/swagger/Anf/swagger.json", "Anf API");
             });
-#endif
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

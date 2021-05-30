@@ -1,0 +1,23 @@
+name: .NET Build Web Linux
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 5.0.x
+    - name: Restore dependencies
+      run: dotnet restore Platforms/Anf.Web.sln
+    - name: Build
+      run: dotnet build Platforms/Anf.Web.sln --no-restore 

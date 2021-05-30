@@ -6,15 +6,13 @@ using System.Text;
 
 namespace Anf.Platform.Models.Impl
 {
-    public class WithImageComicSnapshotInfo<TImage> : WithImageStorableComicSnapshotInfo<TImage>, IDisposable
+    public class WithImageComicSnapshotInfo<TResource,TImage> : WithImageStorableComicSnapshotInfo<TResource,TImage>, IDisposable
     {
         public WithImageComicSnapshotInfo(ComicSnapshot snapshot, INetworkAdapter networkAdapter)
             : base(snapshot)
         {
-            this.networkAdapter = networkAdapter;
             InitLogoImage();
         }
-        private readonly INetworkAdapter networkAdapter;
         private TImage logoImage;
 
         public TImage LogoImage
@@ -30,7 +28,7 @@ namespace Anf.Platform.Models.Impl
         {
             try
             {
-                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync<TImage>(Snapshot.ImageUri);
+                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync<TResource,TImage>(Snapshot.ImageUri);
             }
             catch (Exception)
             {

@@ -10,6 +10,12 @@ using System.Threading.Tasks;
 
 namespace Anf.WebService
 {
+    public class ReadingIdentity
+    {
+        public long BookshelfId { get; set; }
+
+        public string Address { get; set; }
+    }
     public class ReadingManager
     {
         private const string ReadingKeysKey = "Anf.WebService.ReadingManager.ReadingKeys";
@@ -29,6 +35,17 @@ namespace Anf.WebService
             var key = RedisKeyGenerator.Concat(ReadingKey, bookshelfId, address);
             var entities = await database.HashGetAllAsync(key);
             return ToBookselfItem(entities);
+        }
+        public async Task<AnfBookshelfItem[]> BatchGetAsync(ReadingIdentity[] identities)
+        {
+            var keys = identities.Select(x => RedisKeyGenerator.Concat(ReadingKey, x.BookshelfId, x.Address));
+            var batch = database.CreateBatch();
+            var tasks = keys.Select(x => batch.HashGetAllAsync(x)).ToArray();
+            batch.Execute();
+            var entities = await Task.WhenAll(tasks);
+            return entities.Where(x => x != null)
+                .Select(x => ToBookselfItem(x))
+                .ToArray();
         }
         private AnfBookshelfItem ToBookselfItem(HashEntry[] entries)
         {

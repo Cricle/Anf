@@ -4,6 +4,7 @@ import { EntityResult, RSAKeyIdentity } from "./model";
 import { Observable } from 'rxjs';
 
 const TK:string="ANF-TOKEN";
+const STORE_USER_NAME:string="ANF-LOGIN-USER-NAME";
 
 @Injectable({
     providedIn: 'root'
@@ -14,6 +15,11 @@ export class UserManager {
     constructor(private api:ComicApiService){
 
     }
+    
+    public get userName() : string {
+        return localStorage.getItem(STORE_USER_NAME);
+    }
+    
     public isLogin():boolean{
         const val=this.getCookie(TK);
         return val!=null;
@@ -39,6 +45,9 @@ export class UserManager {
             this.api.flushKey().subscribe(y=>{
                 this.identity=y.data;
                 this.coreLogin(userName,pwd).subscribe(z=>{
+                    if(z.succeed){
+                        localStorage.setItem(STORE_USER_NAME,userName);
+                    }
                     x.next(z);
                 });
             });

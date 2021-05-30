@@ -1,6 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <Import Project="..\..\..\engs\comic.engine.props" />
+  <Import Project="..\..\..\engs\pkg.props" />
   <PropertyGroup>
     <TargetFrameworks>$(ComicEngineFrameworks)</TargetFrameworks>
   </PropertyGroup>

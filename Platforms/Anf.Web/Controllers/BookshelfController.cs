@@ -1,4 +1,5 @@
 ﻿using Anf.ChannelModel;
+using Anf.ChannelModel.Entity;
 using Anf.ChannelModel.Results;
 using Anf.WebService;
 using Microsoft.AspNetCore.Authorization;
@@ -29,6 +30,34 @@ namespace Anf.Web.Controllers
             var user = HttpContext.Features.Get<UserSnapshot>();
             await bookshelfService.CreateBookshelfAsync(user.Id, name);
             return Ok(Result.SucceedResult);
+        }
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<AnfBookshelf>), 200)]
+        public async Task<IActionResult> GetBookShelf([FromQuery]long bookshelfId)
+        {
+            var data = await bookshelfService.GetBookshelfAsync(bookshelfId);
+            var res = new EntityResult<AnfBookshelf> { Data = data };
+            return Ok(res);
+        }
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<AnfBookshelf>), 200)]
+        public async Task<IActionResult> GetBookShelfAndItems([FromQuery] long bookshelfId)
+        {
+            var data = await bookshelfService.GetBookshelfAndItemsAsync(bookshelfId);
+            var res = new EntityResult<AnfBookshelf> { Data = data };
+            return Ok(res);
+        }
+        [Authorize]
+        [HttpGet("[action]")]
+        [ProducesResponseType(typeof(EntityResult<AnfBookshelfItem>), 200)]
+        public async Task<IActionResult> GetBookshelfItem([FromQuery]long bookshelfId,[FromQuery]string address)
+        {
+            var user = HttpContext.Features.Get<UserSnapshot>();
+            var data = await bookshelfService.GetBookshelfItemAsync(user.Id, bookshelfId, address);
+            var r = new EntityResult<AnfBookshelfItem> { Data = data };
+            return Ok(r);
         }
         [Authorize]
         [HttpPost("[action]")]
