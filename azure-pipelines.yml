@@ -10,7 +10,9 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  solutionWeb: 'Platforms\Anf.Web.sln'
+  solutionDesktop: 'Platforms\Anf.Desktop.sln'
+  solutionTest: 'Platforms\Anf.Test.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -19,13 +21,34 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
-    restoreSolution: '$(solution)'
+    restoreSolution: '$(solutionWeb)'
 
 - task: VSBuild@1
   inputs:
-    solution: '$(solution)'
+    solution: '$(solutionWeb)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solutionDesktop)'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solutionDesktop)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: NuGetCommand@2
+  inputs:
+    restoreSolution: '$(solutionTest)'
+
+- task: VSBuild@1
+  inputs:
+    solution: '$(solutionTest)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
 
 - task: VSTest@2
   inputs:
