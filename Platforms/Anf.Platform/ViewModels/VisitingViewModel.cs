@@ -21,13 +21,13 @@ namespace Anf.ViewModels
 {
     public class VisitingViewModel<TResource, TImage> : ViewModelBase, IDisposable
     {
-        public VisitingViewModel(IServiceProvider provider,Func<IServiceProvider, IComicVisiting<TResource>> visiting = null)
+        public VisitingViewModel(IServiceProvider provider,Func<IServiceProvider, IComicVisiting<TImage>> visiting = null)
         {
             this.provider = provider;
             InitService(provider, visiting);
             InitVisiting();
         }
-        public VisitingViewModel(Func<IServiceProvider, IComicVisiting<TResource>> visiting = null, bool ignoreVisting = false)
+        public VisitingViewModel(Func<IServiceProvider, IComicVisiting<TImage>> visiting = null, bool ignoreVisting = false)
         {
             scope = AppEngine.CreateScope();
             provider = scope.ServiceProvider;
@@ -35,7 +35,7 @@ namespace Anf.ViewModels
             InitVisiting();
         }
         public VisitingViewModel(
-            IComicVisiting<TResource> visiting,
+            IComicVisiting<TImage> visiting,
             HttpClient httpClient,
             RecyclableMemoryStreamManager recyclableMemoryStreamManager,
             IStreamImageConverter<TImage> streamImageConverter,
@@ -57,12 +57,12 @@ namespace Anf.ViewModels
         protected IStreamImageConverter<TImage> streamImageConverter;
         protected RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         protected HttpClient httpClient;
-        protected IComicVisiting<TResource> visiting;
+        protected IComicVisiting<TImage> visiting;
         private bool isLoading;
-        private ChapterSlots<TResource> chapterSlots;
-        private PageSlots<TResource> pageSlots;
-        private IDataCursor<IComicChapterManager<TResource>> currentChaterCursor;
-        private IDataCursor<IComicVisitPage<TResource>> currentPageCursor;
+        private ChapterSlots<TImage> chapterSlots;
+        private PageSlots<TImage> pageSlots;
+        private IDataCursor<IComicChapterManager<TImage>> currentChaterCursor;
+        private IDataCursor<IComicVisitPage<TImage>> currentPageCursor;
         private TImage logoImage;
         private ComicEntity comicEntity;
         private string name;
@@ -72,13 +72,16 @@ namespace Anf.ViewModels
         private bool resourceLoadDone;
         private bool loadingLogo;
         private bool hasLogo;
+        private Stream logoStream;
 
-        public ChapterSlots<TResource> ChapterSlots => chapterSlots;
+        public ChapterSlots<TImage> ChapterSlots => chapterSlots;
         public CancellationTokenSource LoadCancellationTokenSource => loadCancellationTokenSource;
 
         private int currentPage;
         private int totalPage;
         private string chapterName;
+
+        protected Stream LogoStream => logoStream;
 
         public string ChapterName
         {
@@ -151,7 +154,7 @@ namespace Anf.ViewModels
             private set => Set(ref name, value);
         }
 
-        public PageSlots<TResource> PageSlots
+        public PageSlots<TImage> PageSlots
         {
             get => pageSlots;
             private set => Set(ref pageSlots, value);
@@ -177,7 +180,7 @@ namespace Anf.ViewModels
         }
 
 
-        public IDataCursor<IComicVisitPage<TResource>> CurrentPageCursor
+        public IDataCursor<IComicVisitPage<TImage>> CurrentPageCursor
         {
             get { return currentPageCursor; }
             private set
@@ -187,7 +190,7 @@ namespace Anf.ViewModels
             }
         }
 
-        public IDataCursor<IComicChapterManager<TResource>> CurrentChaterCursor
+        public IDataCursor<IComicChapterManager<TImage>> CurrentChaterCursor
         {
             get { return currentChaterCursor; }
             private set
@@ -205,7 +208,7 @@ namespace Anf.ViewModels
                 OnLoadingChanged(value);
             }
         }
-        public IComicVisiting<TResource> Visiting => visiting;
+        public IComicVisiting<TImage> Visiting => visiting;
 
         public bool SwitchChapterGC { get; set; } = true;
 
@@ -232,10 +235,10 @@ namespace Anf.ViewModels
 
         private static IPlatformService PlatformService => AppEngine.GetRequiredService<IPlatformService>();
 
-        public IList<ComicPageInfo<TResource>> Resources { get; protected set; }
+        public IList<ComicPageInfo<TImage>> Resources { get; protected set; }
 
 
-        public event Action<IDataCursor<IComicVisitPage<TResource>>, int> PageCursorMoved;
+        public event Action<IDataCursor<IComicVisitPage<TImage>>, int> PageCursorMoved;
 
         public Task OpenComicAsync()
         {
@@ -269,11 +272,11 @@ namespace Anf.ViewModels
             PlatformService.Copy(CurrentChapter.TargetUrl);
         }
 
-        protected void InitService(IServiceProvider provider, Func<IServiceProvider, IComicVisiting<TResource>> visiting = null, bool ignoreVisiting = false)
+        protected void InitService(IServiceProvider provider, Func<IServiceProvider, IComicVisiting<TImage>> visiting = null, bool ignoreVisiting = false)
         {
             if (!ignoreVisiting)
             {
-                this.visiting = visiting?.Invoke(provider) ?? provider.GetRequiredService<IComicVisiting<TResource>>();
+                this.visiting = visiting?.Invoke(provider) ?? provider.GetRequiredService<IComicVisiting<TImage>>();
             }
             httpClient = provider.GetRequiredService<HttpClient>();
             recyclableMemoryStreamManager = provider.GetRequiredService<RecyclableMemoryStreamManager>();
@@ -284,11 +287,11 @@ namespace Anf.ViewModels
         {
 
         }
-        protected virtual void OnCurrentPageCursorChanged(IDataCursor<IComicVisitPage<TResource>> cursor)
+        protected virtual void OnCurrentPageCursorChanged(IDataCursor<IComicVisitPage<TImage>> cursor)
         {
 
         }
-        protected virtual void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<TResource>> cursor)
+        protected virtual void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<TImage>> cursor)
         {
 
         }
@@ -302,7 +305,7 @@ namespace Anf.ViewModels
             }
             return count;
         }
-        public ComicPageInfo<TResource> GetResource(int i)
+        public ComicPageInfo<TImage> GetResource(int i)
         {
             var res = Resources;
             if (i >= 0 && i < res.Count)
@@ -450,7 +453,7 @@ namespace Anf.ViewModels
             CopyComicEntityCommand = new RelayCommand(CopyComicEntity);
             CopyChapterCommand = new RelayCommand(CopyChapter);
 
-            Resources = observableCollectionFactory.Create<ComicPageInfo<TResource>>();
+            Resources = observableCollectionFactory.Create<ComicPageInfo<TImage>>();
             if (Visiting.IsLoad())
             {
                 _ = Init();
@@ -463,13 +466,13 @@ namespace Anf.ViewModels
         {
 
         }
-        private async void OnLoaded(ComicVisiting<TResource> arg1, ComicEntity arg2)
+        private async void OnLoaded(ComicVisiting<TImage> arg1, ComicEntity arg2)
         {
             await Init();
             IsLoading = false;
         }
 
-        private void OnLoading(ComicVisiting<TResource> arg1, string arg2)
+        private void OnLoading(ComicVisiting<TImage> arg1, string arg2)
         {
             IsLoading = true;
         }
@@ -496,12 +499,12 @@ namespace Anf.ViewModels
             }
         }
 
-        private void OnCurrentChaterCursorMoveComplated(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
+        private void OnCurrentChaterCursorMoveComplated(IDataCursor<IComicChapterManager<TImage>> arg1, int arg2)
         {
             IsLoading = false;
         }
 
-        private void OnCurrentChaterCursorMoving(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
+        private void OnCurrentChaterCursorMoving(IDataCursor<IComicChapterManager<TImage>> arg1, int arg2)
         {
             IsLoading = true;
         }
@@ -511,7 +514,7 @@ namespace Anf.ViewModels
 
         }
 
-        private async void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TResource>> arg1, int arg2)
+        private async void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TImage>> arg1, int arg2)
         {
             loadCancellationTokenSource?.Cancel();
             loadCancellationTokenSource?.Dispose();
@@ -570,7 +573,7 @@ namespace Anf.ViewModels
                 GC.Collect(0, GCCollectionMode.Optimized);
             }
         }
-        private void OnItemLoadDone(ComicPageInfo<TResource> obj)
+        private void OnItemLoadDone(ComicPageInfo<TImage> obj)
         {
             loadSlim.Wait();
             try
@@ -583,15 +586,15 @@ namespace Anf.ViewModels
             }
         }
 
-        private void OnCurrentPageCursorMoved(IDataCursor<IComicVisitPage<TResource>> arg1, int arg2)
+        private void OnCurrentPageCursorMoved(IDataCursor<IComicVisitPage<TImage>> arg1, int arg2)
         {
             CurrentPage = arg2;
             PageCursorMoved?.Invoke(arg1, arg2);
         }
 
-        protected virtual ComicPageInfo<TResource> CreatePageInfo(PageSlots<TResource> slots,int index)
+        protected virtual ComicPageInfo<TImage> CreatePageInfo(PageSlots<TImage> slots,int index)
         {
-            return new ComicPageInfo<TResource>(slots, index);
+            return new ComicPageInfo<TImage>(slots, index);
         }
         protected virtual Task<bool> LoadComicAsync(string address)
         {
@@ -651,6 +654,7 @@ namespace Anf.ViewModels
                     chapterSlots?.Dispose();
                     pageSlots?.Dispose();
                 }
+                logoStream?.Dispose();
                 scope?.Dispose();
                 loadSlim.Dispose();
                 loadCancellationTokenSource?.Dispose();
@@ -673,9 +677,12 @@ namespace Anf.ViewModels
                 {
                     disposable.Dispose();
                 }
-                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync(address,
-                    () => httpClient.GetStreamAsync(address),
-                    s => streamImageConverter.ToImageAsync(s));
+                var setting = StoreFetchSettings.DefaultCache.Clone();
+                setting.DisposeStream = false;
+                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync<TResource,TImage>(address,
+                    async () => logoStream = await httpClient.GetStreamAsync(address),
+                    s => streamImageConverter.ToImageAsync(s),
+                    setting);
                 await OnLoadedLogoAsync(address, true);
             }
             finally

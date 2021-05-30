@@ -12,12 +12,12 @@ namespace Anf.ViewModels
     public class StoreBoxVisitingViewModel<TResource, TImage, TStoreBox> : VisitingViewModel<TResource, TImage>
            where TStoreBox : ComicStoreBox
     {
-        public StoreBoxVisitingViewModel(Func<IServiceProvider, IComicVisiting<TResource>> visiting = null)
+        public StoreBoxVisitingViewModel(Func<IServiceProvider, IComicVisiting<TImage>> visiting = null)
             : base(visiting)
         {
         }
 
-        public StoreBoxVisitingViewModel(IComicVisiting<TResource> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<TImage> streamImageConverter, IObservableCollectionFactory observableCollectionFactory)
+        public StoreBoxVisitingViewModel(IComicVisiting<TImage> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<TImage> streamImageConverter, IObservableCollectionFactory observableCollectionFactory)
             : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter, observableCollectionFactory)
         {
         }
@@ -83,7 +83,7 @@ namespace Anf.ViewModels
             StoreBox = ComicStoreService.GetStoreBox(ComicEntity.ComicUrl);
             PageCursorMoved += OnStoreBoxVisitingViewModelPageCursorMoved;
         }
-        protected override void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<TResource>> cursor)
+        protected override void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<TImage>> cursor)
         {
             var box = StoreBox;
             if (box != null)
@@ -91,7 +91,7 @@ namespace Anf.ViewModels
                 box.AttackModel.CurrentChapter = cursor.CurrentIndex;
             }
         }
-        private void OnStoreBoxVisitingViewModelPageCursorMoved(IDataCursor<IComicVisitPage<TResource>> arg1, int arg2)
+        private void OnStoreBoxVisitingViewModelPageCursorMoved(IDataCursor<IComicVisitPage<TImage>> arg1, int arg2)
         {
             var box = StoreBox;
             if (box != null)

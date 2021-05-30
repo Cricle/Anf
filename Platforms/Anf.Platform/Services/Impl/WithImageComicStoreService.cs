@@ -6,15 +6,15 @@ using System.Text;
 
 namespace Anf.Platform.Services.Impl
 {
-    public class WithImageComicStoreService<TImage> : ComicStoreService<WithImageComicStoreBox<TImage>>
+    public class WithImageComicStoreService<TResource,TImage> : ComicStoreService<WithImageComicStoreBox<TResource,TImage>>
     {
         public WithImageComicStoreService(DirectoryInfo folder, int cacheSize = 50) : base(folder, cacheSize)
         {
         }
 
-        protected override WithImageComicStoreBox<TImage> CreateBox(FileInfo file)
+        protected override WithImageComicStoreBox<TResource,TImage> CreateBox(FileInfo file)
         {
-            return new WithImageComicStoreBox<TImage>(file);
+            return new WithImageComicStoreBox<TResource,TImage>(file);
         }
     }
 }

@@ -13,8 +13,8 @@ namespace Anf.Platform.Settings
 
         public virtual bool LoadAll
         {
-            get { return loadAll; }
-            set { Set(ref loadAll, value); }
+            get => loadAll;
+            set => Set(ref loadAll, value);
         }
     }
 }

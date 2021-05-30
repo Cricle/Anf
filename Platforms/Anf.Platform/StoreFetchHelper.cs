@@ -68,53 +68,53 @@ namespace Anf.Platform
             }
             return stream;
         }
-        public static Task<T> GetOrFromCacheAsync<T>(string address,
+        public static Task<TImage> GetOrFromCacheAsync<TResource,TImage>(string address,
             Func<Task<Stream>> streamCreator,
-            Func<Stream, T> converter,
+            Func<Stream, TImage> converter,
             StoreFetchSettings settings = null)
         {
-            return GetOrFromCacheAsync(address, streamCreator, x => Task.FromResult(converter(x)), settings);
+            return GetOrFromCacheAsync<TResource,TImage>(address, streamCreator, x => Task.FromResult(converter(x)), settings);
         }
-        public static Task<T> GetOrFromCacheAsync<T>(string address,
+        public static Task<TImage> GetOrFromCacheAsync<TResource, TImage>(string address,
             StoreFetchSettings settings = null)
         {
-            return GetOrFromCacheAsync<T>(address, async () =>
+            return GetOrFromCacheAsync<TResource,TImage>(address, async () =>
             {
                 var rep = await AppEngine.GetRequiredService<HttpClient>().GetAsync(address);
                 return await rep.Content.ReadAsStreamAsync();
             },settings);
         }
-        public static Task<T> GetOrFromCacheAsync<T>(string address,
+        public static Task<TImage> GetOrFromCacheAsync<TResource,TImage>(string address,
             Func<Task<Stream>> streamCreator,
             StoreFetchSettings settings = null)
         {
-            var convert = AppEngine.GetRequiredService<IStreamImageConverter<T>>();
-            return GetOrFromCacheAsync(address, streamCreator, x => convert.ToImageAsync(x), settings);
+            var convert = AppEngine.GetRequiredService<IStreamImageConverter<TImage>>();
+            return GetOrFromCacheAsync<TResource,TImage>(address, streamCreator, x => convert.ToImageAsync(x), settings);
         }
-        public static async Task<T> GetOrFromCacheAsync<T>(string address,
+        public static async Task<TImage> GetOrFromCacheAsync<TResource, TImage>(string address,
             Func<Task<Stream>> streamCreator,
-            Func<Stream,Task<T>> converter,
+            Func<Stream,Task<TImage>> converter,
             StoreFetchSettings settings = null)
         {
             if (settings is null)
             {
                 settings = DefaultStoreFetchSettings;
             }
-            var stream = await GetOrFromCacheAsync(address, streamCreator, settings);
-            if (stream is null)
+            var image = await GetOrFromCacheAsync(address, streamCreator, settings);
+            if (image == null)
             {
                 return default;
             }
             try
             {
-                return await converter(stream);
+                return await converter(image);
             }
             catch (Exception)
             {
                 try
                 {
-                    stream = await GetOrFromCacheAsync(address, streamCreator, StoreFetchSettings.NoCache);
-                    return await converter(stream);
+                    image = await GetOrFromCacheAsync(address, streamCreator, StoreFetchSettings.NoCache);
+                    return await converter(image);
                 }
                 catch (Exception)
                 {
@@ -125,7 +125,7 @@ namespace Anf.Platform
             {
                 if (settings.DisposeStream)
                 {
-                    stream?.Dispose();
+                    image?.Dispose();
                 }
             }
         }

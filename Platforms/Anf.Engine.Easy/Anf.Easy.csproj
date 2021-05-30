@@ -1,16 +1,10 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-
+  <Import Project="..\..\engs\pkg.props"/>
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard1.4;net45;net461</TargetFrameworks>
-    <Authors>Anf</Authors>
-    <Product>Anf</Product>
-    <Description>A comic visit easy pkg!</Description>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-    <Version>0.0.1</Version>
     <LangVersion>8.0</LangVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
-    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
   </PropertyGroup>
 
   <ItemGroup>

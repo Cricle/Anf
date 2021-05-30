@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.SignalR;
+﻿using Anf.ChannelModel;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.SignalR;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
@@ -7,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Anf.Web.Hubs
 {
+    [Authorize]
     public class ReadingHub : Hub
     {
         private readonly IDatabase database;

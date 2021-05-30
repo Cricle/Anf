@@ -6,15 +6,15 @@ using System.Text;
 
 namespace Anf.Platform.Models.Impl
 {
-    public class WithImageStorableComicSourceInfo<TImage>: StorableComicSourceInfo<WithImageComicStoreBox<TImage>>
+    public class WithImageStorableComicSourceInfo<TResource,TImage> : StorableComicSourceInfo<WithImageComicStoreBox<TResource,TImage>>
     {
-        public WithImageStorableComicSourceInfo(ComicSnapshot snapshot, ComicSource source, IComicSourceCondition condition, WithImageComicStoreBox<TImage> storeBox) : base(snapshot, source, condition, storeBox)
+        public WithImageStorableComicSourceInfo(ComicSnapshot snapshot, ComicSource source, IComicSourceCondition condition, WithImageComicStoreBox<TResource,TImage> storeBox) : base(snapshot, source, condition, storeBox)
         {
         }
 
-        protected override WithImageComicStoreBox<TImage> CreateBox(FileInfo file)
+        protected override WithImageComicStoreBox<TResource,TImage> CreateBox(FileInfo file)
         {
-            return new WithImageComicStoreBox<TImage>(file);
+            return new WithImageComicStoreBox<TResource,TImage>(file);
         }
     }
 }

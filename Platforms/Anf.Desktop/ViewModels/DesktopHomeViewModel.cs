@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace Anf.Desktop.ViewModels
 {
-    public class DesktopHomeViewModel : HomeViewModel<WithImageStorableComicSourceInfo<Bitmap>, Bitmap>
+    public class DesktopHomeViewModel : HomeViewModel<WithImageStorableComicSourceInfo<Bitmap, Bitmap>, Bitmap>
     {
         private readonly List<IDisposable> subscribes = new List<IDisposable>();
 
@@ -28,9 +28,9 @@ namespace Anf.Desktop.ViewModels
             InitDatas();
         }
 
-        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<WithImageStorableComicSourceInfo<Bitmap>> info)
+        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<WithImageStorableComicSourceInfo<Bitmap, Bitmap>> info)
         {
-            if (info is WithImageComicSnapshotInfo<Bitmap> sn)
+            if (info is WithImageComicSnapshotInfo<Bitmap, Bitmap> sn)
             {
                 var vm = new DesktopComicViewModel(info.Snapshot, sn.LogoImage);
                 var navSer = AppEngine.GetRequiredService<MainNavigationService>();
@@ -40,10 +40,10 @@ namespace Anf.Desktop.ViewModels
             }
         }
 
-        protected override ComicSnapshotInfo<WithImageStorableComicSourceInfo<Bitmap>> CreateSnapshotInfo(ComicSnapshot info)
+        protected override ComicSnapshotInfo<WithImageStorableComicSourceInfo<Bitmap, Bitmap>> CreateSnapshotInfo(ComicSnapshot info)
         {
             var httpClient = AppEngine.GetRequiredService<INetworkAdapter>();
-            return new WithImageComicSnapshotInfo<Bitmap>(info, httpClient);
+            return new WithImageComicSnapshotInfo<Bitmap, Bitmap>(info, httpClient);
         }
 
 

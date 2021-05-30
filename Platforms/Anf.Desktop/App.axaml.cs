@@ -77,12 +77,12 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton<IStoreService>(store);
             AppEngine.Services.AddSingleton<IPlatformService, PlatformService>();
             AppEngine.Services.AddSingleton<IStreamImageConverter<Bitmap>, StreamImageConverter>();
-            AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, PlatformResourceCreatorFactory<Bitmap>>();
+            AppEngine.Services.AddSingleton<IResourceFactoryCreator<Bitmap>, PlatformResourceCreatorFactory<Bitmap, Bitmap>>();
             AppEngine.Services.AddSingleton<ExceptionService>();
-            var storeSer = new WithImageComicStoreService<Bitmap>(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
+            var storeSer = new WithImageComicStoreService<Bitmap, Bitmap>(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
             AppEngine.Services.AddSingleton(storeSer);
             AppEngine.Services.AddSingleton<IObservableCollectionFactory>(new AvaloniaObservableCollectionFactory());
-            AppEngine.Services.AddSingleton<ComicStoreService<WithImageComicStoreBox<Bitmap>>>(storeSer);
+            AppEngine.Services.AddSingleton<ComicStoreService<WithImageComicStoreBox<Bitmap, Bitmap>>>(storeSer);
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(Workstation, HistoryService.HistoryFileName)));
             AppEngine.Services.AddSingleton<ProposalEngine>();
             AppEngine.Services.AddScoped<IComicVisiting<Bitmap>, DesktopStoreComicVisiting>();

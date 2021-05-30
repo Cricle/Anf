@@ -83,7 +83,7 @@ namespace Anf.Models
         {
             PageSlots = pageSlots ?? throw new ArgumentNullException(nameof(pageSlots));
             Index = index;
-            Page=PageSlots.ChapterManager.ChapterWithPage.Pages[index];
+            Page = PageSlots.ChapterManager.ChapterWithPage.Pages[index];
             PageInfoType = ComicPageInfoTypes.FromLoad;
             Init();
         }
@@ -91,7 +91,7 @@ namespace Anf.Models
         {
             VisitPage = visitPage;
             Page = visitPage.Page;
-            PageInfoType = ComicPageInfoTypes.FromValue; 
+            PageInfoType = ComicPageInfoTypes.FromValue;
             Init();
         }
 
@@ -109,7 +109,7 @@ namespace Anf.Models
 
         public event Action<ComicPageInfo<TResource>> SkipAtConcurrent;
         public event Action<ComicPageInfo<TResource>> LoadDone;
-        public event Action<ComicPageInfo<TResource>,Exception> LoadException;
+        public event Action<ComicPageInfo<TResource>, Exception> LoadException;
         private void Init()
         {
             LoadCommand = new RelayCommand(() => _ = LoadAsync());
