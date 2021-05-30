@@ -19,18 +19,23 @@ variables:
 steps:
 - task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
+- task: RestoreWeb@2
   inputs:
+<<<<<<< HEAD
     command: 'restore'
     restoreSolution: '$(solutionWeb)'
     feedsToUse: 'select'
+=======
+    restoreSolution: '$(solutionWeb)'
+>>>>>>> bcaca5eaa5692dc2bcca44d805efaf45ce536f52
 
-- task: VSBuild@1
+- task: VSBuildWeb@1
   inputs:
     solution: '$(solutionWeb)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+<<<<<<< HEAD
 - task: NuGetCommand@2
   inputs:
     command: 'restore'
@@ -39,12 +44,23 @@ steps:
 
 
 - task: VSBuild@1
+=======
+- task: RestoreDesktop@2
+  inputs:
+    restoreSolution: '$(solutionDesktop)'
+
+- task: VSBuildDesktop@1
+>>>>>>> bcaca5eaa5692dc2bcca44d805efaf45ce536f52
   inputs:
     solution: '$(solutionDesktop)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
 
+<<<<<<< HEAD
 - task: NuGetCommand@2
+=======
+- task: RestoreTest@1
+>>>>>>> bcaca5eaa5692dc2bcca44d805efaf45ce536f52
   inputs:
     restoreSolution: '$(solutionTest)'
 
@@ -57,7 +73,7 @@ steps:
   displayName: 'dotnet test'
   inputs:
     command: test
-    projects: '**/*.Test.csproj'
+    solution: '$(solutionTest)'
     arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
     testRunTitle: AnfProject.UnitTests
 

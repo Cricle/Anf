@@ -13,7 +13,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ResourceFetchers", "Resourc
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.ResourceFetcher.Redis", "ResourceFetchers\Anf.ResourceFetcher.Redis\Anf.ResourceFetcher.Redis.csproj", "{4D18F737-2303-4F15-95D6-9A8AAEA2E6EF}"
 EndProject
+<<<<<<< HEAD
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.ResourceFetcher.Sql", "ResourceFetchers\Anf.ResourceFetcher.Sql\Anf.ResourceFetcher.Sql.csproj", "{B263F188-4301-4F8D-BEC4-8D6331A1CE79}"
+=======
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.ResourceFetcher.Sql", "ResourceFetchers\Anf.ResourceFetcher.sQL\Anf.ResourceFetcher.Sql.csproj", "{B263F188-4301-4F8D-BEC4-8D6331A1CE79}"
+>>>>>>> bcaca5eaa5692dc2bcca44d805efaf45ce536f52
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.WebService", "Anf.WebService\Anf.WebService.csproj", "{CB861057-6472-4C41-AF2F-4EE5C9C0B5EA}"
 EndProject

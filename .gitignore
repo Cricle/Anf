@@ -433,7 +433,13 @@ $RECYCLE.BIN/
 !.vscode/extensions.json
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 Kw.Comic.Web/ComicCache/*.*
+=======
+
+**\results.xml
+**\uploadtest.cmd
+>>>>>>> bcaca5eaa5692dc2bcca44d805efaf45ce536f52
 =======
 
 **\results.xml
