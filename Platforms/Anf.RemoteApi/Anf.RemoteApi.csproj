@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\engs\comic.engine.props" />
+  <Import Project="..\..\engs\pkg.props" />
+
+  <PropertyGroup>
+    <TargetFrameworks>$(ComicEngineFrameworks);netstandard1.1</TargetFrameworks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Anf.Engine\Anf.Engine.csproj" />
+  </ItemGroup>
+
+</Project>

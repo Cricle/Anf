@@ -1,5 +1,4 @@
 ﻿using Anf.Cross.Settings;
-using Anf.Easy;
 using Anf.Easy.Visiting;
 using Anf.Models;
 using Anf.Platform;
@@ -11,14 +10,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
 using Microsoft.Maui.Controls;
 using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
 using System.ComponentModel;
 using System.IO;
-using Intents;
 
 namespace Anf.Cross.ViewModels
 {
@@ -53,7 +48,6 @@ namespace Anf.Cross.ViewModels
         {
             MAUIInit();
         }
-        private IServiceScope scope;
         private ComicPageInfo<ImageSource> selectedResource;
         private IDisposable readingSubscriber;
 
@@ -175,7 +169,6 @@ namespace Anf.Cross.ViewModels
         {
             base.Dispose();
             scope?.Dispose();
-            scope = null;
             readingSubscriber.Dispose();
             PageCursorMoved -= AvalonVisitingViewModel_PageCursorMoved;
         }

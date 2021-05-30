@@ -1,14 +1,11 @@
-﻿using Anf.Easy;
-using Anf.Networks;
+﻿using Anf.Networks;
 using Anf.Platform;
 using Anf.Platform.Models.Impl;
 using GalaSoft.MvvmLight.Command;
 using Microsoft.Maui.Controls;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace Anf.Cross.ViewModels
@@ -49,19 +46,19 @@ namespace Anf.Cross.ViewModels
             try
             {
                 logoStream?.Dispose();
-                logoImage = ImageSource.FromStream(async tk =>
-                  {
-                      logoStream = await StoreFetchHelper.GetOrFromCacheAsync(Snapshot.ImageUri, () =>
-                      {
-                          var networkAdapter = AppEngine.GetRequiredService<INetworkAdapter>();
-                          return networkAdapter.GetStreamAsync(new RequestSettings { Address = Snapshot.ImageUri });
-                      });
-                      return logoStream;
-                  });
+                logoImage = ImageSource.FromStream(LoadLogoAsync);
             }
             catch (Exception) { }
         }
-
+        private async Task<Stream> LoadLogoAsync(CancellationToken token)
+        {
+            logoStream = await StoreFetchHelper.GetOrFromCacheAsync(Snapshot.ImageUri, () =>
+            {
+                var networkAdapter = AppEngine.GetRequiredService<INetworkAdapter>();
+                return networkAdapter.GetStreamAsync(new RequestSettings { Address = Snapshot.ImageUri });
+            });
+            return logoStream;
+        }
         public void Dispose()
         {
             logoStream?.Dispose();
