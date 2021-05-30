@@ -10,9 +10,7 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solutionWeb: 'Platforms\Anf.Web.sln'
-  solutionDesktop: 'Platforms\Anf.Desktop.sln'
-  solutionTest: 'Platforms\Anf.Test.sln'
+  solution: '**/*.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
@@ -21,31 +19,13 @@ steps:
 
 - task: NuGetCommand@2
   inputs:
-    command: 'restore'
-    restoreSolution: '$(solutionWeb)'
-    feedsToUse: 'select'
+    restoreSolution: '$(solution)'
 
 - task: VSBuild@1
   inputs:
-    solution: '$(solutionWeb)'
+    solution: '$(solution)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
-
-- task: NuGetCommand@2
-  inputs:
-    command: 'restore'
-    restoreSolution: '$(solutionDesktop)'
-    feedsToUse: 'select'
-
-- task: VSBuild@1
-  inputs:
-    solution: '$(solutionDesktop)'
-    platform: '$(buildPlatform)'
-    configuration: '$(buildConfiguration)'
-
-- task: NuGetCommand@2
-  inputs:
-    restoreSolution: '$(solutionTest)'
 
 - task: VSTest@2
   inputs:
@@ -58,7 +38,7 @@ steps:
     command: test
     projects: '**/*.Test.csproj'
     arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
-    testRunTitle: AnfProject.UnitTests
+    testRunTitle: MyProject.UnitTests
 
 - script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'
   displayName: 'Install ReportGenerator tool'
@@ -71,3 +51,4 @@ steps:
   inputs:
     codeCoverageTool: Cobertura
     summaryFileLocation: '$(Build.SourcesDirectory)/coverlet/reports/Cobertura.xml'
+    
