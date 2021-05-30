@@ -21,5 +21,10 @@ namespace Anf.Platform
         public TimeSpan? ExpiresTime { get; }
 
         public bool DisposeStream { get; set; } = true;
+
+        public StoreFetchSettings Clone()
+        {
+            return new StoreFetchSettings(ForceNoCache, ExpiresTime) { DisposeStream = DisposeStream };
+        }
     }
 }

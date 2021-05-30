@@ -40,6 +40,10 @@ namespace Anf.Desktop.Services
                     t = types.Pop();
                 }
                 var control = viewActiver.Active(t);
+                if (control is VisitingView)
+                {
+                    return GoBack();
+                }
                 NavigateCore(control);
                 if (types.Count == 0)
                 {

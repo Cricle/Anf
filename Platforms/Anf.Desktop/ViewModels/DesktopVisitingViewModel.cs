@@ -20,7 +20,7 @@ using System.Threading.Tasks;
 
 namespace Anf.Desktop.ViewModels
 {
-    public class DesktopVisitingViewModel : StoreBoxVisitingViewModel<Bitmap, Bitmap,WithImageComicStoreBox<Bitmap>>
+    public class DesktopVisitingViewModel : StoreBoxVisitingViewModel<Bitmap, Bitmap,WithImageComicStoreBox<Bitmap,Bitmap>>
     {
         public static async Task<DesktopVisitingViewModel> CreateAsync(string address,bool usingStore=false)
         {
@@ -75,37 +75,37 @@ namespace Anf.Desktop.ViewModels
 
         public bool LeftPaneOpen
         {
-            get { return leftPaneOpen; }
+            get => leftPaneOpen;
             set => Set(ref leftPaneOpen, value);
         }
 
         public bool StatusShow
         {
-            get { return statusShow; }
+            get => statusShow;
             set => Set(ref statusShow, value);
         }
 
         public ComicPageInfo<Bitmap> SelectedResource
         {
-            get { return selectedResource; }
+            get => selectedResource;
             private set => Set(ref selectedResource, value);
         }
 
         public double MinHeight
         {
-            get { return minHeight; }
+            get => minHeight;
             set => Set(ref minHeight, value);
         }
 
         public double MinWidth
         {
-            get { return minWidth; }
+            get => minWidth;
             set => Set(ref minWidth, value);
         }
 
         public bool Transverse
         {
-            get { return transverse; }
+            get => transverse;
             set
             {
                 var origin = transverse;
@@ -119,41 +119,38 @@ namespace Anf.Desktop.ViewModels
 
         public bool EnableZoom
         {
-            get { return enableZoom; }
+            get => enableZoom;
             set => Set(ref enableZoom, value);
         }
 
         public bool EnableConstrains
         {
-            get { return enableConstrains; }
+            get => enableConstrains;
             set => Set(ref enableConstrains, value);
         }
 
         public bool EnableGesture
         {
-            get { return enableGesture; }
+            get => enableGesture;
             set => Set(ref enableGesture, value);
         }
 
         public double ZoomSpeed
         {
-            get { return zoomSpeed; }
+            get => zoomSpeed;
             set => Set(ref zoomSpeed, value);
         }
 
         public StretchMode StretchMode
         {
-            get { return stretchMode; }
+            get => stretchMode;
             set => Set(ref stretchMode, value);
         }
 
         public ComicChapter TrulyCurrentComicChapter
         {
-            get => this.CurrentChapter;
-            set
-            {
-                _ = AvalonGoChapterAsync(value);
-            }
+            get => CurrentChapter;
+            set => _ = AvalonGoChapterAsync(value);
         }
         public void OpenPane()
         {
@@ -259,8 +256,7 @@ namespace Anf.Desktop.ViewModels
             base.Dispose();
             TitleService.Title = string.Empty;
             readingSubscriber.Dispose();
-            PageCursorMoved-= AvalonVisitingViewModel_PageCursorMoved;
-
+            PageCursorMoved -= AvalonVisitingViewModel_PageCursorMoved;
         }
     }
 }

@@ -113,6 +113,10 @@ namespace Anf.Web.Controllers
         [ProducesResponseType(typeof(WithPageChapter), 200)]
         public async Task<IActionResult> GetChapter([FromQuery] string url, [FromQuery] string entityUrl)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                return BadRequest();
+            }
             var key = RedisKeyGenerator.Concat(ChapterKey, url);
             var res = memoryCache.Get<WithPageChapter>(key);
             if (res != null)
@@ -135,6 +139,10 @@ namespace Anf.Web.Controllers
         [ProducesResponseType(typeof(AnfComicEntityTruck), 200)]
         public async Task<IActionResult> GetEntity([FromQuery] string url)
         {
+            if (string.IsNullOrEmpty(url))
+            {
+                return BadRequest();
+            }
             var key = RedisKeyGenerator.Concat(EntityKey, url);
             var res = memoryCache.Get<AnfComicEntityTruck>(key);
             if (res != null)

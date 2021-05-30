@@ -20,6 +20,7 @@ import {NzSpaceModule} from 'ng-zorro-antd/space'
 import {NzPaginationModule} from 'ng-zorro-antd/pagination'
 import {NzAffixModule } from 'ng-zorro-antd/affix'
 import {NzDropDownModule } from 'ng-zorro-antd/dropdown'
+import {NzFormModule } from 'ng-zorro-antd/form'
 
 import { ComicApiService } from './comic-api/comic-api.service';
 import { AppComponent } from './app.component';
@@ -39,6 +40,7 @@ import { VisitComponent} from './visit/visit.component'
 import { ThemeService } from './theme.service'
 import { BookshelfComponent } from './bookshelf/bookshelf.component'
 import { ComicListComponent } from './comic-list/comic-list.component'
+import { LoginComponent } from './login/login.component'
 
 import { SearchService } from './comic-api/comic-search.service';
 import { VisitManager } from './comic-api/comic-visit.mgr'
@@ -55,7 +57,8 @@ import { VisitManager } from './comic-api/comic-visit.mgr'
     TopRankComponent,
     VisitComponent,
     BookshelfComponent,
-    ComicListComponent
+    ComicListComponent,
+    LoginComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -78,6 +81,7 @@ import { VisitManager } from './comic-api/comic-visit.mgr'
     NzPaginationModule,
     NzAffixModule,
     NzDropDownModule,
+    NzFormModule,
     
     BrowserAnimationsModule,
     RouterModule.forRoot([
@@ -87,6 +91,7 @@ import { VisitManager } from './comic-api/comic-visit.mgr'
       { path: 'rank', component: TopRankComponent },
       { path: 'about', component: AboutComponent },
       { path: 'bookshelf', component: BookshelfComponent },
+      { path: 'login', component: LoginComponent },
       { path: 'visit/:url',component:VisitComponent}
     ]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })

@@ -14,7 +14,7 @@ using Anf.Platform.Models.Impl;
 
 namespace Anf.Desktop.ViewModels
 {
-    public class DesktopComicViewModel : WithImageStorableComicSnapshotInfo<Bitmap>, IDisposable
+    public class DesktopComicViewModel : WithImageStorableComicSnapshotInfo<Bitmap, Bitmap>, IDisposable
     {
         public DesktopComicViewModel(ComicSnapshot snapshot)
             : base(snapshot)
@@ -48,7 +48,7 @@ namespace Anf.Desktop.ViewModels
         {
             try
             {
-                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync<Bitmap>(Snapshot.ImageUri);
+                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync<Bitmap, Bitmap>(Snapshot.ImageUri);
             }
             catch (Exception) { }
         }

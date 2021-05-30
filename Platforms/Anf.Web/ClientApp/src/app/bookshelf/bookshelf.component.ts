@@ -3,6 +3,7 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 import { VisitManager } from '../comic-api/comic-visit.mgr'
 import { SortedItem,SetResult } from '../comic-api/model';
+import { UserManager } from '../comic-api/usermanager';
 
 @Component({
   selector: 'app-bookshelf',
@@ -12,10 +13,13 @@ import { SortedItem,SetResult } from '../comic-api/model';
 export class BookshelfComponent implements OnInit {
 
   loading:boolean;
+  userMgr:UserManager;
   rank: SetResult<SortedItem>;
   constructor(private visitMgr: VisitManager,
+    userMgr:UserManager,
     private notify:NzNotificationService) {
       this.flushSaved();
+      this.userMgr=userMgr;
   }
   flushSaved(){
     this.loading=true;

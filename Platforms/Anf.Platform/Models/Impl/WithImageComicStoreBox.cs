@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Anf.Platform.Models.Impl
 {
-    public class WithImageComicStoreBox<TImage> : ComicStoreBox
+    public class WithImageComicStoreBox<TResource, TImage> : ComicStoreBox
     {
         public WithImageComicStoreBox(FileInfo targetFile) : base(targetFile)
         {
@@ -36,7 +36,7 @@ namespace Anf.Platform.Models.Impl
         {
             try
             {
-                Image = await StoreFetchHelper.GetOrFromCacheAsync<TImage>(AttackModel.ImageUrl);
+                Image = await StoreFetchHelper.GetOrFromCacheAsync<TResource,TImage>(AttackModel.ImageUrl);
             }
             catch (Exception) { }
         }
@@ -52,7 +52,7 @@ namespace Anf.Platform.Models.Impl
 
         protected override void CoreRemove()
         {
-            var storeSer = AppEngine.GetRequiredService<WithImageComicStoreService<TImage>>();
+            var storeSer = AppEngine.GetRequiredService<WithImageComicStoreService<TResource,TImage>>();
             storeSer.Remove(AttackModel.ComicUrl);
         }
     }
