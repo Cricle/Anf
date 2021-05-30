@@ -37,7 +37,6 @@ steps:
     restoreSolution: '$(solutionDesktop)'
     feedsToUse: 'select'
 
-
 - task: VSBuild@1
   inputs:
     solution: '$(solutionDesktop)'
