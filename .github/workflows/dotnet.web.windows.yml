@@ -1,4 +1,4 @@
-name: .NET
+name: .NET Build Web windows
 
 on:
   push:
@@ -18,8 +18,6 @@ jobs:
       with:
         dotnet-version: 5.0.x
     - name: Restore dependencies
-      run: dotnet restore Platforms/Anf.sln
+      run: dotnet restore Platforms/Anf.Web.sln
     - name: Build
-      run: dotnet build Platforms/Anf.sln --no-restore 
-    - name: Test
-      run: dotnet test Platforms/Anf.sln --no-build --verbosity normal
+      run: dotnet build Platforms/Anf.Web.sln --no-restore 

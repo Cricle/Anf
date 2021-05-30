@@ -20,7 +20,8 @@ namespace Anf.Cross
             this.On<Microsoft.Maui.Controls.PlatformConfiguration.Windows>()
                 .SetImageDirectory("Assets");
             _ = AppEngine.Provider;
-            return new Microsoft.Maui.Controls.Window(new HomePage());
+            var window = new Microsoft.Maui.Controls.Window(new HomePage());
+            return window;
         }
     }
 }

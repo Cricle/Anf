@@ -10,22 +10,38 @@ pool:
   vmImage: 'windows-latest'
 
 variables:
-  solution: '**/*.sln'
+  solutionWeb: 'Platforms\Anf.Web.sln'
+  solutionDesktop: 'Platforms\Anf.Desktop.sln'
+  solutionTest: 'Platforms\Anf.Test.sln'
   buildPlatform: 'Any CPU'
   buildConfiguration: 'Release'
 
 steps:
 - task: NuGetToolInstaller@1
 
-- task: NuGetCommand@2
+- task: RestoreWeb@2
   inputs:
-    restoreSolution: '$(solution)'
+    restoreSolution: '$(solutionWeb)'
 
-- task: VSBuild@1
+- task: VSBuildWeb@1
   inputs:
-    solution: '$(solution)'
+    solution: '$(solutionWeb)'
     platform: '$(buildPlatform)'
     configuration: '$(buildConfiguration)'
+
+- task: RestoreDesktop@2
+  inputs:
+    restoreSolution: '$(solutionDesktop)'
+
+- task: VSBuildDesktop@1
+  inputs:
+    solution: '$(solutionDesktop)'
+    platform: '$(buildPlatform)'
+    configuration: '$(buildConfiguration)'
+
+- task: RestoreTest@1
+  inputs:
+    restoreSolution: '$(solutionTest)'
 
 - task: VSTest@2
   inputs:
@@ -36,9 +52,9 @@ steps:
   displayName: 'dotnet test'
   inputs:
     command: test
-    projects: '**/*.Test.csproj'
+    solution: '$(solutionTest)'
     arguments: '--configuration $(BuildConfiguration) --collect "XPlat Code coverage" -- RunConfiguration.DisableAppDomain=true'
-    testRunTitle: MyProject.UnitTests
+    testRunTitle: AnfProject.UnitTests
 
 - script: 'dotnet tool install --global dotnet-reportgenerator-globaltool --version 4.5.8'
   displayName: 'Install ReportGenerator tool'
