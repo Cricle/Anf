@@ -44,7 +44,7 @@
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseFody)'=='true'">
-    <PackageReference Include="Costura.Fody" Version="5.1.0">
+    <PackageReference Include="Costura.Fody" Version="5.3.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
