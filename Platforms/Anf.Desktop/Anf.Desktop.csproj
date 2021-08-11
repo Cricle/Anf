@@ -29,7 +29,7 @@
     <AvaloniaResource Include="Assets\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Ao.SavableConfig" Version="2.3.0" />
+    <PackageReference Include="Ao.SavableConfig" Version="2.5.0" />
     <PackageReference Include="Ao.SavableConfig.Binder" Version="2.3.0" />
     <PackageReference Include="Ao.SavableConfig.Json" Version="2.3.0" />
     <PackageReference Include="Avalonia" Version="0.10.4" />

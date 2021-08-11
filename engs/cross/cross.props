@@ -3,7 +3,7 @@
     <NoWarn>CA1416</NoWarn>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Ao.SavableConfig" Version="2.3.0" />
+    <PackageReference Include="Ao.SavableConfig" Version="2.5.0" />
     <PackageReference Include="Ao.SavableConfig.Binder" Version="2.3.0" />
     <PackageReference Include="Ao.SavableConfig.Json" Version="2.3.0" />
   </ItemGroup>
