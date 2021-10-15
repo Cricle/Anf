@@ -9,7 +9,8 @@
 <div align='center'>
 
 [![codecov](https://codecov.io/gh/Cricle/Anf/branch/dev/graph/badge.svg?token=XMIT1MFLDZ)](https://codecov.io/gh/Cricle/Anf)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/a2248df890a242b081e6719bb795f6c6)](https://www.codacy.com?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Cricle/Anf&amp;utm_campaign=Badge_Grade)
+[![Codacy Badge](https://app.codacy.com/project/badge/Grade/095c3968b8b243e9b908ec01b7302ca3)](https://www.codacy.com/gh/Cricle/Anf/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Cricle/Anf&amp;utm_campaign=Badge_Grade)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Cricle_Anf&metric=alert_status)](https://sonarcloud.io/dashboard?id=Cricle_Anf)
 
 </div>
 

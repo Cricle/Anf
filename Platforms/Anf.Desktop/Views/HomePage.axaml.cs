@@ -13,13 +13,12 @@ namespace Anf.Desktop.Views
 {
     public class HomePage : UserControl
     {
-        private readonly IDisposable binder;
         private readonly DesktopHomeViewModel vm = new DesktopHomeViewModel();
         public HomePage()
         {
             InitializeComponent();
             DataContext = vm;
-            binder = AppEngine.GetRequiredService<MainWindow>().BindDecorationMargin(this);
+            AppEngine.GetRequiredService<MainWindow>().BindDecorationMargin(this);
         }
         private void InitializeComponent()
         {
@@ -30,7 +29,7 @@ namespace Anf.Desktop.Views
         {
             var eng = AppEngine.GetRequiredService<ProposalEngine>();
             var p = eng.Active(0);
-            var res= await p.Provider.GetProposalAsync(10);
+            await p.Provider.GetProposalAsync(10);
         }
     }
 }

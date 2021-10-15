@@ -21,7 +21,6 @@ namespace Anf.Desktop.Views
         public VisitingView()
         {
             InitializeComponent();
-            LoadVm("http://www.dm5.com/manhua-monvzhilv/");
         }
         public VisitingView(string address)
         {

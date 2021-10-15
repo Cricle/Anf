@@ -16,11 +16,11 @@ namespace Anf.Platform.Books
     {
         public BookManager(DirectoryInfo folder, RecyclableMemoryStreamManager streamManager)
         {
-            this.streamManager = streamManager;
+            this.StreamManager = streamManager;
             Folder = folder;
             PathHelper.EnsureCreated(folder.FullName);
         }
-        private readonly RecyclableMemoryStreamManager streamManager;
+        public RecyclableMemoryStreamManager StreamManager { get; }
 
         public DirectoryInfo Folder { get; }
 
@@ -61,7 +61,7 @@ namespace Anf.Platform.Books
         }
         public async Task<Stream> StoreStreamAsync(string address)
         {
-            var stream = streamManager.GetStream();
+            var stream = StreamManager.GetStream();
             var zip = new ZipArchive(stream, ZipArchiveMode.Update, true);
             using (var zipSave = new ZipStoreService(zip))
             {

@@ -3,6 +3,7 @@ using Anf.Cross.Views;
 using Microsoft.Maui;
 using Microsoft.Maui.Controls.PlatformConfiguration.WindowsSpecific;
 using Application = Microsoft.Maui.Controls.Application;
+using Anf.KnowEngines;
 
 namespace Anf.Cross
 {
@@ -19,7 +20,7 @@ namespace Anf.Cross
 
             this.On<Microsoft.Maui.Controls.PlatformConfiguration.Windows>()
                 .SetImageDirectory("Assets");
-            _ = AppEngine.Provider;
+            AppEngine.Provider.UseKnowEngines();
             var window = new Microsoft.Maui.Controls.Window(new HomePage());
             return window;
         }

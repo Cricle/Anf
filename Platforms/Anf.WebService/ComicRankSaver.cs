@@ -36,7 +36,7 @@ namespace Anf.WebService
             {
                 return SaveAsync(RankLevels.Month, dbContext.MonthRanks);
             }
-            return null;
+            return Task.FromResult<AnfComicRank[]>(null);
         }
         public async Task<AnfComicRank[]> SaveAsync<T>(RankLevels level,DbSet<T> rankSet)
             where T: AnfComicRank,new()

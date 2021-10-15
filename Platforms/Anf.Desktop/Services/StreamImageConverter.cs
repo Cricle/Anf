@@ -20,25 +20,16 @@ namespace Anf.Desktop.Services
 
         public async Task<Bitmap> ToImageAsync(Stream stream)
         {
-            Bitmap bit = null;
-            try
+            if (stream.CanSeek)
             {
-                if (stream.CanSeek)
-                {
-                    bit = new Bitmap(stream);
-                }
-                else
-                {
-                    using (var mem = recyclableMemoryStreamManager.GetStream())
-                    {
-                        await stream.CopyToAsync(mem);
-                        mem.Seek(0, SeekOrigin.Begin);
-                        bit = new Bitmap(mem);
-                    }
-                }
+                return new Bitmap(stream);
             }
-            catch (Exception) { }
-            return bit;
+            using (var mem = recyclableMemoryStreamManager.GetStream())
+            {
+                await stream.CopyToAsync(mem);
+                mem.Seek(0, SeekOrigin.Begin);
+                return new Bitmap(mem);
+            }
         }
     }
 }

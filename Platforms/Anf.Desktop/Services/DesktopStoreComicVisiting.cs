@@ -15,7 +15,7 @@ namespace Anf.Desktop.Services
     {
         public DesktopStoreComicVisiting(IServiceProvider host, IResourceFactoryCreator<Bitmap> resourceFactoryCreator) : base(host, resourceFactoryCreator)
         {
-            anfSettings = AppEngine.GetRequiredService<AnfSettings>();
+            anfSettings = AnfSettings.Instance;
             EnableRemote = false;
         }
         private readonly AnfSettings anfSettings;

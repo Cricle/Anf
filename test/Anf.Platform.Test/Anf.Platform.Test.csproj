@@ -15,7 +15,6 @@
 
   <ItemGroup>
     <Folder Include="Models\" />
-    <Folder Include="Services\" />
     <Folder Include="ViewModels\" />
     <Folder Include="Results\" />
     <Folder Include="Resources\" />

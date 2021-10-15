@@ -21,9 +21,11 @@ namespace Anf.Easy.Test.Store
         public void ConverName_MustCanBeCreateFile()
         {
             var name = "http://localhost:1234/hello@!?a=123&b=(!!!!|)";
-            var convertedName = new DirectAddressToFileNameProvider()
+            var provider = new DirectAddressToFileNameProvider();
+            var convertedName = provider
                 .Convert(name);
             File.Create(convertedName).Dispose();
+            provider.Dispose();
         }
     }
 }

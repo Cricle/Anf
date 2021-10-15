@@ -11,7 +11,6 @@ namespace Anf.Easy
     {
         public const char DefaultInvalidReplaceChar = '_';
 
-        private static readonly HashSet<char> AvaliableChars = new HashSet<char>("._[]".ToCharArray());
         private static readonly HashSet<char> InvalidChars = new HashSet<char>(Path.GetInvalidFileNameChars().Concat(Path.GetInvalidPathChars()));
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -27,15 +26,16 @@ namespace Anf.Easy
             }
         }
 #if NETSTANDARD2_1
-        public unsafe static string EnsureName(string name,char invalidChar=DefaultInvalidReplaceChar)
+        public static string EnsureName(string name,char invalidChar=DefaultInvalidReplaceChar)
         {
             return string.Create(name.Length, name, (x, y) =>
             {
+                char c;
                 for (int i = 0; i < x.Length; i++)
                 {
-                    var c = y[i];
+                    c = y[i];
 
-                    if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z'|| AvaliableChars.Contains(c))
+                    if (c >= '0' && c <= '9' || c >= 'a' && c <= 'z' || c >= 'A' && c <= 'Z'||!InvalidChars.Contains(c))
                     {
                         x[i] = c;
                     }
@@ -47,7 +47,7 @@ namespace Anf.Easy
             });
         }
 #else
-        public unsafe static string EnsureName(string name,char invalidChar=DefaultInvalidReplaceChar)
+        public static string EnsureName(string name, char invalidChar = DefaultInvalidReplaceChar)
         {
             var len = name.Length;
             var arr = Encoding.UTF8.GetBytes(name);

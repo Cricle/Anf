@@ -35,7 +35,7 @@ namespace Anf.Desktop.Services
             LeftControls = new SilentObservableCollection<IControl>();
         }
 
-        private void FavoriteButton_Click(object sender, RoutedEventArgs e)
+        private void OnFavoriteButtonClick(object sender, RoutedEventArgs e)
         {
             var navSer = AppEngine.GetRequiredService<MainNavigationService>();
             navSer.Navigate<BookshelfView>();
@@ -44,10 +44,10 @@ namespace Anf.Desktop.Services
         public void CreateControls()
         {
             GoBackButton = CreateIconButton<Button>("\xE72B");
-            GoBackButton.Click += GoBackButton_Click;
+            GoBackButton.Click += OnGoBackButtonClick;
 
             FavoriteButton = CreateIconButton<Button>("\xE8F1");
-            FavoriteButton.Click += FavoriteButton_Click;
+            FavoriteButton.Click += OnFavoriteButtonClick;
 
             var v = new SettingsControlView();
 
@@ -73,7 +73,7 @@ namespace Anf.Desktop.Services
             btn.Bind(Button.FontSizeProperty, new Binding(nameof(AdviseFontSize)) { Source = this });
             return btn;
         }
-        private void GoBackButton_Click(object sender, RoutedEventArgs e)
+        private void OnGoBackButtonClick(object sender, RoutedEventArgs e)
         {
             var navSer = AppEngine.GetRequiredService<MainNavigationService>();
             navSer.GoBack();

@@ -1,11 +1,7 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media.Imaging;
 using Microsoft.IO;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Anf.Desktop
@@ -19,7 +15,7 @@ namespace Anf.Desktop
             var dig = new SaveFileDialog();
             dig.InitialFileName = name;
             var res = await dig.ShowAsync(win);
-            if (res != null && res != null)
+            if (res != null)
             {
                 using (var stream = mgr.GetStream())
                 {

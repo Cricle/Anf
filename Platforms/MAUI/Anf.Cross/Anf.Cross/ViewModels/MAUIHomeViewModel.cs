@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace Anf.Cross.ViewModels
 {
-    public class MAUIHomeViewModel : HomeViewModel<WithImageStorableComicSourceInfo<Stream, ImageSource>, ImageSource>
+    public class MAUIHomeViewModel : HomeViewModel<WithImageStorableComicSourceInfo<ImageResource, ImageSource>, ImageSource>
     {
         public AnfSettings AnfSettings { get; }
         private readonly INetworkAdapter networkAdapter;
@@ -25,9 +25,9 @@ namespace Anf.Cross.ViewModels
             this.networkAdapter = AppEngine.GetRequiredService<INetworkAdapter>();
         }
 
-        protected override ComicSnapshotInfo<WithImageStorableComicSourceInfo<Stream, ImageSource>> CreateSnapshotInfo(ComicSnapshot info)
+        protected override ComicSnapshotInfo<WithImageStorableComicSourceInfo<ImageResource, ImageSource>> CreateSnapshotInfo(ComicSnapshot info)
         {
-            return new WithImageComicSnapshotInfo<Stream, ImageSource>(info, networkAdapter);
+            return new WithImageComicSnapshotInfo<ImageResource, ImageSource>(info, networkAdapter);
         }
     }
 }

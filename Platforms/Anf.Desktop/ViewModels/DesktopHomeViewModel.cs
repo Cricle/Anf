@@ -13,6 +13,7 @@ using Anf.Platform.Settings;
 using Anf.Platform.Models.Impl;
 using Anf.Networks;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Anf.Desktop.ViewModels
 {
@@ -24,7 +25,7 @@ namespace Anf.Desktop.ViewModels
 
         public DesktopHomeViewModel()
         {
-            StartupSettings = AppEngine.GetRequiredService<AnfSettings>().Startup;
+            StartupSettings = AnfSettings.Instance.Startup;
             InitDatas();
         }
 
@@ -56,7 +57,11 @@ namespace Anf.Desktop.ViewModels
             }
             subscribes.Clear();
         }
-        private async void UpdateIfNeedAsync()
+        private async void UpdateIfNeed()
+        {
+            await UpdateIfNeedAsync();
+        }
+        protected Task UpdateIfNeedAsync()
         {
             switch (StartupSettings.StartupType)
             {
@@ -66,24 +71,23 @@ namespace Anf.Desktop.ViewModels
                     {
                         SelectedProposal = ProposalEngine.FirstOrDefault();
                     }
-                    await UpdateProposalAsync(StartupSettings.DisplayProposalCount);
-                    break;
+                    return UpdateProposalAsync(StartupSettings.DisplayProposalCount);
                 case StartupTypes.Providers:
-                    await LoadEngineIcons();
-                    break;
+                    return LoadEngineIcons();
                 default:
                     break;
             }
+            return Task.CompletedTask;
         }
         protected override void OnSelectedProposalChanged(IProposalDescription description)
         {
-            UpdateIfNeedAsync();
+            _ = UpdateIfNeedAsync();
         }
         private void InitDatas()
         {
-            subscribes.Add(StartupSettings.Subscribe(x => x.StartupType, UpdateIfNeedAsync));
-            subscribes.Add(StartupSettings.Subscribe(x => x.DisplayProposalCount, UpdateIfNeedAsync));
-            UpdateIfNeedAsync();
+            subscribes.Add(StartupSettings.Subscribe(x => x.StartupType, UpdateIfNeed));
+            subscribes.Add(StartupSettings.Subscribe(x => x.DisplayProposalCount, UpdateIfNeed));
+            _ = UpdateIfNeedAsync();
         }
     }
 }

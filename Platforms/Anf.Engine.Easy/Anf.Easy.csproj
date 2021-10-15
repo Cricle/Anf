@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <Import Project="..\..\engs\pkg.props"/>
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard1.4;net45;net461</TargetFrameworks>
+    <TargetFrameworks>netstandard2.1;netstandard2.0;netstandard1.4;net45;net461</TargetFrameworks>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>8.0</LangVersion>
     <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
@@ -10,7 +10,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Anf.Engine\Anf.Engine.csproj" />
   </ItemGroup>
-  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net461'">
+  <ItemGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net461' or '$(TargetFramework)'=='netstandard2.1'">
     <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="3.1.14"/>
     <PackageReference Include="Microsoft.IO.RecyclableMemoryStream" Version="2.0.0" />

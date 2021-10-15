@@ -6,6 +6,7 @@ using GalaSoft.MvvmLight;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -14,6 +15,8 @@ namespace Anf.Desktop.Settings
     [ConfigStepIn]
     public class AnfSettings
     {
+        public static AnfSettings Instance => AppEngine.GetRequiredService<AnfSettings>();
+
         public ThemeSettings Theme { get; set; }
 
         public ReadingSettings Reading{ get; set; }

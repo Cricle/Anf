@@ -65,7 +65,7 @@ namespace Anf.KnowEngines.SearchProviders
                         };
                         sources.Add(source);
                     }
-                    var first = comic.ToArray().First();
+                    var first = comic.First();
                     sn.Name = first["SomanId"].ToString();
                     sn.ImageUri = first["PicUrl"].ToString();
                     sn.Author = first["Author"].ToString();

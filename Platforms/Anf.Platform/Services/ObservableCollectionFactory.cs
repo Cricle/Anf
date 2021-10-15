@@ -9,6 +9,16 @@ namespace Anf.Platform.Services
     {
         public void AddRange<T>(IList<T> lst, IEnumerable<T> datas)
         {
+            if (lst is null)
+            {
+                throw new ArgumentNullException(nameof(lst));
+            }
+
+            if (datas is null)
+            {
+                throw new ArgumentNullException(nameof(datas));
+            }
+
             if (lst is SilentObservableCollection<T> coll)
             {
                 coll.AddRange(datas);
@@ -29,6 +39,11 @@ namespace Anf.Platform.Services
 
         public IList<T> Create<T>(IEnumerable<T> datas)
         {
+            if (datas is null)
+            {
+                throw new ArgumentNullException(nameof(datas));
+            }
+
             return new SilentObservableCollection<T>(datas);
         }
     }

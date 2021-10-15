@@ -31,7 +31,8 @@ namespace Anf.Platform.Services
         {
             await LazyWriteAsync(DefaultLazyTime);
         }
-        private SemaphoreSlim writeLocker=new SemaphoreSlim(1);
+
+        private readonly SemaphoreSlim writeLocker=new SemaphoreSlim(1);
         private object writeToken=new object();
 
         public bool LeaveCloseStream { get; set; }

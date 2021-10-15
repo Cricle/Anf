@@ -60,12 +60,10 @@ namespace Anf.Desktop.Services
 
         public void GoSource(ComicSourceInfo info)
         {
-            //Todo
             GoSource(info.Source.TargetUrl);
         }
         public void GoSource(string address)
         {
-            //Todo
             var view = new VisitingView(address);
             Navigate(view);
         }

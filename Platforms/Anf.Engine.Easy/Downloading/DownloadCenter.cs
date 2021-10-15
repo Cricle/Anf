@@ -18,9 +18,9 @@ namespace Anf.Easy.Downloading
 
         public DownloadCenter(IServiceProvider serviceProvider, IDownloadManager downloadTasks, IComicSaver saver)
         {
-            this.serviceProvider = serviceProvider;
-            this.downloadManager = downloadTasks;
-            Saver = saver;
+            this.serviceProvider = serviceProvider ?? throw new ArgumentNullException(nameof(serviceProvider));
+            this.downloadManager = downloadTasks ?? throw new ArgumentNullException(nameof(downloadTasks));
+            Saver = saver ?? throw new ArgumentNullException(nameof(saver));
             semaphoreSlim = new SemaphoreSlim(1, 1);
             downloadMap = new Dictionary<string, DownloadBox>();
         }

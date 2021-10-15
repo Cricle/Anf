@@ -102,11 +102,11 @@ namespace Anf.Easy.Concurrnets
             }
         }
 
-        public void CopyTo(T[] array, int index)
+        public void CopyTo(T[] array, int arrayIndex)
         {
             lock (_sync)
             {
-                Items.CopyTo(array, index);
+                Items.CopyTo(array, arrayIndex);
             }
         }
 

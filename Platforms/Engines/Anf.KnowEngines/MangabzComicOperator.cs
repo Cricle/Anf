@@ -105,7 +105,6 @@ namespace Anf.KnowEngines
             var imgCountRgx = imageCountRegex.Match(str).Groups[0].Value;
 
             var cid = cidRgx.Substring(0, cidRgx.IndexOf(';')).Split('=').Last();
-            var dt = dtRgx.Substring(0, dtRgx.IndexOf(';')).Split('=').Last().Trim('\"');
             var mid = midRgx.Substring(0, midRgx.IndexOf(';')).Split('=').Last();
             var viewSign = viewSignRgx.Substring(0, viewSignRgx.IndexOf(';')).Split('=').Last().Trim('\"');
             var imgCount = imgCountRgx.Substring(0, imgCountRgx.IndexOf(';')).Split('=').Last().Trim('\"');

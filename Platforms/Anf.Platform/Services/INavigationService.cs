@@ -8,6 +8,6 @@ namespace Anf.Services
     public interface IComicTurnPageService
     {
         void GoSource(ComicSourceInfo info);
-        void GoSource(string info);
+        void GoSource(string address);
     }
 }

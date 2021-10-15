@@ -4,11 +4,9 @@
              x:DataType="views:MAUIHomeViewModel"
              x:Class="Anf.Cross.Views.HomePage"
              BackgroundColor="{DynamicResource PageBackgroundColor}">
-    <!--<Entry></Entry>-->
-    <!--<ScrollView Padding="{OnPlatform iOS='30,60,30,30', Default='30'}">
+    <ScrollView Padding="{OnPlatform iOS='30,60,30,30', Default='30'}">
         <StackLayout Orientation="Vertical">
             <Entry Text="{Binding Keyword,Mode=TwoWay}"/>
-            <Button Text="ads"></Button>
         </StackLayout>
-    </ScrollView>-->
+    </ScrollView>
 </ContentPage>

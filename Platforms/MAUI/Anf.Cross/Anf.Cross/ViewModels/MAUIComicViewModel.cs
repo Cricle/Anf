@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 
 namespace Anf.Cross.ViewModels
 {
-    public class MAUIComicViewModel : WithImageStorableComicSnapshotInfo<Stream, ImageSource>,IDisposable
+    public class MAUIComicViewModel : WithImageStorableComicSnapshotInfo<ImageResource, ImageSource>,IDisposable
     {
         public MAUIComicViewModel(ComicSnapshot snapshot)
             : base(snapshot)

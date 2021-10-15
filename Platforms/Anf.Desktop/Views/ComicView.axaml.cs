@@ -9,12 +9,10 @@ namespace Anf.Desktop.Views
 {
     public class ComicView : UserControl
     {
-        private readonly TitleService titleService;
         private readonly IDisposable binder;
         public ComicView()
         {
             InitializeComponent();
-            titleService = AppEngine.GetRequiredService<TitleService>();
             binder = AppEngine.GetRequiredService<MainWindow>().BindDecorationMargin(this);
         }
         protected override void OnDetachedFromLogicalTree(LogicalTreeAttachmentEventArgs e)

@@ -19,7 +19,7 @@ namespace Anf
         private static EasyComicBuilder easyComicBuilder;
 
         public static IServiceCollection Services => easyComicBuilder?.Services;
-        public static bool IsLoaded => !(provider is null);
+        public static bool IsLoaded => provider != null;
 
         public static IServiceProvider Provider
         {
@@ -32,7 +32,6 @@ namespace Anf
                         if (provider == null)
                         {
                             provider = easyComicBuilder.Build();
-                            provider.UseKnowEngines();
                         }
                     }
                 }

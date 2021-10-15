@@ -14,11 +14,11 @@ namespace Anf.Desktop.Converters
         {
             if (value is int vi)
             {
-                return vi++;
+                return vi+1;
             }
             else if (value is long vl)
             {
-                return vl++;
+                return vl+1;
             }
             return value;
         }

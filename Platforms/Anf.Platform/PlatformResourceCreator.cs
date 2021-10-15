@@ -14,7 +14,7 @@ namespace Anf.Platform
 
         public PlatformResourceCreator(IComicSourceProvider provider)
         {
-            this.provider = provider;
+            this.provider = provider ?? throw new ArgumentNullException(nameof(provider));
         }
 
         public void Dispose()

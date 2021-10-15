@@ -12,16 +12,16 @@ using System.Threading.Tasks;
 
 namespace Anf.Platform.Services
 {
-    public abstract class ComicStoreBox : ObservableObject,IDisposable
+    public abstract class ComicStoreBox : ObservableObject, IDisposable
     {
         public static readonly TimeSpan DefaultLazyTime = TimeSpan.FromSeconds(5);
-        public ComicStoreBox(FileInfo targetFile)
+        protected ComicStoreBox(FileInfo targetFile)
         {
             TargetFile = targetFile ?? throw new ArgumentNullException(nameof(targetFile));
             UpdateModelFromFile();
             Init();
         }
-        public ComicStoreBox(FileInfo targetFile, ComicStoreModel attackModel)
+        protected ComicStoreBox(FileInfo targetFile, ComicStoreModel attackModel)
         {
             TargetFile = targetFile ?? throw new ArgumentNullException(nameof(targetFile));
             this.attackModel = attackModel ?? throw new ArgumentNullException(nameof(attackModel));
@@ -29,7 +29,7 @@ namespace Anf.Platform.Services
             Init();
         }
         private readonly SemaphoreSlim writeLocker = new SemaphoreSlim(1);
-        private object updateToken=new object();
+        private object updateToken = new object();
         private ComicStoreModel attackModel;
         private bool isSaving;
         private bool isUpdating;
@@ -141,23 +141,19 @@ namespace Anf.Platform.Services
             return false;
         }
 
-        public void WriteFile()
+        public virtual void WriteFile()
         {
             writeLocker.Wait();
             try
             {
-                using (var s = TargetFile.Open(FileMode.Create))
-                using (var sr = new StreamWriter(s))
-                {
-                    sr.Write(AttackModelJson);
-                }
+                File.WriteAllText(TargetFile.FullName, AttackModelJson);
             }
             finally
             {
                 writeLocker.Release();
             }
         }
-        public async Task WriteFileAsync()
+        public virtual async Task WriteFileAsync()
         {
             await writeLocker.WaitAsync();
             try
@@ -179,7 +175,7 @@ namespace Anf.Platform.Services
         {
             AttackModel.Chapters = info.Chapters;
             AttackModel.ComicUrl = info.ComicUrl;
-            AttackModel.Descript= info.Descript;
+            AttackModel.Descript = info.Descript;
             AttackModel.ImageUrl = info.ImageUrl;
         }
         public void UpdateModelFromFile()

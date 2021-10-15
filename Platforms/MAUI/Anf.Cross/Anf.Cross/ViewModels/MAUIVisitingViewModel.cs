@@ -17,7 +17,7 @@ using System.IO;
 
 namespace Anf.Cross.ViewModels
 {
-    public class MAUIVisitingViewModel : VisitingViewModel<Stream, ImageSource>
+    public class MAUIVisitingViewModel : VisitingViewModel<ImageResource, ImageSource>
     {
         public static async Task<MAUIVisitingViewModel> CreateAsync(string address, bool usingStore = false)
         {

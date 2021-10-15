@@ -3,7 +3,7 @@
     /// <summary>
     /// 表示已知的结果代码
     /// </summary>
-    public class KnowResultCodes
+    public static class KnowResultCodes
     {
         /// <summary>
         /// 成功

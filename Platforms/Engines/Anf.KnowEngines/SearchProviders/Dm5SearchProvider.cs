@@ -12,7 +12,7 @@ namespace Anf.KnowEngines.SearchProviders
     [ComicSearchProvider]
     public class Dm5SearchProvider : ISearchProvider
     {
-        private static readonly string url = "http://www.dm5.com/search?title={0}&language=1";
+        private static readonly string searchUrl = "http://www.dm5.com/search?title={0}&language=1";
 
         private readonly INetworkAdapter networkAdapter;
 
@@ -25,7 +25,7 @@ namespace Anf.KnowEngines.SearchProviders
 
         public async Task<SearchComicResult> SearchAsync(string keywork, int skip, int take)
         {
-            var targetUrl = string.Format(url, keywork);
+            var targetUrl = string.Format(searchUrl, keywork);
             var req = new RequestSettings
             {
                 Address = targetUrl,

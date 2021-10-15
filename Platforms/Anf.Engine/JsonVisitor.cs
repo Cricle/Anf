@@ -1,7 +1,10 @@
-﻿using System;
+﻿#if NETSTANDARD2_0_OR_GREATER||NETCOREAPP2_0_OR_GREATER||NET461_OR_GREATER
+#define USING_TEXT_JSON
+#endif
+using System;
+using System.Collections;
 using System.Collections.Generic;
-using System.Text;
-#if StandardLib
+#if USING_TEXT_JSON
 using System.Text.Json;
 #else
 using Newtonsoft.Json.Linq;
@@ -9,17 +12,21 @@ using Newtonsoft.Json.Linq;
 
 namespace Anf
 {
-#if StandardLib
+#if USING_TEXT_JSON
     public struct JsonVisitor : IJsonVisitor
     {
         private readonly JsonElement doc;
         private readonly JsonDocument docx;
 
+        public bool IsArray => doc.ValueKind == JsonValueKind.Array;
+
+        public bool HasValue => doc.ValueKind != JsonValueKind.Null;
+
         public JsonVisitor(object obj)
         {
             var str = JsonSerializer.Serialize(obj);
-            this.docx = JsonDocument.Parse(str);
-            this.doc = this.docx.RootElement;
+            docx = JsonDocument.Parse(str);
+            doc = docx.RootElement;
         }
         public JsonVisitor(JsonElement doc, JsonDocument docx)
         {
@@ -46,7 +53,15 @@ namespace Anf
         }
         public static IJsonVisitor FromString(string txt)
         {
-            var doc = JsonDocument.Parse(txt);
+            JsonDocument doc;
+            if (string.IsNullOrEmpty(txt))
+            {
+                doc = JsonDocument.Parse("null");
+            }
+            else
+            {
+                doc = JsonDocument.Parse(txt);
+            }
             return new JsonVisitor(doc.RootElement, doc);
         }
 
@@ -54,21 +69,46 @@ namespace Anf
         {
             docx.Dispose();
         }
+
+        public IEnumerator<KeyValuePair<string, IJsonVisitor>> GetEnumerator()
+        {
+            foreach (var item in doc.EnumerateObject())
+            {
+                yield return new KeyValuePair<string, IJsonVisitor>(
+                    item.Name, new JsonVisitor(item.Value, docx));
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
     }
 #else
     public struct JsonVisitor : IJsonVisitor
     {
         private readonly JToken @object;
 
+        public bool IsArray
+        {
+            get
+            {
+                ThrowIfNullValue();
+                return @object.Type == JTokenType.Array;
+            }
+        }
+
+        public bool HasValue => @object != null && @object.Type != JTokenType.Null;
+
         public JsonVisitor(JToken @object)
         {
-            this.@object = @object ?? throw new ArgumentNullException(nameof(@object));
+            this.@object = @object;
         }
         public JsonVisitor(object @object)
         {
             if (@object is null)
             {
-                this.@object = JObject.FromObject(null);
+                this.@object = null;
             }
             else if (@object.GetType().IsArray)
             {
@@ -82,16 +122,25 @@ namespace Anf
 
         public IJsonVisitor this[string key]
         {
-            get => new JsonVisitor(@object[key]);
+            get
+            {
+                ThrowIfNullValue();
+                return new JsonVisitor(@object[key]);
+            }
         }
 
         public void Dispose()
         {
+
         }
         public static IJsonVisitor FromString(string txt)
         {
+            if (string.IsNullOrEmpty(txt))
+            {
+                return new JsonVisitor(null);
+            }
             JToken tk;
-            if (txt.StartsWith("{"))
+            if (txt[0] == '{')
             {
                 tk = JObject.Parse(txt);
             }
@@ -104,6 +153,8 @@ namespace Anf
 
         public IEnumerable<IJsonVisitor> ToArray()
         {
+            ThrowIfNullValue();
+
             foreach (var item in (JArray)@object)
             {
                 yield return new JsonVisitor(item);
@@ -111,7 +162,38 @@ namespace Anf
         }
         public override string ToString()
         {
+            ThrowIfNullValue();
             return @object?.ToString();
+        }
+        private void ThrowIfNullValue()
+        {
+            if (@object == null)
+            {
+                throw new InvalidOperationException("The value is null");
+            }
+        }
+        public IEnumerator<KeyValuePair<string, IJsonVisitor>> GetEnumerator()
+        {
+            ThrowIfNullValue();
+            foreach (var item in @object)
+            {
+                var visitor = new JsonVisitor(item);
+                var name = string.Empty;
+                IJsonVisitor pvisitor = visitor;
+                if (item is JProperty prop)
+                {
+                    name = prop.Name;
+                    pvisitor = new JsonVisitor(prop.Value);
+                }
+                yield return new KeyValuePair<string, IJsonVisitor>(
+                    name, pvisitor);
+
+            }
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
         }
     }
 #endif

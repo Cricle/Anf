@@ -41,14 +41,15 @@ namespace Anf.Cross
             services.AddSingleton<IPlatformService, PlatformService>();
             services.AddScoped<IComicVisiting<ImageSource>, ComicVisiting<ImageSource>>();
             services.AddSingleton<IStreamImageConverter<ImageSource>, StreamImageConverter>();
-            services.AddSingleton<IResourceFactoryCreator<ImageSource>, PlatformResourceCreatorFactory<Stream, ImageSource>>();
+            services.AddSingleton<IStreamImageConverter<ImageResource>, StreamResourceConverter>();
+            services.AddSingleton<IResourceFactoryCreator<ImageSource>, PlatformResourceCreatorFactory<ImageResource, ImageSource>>();
             services.AddSingleton<ExceptionService>();
             services.AddScoped<StoreComicVisiting<ImageSource>>();
 
-            var storeSer = new WithImageComicStoreService<Stream, ImageSource>(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
+            var storeSer = new WithImageComicStoreService<ImageResource, ImageSource>(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
             services.AddSingleton(storeSer);
             services.AddSingleton<IObservableCollectionFactory>(new DefaultObservableCollectionFactory());
-            services.AddSingleton<ComicStoreService<WithImageComicStoreBox<Stream, ImageSource>>>(storeSer);
+            services.AddSingleton<ComicStoreService<WithImageComicStoreBox<ImageResource, ImageSource>>>(storeSer);
 
             var configRoot = BuildConfiguration();
             services.AddSingleton(CreateSettings);

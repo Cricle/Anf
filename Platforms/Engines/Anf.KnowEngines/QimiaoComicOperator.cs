@@ -43,7 +43,6 @@ namespace Anf.KnowEngines
                 var html = new HtmlDocument();
                 html.LoadHtml(str);
                 var img = html.DocumentNode.SelectSingleNode("//div[@class='inner']/div[@class='ctdbLeft ']/a/img");
-                var auth = html.DocumentNode.SelectSingleNode("//div[@class='detailBox']/p[@class='author']");
                 var desc = html.DocumentNode.SelectSingleNode("//p[@id='worksDesc']");
                 var list = html.DocumentNode.SelectNodes("//div[@class='comic-content-list']/ul/li/a");
                 var chps = new List<ComicChapter>();

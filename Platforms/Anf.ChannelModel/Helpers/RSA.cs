@@ -56,7 +56,6 @@ namespace Anf.ChannelModel.Helpers
         {
             keyBase64 = keyBase64.Replace("\r", string.Empty).Replace("\n", string.Empty).Replace(" ", string.Empty);
             var publicInfoByte = Convert.FromBase64String(keyBase64);
-            var pubKeyObj = Asn1Object.FromByteArray(publicInfoByte);//这里也可以从流中读取，从本地导入   
             var pubKey = PublicKeyFactory.CreateKey(publicInfoByte);
             return pubKey;
         }
@@ -65,8 +64,6 @@ namespace Anf.ChannelModel.Helpers
         {
             keyBase64 = keyBase64.Replace("\r", string.Empty).Replace("\n", string.Empty).Replace(" ", string.Empty);
             var privateInfoByte = Convert.FromBase64String(keyBase64);
-            // Asn1Object priKeyObj = Asn1Object.FromByteArray(privateInfoByte);//这里也可以从流中读取，从本地导入   
-            // PrivateKeyInfo privateKeyInfo = PrivateKeyInfoFactory.CreatePrivateKeyInfo(privateKey);
             var priKey = PrivateKeyFactory.CreateKey(privateInfoByte);
             return priKey;
         }

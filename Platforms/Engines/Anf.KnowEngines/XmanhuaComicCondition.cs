@@ -8,7 +8,7 @@ namespace Anf.KnowEngines
     {
         public override string EngineName => "Xmanhua";
 
-        public override Uri Address { get; } = new Uri("http://www.xmanhua.com/");
+        public override Uri Address { get; } = new Uri("https://www.xmanhua.com/");
 
         public override bool Condition(ComicSourceContext context)
         {

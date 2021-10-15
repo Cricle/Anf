@@ -19,8 +19,4 @@
     <ProjectReference Include="..\..\Platforms\Anf.Engine\Anf.Engine.csproj" />
     <ProjectReference Include="..\SimpleService\SimpleService.csproj" />
   </ItemGroup>
-
-  <ItemGroup>
-    <Compile Include="..\..\Platforms\Anf.Engine\ObservableCollectionExtension.cs"></Compile>
-  </ItemGroup>
 </Project>

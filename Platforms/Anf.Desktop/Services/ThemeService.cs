@@ -55,16 +55,17 @@ namespace Anf.Desktop.Services
                 }
                 if (MainWindow.CheckAccess())
                 {
-                    Set(ref currentModel, value);
-                    SwitchModel(value);
+                    UpdateValue();
                 }
                 else
                 {
-                    Dispatcher.UIThread.Post(() =>
-                    {
-                        Set(ref currentModel, value);
-                        SwitchModel(value);
-                    });
+                    Dispatcher.UIThread.Post(UpdateValue);
+                }
+
+                void UpdateValue()
+                {
+                    Set(ref currentModel, value);
+                    SwitchModel(value);
                 }
             }
         }

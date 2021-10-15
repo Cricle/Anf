@@ -39,7 +39,7 @@ namespace Anf.Platform
             var exser = AppEngine.GetRequiredService<ExceptionService>();
             exser.Exception = e.Exception;
             var logger = AppEngine.GetLogger<TaskScheduler>();
-            logger.LogError(default(EventId),e.Exception, sender?.ToString() ?? string.Empty);
+            logger.LogError(default,e.Exception, sender?.ToString() ?? string.Empty);
             e.SetObserved();
         }
 
@@ -48,7 +48,7 @@ namespace Anf.Platform
             var exser = AppEngine.GetRequiredService<ExceptionService>();
             var ex = e.ExceptionObject as Exception;
             var logger = AppEngine.GetLogger<AppDomain>();
-            logger.LogError(default(EventId),ex, sender?.ToString() ?? string.Empty);
+            logger.LogError(default,ex, sender?.ToString() ?? string.Empty);
             exser.Exception = ex;
         }
 

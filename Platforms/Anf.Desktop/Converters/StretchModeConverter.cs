@@ -11,14 +11,13 @@ namespace Anf.Desktop.Converters
 {
     public class StretchModeConverter : IValueConverter
     {
-        private static IReadOnlyDictionary<StretchMode, string> nameForModels = new Dictionary<StretchMode, string>
+        private static readonly IReadOnlyDictionary<StretchMode, string> nameForModels = new Dictionary<StretchMode, string>
         {
             [StretchMode.Fill] = "填满",
             [StretchMode.None] = "自由",
             [StretchMode.Uniform] = "均匀",
             [StretchMode.UniformToFill] = "满均"
         };
-        private static IReadOnlyDictionary<string, StretchMode> modelForNames = nameForModels.ToDictionary(x => x.Value, x => x.Key);
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
             if (value is StretchMode mode)

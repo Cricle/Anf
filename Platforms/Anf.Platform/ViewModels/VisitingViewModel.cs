@@ -41,12 +41,12 @@ namespace Anf.ViewModels
             IStreamImageConverter<TImage> streamImageConverter,
             IObservableCollectionFactory observableCollectionFactory)
         {
-            provider = visiting.Host;
             this.streamImageConverter = streamImageConverter ?? throw new ArgumentNullException(nameof(streamImageConverter));
             this.recyclableMemoryStreamManager = recyclableMemoryStreamManager ?? throw new ArgumentNullException(nameof(recyclableMemoryStreamManager));
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.visiting = visiting ?? throw new ArgumentNullException(nameof(visiting));
             this.observableCollectionFactory = observableCollectionFactory ?? throw new ArgumentNullException(nameof(observableCollectionFactory));
+            provider = visiting.Host;
             InitVisiting();
         }
         private readonly SemaphoreSlim loadSlim = new SemaphoreSlim(1);
@@ -294,6 +294,20 @@ namespace Anf.ViewModels
         protected virtual void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<TImage>> cursor)
         {
 
+        }
+        public async Task<IReadOnlyList<ComicPageInfo<TImage>>> LoadRangeAsync(int start, int count)
+        {
+            var loaded = new List<ComicPageInfo<TImage>>(Math.Min(Resources.Count, count));
+            foreach (var item in Resources.Skip(start).Take(count))
+            {
+                if (loadCancellationTokenSource.IsCancellationRequested)
+                {
+                    break;
+                }
+                await item.LoadAsync();
+                loaded.Add(item);
+            }
+            return loaded;
         }
         public async Task<int> LoadAllAsync()
         {

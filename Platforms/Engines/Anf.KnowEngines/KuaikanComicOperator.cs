@@ -39,7 +39,6 @@ namespace Anf.KnowEngines
         public async Task<ComicEntity> GetChaptersAsync(string targetUrl)
         {
             var str = string.Empty;
-            var req = CreateRequest(targetUrl);
             using (var sr = new StreamReader(await CreateRequest(targetUrl)))
             {
                 str = await sr.ReadToEndAsync();

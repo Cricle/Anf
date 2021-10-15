@@ -1,1 +1,1 @@
-dotnet test
+dotnet test Anf.Test.sln

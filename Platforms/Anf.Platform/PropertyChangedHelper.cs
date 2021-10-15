@@ -20,8 +20,8 @@ namespace System.ComponentModel
                 notify.PropertyChanged -= sub;
             }
         }
-        public static IDisposable Subscribe<T>(this T notify,Expression<Func<T,object>> expression, PropertyChangedEventHandler handler)
-            where T:INotifyPropertyChanged
+        public static IDisposable Subscribe<T>(this T notify, Expression<Func<T, object>> expression, PropertyChangedEventHandler handler)
+            where T : INotifyPropertyChanged
         {
             if (expression is null)
             {
@@ -37,7 +37,7 @@ namespace System.ComponentModel
             {
                 name = exp.Member.Name;
             }
-            else if (expression.Body is UnaryExpression uexp&&uexp.Operand is MemberExpression propExp)
+            else if (expression.Body is UnaryExpression uexp && uexp.Operand is MemberExpression propExp)
             {
                 name = propExp.Member.Name;
             }
@@ -54,11 +54,31 @@ namespace System.ComponentModel
         public static IDisposable Subscribe<T>(this T notify, Expression<Func<T, object>> expression, Action<object> handler)
            where T : INotifyPropertyChanged
         {
+            if (expression is null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (handler is null)
+            {
+                throw new ArgumentNullException(nameof(handler));
+            }
+
             return Subscribe(notify, expression, (o, e) => handler(o));
         }
         public static IDisposable Subscribe<T>(this T notify, Expression<Func<T, object>> expression, Action handler)
           where T : INotifyPropertyChanged
         {
+            if (expression is null)
+            {
+                throw new ArgumentNullException(nameof(expression));
+            }
+
+            if (handler is null)
+            {
+                throw new ArgumentNullException(nameof(handler));
+            }
+
             return Subscribe(notify, expression, (o, e) => handler());
         }
     }

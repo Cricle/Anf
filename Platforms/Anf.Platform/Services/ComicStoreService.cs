@@ -23,7 +23,7 @@ namespace Anf.Platform.Services
 
         public const string Pattern = "*." + Extensions;
 
-        public ComicStoreService(DirectoryInfo folder, int cacheSize = 50)
+        protected ComicStoreService(DirectoryInfo folder, int cacheSize = 50)
             : base(folder, MD5AddressToFileNameProvider.Instance, cacheSize)
         {
 

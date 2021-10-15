@@ -16,7 +16,7 @@ namespace Anf.KnowEngines.SearchProviders
     [ComicSearchProvider]
     public class BilibiliSearchProvider : ISearchProvider
     {
-        private static readonly string url = "https://manga.bilibili.com/twirp/comic.v1.Comic/Search?device=pc&platform=web";
+        private static readonly string searchUrl = "https://manga.bilibili.com/twirp/comic.v1.Comic/Search?device=pc&platform=web";
 
         public string EngineName => "Bilibili";
         private readonly INetworkAdapter networkAdapter;
@@ -75,9 +75,9 @@ namespace Anf.KnowEngines.SearchProviders
                 mem.Seek(0, SeekOrigin.Begin);
                 var req = new RequestSettings
                 {
-                    Address = url,
+                    Address = searchUrl,
                     Method = "POST",
-                    Host=UrlHelper.FastGetHost(url),
+                    Host=UrlHelper.FastGetHost(searchUrl),
                     Referrer = "https://manga.bilibili.com/",
                     Data = mem,
                     Headers = headers

@@ -13,10 +13,20 @@ namespace Anf.Easy.Visiting
     {
         public static bool IsLoad<TResource>(this IComicVisiting<TResource> visiting)
         {
+            if (visiting is null)
+            {
+                throw new ArgumentNullException(nameof(visiting));
+            }
+
             return !string.IsNullOrEmpty(visiting.Address);
         }
         public static async Task<IComicVisitPage<TResource>> GoToPageAsync<TResource>(this IComicVisiting<TResource> visiting, ComicPos pos)
         {
+            if (visiting is null)
+            {
+                throw new ArgumentNullException(nameof(visiting));
+            }
+
             var mgr = await visiting.GetChapterManagerAsync(pos.ChapterIndex);
             var page = await mgr.GetVisitPageAsync(pos.PageIndex);
             return page;
@@ -25,6 +35,15 @@ namespace Anf.Easy.Visiting
             int index,
             int concurrent = 1)
         {
+            if (visiting is null)
+            {
+                throw new ArgumentNullException(nameof(visiting));
+            }
+            if (index < 0)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
             var streamMgr = visiting.Host.GetRequiredService<RecyclableMemoryStreamManager>();
             var mgr = await visiting.GetChapterManagerAsync(index);
             if (mgr == null || mgr.ChapterWithPage?.Pages == null)

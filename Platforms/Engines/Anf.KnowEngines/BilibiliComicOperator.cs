@@ -101,7 +101,7 @@ namespace Anf.KnowEngines
                     {
                         var title = item["title"].ToString();
                         var id = item["id"].ToString();
-                        var url = "https://manga.bilibili.com/" + mc + "/" + id;
+                        var url = "https://manga.bilibili.com/" + mc + "/mc" + id;
                         var chp = new ComicChapter
                         {
                             TargetUrl = url,
@@ -125,7 +125,7 @@ namespace Anf.KnowEngines
         public async Task<ComicPage[]> GetPagesAsync(string targetUrl)
         {
             const int width = 660;
-            var epId = new Uri(targetUrl).Segments.Last();
+            var epId = new Uri(targetUrl).Segments.Last().TrimStart('m','c');
             string targetObjStr = null;
             using (var mem = GetStream())
             {
@@ -142,10 +142,6 @@ namespace Anf.KnowEngines
                     var imgs = jobj["data"]["images"].ToArray();
                     var paths = imgs.Select(x => x["path"].ToString()+$"@{width}w.jpg").ToArray();
                     targetObjStr = "{\"urls\":\"[" + string.Join(",", paths.Select(x=>$"\\\"{x}\\\""))+ "]\"}";
-                    //targetObj = JObject.FromObject(new
-                    //{
-                    //    urls="[\""+string.Join(",",paths)+"\"]"
-                    //});
                 }
             }
             using (var mem = GetStream())

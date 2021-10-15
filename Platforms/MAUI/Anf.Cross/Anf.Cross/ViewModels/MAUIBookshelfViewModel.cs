@@ -10,11 +10,11 @@ using System.Threading.Tasks;
 
 namespace Anf.Cross.ViewModels
 {
-    public class MAUIBookshelfViewModel : BookshelfViewModel<WithImageComicStoreBox<Stream,ImageSource>>
+    public class MAUIBookshelfViewModel : BookshelfViewModel<WithImageComicStoreBox<ImageResource, ImageSource>>
     {
-        protected override WithImageComicStoreBox<Stream, ImageSource> CreateBox(FileInfo fileInfo)
+        protected override WithImageComicStoreBox<ImageResource, ImageSource> CreateBox(FileInfo fileInfo)
         {
-            return new WithImageComicStoreBox<Stream, ImageSource>(fileInfo);
+            return new WithImageComicStoreBox<ImageResource, ImageSource>(fileInfo);
         }
     }
 }

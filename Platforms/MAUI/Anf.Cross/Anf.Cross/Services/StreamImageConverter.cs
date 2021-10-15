@@ -15,4 +15,12 @@ namespace Anf.Cross.Services
             return Task.FromResult(img);
         }
     }
+    internal class StreamResourceConverter : IStreamImageConverter<ImageResource>
+    {
+        public Task<ImageResource> ToImageAsync(Stream stream)
+        {
+            var resource = new ImageResource(null, stream, () => ImageSource.FromStream(() => stream));
+            return Task.FromResult(resource);
+        }
+    }
 }

@@ -186,7 +186,7 @@ namespace Anf.Desktop.ViewModels
             PageCursorMoved += AvalonVisitingViewModel_PageCursorMoved;
             TitleService = AppEngine.GetRequiredService<TitleService>();
             ExceptionService = AppEngine.GetRequiredService<ExceptionService>();
-            ReadingSettings = AppEngine.GetRequiredService<AnfSettings>().Reading;
+            ReadingSettings = AnfSettings.Instance.Reading;
             readingSubscriber = ReadingSettings.Subscribe(x => x.LoadAll, OnReadingSettingsLoadAllChanged);
         }
 
@@ -257,6 +257,7 @@ namespace Anf.Desktop.ViewModels
             TitleService.Title = string.Empty;
             readingSubscriber.Dispose();
             PageCursorMoved -= AvalonVisitingViewModel_PageCursorMoved;
+            GC.SuppressFinalize(this);
         }
     }
 }

@@ -36,6 +36,7 @@ using Microsoft.IO;
 using Anf.Platform.Models.Impl;
 using Anf.Platform.Services.Impl;
 using Anf.Platform.Engines;
+using Anf.KnowEngines;
 
 namespace Anf.Desktop
 {
@@ -93,7 +94,11 @@ namespace Anf.Desktop
             AppEngine.Services.AddSingleton(configRoot);
             AppEngine.Services.AddSingleton<IConfiguration>(configRoot);
             AppEngine.Services.AddSingleton<IConfigurationRoot>(configRoot);
-            AppEngine.Services.AddLogging(x => x.ClearProviders().AddNLog("NLog.config"));
+            AppEngine.Services.AddLogging(x => 
+            {
+                x.ClearProviders();
+                x.AddNLog("NLog.config");
+            });
         }
         private AnfSettings CreateSettings(IServiceProvider provider)
         {
@@ -118,6 +123,7 @@ namespace Anf.Desktop
             {
                 AppEngine.Services.AddSingleton(desktop);
                 AppEngine.Services.AddSingleton<MainWindow>();
+                AppEngine.Provider.UseKnowEngines();
                 var nav = AppEngine.GetRequiredService<MainNavigationService>();
                 var mainWin = AppEngine.GetRequiredService<MainWindow>();
                 var titleSer = AppEngine.GetRequiredService<TitleService>();
@@ -130,7 +136,7 @@ namespace Anf.Desktop
 
                 //nav.Navigate(new VisitingView());
                 nav.Navigate<HomePage>();
-                var themeSer = AppEngine.GetRequiredService<ThemeService>();
+                AppEngine.GetRequiredService<ThemeService>();
                 mainWin.RunInitAll();
             }
             base.OnFrameworkInitializationCompleted();

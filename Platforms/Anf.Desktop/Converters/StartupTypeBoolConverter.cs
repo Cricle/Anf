@@ -12,14 +12,14 @@ namespace Anf.Desktop.Converters
 {
     public class StartupTypeStringConverter : IValueConverter
     {
-        public static IReadOnlyCollection<StartupTypes> IncludeTypes = Enum.GetValues(typeof(StartupTypes)).OfType<StartupTypes>().ToArray();
-        public static IReadOnlyDictionary<StartupTypes, string> NameForModels = new Dictionary<StartupTypes, string>
+        public static readonly IReadOnlyCollection<StartupTypes> IncludeTypes = Enum.GetValues(typeof(StartupTypes)).OfType<StartupTypes>().ToArray();
+        public static readonly IReadOnlyDictionary<StartupTypes, string> NameForModels = new Dictionary<StartupTypes, string>
         {
             [StartupTypes.None] = "空白",
             [StartupTypes.Proposal] = "推介",
             [StartupTypes.Providers] = "提供者"
         };
-        private static IReadOnlyDictionary<string, StartupTypes> modelForNames = NameForModels.ToDictionary(x => x.Value, x => x.Key);
+        private static readonly IReadOnlyDictionary<string, StartupTypes> modelForNames = NameForModels.ToDictionary(x => x.Value, x => x.Key);
 
         public object Convert(object value, Type targetType, object parameter, CultureInfo culture)
         {
