@@ -60,7 +60,10 @@ namespace Anf.Web
             });
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTSCONNECTIONSTRING"]);
             services.AddSignalR()
-                .AddAzureSignalR();
+                .AddAzureSignalR(opt=> 
+                {
+                    opt.ConnectionString = Configuration["ConnectionStrings:Signalr"];
+                });
             services.AddDbContext<AnfDbContext>((x, y) =>
             {
                 var config = x.GetRequiredService<IConfiguration>();

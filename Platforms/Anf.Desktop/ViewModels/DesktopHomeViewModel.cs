@@ -23,9 +23,9 @@ namespace Anf.Desktop.ViewModels
 
         public StartupSettings StartupSettings { get; }
 
-        public DesktopHomeViewModel()
+        public DesktopHomeViewModel(AnfSettings settings)
         {
-            StartupSettings = AnfSettings.Instance.Startup;
+            StartupSettings = settings.Startup;
             InitDatas();
         }
 

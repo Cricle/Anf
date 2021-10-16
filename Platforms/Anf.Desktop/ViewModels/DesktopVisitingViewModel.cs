@@ -186,7 +186,7 @@ namespace Anf.Desktop.ViewModels
             PageCursorMoved += AvalonVisitingViewModel_PageCursorMoved;
             TitleService = AppEngine.GetRequiredService<TitleService>();
             ExceptionService = AppEngine.GetRequiredService<ExceptionService>();
-            ReadingSettings = AnfSettings.Instance.Reading;
+            ReadingSettings = AppEngine.GetRequiredService<AnfSettings>().Reading;
             readingSubscriber = ReadingSettings.Subscribe(x => x.LoadAll, OnReadingSettingsLoadAllChanged);
         }
 

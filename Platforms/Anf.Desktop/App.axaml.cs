@@ -103,7 +103,7 @@ namespace Anf.Desktop
         private AnfSettings CreateSettings(IServiceProvider provider)
         {
             var root = provider.GetRequiredService<SavableConfigurationRoot>();
-            var instType = ProxyHelper.Default.CreateComplexProxy<AnfSettings>(true);
+            var instType = ProxyHelper.Default.CreateComplexProxy<AnfSettings>();
             var inst = (AnfSettings)instType.Build(root);
             _ = root.BindTwoWay(inst, JsonChangeTransferCondition.Instance);
             return inst;

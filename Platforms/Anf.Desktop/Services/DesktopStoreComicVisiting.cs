@@ -13,9 +13,12 @@ namespace Anf.Desktop.Services
 {
     internal class DesktopStoreComicVisiting : StoreComicVisiting<Bitmap>
     {
-        public DesktopStoreComicVisiting(IServiceProvider host, IResourceFactoryCreator<Bitmap> resourceFactoryCreator) : base(host, resourceFactoryCreator)
+        public DesktopStoreComicVisiting(IServiceProvider host, 
+            IResourceFactoryCreator<Bitmap> resourceFactoryCreator,
+            AnfSettings settings) 
+            : base(host, resourceFactoryCreator)
         {
-            anfSettings = AnfSettings.Instance;
+            anfSettings = settings;
             EnableRemote = false;
         }
         private readonly AnfSettings anfSettings;

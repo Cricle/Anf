@@ -8,14 +8,17 @@ using Anf.Desktop.Services;
 using Anf.Desktop.ViewModels;
 using System;
 using Anf.Engine;
+using Anf.Desktop.Settings;
 
 namespace Anf.Desktop.Views
 {
     public class HomePage : UserControl
     {
-        private readonly DesktopHomeViewModel vm = new DesktopHomeViewModel();
+        private readonly DesktopHomeViewModel vm;
         public HomePage()
         {
+            var setting = AppEngine.GetRequiredService<AnfSettings>();
+            vm =new DesktopHomeViewModel(setting);
             InitializeComponent();
             DataContext = vm;
             AppEngine.GetRequiredService<MainWindow>().BindDecorationMargin(this);

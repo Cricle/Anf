@@ -66,10 +66,10 @@ namespace Anf.WebService
             return new HashEntry[]
             {
                  new HashEntry(nameof(AnfBookshelf.CreateTime),bookshelf.CreateTime.Ticks),
-                 new HashEntry(nameof(AnfBookshelf.Name),bookshelf.Name),
+                 new HashEntry(nameof(AnfBookshelf.Name),bookshelf.Name??RedisValue.EmptyString),
                  new HashEntry(nameof(AnfBookshelf.UserId),bookshelf.UserId),
                  new HashEntry(nameof(AnfBookshelf.Like),bookshelf.Like),
-                 new HashEntry(nameof(AnfBookshelf.LinkId),bookshelf.LinkId),
+                 new HashEntry(nameof(AnfBookshelf.LinkId),bookshelf.LinkId??RedisValue.EmptyString),
                  new HashEntry(nameof(AnfBookshelf.Id),bookshelf.Id),
             };
         }
@@ -121,6 +121,7 @@ namespace Anf.WebService
         {
             var entity = new AnfBookshelf
             {
+                Id = GuidToLong(),
                 UserId = userId,
                 Name = name,
                 CreateTime = DateTime.Now
@@ -247,6 +248,11 @@ namespace Anf.WebService
                 .Where(x => x.Id == id)
                 .Include(x => x.Items)
                 .FirstOrDefaultAsync();
+        }
+        private static long GuidToLong()
+        {
+            var uid = Guid.NewGuid().ToByteArray();
+            return BitConverter.ToInt64(uid, 0);
         }
         public async Task<AnfBookshelf> GetBookshelfAsync(long id)
         {
