@@ -52,7 +52,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
         shell: powershell
         run: |
-          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Cricle_Ao.ObjectDesign" /o:"cricle" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="results.xml"
+          .\.sonar\scanner\dotnet-sonarscanner begin /k:"Cricle_Anf" /o:"cricle" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="results.xml"
           dotnet build "Platform\Anf.Desktop.sln" -c Release 
           dotnet build "Platform\Anf.Web.sln" -c Release 
           dotnet build "Platform\Anf.AzureFunc.sln" -c Release 
