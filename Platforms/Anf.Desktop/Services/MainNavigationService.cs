@@ -1,5 +1,5 @@
 ﻿using Avalonia.Controls;
-using GalaSoft.MvvmLight;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Anf.Desktop.ViewModels;
 using Anf.Desktop.Views;
 using Anf.Models;

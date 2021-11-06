@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Anf;
 using Anf.Models;
 using Anf.Services;
@@ -17,10 +16,11 @@ using Anf.Engine;
 using Anf.Platform.Models;
 using System.Net.Http;
 using Anf.Networks;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace Anf.ViewModels
 {
-    public abstract class HomeViewModel<TSourceInfo,TImage> : ViewModelBase,IDisposable
+    public abstract class HomeViewModel<TSourceInfo,TImage> : ObservableObject,IDisposable
         where TSourceInfo:ComicSourceInfo
     {
         public const int PageSize = 50;
@@ -32,9 +32,9 @@ namespace Anf.ViewModels
             SearchEngine = AppEngine.GetRequiredService<SearchEngine>();
             ProposalEngine = AppEngine.GetRequiredService<ProposalEngine>();
 
-            SearchCommand = new RelayCommand(() => _ = SearchAsync());
+            SearchCommand = new AsyncRelayCommand(SearchAsync);
             GoSourceCommand = new RelayCommand(GoSource);
-            SetAndSearchCommand = new RelayCommand<string>(x => _ = SetAndSearchAsync(x));
+            SetAndSearchCommand = new AsyncRelayCommand<string>(SetAndSearchAsync);
             ResetCommand = new RelayCommand(Reset);
             SetCurrentCommand = new RelayCommand<ComicSnapshotInfo<TSourceInfo>>(SetCurrent);
             CopyCommand = new RelayCommand<string>(Copy);
@@ -72,7 +72,7 @@ namespace Anf.ViewModels
         public bool HasSelectedProposal
         {
             get { return hasSelectedProposal; }
-            private set => Set(ref hasSelectedProposal, value);
+            private set => SetProperty(ref hasSelectedProposal, value);
         }
 
         public IProposalDescription SelectedProposal
@@ -81,7 +81,7 @@ namespace Anf.ViewModels
             set
             {
                 var old = selectedProposal;
-                Set(ref selectedProposal, value);
+                SetProperty(ref selectedProposal, value);
                 if (old!=value)
                 {
                     OnSelectedProposalChanged(value);
@@ -93,13 +93,13 @@ namespace Anf.ViewModels
         public bool ProposalLoading
         {
             get { return proposalLoading; }
-            private set => Set(ref proposalLoading, value);
+            private set => SetProperty(ref proposalLoading, value);
         }
 
         public bool HasAvaliableCondition
         {
             get { return hasAvaliableCondition; }
-            private set => Set(ref hasAvaliableCondition, value);
+            private set => SetProperty(ref hasAvaliableCondition, value);
         }
 
         public IComicSourceCondition AvaliableCondition
@@ -107,7 +107,7 @@ namespace Anf.ViewModels
             get { return avaliableCondition; }
             private set
             {
-                Set(ref avaliableCondition, value);
+                SetProperty(ref avaliableCondition, value);
                 HasAvaliableCondition = value != null;
             }
         }
@@ -115,19 +115,19 @@ namespace Anf.ViewModels
         public int Take
         {
             get { return take; }
-            set => Set(ref take, value);
+            set => SetProperty(ref take, value);
         }
 
         public int Skip
         {
             get { return skip; }
-            set => Set(ref skip, value);
+            set => SetProperty(ref skip, value);
         }
 
         public ISearchProvider CurrentSearchProvider
         {
             get { return currentSearchProvider; }
-            set => Set(ref currentSearchProvider, value);
+            set => SetProperty(ref currentSearchProvider, value);
         }
 
         public ComicSnapshotInfo<TSourceInfo> CurrentComicSnapshot
@@ -135,7 +135,7 @@ namespace Anf.ViewModels
             get { return currentComicSnapshot; }
             set
             {
-                Set(ref currentComicSnapshot, value);
+                SetProperty(ref currentComicSnapshot, value);
                 OnCurrentComicSnapshotChanged(value);
             }
         }
@@ -146,7 +146,7 @@ namespace Anf.ViewModels
         public SearchComicResult SearchResult
         {
             get { return searchResult; }
-            private set => Set(ref searchResult, value);
+            private set => SetProperty(ref searchResult, value);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Anf.ViewModels
         public int AdditionCount
         {
             get { return additionCount; }
-            private set => Set(ref additionCount, value);
+            private set => SetProperty(ref additionCount, value);
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace Anf.ViewModels
             get { return searching; }
             private set
             {
-                Set(ref searching, value);
+                SetProperty(ref searching, value);
                 OnSearchingChanged(value);
             }
         }
@@ -176,7 +176,7 @@ namespace Anf.ViewModels
         public bool EmptySet
         {
             get { return emptySet; }
-            private set => Set(ref emptySet, value);
+            private set => SetProperty(ref emptySet, value);
         }
         /// <summary>
         /// 搜索关键字
@@ -186,7 +186,7 @@ namespace Anf.ViewModels
             get { return keyword; }
             set 
             {
-                Set(ref keyword, value);
+                SetProperty(ref keyword, value);
                 AvaliableCondition = null;
                 if (UrlHelper.IsWebsite(value))
                 {
@@ -213,12 +213,12 @@ namespace Anf.ViewModels
         /// <summary>
         /// 搜索命令
         /// </summary>
-        public ICommand SearchCommand { get; }
+        public AsyncRelayCommand SearchCommand { get; }
         public ICommand GoSourceCommand { get; }
         public ICommand ResetCommand { get; }
         public RelayCommand<string> CopyCommand { get; }
         public RelayCommand<ComicSnapshotInfo<TSourceInfo>> SetCurrentCommand { get; }
-        public RelayCommand<string> SetAndSearchCommand { get; }
+        public AsyncRelayCommand<string> SetAndSearchCommand { get; }
         /// <summary>
         /// 漫画快照
         /// </summary>

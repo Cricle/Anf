@@ -1,8 +1,8 @@
 ﻿using Anf.Engine;
 using Anf.Platform.Models;
 using Anf.Services;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
 using System.IO;
@@ -37,20 +37,20 @@ namespace Anf.Platform.Services
         public bool IsUpdating
         {
             get { return isUpdating; }
-            private set => Set(ref isUpdating, value);
+            private set => SetProperty(ref isUpdating, value);
         }
 
         public bool IsSaving
         {
             get { return isSaving; }
-            private set => Set(ref isSaving, value);
+            private set => SetProperty(ref isSaving, value);
         }
 
 
         public ComicStoreModel AttackModel
         {
             get => attackModel;
-            private set => Set(ref attackModel, value);
+            private set => SetProperty(ref attackModel, value);
         }
 
         public FileInfo TargetFile { get; }
@@ -58,7 +58,7 @@ namespace Anf.Platform.Services
 
         public RelayCommand ToggleSuperFavoriteCommand { get; protected set; }
         public RelayCommand RemoveCommand { get; protected set; }
-        public RelayCommand UpdateCommand { get; protected set; }
+        public AsyncRelayCommand UpdateCommand { get; protected set; }
         public RelayCommand GoSourceCommand { get; protected set; }
 
         public event Action<ComicStoreBox> Removed;
@@ -74,7 +74,7 @@ namespace Anf.Platform.Services
         {
             ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
             RemoveCommand = new RelayCommand(Remove);
-            UpdateCommand = new RelayCommand(() => _ = UpdateAsync());
+            UpdateCommand = new AsyncRelayCommand(UpdateAsync);
             GoSourceCommand = new RelayCommand(GoSource);
         }
         public void Remove()

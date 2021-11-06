@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,7 +14,7 @@ namespace Anf.Platform.Settings
         public virtual bool LoadAll
         {
             get => loadAll;
-            set => Set(ref loadAll, value);
+            set => SetProperty(ref loadAll, value);
         }
     }
 }

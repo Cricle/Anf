@@ -1,13 +1,13 @@
-﻿using GalaSoft.MvvmLight;
-using Anf;
+﻿using Anf;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using Anf.Platform.Models;
 using Anf.Platform.Services;
 using Anf.Services;
-using GalaSoft.MvvmLight.Command;
 using Anf.Engine;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace Anf.Models
 {
@@ -49,7 +49,7 @@ namespace Anf.Models
             get { return currentSource; }
             set
             {
-                Set(ref currentSource, value);
+                SetProperty(ref currentSource, value);
                 SourceChanged?.Invoke(this, value);
             }
         }
@@ -61,7 +61,7 @@ namespace Anf.Models
             get => snapshot;
             set
             {
-                Set(ref snapshot, value);
+                SetProperty(ref snapshot, value);
                 if (value is null)
                 {
 #if NET452|| NETSTANDARD1_4
@@ -82,7 +82,7 @@ namespace Anf.Models
         public IReadOnlyList<TSourceInfo> SourceInfos
         {
             get => sourceInfos;
-            private set => Set(ref sourceInfos, value);
+            private set => SetProperty(ref sourceInfos, value);
         }
 
         public ComicEngine ComicEngine { get; }

@@ -1,5 +1,4 @@
-﻿using GalaSoft.MvvmLight.Command;
-using Anf;
+﻿using Anf;
 using Anf.Easy.Visiting;
 using Anf.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -10,7 +9,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using GalaSoft.MvvmLight;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace Anf.Models
 {
@@ -26,7 +26,7 @@ namespace Anf.Models
             CanParse = !(condition is null);
             WatchCommand = new RelayCommand(Watch);
             CopyCommand = new RelayCommand(Copy);
-            OpenCommand = new RelayCommand(()=> OpenAsync().GetAwaiter().GetResult());
+            OpenCommand = new AsyncRelayCommand(OpenAsync);
 
         }
         public bool CanParse { get; }

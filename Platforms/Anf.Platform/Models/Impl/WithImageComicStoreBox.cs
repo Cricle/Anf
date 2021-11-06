@@ -1,6 +1,6 @@
 ﻿using Anf.Platform.Services;
 using Anf.Platform.Services.Impl;
-using GalaSoft.MvvmLight.Command;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -25,7 +25,7 @@ namespace Anf.Platform.Models.Impl
         public TImage Image
         {
             get { return image; }
-            private set => Set(ref image, value);
+            private set => SetProperty(ref image, value);
         }
 
         public bool DoNotDisposeImage { get; set; }

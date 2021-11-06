@@ -1,6 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using Anf.Easy.Visiting;
+﻿using Anf.Easy.Visiting;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -9,6 +7,8 @@ using System.Threading.Tasks;
 using Anf.Services;
 using System.Diagnostics;
 using Anf.Platform;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace Anf.Models
 {
@@ -26,13 +26,13 @@ namespace Anf.Models
         public bool EmitLoad
         {
             get { return emitLoad; }
-            private set => Set(ref emitLoad, value);
+            private set => SetProperty(ref emitLoad, value);
         }
 
         public bool HasException
         {
             get { return hasException; }
-            private set => Set(ref hasException, value);
+            private set => SetProperty(ref hasException, value);
         }
 
         public bool LoadSucceed
@@ -40,7 +40,7 @@ namespace Anf.Models
             get { return loadSucceed; }
             private set
             {
-                Set(ref loadSucceed, value);
+                SetProperty(ref loadSucceed, value);
                 if (value)
                 {
                     LoadDone?.Invoke(this);
@@ -53,26 +53,26 @@ namespace Anf.Models
             get { return resource; }
             private set
             {
-                Set(ref resource, value);
+                SetProperty(ref resource, value);
             }
         }
 
         public Exception Exception
         {
             get { return exception; }
-            private set => Set(ref exception, value);
+            private set => SetProperty(ref exception, value);
         }
 
         public bool Loading
         {
             get { return loading; }
-            private set => Set(ref loading, value);
+            private set => SetProperty(ref loading, value);
         }
 
         public IComicVisitPage<TResource> VisitPage
         {
             get => visitPage;
-            private set => Set(ref visitPage, value);
+            private set => SetProperty(ref visitPage, value);
         }
         private object locker = SharedObject;
         private Task<IComicVisitPage<TResource>> task;
@@ -101,10 +101,10 @@ namespace Anf.Models
 
         public int Index { get; }
 
-        public RelayCommand LoadCommand { get; protected set; }
-        public RelayCommand ReLoadCommand { get; protected set; }
+        public AsyncRelayCommand LoadCommand { get; protected set; }
+        public AsyncRelayCommand ReLoadCommand { get; protected set; }
         public RelayCommand CopyCommand { get; protected set; }
-        public RelayCommand OpenCommand { get; protected set; }
+        public AsyncRelayCommand OpenCommand { get; protected set; }
         public RelayCommand CopyExceptionCommand { get; protected set; }
 
         public event Action<ComicPageInfo<TResource>> SkipAtConcurrent;
@@ -112,11 +112,11 @@ namespace Anf.Models
         public event Action<ComicPageInfo<TResource>, Exception> LoadException;
         private void Init()
         {
-            LoadCommand = new RelayCommand(() => _ = LoadAsync());
-            ReLoadCommand = new RelayCommand(() => _ = ReloadAsync());
+            LoadCommand = new AsyncRelayCommand(LoadAsync);
+            ReLoadCommand = new AsyncRelayCommand(ReloadAsync);
             CopyCommand = new RelayCommand(Copy);
             CopyExceptionCommand = new RelayCommand(CopyException);
-            OpenCommand = new RelayCommand(() => _ = OpenAsync());
+            OpenCommand = new AsyncRelayCommand(OpenAsync);
         }
         public Task ReloadAsync()
         {

@@ -10,9 +10,9 @@ using Anf.Platform.Settings;
 using Anf.ViewModels;
 using Avalonia.Controls.PanAndZoom;
 using Avalonia.Media.Imaging;
-using GalaSoft.MvvmLight.Command;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
 using System.Net.Http;
@@ -76,31 +76,31 @@ namespace Anf.Desktop.ViewModels
         public bool LeftPaneOpen
         {
             get => leftPaneOpen;
-            set => Set(ref leftPaneOpen, value);
+            set => SetProperty(ref leftPaneOpen, value);
         }
 
         public bool StatusShow
         {
             get => statusShow;
-            set => Set(ref statusShow, value);
+            set => SetProperty(ref statusShow, value);
         }
 
         public ComicPageInfo<Bitmap> SelectedResource
         {
             get => selectedResource;
-            private set => Set(ref selectedResource, value);
+            private set => SetProperty(ref selectedResource, value);
         }
 
         public double MinHeight
         {
             get => minHeight;
-            set => Set(ref minHeight, value);
+            set => SetProperty(ref minHeight, value);
         }
 
         public double MinWidth
         {
             get => minWidth;
-            set => Set(ref minWidth, value);
+            set => SetProperty(ref minWidth, value);
         }
 
         public bool Transverse
@@ -109,7 +109,7 @@ namespace Anf.Desktop.ViewModels
             set
             {
                 var origin = transverse;
-                Set(ref transverse, value);
+                SetProperty(ref transverse, value);
                 if (origin != value)
                 {
                     TransverseChanged?.Invoke(this, value);
@@ -120,31 +120,31 @@ namespace Anf.Desktop.ViewModels
         public bool EnableZoom
         {
             get => enableZoom;
-            set => Set(ref enableZoom, value);
+            set => SetProperty(ref enableZoom, value);
         }
 
         public bool EnableConstrains
         {
             get => enableConstrains;
-            set => Set(ref enableConstrains, value);
+            set => SetProperty(ref enableConstrains, value);
         }
 
         public bool EnableGesture
         {
             get => enableGesture;
-            set => Set(ref enableGesture, value);
+            set => SetProperty(ref enableGesture, value);
         }
 
         public double ZoomSpeed
         {
             get => zoomSpeed;
-            set => Set(ref zoomSpeed, value);
+            set => SetProperty(ref zoomSpeed, value);
         }
 
         public StretchMode StretchMode
         {
             get => stretchMode;
-            set => Set(ref stretchMode, value);
+            set => SetProperty(ref stretchMode, value);
         }
 
         public ComicChapter TrulyCurrentComicChapter
@@ -236,7 +236,7 @@ namespace Anf.Desktop.ViewModels
                 base.OnCurrentChaterCursorChanged(cursor);
                 TitleService.Title = $"{ComicEntity.Name}";
                 SelectedResource = null;
-                RaisePropertyChanged(nameof(TrulyCurrentComicChapter));
+                OnPropertyChanged(nameof(TrulyCurrentComicChapter));
                 if (ReadingSettings.LoadAll)
                 {
                     await LoadAllAsync();

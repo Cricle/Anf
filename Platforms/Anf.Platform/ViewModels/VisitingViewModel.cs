@@ -1,6 +1,4 @@
-﻿using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
-using Anf.Easy.Visiting;
+﻿using Anf.Easy.Visiting;
 using Anf.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
@@ -16,10 +14,12 @@ using Anf.Platform;
 using Anf.Platform.Services;
 using System.Collections.Generic;
 using Anf.Engine;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace Anf.ViewModels
 {
-    public class VisitingViewModel<TResource, TImage> : ViewModelBase, IDisposable
+    public class VisitingViewModel<TResource, TImage> : ObservableObject, IDisposable
     {
         public VisitingViewModel(IServiceProvider provider,Func<IServiceProvider, IComicVisiting<TImage>> visiting = null)
         {
@@ -86,37 +86,37 @@ namespace Anf.ViewModels
         public string ChapterName
         {
             get { return chapterName; }
-            private set => Set(ref chapterName, value);
+            private set => SetProperty(ref chapterName, value);
         }
 
         public int TotalPage
         {
             get { return totalPage; }
-            private set => Set(ref totalPage, value);
+            private set => SetProperty(ref totalPage, value);
         }
 
         public int CurrentPage
         {
             get { return currentPage; }
-            private set => Set(ref currentPage, value);
+            private set => SetProperty(ref currentPage, value);
         }
 
         public bool HasLogo
         {
             get { return hasLogo; }
-            private set => Set(ref hasLogo, value);
+            private set => SetProperty(ref hasLogo, value);
         }
 
         public bool LoadingLogo
         {
             get { return loadingLogo; }
-            private set => Set(ref loadingLogo, value);
+            private set => SetProperty(ref loadingLogo, value);
         }
 
         public bool ResourceLoadDone
         {
             get { return resourceLoadDone; }
-            private set => Set(ref resourceLoadDone, value);
+            private set => SetProperty(ref resourceLoadDone, value);
         }
 
         public int ResourceLoadCount
@@ -124,7 +124,7 @@ namespace Anf.ViewModels
             get { return resourceLoadCount; }
             private set
             {
-                Set(ref resourceLoadCount, value);
+                SetProperty(ref resourceLoadCount, value);
                 ResourceLoadDone = value >= Resources.Count;
             }
         }
@@ -133,7 +133,7 @@ namespace Anf.ViewModels
             get { return currentChapterWithPage; }
             private set
             {
-                Set(ref currentChapterWithPage, value);
+                SetProperty(ref currentChapterWithPage, value);
                 CurrentChapter = value?.Chapter;
             }
         }
@@ -143,7 +143,7 @@ namespace Anf.ViewModels
             get { return currentChapter; }
             private set
             {
-                Set(ref currentChapter, value);
+                SetProperty(ref currentChapter, value);
                 ChapterName = value?.Title;
             }
         }
@@ -151,13 +151,13 @@ namespace Anf.ViewModels
         public string Name
         {
             get { return name; }
-            private set => Set(ref name, value);
+            private set => SetProperty(ref name, value);
         }
 
         public PageSlots<TImage> PageSlots
         {
             get => pageSlots;
-            private set => Set(ref pageSlots, value);
+            private set => SetProperty(ref pageSlots, value);
         }
 
         public ComicEntity ComicEntity
@@ -165,7 +165,7 @@ namespace Anf.ViewModels
             get => comicEntity;
             private set
             {
-                Set(ref comicEntity, value);
+                SetProperty(ref comicEntity, value);
                 Name = value?.Name;
             }
         }
@@ -174,7 +174,7 @@ namespace Anf.ViewModels
             get { return logoImage; }
             private set
             {
-                Set(ref logoImage, value);
+                SetProperty(ref logoImage, value);
                 HasLogo = value != null;
             }
         }
@@ -185,7 +185,7 @@ namespace Anf.ViewModels
             get { return currentPageCursor; }
             private set
             {
-                Set(ref currentPageCursor, value);
+                SetProperty(ref currentPageCursor, value);
                 OnCurrentPageCursorChanged(value);
             }
         }
@@ -195,7 +195,7 @@ namespace Anf.ViewModels
             get { return currentChaterCursor; }
             private set
             {
-                Set(ref currentChaterCursor, value);
+                SetProperty(ref currentChaterCursor, value);
             }
         }
 
@@ -204,7 +204,7 @@ namespace Anf.ViewModels
             get { return isLoading; }
             private set
             {
-                Set(ref isLoading, value);
+                SetProperty(ref isLoading, value);
                 OnLoadingChanged(value);
             }
         }
@@ -212,22 +212,22 @@ namespace Anf.ViewModels
 
         public bool SwitchChapterGC { get; set; } = true;
 
-        public RelayCommand FirstChapterCommand { get; protected set; }
-        public RelayCommand LastChapterCommand { get; protected set; }
-        public RelayCommand PrevChapterCommand { get; protected set; }
-        public RelayCommand NextChapterCommand { get; protected set; }
-        public RelayCommand<ComicChapter> GoChapterCommand { get; protected set; }
-        public RelayCommand<int> GoChapterIndexCommand { get; protected set; }
+        public AsyncRelayCommand FirstChapterCommand { get; protected set; }
+        public AsyncRelayCommand LastChapterCommand { get; protected set; }
+        public AsyncRelayCommand PrevChapterCommand { get; protected set; }
+        public AsyncRelayCommand NextChapterCommand { get; protected set; }
+        public AsyncRelayCommand<ComicChapter> GoChapterCommand { get; protected set; }
+        public AsyncRelayCommand<int> GoChapterIndexCommand { get; protected set; }
 
-        public RelayCommand FirstPageCommand { get; protected set; }
-        public RelayCommand LastPageCommand { get; protected set; }
-        public RelayCommand PrevPageCommand { get; protected set; }
-        public RelayCommand NextPageCommand { get; protected set; }
-        public RelayCommand<ComicPage> GoPageCommand { get; protected set; }
-        public RelayCommand<int> GoPageIndexCommand { get; protected set; }
+        public AsyncRelayCommand FirstPageCommand { get; protected set; }
+        public AsyncRelayCommand LastPageCommand { get; protected set; }
+        public AsyncRelayCommand PrevPageCommand { get; protected set; }
+        public AsyncRelayCommand NextPageCommand { get; protected set; }
+        public AsyncRelayCommand<ComicPage> GoPageCommand { get; protected set; }
+        public AsyncRelayCommand<int> GoPageIndexCommand { get; protected set; }
 
-        public RelayCommand OpenComicCommand { get; protected set; }
-        public RelayCommand OpenChapterCommand { get; protected set; }
+        public AsyncRelayCommand OpenComicCommand { get; protected set; }
+        public AsyncRelayCommand OpenChapterCommand { get; protected set; }
         public RelayCommand CopyTitleCommand { get; protected set; }
         public RelayCommand CopyComicCommand { get; protected set; }
         public RelayCommand CopyChapterCommand { get; protected set; }
@@ -446,22 +446,22 @@ namespace Anf.ViewModels
         #endregion
         private void InitVisiting()
         {
-            FirstChapterCommand = new RelayCommand(() => _ = FirstChapterAsync());
-            LastChapterCommand = new RelayCommand(() => _ = LastChapterAsync());
-            PrevChapterCommand = new RelayCommand(() => _ = PrevChapterAsync());
-            NextChapterCommand = new RelayCommand(() => _ = NextChapterAsync());
-            GoChapterCommand = new RelayCommand<ComicChapter>(x => _ = GoChapterAsync(x));
-            GoChapterIndexCommand = new RelayCommand<int>(x => _ = GoChapterIndexAsync(x));
+            FirstChapterCommand = new AsyncRelayCommand(FirstChapterAsync);
+            LastChapterCommand = new AsyncRelayCommand(LastChapterAsync);
+            PrevChapterCommand = new AsyncRelayCommand(PrevChapterAsync);
+            NextChapterCommand = new AsyncRelayCommand(NextChapterAsync);
+            GoChapterCommand = new AsyncRelayCommand<ComicChapter>(GoChapterAsync);
+            GoChapterIndexCommand = new AsyncRelayCommand<int>(GoChapterIndexAsync);
 
-            FirstPageCommand = new RelayCommand(() => _ = FirstPageAsync());
-            LastPageCommand = new RelayCommand(() => _ = LastPageAsync());
-            PrevPageCommand = new RelayCommand(() => _ = PrevPageAsync());
-            NextPageCommand = new RelayCommand(() => _ = NextPageAsync());
-            GoPageCommand = new RelayCommand<ComicPage>(x => _ = GoPageAsync(x));
-            GoPageIndexCommand = new RelayCommand<int>(x => _ = GoPageIndexAsync(x));
+            FirstPageCommand = new AsyncRelayCommand(FirstPageAsync);
+            LastPageCommand = new AsyncRelayCommand(LastPageAsync);
+            PrevPageCommand = new AsyncRelayCommand(PrevPageAsync);
+            NextPageCommand = new AsyncRelayCommand(NextPageAsync);
+            GoPageCommand = new AsyncRelayCommand<ComicPage>(GoPageAsync);
+            GoPageIndexCommand = new AsyncRelayCommand<int>(GoPageIndexAsync);
 
-            OpenComicCommand = new RelayCommand(() => _ = OpenComicAsync());
-            OpenChapterCommand = new RelayCommand(() => _ = OpenChapterAsync());
+            OpenComicCommand = new AsyncRelayCommand(OpenComicAsync);
+            OpenChapterCommand = new AsyncRelayCommand(OpenChapterAsync);
             CopyTitleCommand = new RelayCommand(CopyTitle);
             CopyComicCommand = new RelayCommand(CopyComic);
             CopyComicEntityCommand = new RelayCommand(CopyComicEntity);

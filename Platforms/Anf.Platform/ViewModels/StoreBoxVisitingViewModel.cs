@@ -1,11 +1,11 @@
-﻿using GalaSoft.MvvmLight.Command;
-using Anf.Easy.Visiting;
+﻿using Anf.Easy.Visiting;
 using Microsoft.IO;
 using System.Net.Http;
 using Anf.Platform.Services;
 using System.ComponentModel;
 using Anf.Platform.Models;
 using System;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace Anf.ViewModels
 {
@@ -37,7 +37,7 @@ namespace Anf.ViewModels
         public bool HasStoreBox
         {
             get { return hasStoreBox; }
-            private set => Set(ref hasStoreBox, value);
+            private set => SetProperty(ref hasStoreBox, value);
         }
 
         public ComicStoreBox StoreBox
@@ -49,7 +49,7 @@ namespace Anf.ViewModels
                 {
                     storeBox.PropertyChanged -= OnStoreBoxPropertyChanged;
                 }
-                Set(ref storeBox, value);
+                SetProperty(ref storeBox, value);
                 if (value != null)
                 {
                     value.PropertyChanged -= OnStoreBoxPropertyChanged;
@@ -68,7 +68,7 @@ namespace Anf.ViewModels
             var name = nameof(ComicStoreModel.SuperFavorite);
             if (e.PropertyName == name)
             {
-                RaisePropertyChanged(name);
+                OnPropertyChanged(name);
             }
         }
         protected override void OnInitedVisiting()

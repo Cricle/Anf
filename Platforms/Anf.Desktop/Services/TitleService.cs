@@ -2,7 +2,6 @@
 using Avalonia.Controls;
 using Avalonia.Data;
 using Avalonia.Layout;
-using GalaSoft.MvvmLight;
 using Anf.Desktop.Views;
 using Anf.Services;
 using System;
@@ -16,6 +15,7 @@ using Avalonia.Interactivity;
 using Avalonia.Controls.Primitives;
 using Anf.Desktop.Converters;
 using Avalonia.Themes.Fluent;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace Anf.Desktop.Services
 {
@@ -95,38 +95,38 @@ namespace Anf.Desktop.Services
         public MainWindow Window
         {
             get { return window; }
-            private set => Set(ref window, value);
+            private set => SetProperty(ref window, value);
         }
 
         public bool TitleVisible
         {
             get { return titleVisible; }
-            set => Set(ref titleVisible, value);
+            set => SetProperty(ref titleVisible, value);
         }
 
         public double OffsceneHeight
         {
             get { return offsceneHeight; }
-            private set => Set(ref offsceneHeight, value);
+            private set => SetProperty(ref offsceneHeight, value);
         }
 
         public double AdviseFontSize
         {
             get { return adviseFontSize; }
-            private set => Set(ref adviseFontSize, value);
+            private set => SetProperty(ref adviseFontSize, value);
         }
 
         public IControl TitleControl
         {
             get { return titleControl; }
-            set => Set(ref titleControl, value);
+            set => SetProperty(ref titleControl, value);
         }
         public string Title
         {
             get => title;
             set
             {
-                Set(ref title, value);
+                SetProperty(ref title, value);
             }
         }
 

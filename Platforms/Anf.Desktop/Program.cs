@@ -48,10 +48,9 @@ namespace Anf.Desktop
         // Avalonia configuration, don't remove; also used by visual designer.
         public static AppBuilder BuildAvaloniaApp()
             => AppBuilder.Configure<App>()
-#if RENDER_D2D
+#if RENDERSYSTEM_D2D
                 .UseWin32()
                 .UseDirect2D1()
-                .With(new Win32PlatformOptions { AllowEglInitialization = false })
 #else
                 .UsePlatformDetect()
 #endif

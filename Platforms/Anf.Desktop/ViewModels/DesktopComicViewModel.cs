@@ -8,9 +8,9 @@ using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using GalaSoft.MvvmLight.Command;
 using Anf.Platform;
 using Anf.Platform.Models.Impl;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace Anf.Desktop.ViewModels
 {
@@ -33,7 +33,7 @@ namespace Anf.Desktop.ViewModels
         public Bitmap LogoImage
         {
             get { return logoImage; }
-            private set => Set(ref logoImage, value);
+            private set => SetProperty(ref logoImage, value);
         }
         public RelayCommand SaveLogoImageCommand { get; }
         public async void SaveLogoImage()

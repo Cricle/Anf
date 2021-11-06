@@ -8,11 +8,14 @@ namespace Anf.Platform
 {
     internal static class TaskHelper
     {
+#if NET452 || NETSTANDARD1_4
+        private static readonly Task ComplatedTask = Task.FromResult(false);
+#endif
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         public static Task GetComplatedTask()
         {
 #if NET452 || NETSTANDARD1_4
-            return Task.FromResult(false);
+            return ComplatedTask;
 #else
             return Task.CompletedTask;
 #endif

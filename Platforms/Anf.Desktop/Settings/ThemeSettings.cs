@@ -1,6 +1,6 @@
 ﻿using Anf.Desktop.Services;
 using Avalonia.Themes.Fluent;
-using GalaSoft.MvvmLight;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 
 namespace Anf.Desktop.Settings
 {

@@ -1,14 +1,14 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using Anf.Platform.Services;
-using GalaSoft.MvvmLight.Command;
 using System.IO;
 using System.Threading.Tasks;
+using Microsoft.Toolkit.Mvvm.Input;
 
 namespace Anf.ViewModels
 {
-    public abstract class BookshelfViewModel<TStoreBox> : ViewModelBase, IDisposable
+    public abstract class BookshelfViewModel<TStoreBox> : ObservableObject, IDisposable
         where TStoreBox : ComicStoreBox
     {
         public const int DefaultPageSize = 20;
@@ -20,7 +20,7 @@ namespace Anf.ViewModels
             NextCommand = new RelayCommand(Next);
             FlushCommand = new RelayCommand(Load);
             RemoveCommand = new RelayCommand(Remove);
-            UpdateCommand = new RelayCommand(() => _ = UpdateAsync());
+            UpdateCommand = new AsyncRelayCommand(UpdateAsync);
             StoreBoxs = observableCollectionFactory.Create<TStoreBox>();
             Load();
         }
@@ -40,19 +40,19 @@ namespace Anf.ViewModels
         public TStoreBox UpdateingBox
         {
             get => updatingBox;
-            private set => Set(ref updatingBox, value);
+            private set => SetProperty(ref updatingBox, value);
         }
         public virtual TimeSpan UpdateDelayTime
         {
             get => updateDelayTime;
-            set => Set(ref updateDelayTime, value);
+            set => SetProperty(ref updateDelayTime, value);
         }
         public string Keyword
         {
             get => keyword;
             set
             {
-                Set(ref keyword, value);
+                SetProperty(ref keyword, value);
                 RaiseKeywordChanged(value);
             }
         }
@@ -61,26 +61,26 @@ namespace Anf.ViewModels
             get { return updated; }
             private set
             {
-                Set(ref updated, value);
+                SetProperty(ref updated, value);
             }
         }
 
         public bool IsUpdating
         {
             get { return isUpdating; }
-            private set => Set(ref isUpdating, value);
+            private set => SetProperty(ref isUpdating, value);
         }
 
         public bool EndOfFetch
         {
             get { return endOfFetch; }
-            private set => Set(ref endOfFetch, value);
+            private set => SetProperty(ref endOfFetch, value);
         }
 
         public bool IsLoading
         {
             get { return isLoading; }
-            private set => Set(ref isLoading, value);
+            private set => SetProperty(ref isLoading, value);
         }
 
         public int PageSize
@@ -92,14 +92,14 @@ namespace Anf.ViewModels
                 {
                     throw new ArgumentException($"PageSize must more than zero");
                 }
-                Set(ref pageSize, value);
+                SetProperty(ref pageSize, value);
             }
         }
 
         public TStoreBox CurrentBox
         {
             get { return currentBox; }
-            set => Set(ref currentBox, value);
+            set => SetProperty(ref currentBox, value);
         }
 
         public ComicStoreService<TStoreBox> StoreService { get; }
@@ -109,7 +109,7 @@ namespace Anf.ViewModels
         public RelayCommand NextCommand { get; }
         public RelayCommand FlushCommand { get; }
         public RelayCommand RemoveCommand { get; }
-        public RelayCommand UpdateCommand { get; }
+        public AsyncRelayCommand UpdateCommand { get; }
 
         public event Action<BookshelfViewModel<TStoreBox>> ComplatedUpdatedAll;
         public event Action<BookshelfViewModel<TStoreBox>> Loaded;

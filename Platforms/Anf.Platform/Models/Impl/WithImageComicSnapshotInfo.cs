@@ -18,7 +18,7 @@ namespace Anf.Platform.Models.Impl
         public TImage LogoImage
         {
             get { return logoImage; }
-            private set => Set(ref logoImage, value);
+            private set => SetProperty(ref logoImage, value);
         }
 
 

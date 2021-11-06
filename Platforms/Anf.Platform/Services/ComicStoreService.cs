@@ -3,7 +3,7 @@ using Anf.Easy.Store;
 using Anf.Engine;
 using Anf.Platform.Models;
 using Anf.Services;
-using GalaSoft.MvvmLight;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

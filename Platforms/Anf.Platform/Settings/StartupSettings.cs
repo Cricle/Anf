@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -16,13 +16,13 @@ namespace Anf.Platform.Settings
         public virtual int DisplayProposalCount
         {
             get { return displayProposalCount; }
-            set => Set(ref displayProposalCount, value);
+            set => SetProperty(ref displayProposalCount, value);
         }
 
         public virtual StartupTypes StartupType
         {
             get { return startupType; }
-            set => Set(ref startupType, value);
+            set => SetProperty(ref startupType, value);
         }
     }
 }

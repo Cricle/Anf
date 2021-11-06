@@ -2,7 +2,7 @@
 using Anf.Platform.Settings;
 using Ao.SavableConfig.Binder.Annotations;
 using Avalonia.Themes.Fluent;
-using GalaSoft.MvvmLight;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;

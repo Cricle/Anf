@@ -1,7 +1,7 @@
 ﻿using Anf.Models;
 using Anf.Platform.Services;
-using GalaSoft.MvvmLight.Command;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -23,9 +23,9 @@ namespace Anf.Platform.Models
             HasBox = storeBox != null;
             CanStore = condition != null;
             ToggleSuperFavoriteCommand = new RelayCommand(ToggleSuperFavorite);
-            AddCommand = new RelayCommand(() => _ = AddAsync());
+            AddCommand = new AsyncRelayCommand(AddAsync);
             RemoveCommand = new RelayCommand(Remove);
-            ToggleCommand = new RelayCommand(() => _ = ToggleAsync());
+            ToggleCommand = new AsyncRelayCommand(ToggleAsync);
             StoreService = AppEngine.GetRequiredService<ComicStoreService<TStoreBox>>();
         }
         private bool hasBox;
@@ -35,7 +35,7 @@ namespace Anf.Platform.Models
         public bool IsStoring
         {
             get { return isStoring; }
-            private set => Set(ref isStoring, value);
+            private set => SetProperty(ref isStoring, value);
         }
 
         public TStoreBox StoreBox
@@ -43,7 +43,7 @@ namespace Anf.Platform.Models
             get { return storeBox; }
             private set
             {
-                Set(ref storeBox, value);
+                SetProperty(ref storeBox, value);
                 HasBox = value != null;
             }
         }
@@ -51,7 +51,7 @@ namespace Anf.Platform.Models
         public bool HasBox
         {
             get { return hasBox; }
-            private set => Set(ref hasBox, value);
+            private set => SetProperty(ref hasBox, value);
         }
 
         public bool CanStore { get; }
@@ -59,9 +59,9 @@ namespace Anf.Platform.Models
         public ComicStoreService<TStoreBox> StoreService { get; }
 
         public RelayCommand ToggleSuperFavoriteCommand { get; }
-        public RelayCommand AddCommand { get; }
+        public AsyncRelayCommand AddCommand { get; }
         public RelayCommand RemoveCommand { get; }
-        public RelayCommand ToggleCommand { get; }
+        public AsyncRelayCommand ToggleCommand { get; }
 
         public void ToggleSuperFavorite()
         {

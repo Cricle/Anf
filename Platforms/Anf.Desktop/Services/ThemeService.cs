@@ -5,8 +5,8 @@ using Avalonia.Data;
 using Avalonia.Layout;
 using Avalonia.Themes.Fluent;
 using Avalonia.Threading;
-using GalaSoft.MvvmLight;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -64,7 +64,7 @@ namespace Anf.Desktop.Services
 
                 void UpdateValue()
                 {
-                    Set(ref currentModel, value);
+                    SetProperty(ref currentModel, value);
                     SwitchModel(value);
                 }
             }

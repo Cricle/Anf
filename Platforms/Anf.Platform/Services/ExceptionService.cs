@@ -1,6 +1,6 @@
 ﻿using Anf.Services;
-using GalaSoft.MvvmLight;
-using GalaSoft.MvvmLight.Command;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
+using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -20,7 +20,7 @@ namespace Anf.Platform.Services
         public bool HasException
         {
             get { return hasException; }
-            private set => Set(ref hasException, value);
+            private set => SetProperty(ref hasException, value);
         }
 
         public Exception Exception
@@ -28,7 +28,7 @@ namespace Anf.Platform.Services
             get { return exception; }
             set
             {
-                Set(ref exception, value);
+                SetProperty(ref exception, value);
                 HasException = value != null;
             }
         }
