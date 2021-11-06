@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <NgenR2R>false</NgenR2R>
+    <NgenR2R>true</NgenR2R>
     <UseFody>false</UseFody>
     <UseD2D>true</UseD2D>
     <EnableCache>true</EnableCache>
@@ -38,20 +38,20 @@
     <None Remove="Models\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="Ao.SavableConfig" Version="2.5.1" />
-    <PackageReference Include="Ao.SavableConfig.Binder" Version="2.5.1" />
-    <PackageReference Include="Ao.SavableConfig.Json" Version="2.5.1" />
-    <PackageReference Include="Avalonia" Version="0.10.4" />
-    <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="3.4.0" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="Ao.SavableConfig" Version="2.6.0" />
+    <PackageReference Include="Ao.SavableConfig.Binder" Version="2.6.0" />
+    <PackageReference Include="Ao.SavableConfig.Json" Version="2.6.0" />
+    <PackageReference Include="Avalonia" Version="0.10.10" />
+    <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="4.2.0" />
+    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="5.0.0" />
     <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration" Version="5.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="5.0.0" />
-    <PackageReference Include="NLog.Extensions.Logging" Version="1.7.2" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="1.7.4" />
     <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.0-rc.2.21480.5" />
+    <PackageReference Include="System.Text.Json" Version="5.0.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseFody)'=='true'">
     <PackageReference Include="Costura.Fody" Version="5.1.0">
@@ -60,11 +60,11 @@
     </PackageReference>
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
-    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.4" />
+    <PackageReference Include="Avalonia.Diagnostics" Version="0.10.10" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseD2D)' == 'true'">
-    <PackageReference Include="Avalonia.Win32" Version="0.10.4" />
-    <PackageReference Include="Avalonia.Direct2D1" Version="0.10.4" />
+    <PackageReference Include="Avalonia.Win32" Version="0.10.10" />
+    <PackageReference Include="Avalonia.Direct2D1" Version="0.10.10" />
   </ItemGroup>
 
   <ItemGroup Condition="'$(UseD2D)' != 'true'">
@@ -74,7 +74,7 @@
     <Folder Include="Assets\" />
     <Folder Include="Styles\" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsingNetFramework)' == 'true'">
+  <ItemGroup Condition="'$(UsingNetFramework)' == 'true' and '$(Configuration)' == 'Release'">
     <PackageReference Include="Microsoft.DotNet.Framework.NativeImageCompiler" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
