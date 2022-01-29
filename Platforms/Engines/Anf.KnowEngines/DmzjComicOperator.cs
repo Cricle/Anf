@@ -122,7 +122,7 @@ namespace Anf.KnowEngines
             var strx = v8.Evaluate(sc)?.ToString();
             if (strx is null)
             {
-#if NETSTANDARD1_3 || NET45
+#if NETSTANDARD1_3 || NET452
                     return new ComicPage[0];
 #else
                 return Array.Empty<ComicPage>();

@@ -1,0 +1,247 @@
+﻿<Page
+    x:Class="Anf.Views.HomePage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Anf.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:Anf.ViewModels" 
+    xmlns:kwce="using:Anf"
+    xmlns:conv="using:Anf.Converters"
+    xmlns:s="using:Anf.Platform.Settings"
+    mc:Ignorable="d"
+    d:DataContext="{d:DesignInstance Type=vm:UnoHomeViewModel}"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <conv:StartupTypeStringConverter x:Key="StartupTypeStringConverter"/>
+        <conv:SearchProviderConverter x:Key="SearchProviderConverter"/>
+        <conv:StartupTypeBoolConverter x:Key="StartupTypeBoolConverter"/>
+        <conv:RevBoolConverter x:Key="RevBoolConverter"></conv:RevBoolConverter>
+            <DataTemplate x:Key="CsiDt">
+            <Grid>
+                <Grid.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="详细" Command="{Binding DataContext.SetCurrentCommand,ElementName=HomePg}" CommandParameter="{Binding}"/>
+                        <MenuFlyoutItem Text="用此标题搜索" Command="{Binding DataContext.SetAndSearchCommand,ElementName=HomePg}" CommandParameter="{Binding Snapshot.Name}"/>
+                        <MenuFlyoutItem Text="清除结果" Command="{Binding DataContext.ResetCommand,ElementName=HomePg}"/>
+                        <MenuFlyoutItem Text="-" IsEnabled="False"/>
+                        <MenuFlyoutSubItem Text="复制">
+                            <MenuFlyoutItem Text="标题" Command="{Binding DataContext.CopyCommand,ElementName=HomePg}" CommandParameter="{Binding Snapshot.Name}"/>
+                            <MenuFlyoutItem Text="封面" Command="{Binding DataContext.CopyCommand,ElementName=HomePg}" CommandParameter="{Binding Snapshot.ImageUri}"/>
+                        </MenuFlyoutSubItem>
+                    </MenuFlyout>
+                </Grid.ContextFlyout>
+                <ToolTipService.ToolTip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock Text="{Binding Snapshot.Descript,Mode=OneTime}"/>
+                        <ItemsControl ItemsSource="{Binding SourceInfos}" Margin="0,4,0,0">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <ItemsStackPanel Orientation="Horizontal"></ItemsStackPanel>
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Padding="4,2" CornerRadius="3" Background="Gray" Margin="0,0,2,0">
+                                        <TextBlock Text="{Binding Source.Name}"/>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ToolTipService.ToolTip>
+                <Image Source="{Binding LogoImage,Mode=OneWay}" Width="300"/>
+                <Border Background="#A1666666"
+                            VerticalAlignment="Bottom">
+                    <TextBlock Text="{Binding Snapshot.Name,Mode=OneTime}"
+                     FontSize="16"
+                     Margin="0,16"
+                     HorizontalAlignment="Center"/>
+                </Border>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Margin="20,0,20,6">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <ComboBox ItemsSource="{Binding SearchProviders}"
+                SelectedItem="{Binding CurrentSearchProvider,Mode=TwoWay}">
+                <ComboBox.ItemTemplate>
+                    <DataTemplate>
+                        <TextBlock Text="{Binding EngineName}"/>
+                    </DataTemplate>
+                </ComboBox.ItemTemplate>
+            </ComboBox>
+            <AutoSuggestBox Grid.Column="1"
+                            HorizontalAlignment="Stretch"
+                            IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}"
+                            Text="{Binding Keyword,Mode=TwoWay}"
+                            ItemsSource="{Binding HistoryService.Lines}">
+            </AutoSuggestBox>
+            <Button Grid.Column="2" VerticalAlignment="Stretch" Background="Transparent" Padding="16,8" Command="{Binding SearchCommand}" IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}" >
+                <FontIcon Glyph="&#xE71E;" VerticalAlignment="Center"></FontIcon>
+            </Button>
+            <Border Grid.Column="3" Visibility="{Binding HasAvaliableCondition}" Padding="3,0,0,0">
+                <Button Background="{x:Null}" HorizontalAlignment="Center" Command="{Binding GoSourceCommand}"
+                        ToolTipService.ToolTip="此地址可能可以被直接解析">
+                    <FontIcon VerticalAlignment="Center" Glyph="&#xE707;"></FontIcon>
+                </Button>
+            </Border>
+        </Grid>
+        <ProgressBar Grid.Row="2" Visibility="{Binding Searching}" IsIndeterminate="True">
+
+        </ProgressBar>
+        <Grid Grid.RowSpan="5">
+            <Grid VerticalAlignment="Stretch"
+            HorizontalAlignment="Stretch"
+            Visibility="{Binding EmptySet}">
+                <Grid.Resources>
+                    <s:StartupTypes x:Key="StartupTypes.Providers">Providers</s:StartupTypes>
+                    <s:StartupTypes x:Key="StartupTypes.Proposal">Proposal</s:StartupTypes>
+                    <s:StartupTypes x:Key="StartupTypes.None">None</s:StartupTypes>
+                </Grid.Resources>
+                <!--favicon.ico-->
+                <Grid VerticalAlignment="Center"
+                    Visibility="{Binding StartupSettings.StartupType,ConverterParameter={StaticResource StartupTypes.Providers}, Converter={StaticResource StartupTypeBoolConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock FontSize="22" Text="可以从上方输入框输入"/>
+                        <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="关键字"/>
+                        <TextBlock FontSize="22" Text="搜索或直接输入"/>
+                        <TextBlock FontSize="22" FontWeight="ExtraBlack" Text="可解析"/>
+                        <TextBlock FontSize="22" Text="漫画网址"/>
+                    </StackPanel>
+                    <TextBlock Grid.Row="1" FontSize="24" FontWeight="Bold" Margin="0,10" HorizontalAlignment="Center">
+            可用引擎
+                    </TextBlock>
+                    <ItemsControl Grid.Row="2"
+                                  ItemsSource="{Binding EngineIcons}"
+                                  HorizontalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <ItemsWrapGrid Orientation="Horizontal"/>
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border Padding="4">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip>
+                                            <StackPanel Orientation="Vertical">
+                                                <TextBlock Text="{Binding Condition.EnginName}"/>
+                                                <TextBlock Text="{Binding Condition.Address}"/>
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </ToolTipService.ToolTip>
+                                    <Border.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="打开" Command="{Binding OpenCommand}"/>
+                                            <MenuFlyoutItem Text="复制" Command="{Binding CopyCommand}"/>
+                                        </MenuFlyout>
+                                    </Border.ContextFlyout>
+                                    <Image Source="{Binding Bitmap}"
+                         Width="24"/>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </Grid>
+                <Grid HorizontalAlignment="Stretch"
+                      VerticalAlignment="Center"
+                      Margin="16,0"
+                      Visibility="{Binding StartupSettings.StartupType,ConverterParameter={StaticResource StartupTypes.Proposal}, Converter={StaticResource StartupTypeBoolConverter}}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel HorizontalAlignment="Left"
+                      VerticalAlignment="Center"
+                      Orientation="Horizontal"
+                      Grid.Row="1">
+                        <TextBlock VerticalAlignment="Center" Margin="0,0,8,0">推介引擎</TextBlock>
+                        <ComboBox SelectedIndex="0"
+                                  ItemsSource="{Binding ProposalEngine}"
+                                  SelectedItem="{Binding SelectedProposal,Mode=TwoWay}">
+                            <ComboBox.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding Name}"/>
+                                </DataTemplate>
+                            </ComboBox.ItemTemplate>
+                        </ComboBox>
+                    </StackPanel>
+                    <StackPanel Visibility="{Binding ProposalLoading}"
+                      Orientation="Vertical"
+                      Grid.Row="2"
+                      VerticalAlignment="Center"
+                      HorizontalAlignment="Center">
+                        <ProgressBar IsIndeterminate="{Binding ProposalLoading}" MaxWidth="200"/>
+                        <TextBlock>正在加载推介</TextBlock>
+                    </StackPanel>
+                    <Border Grid.Row="2"
+                            Visibility="{Binding ProposalLoading,Converter={StaticResource RevBoolConverter}}">
+                        <ScrollViewer HorizontalScrollBarVisibility="Auto"
+                          Margin="0,20,0,0">
+                            <ListBox Background="{x:Null}"
+                                     ItemsSource="{Binding ProposalSnapshots}"
+                                     SelectionMode="Single"
+                                     ItemTemplate="{StaticResource CsiDt}"
+                                     SelectedItem="{Binding CurrentComicSnapshot,Mode=OneWay}">
+                                <ListBox.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal"/>
+                                    </ItemsPanelTemplate>
+                                </ListBox.ItemsPanel>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Border>
+                </Grid>
+                <Border HorizontalAlignment="Left" 
+                VerticalAlignment="Bottom"
+                Margin="8,0,0,8">
+                    <ComboBox SelectedItem="{Binding StartupSettings.StartupType}"
+                              ItemsSource="{x:Bind conv:StartupTypeStringConverter.IncludeTypes}">
+                        <ComboBox.ItemTemplate>
+                            <DataTemplate>
+                                <TextBlock Text="{Binding Converter={StaticResource StartupTypeStringConverter}}"></TextBlock>
+                            </DataTemplate>
+                        </ComboBox.ItemTemplate>
+                    </ComboBox>
+                </Border>
+            </Grid>
+        </Grid>
+        <Grid Grid.Row="3"
+              Visibility="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
+            <ListBox Grid.Row="1"
+                     Background="{x:Null}"
+                     ItemsSource="{Binding Snapshots}"
+                     SelectionMode="Single"
+                     ItemTemplate="{StaticResource CsiDt}"
+                     SelectedItem="{Binding CurrentComicSnapshot,Mode=OneWay}">
+                <ListBox.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <ItemsWrapGrid Orientation="Horizontal"/>
+                    </ItemsPanelTemplate>
+                </ListBox.ItemsPanel>
+            </ListBox>
+        </Grid>
+
+    </Grid>
+</Page>

@@ -48,7 +48,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddSingleton<IComicDownloader, ComicDownloader>();
 
             services.AddSingleton<RecyclableMemoryStreamManager>();
-#if NET45 || NETSTANDARD1_4
+#if NET452 || NETSTANDARD1_4
             services.AddSingleton<HttpClient>();
             services.AddScoped<INetworkAdapter, HttpClientAdapter>();
 #else

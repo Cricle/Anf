@@ -1,6 +1,6 @@
 <Project>
   <PropertyGroup>
-    <ComicEngineFrameworks>netstandard2.0;netstandard1.3;net45;net461</ComicEngineFrameworks>
+    <ComicEngineFrameworks>netstandard2.0;netstandard1.3;net452;net461</ComicEngineFrameworks>
     <Authors>Anf</Authors>
     <Company>Anf</Company>
     <Product>Anf</Product>
