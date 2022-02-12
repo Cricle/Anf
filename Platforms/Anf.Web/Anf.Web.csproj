@@ -36,7 +36,7 @@
     </PackageReference>
     <PackageReference Include="MongoDB.Driver" Version="2.14.1"/>
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.2" />
-    <PackageReference Include="RedLock.net" Version="2.2.0" />
+    <PackageReference Include="RedLock.net" Version="2.3.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.2.3" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.2.3" />
     <PackageReference Include="RedLock.net" Version="2.3.1" />
