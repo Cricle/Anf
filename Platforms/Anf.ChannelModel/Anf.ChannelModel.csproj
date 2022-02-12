@@ -16,7 +16,7 @@
   </ItemGroup>
   <ItemGroup Condition="'$(EnableMongo)'==true">
     <PackageReference Include="MongoDB.Bson">
-      <Version>2.12.3</Version>
+      <Version>2.14.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
