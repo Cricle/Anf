@@ -1,4 +1,5 @@
-﻿using Org.BouncyCastle.Asn1;
+﻿#if NETSTANDARD2_0
+using Org.BouncyCastle.Asn1;
 using Org.BouncyCastle.Crypto;
 using Org.BouncyCastle.Crypto.Encodings;
 using Org.BouncyCastle.Crypto.Engines;
@@ -8,11 +9,53 @@ using Org.BouncyCastle.Math;
 using Org.BouncyCastle.Pkcs;
 using Org.BouncyCastle.Security;
 using Org.BouncyCastle.X509;
+#endif
 using System;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace Anf.ChannelModel.Helpers
 {
+#if NET5_0_OR_GREATER
+    public class RSA
+    {
+        public static readonly Encoding UTF8 = Encoding.UTF8;
+        public RSAKey GetKey(int keyLen = 1024)
+        {
+            var rsa = new RSACryptoServiceProvider(keyLen);
+            var privateKey=rsa.ExportRSAPrivateKey();
+            var publicKey=rsa.ExportRSAPublicKey();
+            var pub = Convert.ToBase64String(publicKey);
+            var pri = Convert.ToBase64String(privateKey);
+            return new RSAKey(pri, pub);
+        }
+        public string EncryptByPrivateKey(string data, string privateKey)
+        {
+            var rsa=new RSACryptoServiceProvider();
+            rsa.ImportRSAPrivateKey(Convert.FromBase64String(privateKey), out _);
+            var byteData = UTF8.GetBytes(data);
+            var buffer = rsa.Encrypt(byteData, false);
+            return Convert.ToBase64String(buffer);
+        }
+        public string DecryptByPrivateKey(string data, string privateKey)
+        {
+            var rsa = new RSACryptoServiceProvider();
+            rsa.ImportRSAPrivateKey(Convert.FromBase64String(privateKey), out _);
+            var byteData = UTF8.GetBytes(data);
+            var buffer = rsa.Decrypt(byteData, false);
+            return Convert.ToBase64String(buffer);
+        }
+        public string EncryptByPublicKey(string data, string publicKey)
+        {
+            var rsa = new RSACryptoServiceProvider();
+            rsa.ImportRSAPublicKey(Convert.FromBase64String(publicKey), out _);
+            var byteData = UTF8.GetBytes(data);
+            var buffer = rsa.Encrypt(byteData, false);
+            return Convert.ToBase64String(buffer);
+
+        }
+    }
+#else
     public partial class RSA
     {
         private static readonly Encoding UTF8 = Encoding.UTF8;
@@ -138,4 +181,6 @@ namespace Anf.ChannelModel.Helpers
             return UTF8.GetString(ResultData);
         }
     }
+#endif
+
 }
