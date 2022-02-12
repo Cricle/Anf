@@ -11,6 +11,7 @@ using Anf.Web.Models;
 using Anf.ChannelModel.Results;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
+using Anf.Easy.Store;
 
 namespace Anf.Web.Controllers
 {
@@ -93,21 +94,29 @@ namespace Anf.Web.Controllers
             });
             return Ok(r);
         }
-        //[AllowAnonymous]
-        //[HttpGet("[action]")]
-        //public async Task<IActionResult> GetImage([FromQuery] string entityUrl,[FromQuery]string url)
-        //{
-        //    var prov = comicEngine.GetComicSourceProviderType(entityUrl);
-        //    if (prov is null)
-        //    {
-        //        return NotFound(url);
-        //    }
-        //    using var scope = scopeFactory.CreateScope();
-        //    var provider = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(prov.ProviderType);
-        //    var stream = await provider.GetImageStreamAsync(url);
-        //    HttpContext.Response.RegisterForDispose(stream);
-        //    return File(stream, "application/octet-stream");
-        //}
+        [AllowAnonymous]
+        [HttpGet("[action]")]
+        public async Task<IActionResult> GetImage([FromQuery] string entityUrl, [FromQuery] string url)
+        {
+            var prov = comicEngine.GetComicSourceProviderType(entityUrl);
+            if (prov is null)
+            {
+                return NotFound(url);
+            }
+            using var scope = scopeFactory.CreateScope();
+            var provider = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(prov.ProviderType);
+            var storeSer = scope.ServiceProvider.GetRequiredService<IStoreService>();
+            var exist = await storeSer.ExistsAsync(url);
+            if (!exist)
+            {
+                var imgRes = await provider.GetImageStreamAsync(url);
+                await storeSer.SaveAsync(url, imgRes);
+            }
+            var stream = await storeSer.GetStreamAsync(url);
+            
+            HttpContext.Response.RegisterForDispose(stream);
+            return File(stream, "application/octet-stream");
+        }
         [AllowAnonymous]
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(WithPageChapter), 200)]

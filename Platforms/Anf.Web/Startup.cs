@@ -26,6 +26,10 @@ using System.Threading.Tasks;
 using Quartz;
 using Anf.Web.Jobs;
 using System.Linq;
+using Microsoft.Extensions.Azure;
+using Azure.Storage.Queues;
+using Azure.Storage.Blobs;
+using Azure.Core.Extensions;
 
 namespace Anf.Web
 {
@@ -43,10 +47,12 @@ namespace Anf.Web
         {
             AppEngine.Reset(services);
             AppEngine.AddServices(NetworkAdapterTypes.HttpClient);
-            var store = FileStoreService.FromMd5Default(Path.Combine(Environment.CurrentDirectory, XComicConst.CacheFolderName));
-
-            services.AddSingleton<IComicSaver>(store);
-            services.AddSingleton<IStoreService>(store);
+            //var store = FileStoreService.FromMd5Default(Path.Combine(Environment.CurrentDirectory, XComicConst.CacheFolderName));
+            
+            services.AddSingleton(provider => new AzureStoreService(
+                provider.GetRequiredService<BlobServiceClient>(), MD5AddressToFileNameProvider.Instance, 512));
+            services.AddSingleton<IComicSaver>(provider=>provider.GetRequiredService<AzureStoreService>());
+            services.AddSingleton<IStoreService>(provider => provider.GetRequiredService<AzureStoreService>());
             services.AddSingleton<IResourceFactoryCreator<Stream>, WebResourceFactoryCreator>();
             services.AddSingleton<ProposalEngine>();
             services.AddScoped<IComicVisiting<Stream>, WebComicVisiting>();
@@ -131,6 +137,11 @@ namespace Anf.Web
             services.AddRedis();
             services.AddScoped<ReadingManager>();
             AddQuartzAsync(services).GetAwaiter().GetResult();
+            services.AddAzureClients(builder =>
+            {
+                builder.AddBlobServiceClient(Configuration["Azure:Store:Blob:blob"], preferMsi: true);
+                builder.AddQueueServiceClient(Configuration["Azure:Store:Blob:queue"], preferMsi: true);
+            });
         }
         private async Task AddQuartzAsync(IServiceCollection services)
         {
@@ -289,6 +300,31 @@ namespace Anf.Web
                     .Build();
                 var scheduler = await f.GetSchedulerAsync();
                 var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
+            }
+        }
+    }
+    internal static class StartupExtensions
+    {
+        public static IAzureClientBuilder<BlobServiceClient, BlobClientOptions> AddBlobServiceClient(this AzureClientFactoryBuilder builder, string serviceUriOrConnectionString, bool preferMsi)
+        {
+            if (preferMsi && Uri.TryCreate(serviceUriOrConnectionString, UriKind.Absolute, out Uri serviceUri))
+            {
+                return builder.AddBlobServiceClient(serviceUri);
+            }
+            else
+            {
+                return builder.AddBlobServiceClient(serviceUriOrConnectionString);
+            }
+        }
+        public static IAzureClientBuilder<QueueServiceClient, QueueClientOptions> AddQueueServiceClient(this AzureClientFactoryBuilder builder, string serviceUriOrConnectionString, bool preferMsi)
+        {
+            if (preferMsi && Uri.TryCreate(serviceUriOrConnectionString, UriKind.Absolute, out Uri serviceUri))
+            {
+                return builder.AddQueueServiceClient(serviceUri);
+            }
+            else
+            {
+                return builder.AddQueueServiceClient(serviceUriOrConnectionString);
             }
         }
     }

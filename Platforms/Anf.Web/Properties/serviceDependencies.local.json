@@ -4,28 +4,34 @@
       "type": "secrets.user"
     },
     "appInsights1": {
+      "secretStore": "LocalSecretsFile",
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourcegroups/[parameters('resourceGroupName')]/providers/Microsoft.Insights/components/Anf.Web",
       "type": "appInsights.azure",
-      "connectionId": "APPINSIGHTS_CONNECTIONSTRING",
-      "secretStore": "LocalSecretsFile"
+      "connectionId": "APPINSIGHTS_CONNECTIONSTRING"
     },
     "redis1": {
+      "secretStore": "LocalSecretsFile",
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Cache/Redis/anf",
       "type": "redis.azure",
-      "connectionId": "CacheConnection",
-      "secretStore": "LocalSecretsFile"
+      "connectionId": "CacheConnection"
     },
     "signalr1": {
+      "secretStore": "LocalSecretsFile",
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.SignalRService/SignalR/AnfWebservice",
       "type": "signalr.azure",
-      "connectionId": "Azure__SignalR__ConnectionString",
-      "secretStore": "LocalSecretsFile"
+      "connectionId": "Azure__SignalR__ConnectionString"
     },
     "mssql1": {
+      "secretStore": "AzureKeyVault",
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/anfsqlservice/databases/anfdb",
       "type": "mssql.azure",
-      "connectionId": "anfdb",
-      "secretStore": "AzureKeyVault"
+      "connectionId": "anfdb"
+    },
+    "storage1": {
+      "secretStore": "LocalSecretsFile",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Storage/storageAccounts/anfs",
+      "type": "storage.azure",
+      "connectionId": "BlobStore"
     }
   }
 }

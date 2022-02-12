@@ -19,6 +19,10 @@
     "mssql1": {
       "type": "mssql",
       "connectionId": "anfdb"
+    },
+    "storage1": {
+      "type": "storage",
+      "connectionId": "BlobStore"
     }
   }
 }

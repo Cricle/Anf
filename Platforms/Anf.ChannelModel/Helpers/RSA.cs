@@ -17,7 +17,7 @@ using System.Text;
 namespace Anf.ChannelModel.Helpers
 {
 #if NET5_0_OR_GREATER
-        public class RSA
+    public class RSA
     {
         public static readonly Encoding UTF8 = Encoding.UTF8;
         public RSAKey GetKey(int keyLen = 1024)
