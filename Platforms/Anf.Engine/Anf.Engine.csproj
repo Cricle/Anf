@@ -8,8 +8,8 @@
     <Compile Remove="HttpUtility.cs"></Compile>
   </ItemGroup>
   <ItemGroup Condition="'$(StandardLib)'==true and '$(TargetFramework)' != 'netstandard1.1'">
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="5.0.0" />
-    <PackageReference Include="System.Text.Json" Version="5.0.2" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="6.0.0" />
+    <PackageReference Include="System.Text.Json" Version="6.0.2" />
   </ItemGroup>
   <!--Condition="'$(StandardLib)'!=true"-->
   <ItemGroup Condition="'$(StandardLib)'!='true' or '$(TargetFramework)' == 'netstandard1.1'">

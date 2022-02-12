@@ -1,4 +1,4 @@
-﻿using GalaSoft.MvvmLight;
+﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace Anf.Platform.Test
             public string Name
             {
                 get => name;
-                set => Set(ref name, value);
+                set => SetProperty(ref name, value);
             }
         }
         [TestMethod]
