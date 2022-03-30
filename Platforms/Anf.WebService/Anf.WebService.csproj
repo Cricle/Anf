@@ -10,17 +10,17 @@
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.15" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />
-    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="3.1.36" />
+    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="6.13.16" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.1'">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="5.0.14" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="5.0.14" />
-    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="5.13.9" />
+    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="6.13.16" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
-    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="6.13.9" />
+    <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="6.13.16" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Shareds\AnfDbContext.cs"></Compile>
