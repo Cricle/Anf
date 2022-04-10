@@ -32,7 +32,11 @@ namespace Anf.KnowEngines.SearchProviders
             }
             var targetUrl = string.Format(SeachUrl, page, take, keywork);
             string str = string.Empty;
-            using (var rep = await networkAdapter.GetStreamAsync(new RequestSettings { Address = targetUrl }))
+            using (var rep = await networkAdapter.GetStreamAsync(new RequestSettings
+            {
+                Address = targetUrl,
+                Referrer = "https://www.soman.com/"
+            }))
             using (var sr = new StreamReader(rep))
             {
                 str = sr.ReadToEnd();

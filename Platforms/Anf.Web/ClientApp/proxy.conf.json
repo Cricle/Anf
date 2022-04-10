@@ -1,0 +1,8 @@
+{
+    "/api/*": {
+    "target": "https://qnyd.moe/",
+    "secure": true,
+    "logLevel": "debug",
+    "changeOrigin": true
+  }
+}

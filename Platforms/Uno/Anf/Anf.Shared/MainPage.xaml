@@ -9,8 +9,20 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
         <NavigationView x:Name="Nv">
-            
+            <NavigationView.AutoSuggestBox>
+                <AutoSuggestBox QueryIcon="Find" 
+                                PlaceholderText="查询漫画" 
+                                AutomationProperties.Name="Search" />
+            </NavigationView.AutoSuggestBox>
+            <NavigationView.MenuItems>
+                <NavigationViewItem Content="aaa"></NavigationViewItem>
+                <NavigationViewItem Content="aaa"></NavigationViewItem>
+                <NavigationViewItem Content="aaa"></NavigationViewItem>
+                <NavigationViewItem Content="aaa"></NavigationViewItem>
+            </NavigationView.MenuItems>
         </NavigationView>
+
+
         <Border x:Name="WraperExcetionBorder" VerticalAlignment="Stretch"
             HorizontalAlignment="Stretch"
                 Visibility="Collapsed">

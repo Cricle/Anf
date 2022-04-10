@@ -31,6 +31,12 @@
         </li>
     </ul>
     <ul style="display:inline-block;float: right;">
+        <li class="normal-li m-li">
+            <!--nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"-->
+            <a [routerLink]='["/login"]' >
+                <i nz-icon nzType="user" nzTheme="outline"></i>
+            </a>
+        </li>
         <li class="normal-li m-li" nz-tooltip nzTooltipTitle="Swith the theme">
             <!--nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"-->
             <a (click)='switchTheme()' >

@@ -23,7 +23,6 @@ using Anf.Platform.Models.Impl;
 using Anf.Platform.Services.Impl;
 using Anf.Platform.Engines;
 using Anf.KnowEngines;
-using Org.BouncyCastle.Crmf;
 using Windows.UI.Xaml.Media;
 using Anf.Settings;
 using Windows.UI.Xaml;
@@ -68,6 +67,9 @@ namespace Anf
             AppEngine.Services.AddLogging(x =>
             {
                 x.ClearProviders();
+#if HAS_UNO_SKIA_WPF
+                x.AddConsole();
+#endif
             });
         }
         private AnfSettings CreateSettings(IServiceProvider provider)
