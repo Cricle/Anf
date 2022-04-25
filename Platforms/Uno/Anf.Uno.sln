@@ -31,6 +31,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Skia.Wpf", "Anf\Anf.Ski
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Skia.Gtk", "Anf\Anf.Skia.Gtk\Anf.Skia.Gtk.csproj", "{87E67EAD-4BF8-40E4-89DF-70A0509B53C1}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "eng", "eng", "{B77AF053-8D35-41C3-A8B5-8C0F020F52CE}"
+	ProjectSection(SolutionItems) = preProject
+		Anf\Anf.Uno.ref.targets = Anf\Anf.Uno.ref.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Anf\Anf.Shared\Anf.Shared.projitems*{116b73b1-44ac-4c20-bae4-2a84f2ccb088}*SharedItemsImports = 5

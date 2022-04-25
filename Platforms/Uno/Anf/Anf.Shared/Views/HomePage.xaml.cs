@@ -27,6 +27,7 @@ namespace Anf.Views
         public HomePage()
         {
             this.InitializeComponent();
+            DataContext = AppEngine.GetRequiredService<UnoHomeViewModel>();
         }
     }
 }

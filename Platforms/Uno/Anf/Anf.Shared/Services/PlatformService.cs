@@ -4,6 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Threading.Tasks;
 using Windows.ApplicationModel.DataTransfer;
+using Windows.System;
 
 namespace Anf.Services
 {
@@ -16,19 +17,9 @@ namespace Anf.Services
             Clipboard.SetContent(dp);
         }
 
-        public Task OpenAddressAsync(string address)
+        public async Task OpenAddressAsync(string address)
         {
-#if !HAS_UNO_SKIA_WPF
-            var psi = new ProcessStartInfo
-            {
-                FileName = address,
-                UseShellExecute = true
-            };
-            Process.Start(psi);
-#else
-            Process.Start(address);
-#endif
-            return Task.CompletedTask;
+            await Launcher.LaunchUriAsync(new Uri(address));
         }
     }
 }

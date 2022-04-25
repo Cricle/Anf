@@ -5,10 +5,174 @@
     xmlns:local="using:Anf.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:sys="using:System"
+    xmlns:vm="using:Anf.ViewModels"
+    xmlns:conv="using:Anf.Converters"
     mc:Ignorable="d"
+    d:DataContext="vm:UnoComicViewModel"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+    <Page.Resources>
+        <Thickness x:Key="IconMargin">0,0,12,0</Thickness>
+        <Thickness x:Key="DescMargin">0,0,12,0</Thickness>
+        <Thickness x:Key="ItemMargin">0,4</Thickness>
+        <conv:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+    </Page.Resources>
 
     <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Border>
+                <Border.ContextFlyout>
+                    <MenuFlyout>
+                        <MenuFlyoutItem Text="保存" Command="{Binding SaveLogoImageCommand}"/>
+                    </MenuFlyout>
+                </Border.ContextFlyout>
+                <Image Source="{Binding LogoImage}"
+                       Stretch="UniformToFill"
+                       Width="280"
+                       Margin="10,10,0,0"/>
+            </Border>
+            <StackPanel Grid.Column="1"
+                        Orientation="Vertical"
+                        Margin="35,0,0,0">
+                <TextBlock Text="{Binding Snapshot.Name}" FontSize="26"/>
+                <Grid Margin="{StaticResource ItemMargin}">
+                    <Grid.ContextFlyout>
+                        <MenuFlyout>
+                            <MenuFlyoutItem Text="复制名字" Command="{Binding CopyNameCommand}"/>
+                            <MenuFlyoutItem Text="复制作者" Command="{Binding CopyAuthorizeCommand}"/>
+                            <MenuFlyoutItem Text="复制描述" Command="{Binding CopyDescriptCommand}"/>
+                            <MenuFlyoutSeparator/>
+                            <MenuFlyoutItem Text="复制实体" Command="{Binding CopyEntityCommand}"/>
+                        </MenuFlyout>
+                    </Grid.ContextFlyout>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Style="{StaticResource TextBlock.segoblock}" FontSize="16" Text="&#xE77B;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
+                    <TextBlock Text="{Binding Snapshot.Author}"
+                               FontSize="16"
+                               Grid.Column="1"/>
+                </Grid>
+                <ItemsControl ItemsSource="{Binding Snapshot.Sources}" Margin="{StaticResource ItemMargin}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <StackPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Button FontSize="16"
+                                    Margin="6">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock Text="{Binding Name}" Grid.Column="1"/>
+                                </StackPanel>
+                            </Button>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+                <Grid Margin="{StaticResource DescMargin}">
+                    <TextBlock Text="{Binding Snapshot.Descript}"
+                               FontSize="16"
+                               MaxHeight="300"
+                               TextWrapping="Wrap"
+                               Grid.Column="1">
+                        <ToolTipService.ToolTip>
+                              <TextBlock Text="{Binding Snapshot.Descript}"
+                                         TextWrapping="Wrap"
+                                         MaxWidth="400"/>
+                        </ToolTipService.ToolTip>
+                    </TextBlock>
+                </Grid>
+            </StackPanel>
+        </Grid>
+        <Border Grid.Row="1"
+                Margin="0,15,0,0"
+                HorizontalAlignment="Center">
+            <TextBlock FontSize="22" Text="引用源"/>
+        </Border>
+        <ScrollViewer Grid.Row="2">
+            <ItemsControl ItemsSource="{Binding SourceInfos}" FontSize="14">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Grid>
+                            <Grid.ContextFlyout>
+                                <MenuFlyout>
+                                    <MenuFlyoutItem Command="{Binding OpenCommand}" Text="打开"/>
+                                    <MenuFlyoutItem Command="{Binding CopyCommand}" Text="复制"/>
+                                </MenuFlyout>
+                            </Grid.ContextFlyout>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Orientation="Horizontal"
+                                        Margin="20">
+                                <ToolTipService.ToolTip>
+                                    <Grid>
+                                        <TextBlock Visibility="{Binding CanParse,Converter={StaticResource BoolVisibilityConverter}}">可以被解析</TextBlock>
+                                        <TextBlock Visibility="{Binding CanParse,Converter={StaticResource BoolVisibilityConverter},ConverterParameter=rev}">无法被解析</TextBlock>
+                                    </Grid>
+                                </ToolTipService.ToolTip>
+                                <TextBlock Style="{StaticResource TextBlock.segoblock}" Visibility="{Binding CanParse,Converter={StaticResource BoolVisibilityConverter}}" FontSize="16" Text="&#xE8FB;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
+                                <TextBlock Style="{StaticResource TextBlock.segoblock}" Visibility="{Binding CanParse,Converter={StaticResource BoolVisibilityConverter},ConverterParameter=rev}" FontSize="16" Text="&#xE894;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
 
+                                <TextBlock Text="{Binding Source.Name}"
+                                           Margin="6,0"
+                                           VerticalAlignment="Center"/>
+                                <Button Content="{Binding Source.TargetUrl}"
+                                        Command="{Binding OpenCommand}"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal"
+                                        Grid.Column="1"
+                                        HorizontalAlignment="Right">
+                                <StackPanel.Resources>
+                                    <Thickness x:Key="BlockMargin">6,0</Thickness>
+                                </StackPanel.Resources>
+                                <Button Command="{Binding ToggleCommand}"
+                                        Margin="{StaticResource BlockMargin}"
+                                        IsEnabled="{Binding CanStore}">
+                                    <ToolTipService.ToolTip>
+                                        <ToolTip>
+                                            <StackPanel Orientation="Horizontal" Visibility="{Binding HasBox,Converter={StaticResource BoolVisibilityConverter}}">
+                                                <TextBlock Text="喜欢" />
+                                                <TextBlock Text="，而且是特别喜欢" Visibility="{Binding StoreBox.AttackModel.SuperFavorite,Converter={StaticResource BoolVisibilityConverter}}"/>
+                                            </StackPanel>
+                                        </ToolTip>
+                                    </ToolTipService.ToolTip>
+                                    <StackPanel Orientation="Horizontal">
+                                        <StackPanel.Resources>
+                                            <Style TargetType="TextBlock" 
+                                                   BasedOn="{StaticResource TextBlock.segoblock}">
+                                                <Setter Property="FontSize" Value="16"></Setter>
+                                                <Setter Property="VerticalAlignment" Value="Center"></Setter>
+                                                <Setter Property="Text" Value="&#xE735;"></Setter>
+                                            </Style>
+                                        </StackPanel.Resources>
+                                        <TextBlock Foreground="Red" Visibility="{Binding HasBox,Converter={StaticResource BoolVisibilityConverter}}"/>
+                                        <TextBlock Visibility="{Binding HasBox,Converter={StaticResource BoolVisibilityConverter},ConverterParameter=rev}"/>
+                                    </StackPanel>
+                                </Button>
+                                <Button Command="{Binding WatchCommand}" Visibility="{Binding CanParse}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Style="{StaticResource TextBlock.segoblock}" FontSize="16" Text="&#xE768;" Margin="{StaticResource DescMargin}" VerticalAlignment="Center"/>
+                                        <TextBlock VerticalAlignment="Center">进入</TextBlock>
+                                    </StackPanel>
+                                </Button>
+                            </StackPanel>
+                        </Grid>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
     </Grid>
 </Page>

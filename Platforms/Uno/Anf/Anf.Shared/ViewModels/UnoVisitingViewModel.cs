@@ -15,6 +15,7 @@ using System.ComponentModel;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
@@ -48,12 +49,40 @@ namespace Anf.ViewModels
         {
             AvalonInit();
         }
-        //private StretchMode stretchMode;
-        private double zoomSpeed;
-        private bool enableGesture;
-        private bool enableConstrains;
-        private bool enableZoom;
-        private bool transverse;
+
+        private bool isVerticalRailEnabled = true;
+        private bool isScrollInertiaEnabled = true;
+        private bool isHorizontalScrollChainingEnabled;
+        private bool isVerticalScrollChainingEnabled = true;
+        private ZoomMode zoomMode= ZoomMode.Enabled;
+
+        public ZoomMode ZoomMode
+        {
+            get => zoomMode;
+            set => SetProperty(ref zoomMode, value);
+        }
+
+        public bool IsVerticalScrollChainingEnabled
+        {
+            get => isVerticalScrollChainingEnabled;
+            set => SetProperty(ref isVerticalScrollChainingEnabled, value);
+        }
+        public bool IsHorizontalScrollChainingEnabled
+        {
+            get => isHorizontalScrollChainingEnabled;
+            set => SetProperty(ref isHorizontalScrollChainingEnabled, value);
+        }
+        public bool IsVerticalRailEnabled
+        {
+            get => isVerticalRailEnabled;
+            set => SetProperty(ref isVerticalRailEnabled, value);
+        }
+        public bool IsScrollInertiaEnabled
+        {
+            get => isScrollInertiaEnabled;
+            set => SetProperty(ref isScrollInertiaEnabled, value);
+        }
+
         private double minWidth;
         private double minHeight;
         private ComicPageInfo<ImageSource> selectedResource;
@@ -62,7 +91,6 @@ namespace Anf.ViewModels
         private IDisposable readingSubscriber;
 
         public ReadingSettings ReadingSettings { get; private set; }
-        //public StretchMode[] StretchModes { get; private set; }
         public RelayCommand OpenPaneCommand { get; private set; }
         public RelayCommand ClosePaneCommand { get; private set; }
         public RelayCommand SaveLogoCommand { get; private set; }
@@ -103,49 +131,6 @@ namespace Anf.ViewModels
             set => SetProperty(ref minWidth, value);
         }
 
-        public bool Transverse
-        {
-            get => transverse;
-            set
-            {
-                var origin = transverse;
-                SetProperty(ref transverse, value);
-                if (origin != value)
-                {
-                    TransverseChanged?.Invoke(this, value);
-                }
-            }
-        }
-
-        public bool EnableZoom
-        {
-            get => enableZoom;
-            set => SetProperty(ref enableZoom, value);
-        }
-
-        public bool EnableConstrains
-        {
-            get => enableConstrains;
-            set => SetProperty(ref enableConstrains, value);
-        }
-
-        public bool EnableGesture
-        {
-            get => enableGesture;
-            set => SetProperty(ref enableGesture, value);
-        }
-
-        public double ZoomSpeed
-        {
-            get => zoomSpeed;
-            set => SetProperty(ref zoomSpeed, value);
-        }
-
-        //public StretchMode StretchMode
-        //{
-        //    get => stretchMode;
-        //    set => SetProperty(ref stretchMode, value);
-        //}
 
         public ComicChapter TrulyCurrentComicChapter
         {
@@ -175,7 +160,6 @@ namespace Anf.ViewModels
         {
             MinWidth = 200;
             MinHeight = 400;
-            ZoomSpeed = 1;
             //StretchMode = StretchMode.UniformToFill;
             //StretchModes = ZoomBorder.StretchModes;
             SaveImageCommand = new RelayCommand<ComicPageInfo<ImageSource>>(SaveImage);

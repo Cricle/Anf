@@ -5,10 +5,193 @@
     xmlns:local="using:Anf.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:Anf.ViewModels"
+    xmlns:conv="using:Anf.Converters"
+    xmlns:kwc="using:Anf"
     mc:Ignorable="d"
+    d:DataContext="vm:UnoVisitingViewModel"
+    x:Name="Rep"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
-
+    <Page.Resources>
+        <conv:AddNumberConverter x:Key="AddConverter"/>
+        <conv:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+        <Style x:Key="Border.flow" TargetType="Border">
+            <Setter Property="Grid.RowSpan" Value="2"/>
+            <Setter Property="VerticalAlignment" Value="Bottom"/>
+            <Setter Property="Padding" Value="8,4"/>
+            <Setter Property="CornerRadius" Value="8"/>
+            <Setter Property="Margin" Value="4,8"/>
+        </Style>
+        <MenuFlyout x:Key="ControlMenu">
+            <MenuFlyoutItem Text="{Binding DataContext.CurrentChapter.Title,ElementName=Rep}" IsEnabled="False"/>
+            <MenuFlyoutSubItem Text="复制">
+                <MenuFlyoutItem Text="名字" Command="{Binding DataContext.CopyTitleCommand,ElementName=Rep,Mode=OneTime}"/>
+                <MenuFlyoutItem Text="实体" Command="{Binding DataContext.CopyComicEntityCommand,ElementName=Rep,Mode=OneTime}"/>
+                <MenuFlyoutItem Text="地址" Command="{Binding DataContext.CopyComicCommand,ElementName=Rep,Mode=OneTime}"/>
+                <MenuFlyoutItem Text="章节" Command="{Binding DataContext.CopyChapterCommand,ElementName=Rep,Mode=OneTime}"/>
+            </MenuFlyoutSubItem>
+            <MenuFlyoutSubItem Text="打开">
+                <MenuFlyoutItem Text="漫画" Command="{Binding DataContext.OpenComicCommand,ElementName=Rep,Mode=OneTime}"/>
+                <MenuFlyoutItem Text="章节" Command="{Binding DataContext.OpenChapterCommand,ElementName=Rep,Mode=OneTime}"/>
+            </MenuFlyoutSubItem>
+            <MenuFlyoutSubItem Text="控制">
+                <MenuFlyoutItem Text="上一章" Command="{Binding DataContext.PrevChapterCommand,ElementName=Rep,Mode=OneTime}"/>
+                <MenuFlyoutItem Text="下一章" Command="{Binding DataContext.NextChapterCommand,ElementName=Rep,Mode=OneTime}"/>
+            </MenuFlyoutSubItem>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem Text="保存图片" CommandParameter="{Binding}" Command="{Binding DataContext.SaveImageCommand,ElementName=Rep,Mode=OneTime}"></MenuFlyoutItem>
+            <MenuFlyoutItem Text="重载图片" Command="{Binding ReLoadCommand,Mode=OneTime}"/>
+            <MenuFlyoutSeparator/>
+            <MenuFlyoutItem Text="保存封面" IsEnabled="{Binding DataContext.HasLogo,ElementName=Rep}" Command="{Binding DataContext.SaveLogoCommand,ElementName=Rep,Mode=OneTime}"></MenuFlyoutItem>
+        </MenuFlyout>
+        <DataTemplate x:Key="ItemDt">
+            <Grid>
+                <Border Visibility="{Binding LoadSucceed,Converter={StaticResource BoolVisibilityConverter}}"
+                        ContextFlyout="{StaticResource ControlMenu}">
+                    <Image Stretch="None" Source="{Binding Resource}" MinHeight="200"></Image>
+                </Border>
+                <StackPanel Visibility="{Binding HasException,Converter={StaticResource BoolVisibilityConverter}}" Orientation="Vertical" HorizontalAlignment="Center">
+                    <TextBlock VerticalAlignment="Center" Text="{Binding Exception}" TextWrapping="Wrap" MaxHeight="400">
+                        <ToolTipService.ToolTip>
+                          <TextBlock Text="{Binding Exception}"/>
+                        </ToolTipService.ToolTip>
+                    </TextBlock>
+                    <Button MaxWidth="200" HorizontalAlignment="Center" Content="Reload" Command="{Binding LoadCommand}" Margin="0,10,0,0"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
     <Grid>
+        <SplitView IsPaneOpen="{Binding LeftPaneOpen,Mode=TwoWay}"
+               CompactPaneLength="0"
+               DisplayMode="CompactInline">
+            <SplitView.Pane>
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <Grid Margin="0,3">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <TextBlock FontWeight="Bold" Text="{Binding Name}" VerticalAlignment="Center"
+                                   HorizontalAlignment="Center"
+                                   TextWrapping="NoWrap"
+                                   TextTrimming="CharacterEllipsis">
+                            <ToolTipService.ToolTip>
+                                <TextBlock Text="{Binding Name}"/>
+                            </ToolTipService.ToolTip>
+                        </TextBlock>
+                        <Button Command="{Binding ClosePaneCommand}" Grid.Column="1" Background="{x:Null}" HorizontalContentAlignment="Center" HorizontalAlignment="Stretch">
+                            <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE894;" Foreground="Red"/>
+                        </Button>
+                    </Grid>
+                    <ListView SelectedItem="{Binding TrulyCurrentComicChapter,Mode=TwoWay}"
+                              ItemsSource="{Binding ComicEntity.Chapters}"
+                              Grid.Row="1"
+                              Background="{x:Null}">
+                        <ListView.ItemTemplate>
+                            <DataTemplate x:DataType="kwc:ComicChapter">
+                                <TextBlock Text="{Binding Title}">
+                                    <ToolTipService.ToolTip>
+                                        <TextBlock Text="{Binding TargetUrl}"/>
+                                    </ToolTipService.ToolTip>
+                                </TextBlock>
+                            </DataTemplate>
+                        </ListView.ItemTemplate>
+                    </ListView>
+                </Grid>
+            </SplitView.Pane>
+            <SplitView.Content>
+                <Grid>
+                    <FlipView x:Name="Car"
+                              ItemsSource="{Binding Resources}"
+                              Background="{x:Null}"
+                              SelectedItem="{Binding SelectedResource,Mode=TwoWay}">
+                        <FlipView.ItemTemplate>
+                            <DataTemplate>
+                                <ScrollViewer IsScrollInertiaEnabled="{Binding DataContext.IsScrollInertiaEnabled,ElementName=Rep,Mode=TwoWay}"
+                                              IsVerticalRailEnabled="{Binding DataContext.IsVerticalRailEnabled,ElementName=Rep,Mode=TwoWay}"
+                                              IsHorizontalScrollChainingEnabled="{Binding DataContext.IsHorizontalScrollChainingEnabled,ElementName=Rep,Mode=TwoWay}"
+                                              IsVerticalScrollChainingEnabled="{Binding DataContext.IsVerticalScrollChainingEnabled,ElementName=Rep,Mode=TwoWay}"
+                                              ZoomMode="{Binding DataContext.ZoomMode,ElementName=Rep,Mode=TwoWay}"
+                                              MinWidth="{Binding DataContext.MinWidth,ElementName=Car}"
+                                              MinHeight="{Binding DataContext.MinHeight,ElementName=Car}">
+                                    <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ItemDt}"/>
+                                </ScrollViewer>
+                            </DataTemplate>
+                        </FlipView.ItemTemplate>
+                    </FlipView>
+                </Grid>
+            </SplitView.Content>
+        </SplitView>
 
+        <Border Style="{StaticResource Border.flow}" HorizontalAlignment="Left">
+            <ToolTipService.ToolTip>
+                <ToolTip>
+                    <StackPanel Orientation="Vertical">
+                        <TextBlock>唉，很难做!</TextBlock>
+                    </StackPanel>
+                </ToolTip>
+            </ToolTipService.ToolTip>
+            <Grid>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel.Resources>
+                        <Style x:Key="Tbx" TargetType="TextBlock">
+                            <Setter Property="FontSize" Value="10"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <TextBlock Text="{Binding ChapterName}"/>
+                    <TextBlock>(</TextBlock>
+                    <TextBlock Text="{Binding CurrentPage,Converter={StaticResource AddConverter}}"></TextBlock>
+                    <TextBlock>/</TextBlock>
+                    <TextBlock Text="{Binding TotalPage}"></TextBlock>
+                    <TextBlock>)</TextBlock>
+                </StackPanel>
+                <!--<ProgressBar VerticalAlignment="Bottom"
+                   MaxWidth="40"
+                   Grid.Row="1"
+                   Minimum="{Binding CurrentChaterCursor.CurrentIndex,Converter={StaticResource AddConverter}}"
+                   Value="{Binding CurrentChaterCursor.Count,Converter={StaticResource AddConverter}}"/>-->
+            </Grid>
+        </Border>
+        <Border Style="{StaticResource Border.flow}" 
+                Visibility="{Binding HasStoreBox,Converter={StaticResource BoolVisibilityConverter}}" Background="{x:Null}">
+            <Border Style="{StaticResource Border.flow}"
+                    HorizontalAlignment="Right" 
+                    Visibility="{Binding StoreBox.IsSaving,Converter={StaticResource BoolVisibilityConverter}}">
+                <ToolTipService.ToolTip>
+                    <TextBlock>我正在保存你的位置，别客气OvO</TextBlock>
+                </ToolTipService.ToolTip>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <StackPanel.Resources>
+                        <Style x:Key="Tbx" TargetType="TextBlock">
+                            <Setter Property="FontSize" Value="10"/>
+                        </Style>
+                    </StackPanel.Resources>
+                    <TextBlock>(</TextBlock>
+                    <TextBlock Text="{Binding StoreBox.AttackModel.CurrentChapter,Converter={StaticResource AddConverter}}"></TextBlock>
+                    <TextBlock Text=" - "></TextBlock>
+                    <TextBlock Text="{Binding StoreBox.AttackModel.CurrentPage,Converter={StaticResource AddConverter}}"></TextBlock>
+                    <TextBlock>)</TextBlock>
+                </StackPanel>
+            </Border>
+        </Border>
+
+        <Border Visibility="{Binding IsLoading,Converter={StaticResource BoolVisibilityConverter}}"
+                HorizontalAlignment="Stretch"
+                VerticalAlignment="Stretch" >
+            <StackPanel Orientation="Vertical" VerticalAlignment="Center" Margin="20,0">
+                <StackPanel.Resources>
+                    <Thickness x:Key="ItemMargin">0,20,0,0</Thickness>
+                </StackPanel.Resources>
+                <Image Height="400" Source="{Binding LogoImage}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+                <TextBlock FontSize="22" Text="{Binding Name}" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+                <TextBlock FontSize="12" Text="正在获取所有资源" HorizontalAlignment="Center" Margin="{StaticResource ItemMargin}"/>
+                <ProgressBar IsIndeterminate="{Binding IsLoading}" Margin="0,10,0,0" MaxWidth="300"/>
+            </StackPanel>
+        </Border>
     </Grid>
 </Page>

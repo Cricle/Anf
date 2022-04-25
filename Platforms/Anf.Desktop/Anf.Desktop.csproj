@@ -42,18 +42,9 @@
     <PackageReference Include="Ao.SavableConfig" Version="2.7.0" />
     <PackageReference Include="Ao.SavableConfig.Binder" Version="2.7.0" />
     <PackageReference Include="Ao.SavableConfig.Json" Version="2.7.0" />
-    <PackageReference Include="Avalonia" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="10.12.0" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Binder" Version="6.0.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-    <PackageReference Include="System.Net.NameResolution" Version="4.3.0" />
-    <PackageReference Include="Microsoft.Extensions.Configuration" Version="6.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="6.0.0" />
     <PackageReference Include="NLog.Extensions.Logging" Version="1.7.4" />
-    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
-    <PackageReference Include="System.Text.Json" Version="6.0.2" />
-    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
   </ItemGroup>
   <ItemGroup Condition="'$(UseFody)'=='true'">
     <PackageReference Include="Costura.Fody" Version="5.1.0">
@@ -69,7 +60,6 @@
     <PackageReference Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
   </ItemGroup>
   <ItemGroup Condition="'$(RenderSystem)' == 'D2D'">
-    <PackageReference Include="Avalonia.Win32" Version="$(AvaloniaVersion)" />
     <PackageReference Include="Avalonia.Direct2D1" Version="$(AvaloniaVersion)" />
   </ItemGroup>
 

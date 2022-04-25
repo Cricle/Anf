@@ -11,6 +11,7 @@ using Windows.UI.Xaml.Navigation;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using Anf.KnowEngines;
 
 namespace Anf
 {
@@ -28,18 +29,9 @@ namespace Anf
         public App()
         {
             InitializeLogging();
-            var root=LanguageManager.Instance.LangService.EnsureGetLangNode("zh-cn");
-            root.AddInMemoryCollection(new Dictionary<string, string>
-            {
-                ["Assd"] = "dsadsadsa"
-            }); 
-            root = LanguageManager.Instance.LangService.EnsureGetLangNode("en-IE");
-            root.AddInMemoryCollection(new Dictionary<string, string>
-            {
-                ["Assd"] = "en-IE"
-            });
             this.InitializeComponent();
             InitServices();
+            AppEngine.Provider.UseKnowEngines();
 #if HAS_UNO || NETFX_CORE
             this.Suspending += OnSuspending;
 #endif
