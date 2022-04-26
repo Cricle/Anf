@@ -4,28 +4,53 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.UI.Core;
+using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
 using Windows.UI.Xaml.Media.Imaging;
 
 namespace Anf.Services
 {
-    internal class StreamImageConverter : IStreamImageConverter<ImageSource>
+    public class ImageBox : IDisposable
     {
-        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
-
-        public StreamImageConverter(RecyclableMemoryStreamManager recyclableMemoryStreamManager)
+        public ImageBox(ImageSource image, Stream stream)
         {
-            this.recyclableMemoryStreamManager = recyclableMemoryStreamManager;
+            Image = image;
+            Stream = stream;
         }
 
-        public async Task<ImageSource> ToImageAsync(Stream stream)
+        public ImageSource Image { get; }
+
+        public Stream Stream { get; }
+
+        public void Dispose()
         {
-            var bitmap = new BitmapImage();
-            using (var rs = stream.AsRandomAccessStream())
+            Stream.Dispose();
+#if !WINDOWS_UWP
+            if (Image is BitmapImage bi)
             {
-                await bitmap.SetSourceAsync(rs);
+                bi.Dispose();
             }
-            return bitmap;
+#endif
+        }
+    }
+    internal class StreamImageConverter : IStreamImageConverter<ImageBox>
+    {
+        public async Task<ImageBox> ToImageAsync(Stream stream)
+        {
+            try
+            {
+                var bitmap = new BitmapImage();
+                using (var rs = stream.AsRandomAccessStream())
+                {
+                    await bitmap.SetSourceAsync(rs);
+                }
+                return new ImageBox(bitmap, stream);
+            }
+            catch (Exception ex)
+            {
+                throw;
+            }
         }
     }
 }

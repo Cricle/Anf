@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 #if !NETSTANDARD1_3
 using System.Net;
 #endif
 using System.Net.Http;
 using System.Net.Http.Headers;
+#if !NETSTANDARD1_1
+using System.Net.Security;
+#endif
 using System.Text;
 using System.Threading.Tasks;
 
@@ -26,6 +30,22 @@ namespace Anf.Networks
             }
 
             var req = (HttpWebRequest)WebRequest.Create(settings.Address);
+            req.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
+            {
+                var expirationDate = DateTime.Parse(certificate.GetExpirationDateString(), CultureInfo.InvariantCulture);
+                if (expirationDate - DateTime.Today < TimeSpan.FromDays(30))
+                {
+                    throw new Exception("Time to renew the certificate!");
+                }
+                if (sslPolicyErrors == SslPolicyErrors.None)
+                {
+                    return true;
+                }
+                else
+                {
+                    throw new Exception("Cert policy errors: " + sslPolicyErrors.ToString());
+                }
+            };
             req.Method = "GET";
             if (!string.IsNullOrEmpty(settings.Method))
             {

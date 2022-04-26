@@ -54,6 +54,7 @@ namespace Anf
         private async void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
             var vm =await UnoVisitingViewModel.CreateAsync("https://www.dmzj.com/info/xiaoyuanwanderichang.html");
+            await vm.SelectChapterAsync(1);
             Nv.Content = new VisitingView
             {
                 DataContext = vm

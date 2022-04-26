@@ -8,10 +8,10 @@ using Windows.UI.Xaml.Media;
 
 namespace Anf.Services
 {
-    internal class UnoStoreComicVisiting: StoreComicVisiting<ImageSource>
+    internal class UnoStoreComicVisiting: StoreComicVisiting<ImageBox>
     {
         public UnoStoreComicVisiting(IServiceProvider host,
-           IResourceFactoryCreator<ImageSource> resourceFactoryCreator,
+           IResourceFactoryCreator<ImageBox> resourceFactoryCreator,
            AnfSettings settings)
             : base(host, resourceFactoryCreator)
         {

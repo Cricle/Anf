@@ -129,13 +129,13 @@ namespace Anf.KnowEngines
 #endif
             }
             string[] inn = null;
-            var visitor = JsonVisitor.FromString(strx);
+            var visitor = JsonVisitor.FromString(strx.Replace("\r\n", "$@$"));
             try
             {
 
                 if (strx.StartsWith("{"))
                 {
-                    inn = visitor["page_url"].ToString().Split('\n');
+                    inn = visitor["page_url"].ToString().Split(new[] { "$@$" }, StringSplitOptions.RemoveEmptyEntries);
                 }
                 else
                 {

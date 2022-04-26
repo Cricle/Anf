@@ -37,7 +37,7 @@ namespace Anf
         private void InitServices()
         {
             AppEngine.Reset();
-            AppEngine.AddServices(NetworkAdapterTypes.HttpClient);
+            AppEngine.AddServices(NetworkAdapterTypes.WebRequest);
             //var store = new GzipFileStoreService(new DirectoryInfo(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, XComicConst.CacheFolderName)), MD5AddressToFileNameProvider.Instance);
             var store = FileStoreService.FromMd5Default(Path.Combine(Workstation, XComicConst.CacheFolderName));
             AppEngine.Services.AddSingleton(x => new BookManager(new DirectoryInfo(Path.Combine(Workstation, XComicConst.BookFolderName)), x.GetRequiredService<RecyclableMemoryStreamManager>()));
@@ -47,17 +47,17 @@ namespace Anf
             AppEngine.Services.AddSingleton<IComicSaver>(store);
             AppEngine.Services.AddSingleton<IStoreService>(store);
             AppEngine.Services.AddSingleton<IPlatformService, PlatformService>();
-            AppEngine.Services.AddSingleton<IStreamImageConverter<ImageSource>, StreamImageConverter>();
-            AppEngine.Services.AddSingleton<IResourceFactoryCreator<ImageSource>, PlatformResourceCreatorFactory<ImageSource, ImageSource>>();
+            AppEngine.Services.AddSingleton<IStreamImageConverter<ImageBox>, StreamImageConverter>();
+            AppEngine.Services.AddSingleton<IResourceFactoryCreator<ImageBox>, PlatformResourceCreatorFactory<ImageBox, ImageBox>>();
             AppEngine.Services.AddSingleton<ExceptionService>();
-            var storeSer = new WithImageComicStoreService<ImageSource, ImageSource>(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
+            var storeSer = new WithImageComicStoreService<ImageBox, ImageBox>(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
             AppEngine.Services.AddSingleton(storeSer);
             AppEngine.Services.AddSingleton<IObservableCollectionFactory>(new UnoObservableCollectionFactory());
-            AppEngine.Services.AddSingleton<ComicStoreService<WithImageComicStoreBox<ImageSource, ImageSource>>>(storeSer);
+            AppEngine.Services.AddSingleton<ComicStoreService<WithImageComicStoreBox<ImageBox, ImageBox>>>(storeSer);
             AppEngine.Services.AddSingleton(HistoryService.FromFile(Path.Combine(Workstation, HistoryService.HistoryFileName)));
             AppEngine.Services.AddSingleton<ProposalEngine>();
-            AppEngine.Services.AddScoped<IComicVisiting<ImageSource>, UnoStoreComicVisiting>();
-            AppEngine.Services.AddScoped<StoreComicVisiting<ImageSource>>();
+            AppEngine.Services.AddScoped<IComicVisiting<ImageBox>, UnoStoreComicVisiting>();
+            AppEngine.Services.AddScoped<StoreComicVisiting<ImageBox>>();
 
             var configRoot = BuildConfiguration();
             AppEngine.Services.AddSingleton(CreateSettings);

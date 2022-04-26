@@ -5,29 +5,28 @@ using Anf.Platform;
 using Anf.Platform.Models.Impl;
 using Anf.Platform.Services;
 using Anf.Platform.Settings;
+using Anf.Services;
 using Anf.Settings;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Net.Http;
-using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage.Pickers;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
-using Windows.UI.Xaml.Media.Imaging;
 
 namespace Anf.ViewModels
 {
-    internal class UnoVisitingViewModel : StoreBoxVisitingViewModel<ImageSource, ImageSource, WithImageComicStoreBox<ImageSource, ImageSource>>
+    internal class UnoVisitingViewModel : StoreBoxVisitingViewModel<ImageBox, ImageBox, WithImageComicStoreBox<ImageBox, ImageBox>>
     {
         public static async Task<UnoVisitingViewModel> CreateAsync(string address, bool usingStore = false)
         {
             var vm = new UnoVisitingViewModel(x =>
             {
-                var visiting = x.GetRequiredService<StoreComicVisiting<ImageSource>>();
+                var visiting = x.GetRequiredService<StoreComicVisiting<ImageBox>>();
                 visiting.UseStore = usingStore;
                 return visiting;
             });
@@ -38,13 +37,13 @@ namespace Anf.ViewModels
             }
             return vm;
         }
-        public UnoVisitingViewModel(Func<IServiceProvider, IComicVisiting<ImageSource>> visiting = null)
+        public UnoVisitingViewModel(Func<IServiceProvider, IComicVisiting<ImageBox>> visiting = null)
             : base(visiting)
         {
             AvalonInit();
         }
 
-        public UnoVisitingViewModel(IComicVisiting<ImageSource> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<ImageSource> streamImageConverter, IObservableCollectionFactory observableCollectionFactory)
+        public UnoVisitingViewModel(IComicVisiting<ImageBox> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<ImageBox> streamImageConverter, IObservableCollectionFactory observableCollectionFactory)
             : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter, observableCollectionFactory)
         {
             AvalonInit();
@@ -85,7 +84,7 @@ namespace Anf.ViewModels
 
         private double minWidth;
         private double minHeight;
-        private ComicPageInfo<ImageSource> selectedResource;
+        private ComicPageInfo<ImageBox> selectedResource;
         private bool statusShow;
         private bool leftPaneOpen;
         private IDisposable readingSubscriber;
@@ -94,12 +93,10 @@ namespace Anf.ViewModels
         public RelayCommand OpenPaneCommand { get; private set; }
         public RelayCommand ClosePaneCommand { get; private set; }
         public RelayCommand SaveLogoCommand { get; private set; }
-        public RelayCommand<ComicPageInfo<ImageSource>> SaveImageCommand { get; private set; }
+        public RelayCommand<ComicPageInfo<ImageBox>> SaveImageCommand { get; private set; }
 
         //internal TitleService TitleService { get; set; }
         internal ExceptionService ExceptionService { get; set; }
-
-        public event Action<UnoVisitingViewModel, bool> TransverseChanged;
 
         public bool LeftPaneOpen
         {
@@ -113,7 +110,7 @@ namespace Anf.ViewModels
             set => SetProperty(ref statusShow, value);
         }
 
-        public ComicPageInfo<ImageSource> SelectedResource
+        public ComicPageInfo<ImageBox> SelectedResource
         {
             get => selectedResource;
             private set => SetProperty(ref selectedResource, value);
@@ -162,7 +159,7 @@ namespace Anf.ViewModels
             MinHeight = 400;
             //StretchMode = StretchMode.UniformToFill;
             //StretchModes = ZoomBorder.StretchModes;
-            SaveImageCommand = new RelayCommand<ComicPageInfo<ImageSource>>(SaveImage);
+            SaveImageCommand = new RelayCommand<ComicPageInfo<ImageBox>>(SaveImage);
             SaveLogoCommand = new RelayCommand(SaveLogo);
             OpenPaneCommand = new RelayCommand(OpenPane);
             ClosePaneCommand = new RelayCommand(ClosePane);
@@ -187,7 +184,7 @@ namespace Anf.ViewModels
             base.OnInitDone();
         }
 
-        private void AvalonVisitingViewModel_PageCursorMoved(IDataCursor<IComicVisitPage<ImageSource>> arg1, int arg2)
+        private void AvalonVisitingViewModel_PageCursorMoved(IDataCursor<IComicVisitPage<ImageBox>> arg1, int arg2)
         {
             SelectedResource = GetResource(arg2);
         }
@@ -197,22 +194,42 @@ namespace Anf.ViewModels
             if (logo != null)
             {
                 var name = $"{PathHelper.EnsureName(Name)}-logo.jpg";
+                LogoStream.Position = 0;
+                var fp = new FileSavePicker
+                {
+                    SuggestedFileName = name
+                };
+                var file = await fp.PickSaveFileAsync();
+                if (file != null)
+                {
+                    await LogoStream.CopyToAsync(LogoStream);
+                }
                 //await logo.PickSaveAsync(name);
             }
         }
-        public async void SaveImage(ComicPageInfo<ImageSource> info)
+        public async void SaveImage(ComicPageInfo<ImageBox> info)
         {
             try
             {
                 var name = $"{PathHelper.EnsureName(Name)}-{PathHelper.EnsureName(CurrentChapter.Title)}-{info.Index}.jpg";
                 //await info.Resource.PickSaveAsync(name);
+                var fp = new FileSavePicker
+                {
+                    SuggestedFileName = name
+                };
+                var file = await fp.PickSaveFileAsync();
+                if (file != null)
+                {
+                    info.Resource.Stream.Position = 0;
+                    await LogoStream.CopyToAsync(info.Resource.Stream);
+                }
             }
             catch (Exception ex)
             {
                 ExceptionService.Exception = ex;
             }
         }
-        protected async override void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<ImageSource>> cursor)
+        protected async override void OnCurrentChaterCursorChanged(IDataCursor<IComicChapterManager<ImageBox>> cursor)
         {
             try
             {

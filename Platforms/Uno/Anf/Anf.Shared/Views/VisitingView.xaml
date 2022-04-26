@@ -48,7 +48,9 @@
             <Grid>
                 <Border Visibility="{Binding LoadSucceed,Converter={StaticResource BoolVisibilityConverter}}"
                         ContextFlyout="{StaticResource ControlMenu}">
-                    <Image Stretch="None" Source="{Binding Resource}" MinHeight="200"></Image>
+                    <Image Stretch="Uniform" 
+                           Source="{Binding Resource.Image}" 
+                           MinHeight="200"/>
                 </Border>
                 <StackPanel Visibility="{Binding HasException,Converter={StaticResource BoolVisibilityConverter}}" Orientation="Vertical" HorizontalAlignment="Center">
                     <TextBlock VerticalAlignment="Center" Text="{Binding Exception}" TextWrapping="Wrap" MaxHeight="400">
@@ -105,26 +107,27 @@
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
-                <Grid>
-                    <FlipView x:Name="Car"
+                <ScrollViewer IsScrollInertiaEnabled="{Binding DataContext.IsScrollInertiaEnabled,ElementName=Rep,Mode=TwoWay}"
+                              IsVerticalRailEnabled="{Binding DataContext.IsVerticalRailEnabled,ElementName=Rep,Mode=TwoWay}"
+                              IsHorizontalScrollChainingEnabled="{Binding DataContext.IsHorizontalScrollChainingEnabled,ElementName=Rep,Mode=TwoWay}"
+                              IsVerticalScrollChainingEnabled="{Binding DataContext.IsVerticalScrollChainingEnabled,ElementName=Rep,Mode=TwoWay}"
+                              ZoomMode="{Binding DataContext.ZoomMode,ElementName=Rep,Mode=TwoWay}"
+                              MinWidth="{Binding DataContext.MinWidth,ElementName=Car}"
+                              MinHeight="{Binding DataContext.MinHeight,ElementName=Car}">
+                    <Grid>
+                        <ListView x:Name="Car"
                               ItemsSource="{Binding Resources}"
                               Background="{x:Null}"
                               SelectedItem="{Binding SelectedResource,Mode=TwoWay}">
-                        <FlipView.ItemTemplate>
-                            <DataTemplate>
-                                <ScrollViewer IsScrollInertiaEnabled="{Binding DataContext.IsScrollInertiaEnabled,ElementName=Rep,Mode=TwoWay}"
-                                              IsVerticalRailEnabled="{Binding DataContext.IsVerticalRailEnabled,ElementName=Rep,Mode=TwoWay}"
-                                              IsHorizontalScrollChainingEnabled="{Binding DataContext.IsHorizontalScrollChainingEnabled,ElementName=Rep,Mode=TwoWay}"
-                                              IsVerticalScrollChainingEnabled="{Binding DataContext.IsVerticalScrollChainingEnabled,ElementName=Rep,Mode=TwoWay}"
-                                              ZoomMode="{Binding DataContext.ZoomMode,ElementName=Rep,Mode=TwoWay}"
-                                              MinWidth="{Binding DataContext.MinWidth,ElementName=Car}"
-                                              MinHeight="{Binding DataContext.MinHeight,ElementName=Car}">
+                            <ListView.ItemTemplate>
+                                <DataTemplate>
+
                                     <ContentControl Content="{Binding}" ContentTemplate="{StaticResource ItemDt}"/>
-                                </ScrollViewer>
-                            </DataTemplate>
-                        </FlipView.ItemTemplate>
-                    </FlipView>
-                </Grid>
+                                </DataTemplate>
+                            </ListView.ItemTemplate>
+                        </ListView>
+                    </Grid>
+                </ScrollViewer>
             </SplitView.Content>
         </SplitView>
 

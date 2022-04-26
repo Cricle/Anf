@@ -13,10 +13,11 @@ using System.Threading.Tasks;
 using Windows.UI.Xaml.Media;
 using Anf.Settings;
 using Anf.Views;
+using Anf.Services;
 
 namespace Anf.ViewModels
 {
-    internal class UnoHomeViewModel : HomeViewModel<WithImageStorableComicSourceInfo<ImageSource, ImageSource>, ImageSource>
+    internal class UnoHomeViewModel : HomeViewModel<WithImageStorableComicSourceInfo<ImageBox, ImageBox>, ImageBox>
     {
         private readonly List<IDisposable> subscribes = new List<IDisposable>();
 
@@ -32,11 +33,11 @@ namespace Anf.ViewModels
             StartupSettings = new StartupSettings();
             InitDatas();
         }
-        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<WithImageStorableComicSourceInfo<ImageSource, ImageSource>> info)
+        protected override void OnCurrentComicSnapshotChanged(ComicSnapshotInfo<WithImageStorableComicSourceInfo<ImageBox, ImageBox>> info)
         {
-            if (info is WithImageComicSnapshotInfo<ImageSource, ImageSource> sn)
+            if (info is WithImageComicSnapshotInfo<ImageBox, ImageBox> sn)
             {
-                var vm = new UnoComicViewModel(info.Snapshot, sn.LogoImage);
+                var vm = new UnoComicViewModel(info.Snapshot, sn.LogoImage.Image);
                 //var navSer = AppEngine.GetRequiredService<MainNavigationService>();
 
                 //var c = navSer.Navigate<ComicView>();
@@ -44,10 +45,10 @@ namespace Anf.ViewModels
             }
         }
 
-        protected override ComicSnapshotInfo<WithImageStorableComicSourceInfo<ImageSource, ImageSource>> CreateSnapshotInfo(ComicSnapshot info)
+        protected override ComicSnapshotInfo<WithImageStorableComicSourceInfo<ImageBox, ImageBox>> CreateSnapshotInfo(ComicSnapshot info)
         {
             var httpClient = AppEngine.GetRequiredService<INetworkAdapter>();
-            return new WithImageComicSnapshotInfo<ImageSource, ImageSource>(info, httpClient);
+            return new WithImageComicSnapshotInfo<ImageBox, ImageBox>(info, httpClient);
         }
 
 

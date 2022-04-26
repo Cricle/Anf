@@ -1,4 +1,5 @@
 ﻿using Anf.Platform.Models.Impl;
+using Anf.Services;
 using Anf.ViewModels;
 using System;
 using System.Collections.Generic;
@@ -10,11 +11,11 @@ using Windows.UI.Xaml.Media;
 
 namespace Anf.ViewModels
 {
-    public class UnoBookshelfViewModel : BookshelfViewModel<WithImageComicStoreBox<ImageSource, ImageSource>>
+    public class UnoBookshelfViewModel : BookshelfViewModel<WithImageComicStoreBox<ImageBox, ImageBox>>
     {
-        protected override WithImageComicStoreBox<ImageSource, ImageSource> CreateBox(FileInfo fileInfo)
+        protected override WithImageComicStoreBox<ImageBox, ImageBox> CreateBox(FileInfo fileInfo)
         {
-            return new WithImageComicStoreBox<ImageSource, ImageSource>(fileInfo);
+            return new WithImageComicStoreBox<ImageBox, ImageBox>(fileInfo);
         }
     }
 }

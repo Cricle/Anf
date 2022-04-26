@@ -1,6 +1,7 @@
 ﻿using Anf.Easy;
 using Anf.Platform;
 using Anf.Platform.Models.Impl;
+using Anf.Services;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.Collections.Generic;
@@ -9,7 +10,7 @@ using Windows.UI.Xaml.Media;
 
 namespace Anf.ViewModels
 {
-    internal class UnoComicViewModel : WithImageStorableComicSnapshotInfo<ImageSource, ImageSource>, IDisposable
+    internal class UnoComicViewModel : WithImageStorableComicSnapshotInfo<ImageBox, ImageBox>, IDisposable
     {
         public UnoComicViewModel(ComicSnapshot snapshot)
             : base(snapshot)
@@ -43,7 +44,7 @@ namespace Anf.ViewModels
         {
             try
             {
-                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync<ImageSource, ImageSource>(Snapshot.ImageUri);
+                LogoImage = (await StoreFetchHelper.GetOrFromCacheAsync<ImageBox, ImageBox>(Snapshot.ImageUri))?.Image;
             }
             catch (Exception) { }
         }
