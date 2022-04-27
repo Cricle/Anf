@@ -158,7 +158,7 @@ namespace Anf.KnowEngines
             using (var doc = JsonVisitor.FromString(val))
             {
                 var pages = new List<ComicPage>();
-                var pics = doc["picture"].ToArray();
+                var pics = doc["picture"].ToEnumerable();
                 foreach (var item in pics)
                 {
                     var pid = item["pid"];

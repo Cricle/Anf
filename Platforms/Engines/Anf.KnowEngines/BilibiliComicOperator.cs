@@ -95,11 +95,16 @@ namespace Anf.KnowEngines
                         ComicUrl = targetUrl,
                         ImageUrl = data["vertical_cover"].ToString()
                     };
-                    var chapts = new List<ComicChapter>();
-                    var ep = data["ep_list"].ToArray();
+                    var ep = data["ep_list"].ToEnumerable();
+                    var len = ep.Count();
+                    var chapts = new List<ComicChapter>(ep.Count());
                     foreach (var item in ep)
                     {
                         var title = item["title"].ToString();
+                        if (string.IsNullOrWhiteSpace(title))
+                        {
+                            title = entity.Name + "-" + (len - chapts.Count);
+                        }
                         var id = item["id"].ToString();
                         var url = "https://manga.bilibili.com/" + mc + "/mc" + id;
                         var chp = new ComicChapter
@@ -139,7 +144,7 @@ namespace Anf.KnowEngines
                 }
                 using (var jobj=JsonVisitor.FromString(str))
                 {
-                    var imgs = jobj["data"]["images"].ToArray();
+                    var imgs = jobj["data"]["images"].ToEnumerable();
                     var paths = imgs.Select(x => x["path"].ToString()+$"@{width}w.jpg").ToArray();
                     targetObjStr = "{\"urls\":\"[" + string.Join(",", paths.Select(x=>$"\\\"{x}\\\""))+ "]\"}";
                 }
@@ -155,7 +160,7 @@ namespace Anf.KnowEngines
                 }
                 using (var jobj=JsonVisitor.FromString(str))
                 {
-                    var data = jobj["data"].ToArray();
+                    var data = jobj["data"].ToEnumerable();
                     var pages = data.Select(x => x["url"].ToString() + "?token=" + x["token"].ToString())
                         .ToArray();
                     return Enumerable.Range(0, pages.Length)

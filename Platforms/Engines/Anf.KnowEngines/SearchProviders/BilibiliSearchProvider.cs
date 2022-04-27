@@ -85,7 +85,7 @@ namespace Anf.KnowEngines.SearchProviders
                 var str =await networkAdapter.GetStringAsync(req);
                 using (var visitor = JsonVisitor.FromString(str))
                 {
-                    var list = visitor["data"]["list"].ToArray();
+                    var list = visitor["data"]["list"].ToEnumerable();
                     res.Total = list.Count();
                     var sns = new List<ComicSnapshot>();
                     foreach (var item in list)
@@ -93,7 +93,7 @@ namespace Anf.KnowEngines.SearchProviders
                         var conv = item["vertical_cover"].ToString();
                         var title = item["org_title"].ToString();
                         var id = item["id"].ToString();
-                        var auth = string.Join(",", item["author_name"].ToArray());
+                        var auth = string.Join(",", item["author_name"].ToEnumerable());
                         var url = "https://manga.bilibili.com/detail/mc" + id;
                         var sn = new ComicSnapshot
                         {

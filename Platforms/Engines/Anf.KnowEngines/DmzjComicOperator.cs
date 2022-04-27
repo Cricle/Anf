@@ -139,7 +139,7 @@ namespace Anf.KnowEngines
                 }
                 else
                 {
-                    inn = visitor.ToArray().Select(x => x.ToString()).ToArray();
+                    inn = visitor.ToEnumerable().Select(x => x.ToString()).ToArray();
                 }
                 foreach (var item in inn)
                 {

@@ -38,7 +38,7 @@ namespace Anf.KnowEngines.SearchProviders
             var datas = await networkAdapter.GetStringAsync(setting);
             using (var visit=JsonVisitor.FromString(datas))
             {
-                var hit = visit["data"]["hit"].ToArray();
+                var hit = visit["data"]["hit"].ToEnumerable();
                 var res = new SearchComicResult
                 {
                     Total = hit.Count(),

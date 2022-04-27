@@ -89,7 +89,7 @@ namespace Anf.KnowEngines
                 }
                 using (var jobj=JsonVisitor.FromString(str))
                 {
-                    var imgs = jobj["listImg"].ToArray();
+                    var imgs = jobj["listImg"].ToEnumerable();
                     var pages = new List<ComicPage>();
                     var i = 0;
                     foreach (var item in imgs)

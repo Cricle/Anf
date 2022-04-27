@@ -46,11 +46,11 @@ namespace Anf.KnowEngines.SearchProviders
             {
 
                 var total = int.Parse(visitor["Total"].ToString());
-                var items = visitor["Items"].ToArray();
+                var items = visitor["Items"].ToEnumerable();
                 var snaps = new List<ComicSnapshot>();
                 foreach (var item in items)
                 {
-                    var comic = item["Comics"].ToArray();
+                    var comic = item["Comics"].ToEnumerable();
                     if (!comic.Any())
                     {
                         continue;

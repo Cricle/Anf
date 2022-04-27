@@ -142,6 +142,38 @@ namespace Anf.ViewModels
         {
             LeftPaneOpen = false;
         }
+
+        public async Task InitAsync(string address)
+        {
+            await Visiting.LoadAsync(address);
+            if (HasStoreBox)
+            {
+                await GoChapterIndexAsync(StoreBox.AttackModel.CurrentChapter);
+            }
+            else
+            {
+                await NextChapterAsync();
+            }
+            if (ReadingSettings.LoadAll)
+            {
+                _ = LoadAllAsync();
+            }
+            else
+            {
+                _ = LoadPageAsync(0);
+            }
+        }
+        public Task LoadPageAsync(int index)
+        {
+            var p = GetResource(index);
+            if (p is null)
+            {
+                return Task.CompletedTask;
+            }
+            return p.LoadAsync();
+        }
+
+
         private async Task AvalonGoChapterAsync(ComicChapter chapter)
         {
             try

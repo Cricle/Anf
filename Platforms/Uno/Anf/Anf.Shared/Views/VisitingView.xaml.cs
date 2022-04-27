@@ -5,8 +5,11 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI.ViewManagement;
+using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -28,6 +31,8 @@ namespace Anf.Views
         {
             this.InitializeComponent();
             LoadVm(address);
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+            var win = ApplicationView.GetForCurrentView();
         }
 
         UnoVisitingViewModel vm;
@@ -37,32 +42,13 @@ namespace Anf.Views
             DataContext = vm;
             try
             {
-                await vm.Visiting.LoadAsync(address);
-                if (vm.HasStoreBox)
-                {
-                    await vm.GoChapterIndexAsync(vm.StoreBox.AttackModel.CurrentChapter);
-                }
-                else
-                {
-                    await vm.NextChapterAsync();
-                }
-                //_ = LoadPageAsync(0);
-                _ = vm.LoadAllAsync();
+                await vm.InitAsync(address);
             }
             catch (Exception ex)
             {
                 vm.ExceptionService.Exception = ex;
             }
         }
-        private Task LoadPageAsync(int index)
-        {
-            var p = vm.GetResource(index);
-            if (p is null)
-            {
-                return Task.CompletedTask;
-            }
-            return p.LoadAsync();
-        }
-
+        
     }
 }

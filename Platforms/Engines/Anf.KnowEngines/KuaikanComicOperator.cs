@@ -93,8 +93,8 @@ namespace Anf.KnowEngines
             {
 
                 var info = visitor["data"]
-                    .ToArray().First()["res"]["data"]["comic_info"];
-                var comics = info["comic_images"].ToArray();
+                    .ToEnumerable().First()["res"]["data"]["comic_info"];
+                var comics = info["comic_images"].ToEnumerable();
                 var pages = new List<ComicPage>();
                 var title = info["title"].ToString();
                 foreach (var item in comics)

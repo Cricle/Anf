@@ -11,6 +11,6 @@ namespace Anf
 
         bool IsArray { get; }
 
-        IEnumerable<IJsonVisitor> ToArray();
+        IEnumerable<IJsonVisitor> ToEnumerable();
     }
 }

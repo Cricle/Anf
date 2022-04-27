@@ -39,7 +39,7 @@ namespace Anf
             get => new JsonVisitor(doc.GetProperty(key), docx);
         }
 
-        public IEnumerable<IJsonVisitor> ToArray()
+        public IEnumerable<IJsonVisitor> ToEnumerable()
         {
             foreach (var item in doc.EnumerateArray())
             {
@@ -151,7 +151,7 @@ namespace Anf
             return new JsonVisitor(tk);
         }
 
-        public IEnumerable<IJsonVisitor> ToArray()
+        public IEnumerable<IJsonVisitor> ToEnumerable()
         {
             ThrowIfNullValue();
 

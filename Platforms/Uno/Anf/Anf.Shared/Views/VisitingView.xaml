@@ -95,7 +95,8 @@
                     <ListView SelectedItem="{Binding TrulyCurrentComicChapter,Mode=TwoWay}"
                               ItemsSource="{Binding ComicEntity.Chapters}"
                               Grid.Row="1"
-                              Background="{x:Null}">
+                              Background="{x:Null}"
+                              SelectionMode="None">
                         <ListView.ItemTemplate>
                             <DataTemplate x:DataType="kwc:ComicChapter">
                                 <TextBlock Text="{Binding Title}">
@@ -118,10 +119,10 @@
                               MinHeight="{Binding DataContext.MinHeight,ElementName=Car}">
                     <Grid>
                         <ListView x:Name="Car"
-                              ItemsSource="{Binding Resources}"
-                              Background="{x:Null}"
-                              SelectedItem="{Binding SelectedResource,Mode=TwoWay}"
-                                  ItemTemplate="{StaticResource ItemDt}">
+                                  ItemsSource="{Binding Resources}"
+                                  Background="{x:Null}"
+                                  SelectedItem="{Binding SelectedResource,Mode=TwoWay}"
+                                  ItemTemplate="{StaticResource ItemDt}" SelectionMode="None">
                         </ListView>
                     </Grid>
                 </ScrollViewer>

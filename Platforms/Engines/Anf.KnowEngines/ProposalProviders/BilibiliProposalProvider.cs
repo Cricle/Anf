@@ -67,7 +67,7 @@ namespace Anf.KnowEngines.ProposalProviders
             }
             using (var doc = JsonVisitor.FromString(str))
             {
-                var dataTk = doc["data"]["list"].ToArray().ToArray();
+                var dataTk = doc["data"]["list"].ToEnumerable().ToArray();
                 var sns = new List<ComicSnapshot>(dataTk.Length);
                 for (int i = 0; i < dataTk.Length; i++)
                 {
@@ -76,7 +76,7 @@ namespace Anf.KnowEngines.ProposalProviders
                         break;
                     }
                     var tk = dataTk[i];
-                    var authTk = tk["authors"]?.ToArray();
+                    var authTk = tk["authors"]?.ToEnumerable();
                     var title = tk["title"]?.ToString();
                     var id = tk["comic_id"]?.ToString();
                     var conver = tk["vertical_cover"]?.ToString();
