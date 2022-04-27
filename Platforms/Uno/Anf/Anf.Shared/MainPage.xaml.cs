@@ -1,11 +1,14 @@
 ﻿using Anf.ViewModels;
 using Anf.Views;
 using Ao.Lang.Runtime;
+using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI.Xaml;
@@ -14,6 +17,7 @@ using Windows.UI.Xaml.Controls.Primitives;
 using Windows.UI.Xaml.Data;
 using Windows.UI.Xaml.Input;
 using Windows.UI.Xaml.Media;
+using Windows.UI.Xaml.Media.Imaging;
 using Windows.UI.Xaml.Navigation;
 
 // The Blank Page item template is documented at http://go.microsoft.com/fwlink/?LinkId=402352&clcid=0x409
@@ -51,14 +55,9 @@ namespace Anf
             //Nv.Content = new HomePage { DataContext=new UnoHomeViewModel()};
         }
 
-        private async void MainPage_Loaded(object sender, RoutedEventArgs e)
+        private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            var vm =await UnoVisitingViewModel.CreateAsync("https://www.dmzj.com/info/xiaoyuanwanderichang.html");
-            await vm.SelectChapterAsync(1);
-            Nv.Content = new VisitingView
-            {
-                DataContext = vm
-            };
+            Nv.Content = new VisitingView("https://manga.bilibili.com/detail/mc25872");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

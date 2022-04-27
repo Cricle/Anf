@@ -313,7 +313,7 @@ namespace Anf.ViewModels
         {
             var count = Resources.Count;
             var enu = Resources.GetEnumerator();
-            while (enu.MoveNext() && !loadCancellationTokenSource.IsCancellationRequested)
+            while (enu.MoveNext() && (loadCancellationTokenSource==null||!loadCancellationTokenSource.IsCancellationRequested))
             {
                 await enu.Current.LoadAsync();
             }

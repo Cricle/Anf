@@ -30,22 +30,23 @@ namespace Anf.Networks
             }
 
             var req = (HttpWebRequest)WebRequest.Create(settings.Address);
-            req.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
-            {
-                var expirationDate = DateTime.Parse(certificate.GetExpirationDateString(), CultureInfo.InvariantCulture);
-                if (expirationDate - DateTime.Today < TimeSpan.FromDays(30))
-                {
-                    throw new Exception("Time to renew the certificate!");
-                }
-                if (sslPolicyErrors == SslPolicyErrors.None)
-                {
-                    return true;
-                }
-                else
-                {
-                    throw new Exception("Cert policy errors: " + sslPolicyErrors.ToString());
-                }
-            };
+            //req.ServerCertificateValidationCallback = (sender, certificate, chain, sslPolicyErrors) =>
+            //{
+            //    return true;
+            //    //var expirationDate = DateTime.Parse(certificate.GetExpirationDateString(), CultureInfo.InvariantCulture);
+            //    //if (expirationDate - DateTime.Today < TimeSpan.FromDays(30))
+            //    //{
+            //    //    throw new Exception("Time to renew the certificate!");
+            //    //}
+            //    //if (sslPolicyErrors == SslPolicyErrors.None)
+            //    //{
+            //    //    return true;
+            //    //}
+            //    //else
+            //    //{
+            //    //    throw new Exception("Cert policy errors: " + sslPolicyErrors.ToString());
+            //    //}
+            //};
             req.Method = "GET";
             if (!string.IsNullOrEmpty(settings.Method))
             {
@@ -102,6 +103,8 @@ namespace Anf.Networks
                     }
                 }
             }
+            req.Accept = settings.Accept?? "*/*";
+            req.Date = DateTime.Now;
             var rep = await req.GetResponseAsync();
             return rep.GetResponseStream();
         }
