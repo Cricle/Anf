@@ -4,7 +4,7 @@
         <PackageReference Include="Ao.SavableConfig" Version="2.7.0" />
         <PackageReference Include="Ao.SavableConfig.TextJson" Version="2.7.0" />
         <PackageReference Include="Ao.SavableConfig.Binder" Version="2.7.0" />
-        <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="5.1.0" />
+        <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.0.0" />
         <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
         <PackageReference Include="Uno.Microsoft.Xaml.Behaviors.Uwp.Managed" Version="2.3.0" />

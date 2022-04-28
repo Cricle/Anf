@@ -132,7 +132,7 @@ namespace Anf
 #elif NETFX_CORE
                 builder.AddDebug();
 #else
-                builder.AddConsole();
+                //builder.AddConsole();
 #endif
 
                 // Exclude logs below this level
