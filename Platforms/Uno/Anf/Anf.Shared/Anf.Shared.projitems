@@ -31,6 +31,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Services\DependencyAppService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\PlatformService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\StreamImageConverter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Services\UnoNavigationService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\UnoTtileService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\UnoObservableCollectionFactory.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Services\UnoStoreComicVisiting.cs" />
@@ -46,6 +47,9 @@
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\HomePage.xaml.cs">
       <DependentUpon>HomePage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="$(MSBuildThisFileDirectory)Views\VisitingControlView.xaml.cs">
+      <DependentUpon>VisitingControlView.xaml</DependentUpon>
     </Compile>
     <Compile Include="$(MSBuildThisFileDirectory)Views\VisitingView.xaml.cs">
       <DependentUpon>VisitingView.xaml</DependentUpon>
@@ -65,6 +69,10 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="$(MSBuildThisFileDirectory)Views\HomePage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="$(MSBuildThisFileDirectory)Views\VisitingControlView.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

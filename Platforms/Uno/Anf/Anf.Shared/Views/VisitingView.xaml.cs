@@ -31,8 +31,22 @@ namespace Anf.Views
         {
             this.InitializeComponent();
             LoadVm(address);
+            Sv.ViewChanged += Sv_ViewChanged;
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
-            var win = ApplicationView.GetForCurrentView();
+        }
+
+        private async void Sv_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
+        {
+            if (!vm.ReadingSettings.LoadAll)
+            {
+                var sv = (ScrollViewer)sender;
+                if (sv.ExtentHeight <= sv.VerticalOffset + sv.ViewportHeight * 2)
+                {
+                    var idx = vm.CurrentPageCursor.CurrentIndex;
+                    await vm.LoadResourceAsync(idx + 1);
+                    await vm.GoPageIndexAsync(idx + 1);
+                }
+            }
         }
 
         UnoVisitingViewModel vm;

@@ -1,0 +1,364 @@
+﻿<StackPanel
+    x:Class="Anf.Views.VisitingControlView"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="using:Anf.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
+    mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="50"
+    xmlns:kwc="using:Anf"
+    Orientation="Horizontal"
+    Margin="2">
+
+    <StackPanel Orientation="Horizontal">
+        <ToggleButton x:Name="ChapterSelector"
+                  Classes="control part"
+                  Background="{x:Null}">
+            <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xEA37;" FontSize="{Binding TitleService.AdviseFontSize}"/>
+            <ToolTipService.ToolTip>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock>展开章节列表</TextBlock>
+                    <TextBlock>(</TextBlock>
+                    <TextBlock Text="{Binding CurrentChaterCursor.CurrentIndex}"></TextBlock>
+                    <TextBlock>/</TextBlock>
+                    <TextBlock Text="{Binding CurrentChaterCursor.Count}"></TextBlock>
+                    <TextBlock>)</TextBlock>
+                </StackPanel>
+            </ToolTipService.ToolTip>
+        </ToggleButton>
+        <Popup PlacementTarget="{Binding ElementName=ChapterSelector}"
+               PlacementMode="Bottom"
+               PlacementAnchor="Bottom"
+               StaysOpen="False"
+               IsOpen="{Binding ElementName=ChapterSelector,Path=IsChecked,Mode=TwoWay}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+                <Button FontWeight="Bold" Content="左侧弹出" Command="{Binding OpenPaneCommand}"/>
+                <ListBox SelectedItem="{Binding TrulyCurrentComicChapter,Mode=TwoWay}"
+                         ItemsSource="{Binding ComicEntity.Chapters}"
+                         MaxHeight="200"
+                         Grid.Row="1">
+                    <ListBox.ItemTemplate>
+                        <DataTemplate x:DataType="{x:Type kwc:ComicChapter}">
+                            <TextBlock Text="{Binding Title}">
+                                <ToolTipService.ToolTip>
+                                    <TextBlock Text="{Binding TargetUrl}"/>
+                                </ToolTipService.ToolTip>
+                            </TextBlock>
+                        </DataTemplate>
+                    </ListBox.ItemTemplate>
+                </ListBox>
+            </Grid>
+        </Popup>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal">
+        <ToggleButton Classes="control part"
+                  Background="{x:Null}"
+                  IsChecked="{Binding Transverse,Mode=TwoWay}">
+            <ToolTipService.ToolTip>
+                <TextBlock Text="横向模式"/>
+            </ToolTipService.ToolTip>
+            <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE8EA;" FontSize="{Binding TitleService.AdviseFontSize}"/>
+        </ToggleButton>
+    </StackPanel>
+    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" 
+                IsVisible="{Binding Transverse}">
+        <ToggleButton x:Name="ControlToggle"
+                  Classes="control part"
+                  Background="{x:Null}">
+            <ToolTipService.ToolTip>
+                <TextBlock Text="观察模式"/>
+            </ToolTipService.ToolTip>
+            <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE7A8;" FontSize="{Binding TitleService.AdviseFontSize}"/>
+        </ToggleButton>
+    </StackPanel>
+    <StackPanel Orientation="Horizontal">
+        <ToggleButton x:Name="SharedBtn"
+                  Classes="control"
+                  Background="{x:Null}">
+            <ToolTipService.ToolTip>
+                <TextBlock Text="分享"/>
+            </ToolTipService.ToolTip>
+            <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE72D;" FontSize="{Binding TitleService.AdviseFontSize}"/>
+        </ToggleButton>
+        <ToggleButton Classes="control"
+                  IsChecked="{Binding HasStoreBox}"
+                  Command="{Binding ToggleStoreCommand}"
+                  Background="{x:Null}">
+            <ToolTipService.ToolTip>
+                <TextBlock Text="喜欢"/>
+            </ToolTipService.ToolTip>
+            <Grid>
+                <TextBlock Style="{StaticResource TextBlock.segoblock}" FontSize="{Binding TitleService.AdviseFontSize}" Text="&#xE735;" IsVisible="{Binding HasStoreBox,Converter={StaticResource RevBoolConverter}}"/>
+                <TextBlock Style="{StaticResource TextBlock.segoblock}" FontSize="{Binding TitleService.AdviseFontSize}" Foreground="OrangeRed" Text="&#xE735;" IsVisible="{Binding HasStoreBox}"/>
+            </Grid>
+        </ToggleButton>
+        <!--<ToggleButton Classes="control"
+                  Background="{x:Null}"
+                  ToolTip.Tip="非超喜欢"
+                  IsChecked="{Binding SuperFavorite}"
+                  Command="{Binding ToggleSuperFavoriteCommand}"
+                  IsVisible="{Binding HasStoreBox,Converter={StaticResource RevBoolConverter}}">
+      <Grid>
+        <TextBlock Classes="segoblock" Text="&#xE735;" IsVisible="{Binding SuperFavorite,Converter={StaticResource RevBoolConverter}}"/>
+        <TextBlock Classes="segoblock" Foreground="Gold" Text="&#xE735;" IsVisible="{Binding SuperFavorite}"/>
+      </Grid>
+    </ToggleButton>-->
+    </StackPanel>
+    <Grid>
+        <ToolTipService.ToolTip>
+            <TextBlock Text="状态"/>  
+        </ToolTipService.ToolTip>
+        <ToggleButton Background="{x:Null}"
+                  IsChecked="{Binding StatusShow,Mode=TwoWay}"
+                  IsVisible="{Binding ResourceLoadDone}">
+            <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE8FB;" Foreground="Green" FontSize="{Binding TitleService.AdviseFontSize}"/>
+        </ToggleButton>
+        <ToggleButton Background="{x:Null}"
+                  IsChecked="{Binding StatusShow,Mode=TwoWay}"
+                  IsVisible="{Binding ResourceLoadDone,Converter={StaticResource RevBoolConverter}}">
+            <ProgressBar Minimum="0"
+                    Classes="notdone"
+                    Maximum="{Binding Resources.Count}"
+                    Value="{Binding ResourceLoadCount}"
+                    Foreground="Gray">
+                <ToolTipService.ToolTip>
+                    <ToolTip>
+                        <StackPanel Orientation="Horizontal">
+                            <TextBlock Text="图片下载进程("/>
+                            <TextBlock Text="{Binding ResourceLoadCount}"/>
+                            <TextBlock Text="/"/>
+                            <TextBlock Text="{Binding Resources.Count}"/>
+                            <TextBlock Text=")"/>
+                        </StackPanel>
+                    </ToolTip>
+                </ToolTipService.ToolTip>
+            </ProgressBar>
+        </ToggleButton>
+    </Grid>
+    <Popup IsOpen="{Binding StatusShow,Mode=TwoWay}"
+           StaysOpen="False"
+           PlacementTarget="{Binding ElementName=StatusBtn}">
+        <Border CornerRadius="6" Padding="12">
+            <StackPanel Orientation="Vertical">
+                <StackPanel Orientation="Horizontal"
+                    VerticalAlignment="Center"
+                    Margin="0,0,0,6">
+                    <TextBlock Text="已完成加载"/>
+                    <TextBlock Text="{Binding ResourceLoadCount}" VerticalAlignment="Center" FontWeight="Bold"/>
+                    <TextBlock Text="个链接"/>
+                </StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto"
+                      HorizontalScrollBarVisibility="Hidden"
+                      MaxHeight="500">
+                    <ItemsControl ItemsSource="{Binding Resources}">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Grid Margin="0,4">
+                                    <Grid.ContextFlyout>
+                                        <MenuFlyout>
+                                            <MenuFlyoutItem Text="复制" Command="{Binding CopyCommand}"/>
+                                            <MenuFlyoutItem Text="打开" Command="{Binding OpenCommand}"/>
+                                            <MenuFlyoutItem Text="重新加载" Command="{Binding ReLoadCommand}"/>
+                                            <MenuFlyoutItem Text="复制异常" IsVisible="{Binding HasException}" Command="{Binding CopyExceptionCommand}"/>
+                                        </MenuFlyout>
+                                    </Grid.ContextFlyout>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" MaxWidth="500"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                        <ColumnDefinition Width="Auto"/>
+                                    </Grid.ColumnDefinitions>
+                                    <TextBlock Text="{Binding Page.TargetUrl}"
+                                               TextTrimming="CharacterEllipsis"
+                                               TextWrapping="NoWrap"
+                                               VerticalAlignment="Center">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock Text="{Binding Page.TargetUrl}"></TextBlock>
+                                        </ToolTipService.ToolTip>
+                                    </TextBlock>
+                                    <StackPanel Orientation="Horizontal"
+                                                Grid.Column="1"
+                                                Margin="6,0,0,0"
+                                                VerticalAlignment="Center">
+                                        <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE894;" Foreground="Red" IsVisible="{Binding HasException}"/>
+                                        <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE8FB;" Foreground="Green" IsVisible="{Binding LoadSucceed}"/>
+                                    </StackPanel>
+                                    <Button Grid.Column="2"
+                                            Margin="6,0,0,0"
+                                            Command="{Binding CopyCommand}">
+                                        <ToolTipService.ToolTip>
+                                            <TextBlock Text="复制"/>
+                                        </ToolTipService.ToolTip>
+                                        <TextBlock Text="&#xE8C8;" Style="{StaticResource TextBlock.segoblock}"/>
+                                    </Button>
+                                    <ProgressBar Height="1.5" VerticalAlignment="Bottom" IsVisible="{Binding Loading}" IsIndeterminate="True"/>
+                                </Grid>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ScrollViewer>
+            </StackPanel>
+        </Border>
+    </Popup>
+    <Popup IsOpen="{Binding ElementName=SharedBtn,Path=IsChecked,Mode=TwoWay}"
+           PlacementMode="Bottom"
+           PlacementAnchor="Bottom"
+           StaysOpen="False"
+           PlacementTarget="{Binding ElementName=SharedBtn}">
+        <Border Background="{StaticResource SystemControlBackgroundChromeMediumBrush}"
+                CornerRadius="6"
+                Padding="12"
+                MaxWidth="600">
+            <Grid HorizontalAlignment="Center" Margin="10">
+                <Grid.Resources>
+                    <Style TargetType="ContentControl">
+                        <Setter Property="Margin" Value="0,3"/>
+                    </Style>
+                    <Style x:Key="TextBox.url" TargetType="TextBox">
+                        <Setter Property="FontSize" Value="12"/>
+                        <Setter Property="IsReadOnly" Value="True"/>
+                    </Style>
+                    <Style TargetType="TextBlock">
+                        <Setter Property="VerticalAlignment" Value="Center"/>
+                        <Setter Property="Margin" Value="0,0,3,0"/>
+                    </Style>
+                </Grid.Resources>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" MaxWidth="120"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Text="{Binding ComicEntity.Name}"
+                   TextTrimming="CharacterEllipsis">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="表示漫画地址"/>
+                    </ToolTipService.ToolTip>
+                </TextBlock>
+
+                <TextBox Style="{StaticResource TextBox.url}"
+                         Text="{Binding ComicEntity.ComicUrl}"
+                         Grid.Column="1">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding ComicEntity.ComicUrl}"/>
+                    </ToolTipService.ToolTip>
+                </TextBox>
+                <TextBlock Text="章节路径"
+                           TextTrimming="CharacterEllipsis"
+                           Grid.Row="1">                
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="表示章节名如果有"/>
+                    </ToolTipService.ToolTip>
+
+                </TextBlock>
+                <TextBox Style="{StaticResource TextBox.url}"
+                         Text="{Binding CurrentChapter.TargetUrl}"
+                         Grid.Row="1" 
+                         Grid.Column="1">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding CurrentChapter.TargetUrl}"/>
+                    </ToolTipService.ToolTip>
+                </TextBox>
+                <TextBlock Text="{Binding CurrentPageCursor.CurrentIndex}"
+                           TextTrimming="CharacterEllipsis"
+                           Grid.Row="2">       
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="表示页数"/>
+                    </ToolTipService.ToolTip>
+
+                </TextBlock>
+                <TextBox Style="{StaticResource TextBox.url}"
+                         Text="{Binding CurrentPageCursor.Current.Page.TargetUrl}"
+                         Grid.Row="2" Grid.Column="1">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding CurrentPageCursor.Current.Page.TargetUrl}"/>
+                    </ToolTipService.ToolTip>
+                </TextBox>
+                <TextBlock Text="漫画封面"
+                           TextTrimming="CharacterEllipsis"
+                           Grid.Row="3">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="表示封面图地址"/>
+                    </ToolTipService.ToolTip>
+                </TextBlock>
+                <TextBox Style="{StaticResource TextBox.url}"
+                         Text="{Binding ComicEntity.ImageUrl}"
+                         Grid.Row="3" Grid.Column="1">
+                    <ToolTipService.ToolTip>
+                        <TextBlock Text="{Binding ComicEntity.ImageUrl}"/>
+                    </ToolTipService.ToolTip>
+                </TextBox>
+            </Grid>
+        </Border>
+    </Popup>
+    <Popup IsOpen="{Binding ElementName=ControlToggle,Mode=TwoWay,Path=IsChecked}"
+         PlacementTarget="{Binding ElementName=ControlToggle}"
+         PlacementMode="Bottom"
+         StaysOpen="False">
+        <Border Background="{StaticResource SystemControlBackgroundBaseLowBrush}"
+            Padding="6"
+            CornerRadius="6">
+            <Border.Resources>
+                <Thickness x:Key="ItemMargin">
+                    0,6,0,0
+                </Thickness>
+                <Thickness x:Key="ControlItemMargin">
+                    4,6,4,0
+                </Thickness>
+            </Border.Resources>
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="40"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <TextBlock Text="手势" Grid.Column="0" Grid.Row="0"/>
+                <ToggleSwitch Classes="control part forcehover"
+                              Margin="3,0"
+                              IsOn="{Binding EnableGesture,Mode=TwoWay}"
+                       Grid.Column="1" Grid.Row="0">
+                </ToggleSwitch>
+                <TextBlock Margin="{StaticResource ItemMargin}" Text="缩放" Grid.Column="0" Grid.Row="1"/>
+                <ToggleSwitch Classes="control part forcehover"
+                              Margin="{StaticResource ControlItemMargin}"
+                              IsOn="{Binding EnableZoom,Mode=TwoWay}"
+                              Grid.Column="1" Grid.Row="1">
+                </ToggleSwitch>
+                <TextBlock Margin="{StaticResource ItemMargin}" Text="容器" Grid.Column="0" Grid.Row="2"/>
+                <ToggleSwitch Classes="control part item forcehover"
+                              Margin="{StaticResource ControlItemMargin}"
+                              IsOn="{Binding EnableConstrains,Mode=TwoWay}"
+                              Grid.Column="1" Grid.Row="2">
+                </ToggleSwitch>
+                <TextBlock Margin="{StaticResource ItemMargin}" Text="模式" Grid.Column="0" Grid.Row="3"/>
+                <ComboBox Classes="center item"
+                          Padding="3"
+                          Margin="{StaticResource ControlItemMargin}"
+                          Grid.Column="1" Grid.Row="3"
+                          ItemsSource="{Binding StretchModes}}"
+                          SelectedItem="{Binding StretchMode,Mode=TwoWay,Converter={StaticResource StretchModeConverter}}">
+                    <ComboBox.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding Converter={StaticResource StretchModeConverter}}"/>
+                        </DataTemplate>
+                    </ComboBox.ItemTemplate>
+                </ComboBox>
+            </Grid>
+        </Border>
+    </Popup>
+</StackPanel>

@@ -160,7 +160,10 @@ namespace Anf.ViewModels
             }
             else
             {
-                _ = LoadPageAsync(0);
+                for (int i = 0; i < 3; i++)
+                {
+                    _ = LoadPageAsync(i);
+                }
             }
         }
         public Task LoadPageAsync(int index)

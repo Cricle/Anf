@@ -110,21 +110,21 @@
                 </Grid>
             </SplitView.Pane>
             <SplitView.Content>
-                <ScrollViewer IsScrollInertiaEnabled="{Binding DataContext.IsScrollInertiaEnabled,ElementName=Rep,Mode=TwoWay}"
+                <ScrollViewer x:Name="Sv"
+                              IsScrollInertiaEnabled="{Binding DataContext.IsScrollInertiaEnabled,ElementName=Rep,Mode=TwoWay}"
                               IsVerticalRailEnabled="{Binding DataContext.IsVerticalRailEnabled,ElementName=Rep,Mode=TwoWay}"
                               IsHorizontalScrollChainingEnabled="{Binding DataContext.IsHorizontalScrollChainingEnabled,ElementName=Rep,Mode=TwoWay}"
                               IsVerticalScrollChainingEnabled="{Binding DataContext.IsVerticalScrollChainingEnabled,ElementName=Rep,Mode=TwoWay}"
                               ZoomMode="{Binding DataContext.ZoomMode,ElementName=Rep,Mode=TwoWay}"
                               MinWidth="{Binding DataContext.MinWidth,ElementName=Car}"
                               MinHeight="{Binding DataContext.MinHeight,ElementName=Car}">
-                    <Grid>
-                        <ListView x:Name="Car"
-                                  ItemsSource="{Binding Resources}"
-                                  Background="{x:Null}"
-                                  SelectedItem="{Binding SelectedResource,Mode=TwoWay}"
-                                  ItemTemplate="{StaticResource ItemDt}" SelectionMode="None">
-                        </ListView>
-                    </Grid>
+                    <ListView x:Name="Car"
+                                ItemsSource="{Binding Resources}"
+                                Background="{x:Null}"
+                                SelectedItem="{Binding SelectedResource,Mode=TwoWay}"
+                                ItemTemplate="{StaticResource ItemDt}"
+                              SelectionMode="Single">
+                    </ListView>
                 </ScrollViewer>
             </SplitView.Content>
         </SplitView>
