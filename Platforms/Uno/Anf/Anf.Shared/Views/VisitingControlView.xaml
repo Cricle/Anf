@@ -39,7 +39,7 @@
             </ToolTipService.ToolTip>
         </ToggleButton>
         <Popup IsOpen="{Binding ElementName=ChapterSelector,Path=IsChecked,Mode=TwoWay}">
-            <Grid>
+            <Grid Background="{ThemeResource AppBarBackgroundThemeBrush}">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
@@ -62,15 +62,15 @@
             </Grid>
         </Popup>
     </StackPanel>
-    <StackPanel Orientation="Horizontal">
+    <!--<StackPanel Orientation="Horizontal">
         <ToggleButton  IsChecked="{Binding Transverse,Mode=TwoWay}">
             <ToolTipService.ToolTip>
                 <TextBlock Text="横向模式"/>
             </ToolTipService.ToolTip>
             <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE8EA;" FontSize="{Binding TitleService.AdviseFontSize}"/>
         </ToggleButton>
-    </StackPanel>
-    <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" 
+    </StackPanel>-->
+    <!--<StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" 
                 Visibility="{Binding Transverse}">
         <ToggleButton x:Name="ControlToggle" >
             <ToolTipService.ToolTip>
@@ -78,7 +78,7 @@
             </ToolTipService.ToolTip>
             <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE7A8;" FontSize="{Binding TitleService.AdviseFontSize}"/>
         </ToggleButton>
-    </StackPanel>
+    </StackPanel>-->
     <StackPanel Orientation="Horizontal">
         <ToggleButton x:Name="SharedBtn" >
             <ToolTipService.ToolTip>
@@ -134,15 +134,33 @@
             </ProgressBar>
         </ToggleButton>
     </Grid>
-    <Popup IsOpen="{Binding StatusShow,Mode=TwoWay}">
-        <Border CornerRadius="6" Padding="12" Background="{ThemeResource AppBarBackgroundThemeBrush}">
+    <Popup IsOpen="{Binding StatusShow,Mode=TwoWay}" IsLightDismissEnabled="False">
+        <Border CornerRadius="6" 
+                Padding="12" 
+                Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal"
-                    VerticalAlignment="Center"
-                    Margin="0,0,0,6">
-                    <TextBlock Text="已完成加载"/>
-                    <TextBlock Text="{Binding ResourceLoadCount}" VerticalAlignment="Center" FontWeight="Bold"/>
-                    <TextBlock Text="个链接"/>
+                            VerticalAlignment="Center"
+                            Margin="0,0,0,6">
+                    <TextBlock TextAlignment="Center" 
+                               VerticalAlignment="Center"
+                               Visibility="{Binding ResourceLoadDone,Converter={StaticResource BoolVisibilityConverter},ConverterParameter=rev}">
+                        <Run Text="已加载"/>
+                        <Run Text="{Binding ResourceLoadCount}" FontWeight="Bold"/>                 
+                        <Run Text="个链接"/>
+                    </TextBlock>
+                    <TextBlock TextAlignment="Center" 
+                               VerticalAlignment="Center"
+                               Foreground="Green"
+                               Visibility="{Binding ResourceLoadDone,Converter={StaticResource BoolVisibilityConverter}}">
+                        <Run Text="已全部加载共"/>
+                        <Run Text="{Binding ResourceLoadCount}" FontWeight="Bold"/>                 
+                        <Run Text="个链接"/>
+                    </TextBlock>
+                    <HyperlinkButton Command="{Binding LoadAllCommand}"
+                                     Visibility="{Binding ResourceLoadDone,Converter={StaticResource BoolVisibilityConverter},ConverterParameter=rev}">
+                        <TextBlock>全部加载</TextBlock>
+                    </HyperlinkButton>
                 </StackPanel>
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Hidden"
@@ -197,7 +215,7 @@
         </Border>
     </Popup>
     <Popup IsOpen="{Binding ElementName=SharedBtn,Path=IsChecked,Mode=TwoWay}">
-        <Border Background="{StaticResource SystemControlBackgroundChromeMediumBrush}"
+        <Border Background="{ThemeResource AppBarBackgroundThemeBrush}"
                 CornerRadius="6"
                 Padding="12"
                 MaxWidth="600">
@@ -289,7 +307,7 @@
         </Border>
     </Popup>
     <Popup IsOpen="{Binding ElementName=ControlToggle,Mode=TwoWay,Path=IsChecked}">
-        <Border Background="{StaticResource SystemControlBackgroundBaseLowBrush}"
+        <Border Background="{ThemeResource AppBarBackgroundThemeBrush}"
             Padding="6"
             CornerRadius="6">
             <Border.Resources>

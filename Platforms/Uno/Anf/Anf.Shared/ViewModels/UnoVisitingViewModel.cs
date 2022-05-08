@@ -40,13 +40,13 @@ namespace Anf.ViewModels
         public UnoVisitingViewModel(Func<IServiceProvider, IComicVisiting<ImageBox>> visiting = null)
             : base(visiting)
         {
-            AvalonInit();
+            UnoInit();
         }
 
         public UnoVisitingViewModel(IComicVisiting<ImageBox> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<ImageBox> streamImageConverter, IObservableCollectionFactory observableCollectionFactory)
             : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter, observableCollectionFactory)
         {
-            AvalonInit();
+            UnoInit();
         }
 
         private bool isVerticalRailEnabled = true;
@@ -91,6 +91,7 @@ namespace Anf.ViewModels
 
         public ReadingSettings ReadingSettings { get; private set; }
         public RelayCommand OpenPaneCommand { get; private set; }
+        public AsyncRelayCommand LoadAllCommand { get; private set; }
         public RelayCommand ClosePaneCommand { get; private set; }
         public RelayCommand SaveLogoCommand { get; private set; }
         public RelayCommand<ComicPageInfo<ImageBox>> SaveImageCommand { get; private set; }
@@ -142,6 +143,10 @@ namespace Anf.ViewModels
         {
             LeftPaneOpen = false;
         }
+        public Task LoadAllPage()
+        {
+            return LoadAllAsync();
+        }
 
         public async Task InitAsync(string address)
         {
@@ -188,7 +193,7 @@ namespace Anf.ViewModels
                 ExceptionService.Exception = ex;
             }
         }
-        private void AvalonInit()
+        private void UnoInit()
         {
             MinWidth = 200;
             MinHeight = 400;
@@ -198,6 +203,7 @@ namespace Anf.ViewModels
             SaveLogoCommand = new RelayCommand(SaveLogo);
             OpenPaneCommand = new RelayCommand(OpenPane);
             ClosePaneCommand = new RelayCommand(ClosePane);
+            LoadAllCommand = new AsyncRelayCommand(LoadAllPage);
 
             PageCursorMoved += AvalonVisitingViewModel_PageCursorMoved;
             //TitleService = AppEngine.GetRequiredService<TitleService>();
