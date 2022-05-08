@@ -1,4 +1,5 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using Anf.Views;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -6,12 +7,16 @@ using System.Text;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Data;
+using Windows.UI.Xaml.Media;
 
 namespace Anf.Services
 {
     internal class UnoTtileService: DependencyAppService
     {
         public const double FontSizeFactor = 0.45d;
+
+        private readonly static FontFamily segoFont = new FontFamily("Segoe MDL2 Assets");
+
         public UnoTtileService()
         {
             var tbx = new TextBlock
@@ -31,8 +36,8 @@ namespace Anf.Services
 
         private void OnFavoriteButtonClick(object sender, RoutedEventArgs e)
         {
-            var navSer = AppEngine.GetRequiredService<MainNavigationService>();
-            navSer.Navigate<BookshelfView>();
+            var navSer = AppEngine.GetRequiredService<UnoNavigationService>();
+            //navSer.Navigate<BookshelfView>();
         }
 
         public void CreateControls()
@@ -43,7 +48,7 @@ namespace Anf.Services
             FavoriteButton = CreateIconButton<Button>("\xE8F1");
             FavoriteButton.Click += OnFavoriteButtonClick;
 
-            var v = new SettingsControlView();
+            var v = new VisitingControlView();
 
             LeftControls.AddRange(new FrameworkElement[] { GoBackButton, FavoriteButton, v });
         }
@@ -59,23 +64,22 @@ namespace Anf.Services
                 VerticalContentAlignment = VerticalAlignment.Center,
                 Content = new TextBlock
                 {
-                    Classes = new Classes("segoblock"),
+                    FontFamily = segoFont,
                     Text = text
                 }
             };
-            btn.IsVisible = true;
-            btn.Bind(Button.FontSizeProperty, new Binding(nameof(AdviseFontSize)) { Source = this });
+            btn.Visibility = Visibility.Visible;
             return btn;
         }
         private void OnGoBackButtonClick(object sender, RoutedEventArgs e)
         {
-            var navSer = AppEngine.GetRequiredService<MainNavigationService>();
+            var navSer = AppEngine.GetRequiredService<UnoNavigationService>();
             navSer.GoBack();
         }
 
         private void BackButton_Click(object sender, RoutedEventArgs e)
         {
-            var navSer = AppEngine.GetRequiredService<MainNavigationService>();
+            var navSer = AppEngine.GetRequiredService<UnoNavigationService>();
             navSer.GoBack();
         }
         private string title;

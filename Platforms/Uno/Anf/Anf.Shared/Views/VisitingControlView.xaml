@@ -5,17 +5,27 @@
     xmlns:local="using:Anf.Views"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:conv="using:Anf.Converters"
     mc:Ignorable="d"
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}"
-    mc:Ignorable="d" d:DesignWidth="600" d:DesignHeight="50"
+    d:DesignWidth="600" d:DesignHeight="50"
     xmlns:kwc="using:Anf"
     Orientation="Horizontal"
     Margin="2">
-
+    <StackPanel.Resources>
+        <conv:BoolVisibilityConverter x:Key="BoolVisibilityConverter"/>
+        <Style TargetType="ToggleButton">
+            <Setter Property="Height" Value="25"/>
+            <Setter Property="CornerRadius" Value="0"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+        </Style>
+        <Style TargetType="Popup">
+            <Setter Property="IsLightDismissEnabled" Value="True"/>
+        </Style>
+    </StackPanel.Resources>
     <StackPanel Orientation="Horizontal">
-        <ToggleButton x:Name="ChapterSelector"
-                  Classes="control part"
-                  Background="{x:Null}">
+        <ToggleButton x:Name="ChapterSelector">
             <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xEA37;" FontSize="{Binding TitleService.AdviseFontSize}"/>
             <ToolTipService.ToolTip>
                 <StackPanel Orientation="Horizontal">
@@ -28,11 +38,7 @@
                 </StackPanel>
             </ToolTipService.ToolTip>
         </ToggleButton>
-        <Popup PlacementTarget="{Binding ElementName=ChapterSelector}"
-               PlacementMode="Bottom"
-               PlacementAnchor="Bottom"
-               StaysOpen="False"
-               IsOpen="{Binding ElementName=ChapterSelector,Path=IsChecked,Mode=TwoWay}">
+        <Popup IsOpen="{Binding ElementName=ChapterSelector,Path=IsChecked,Mode=TwoWay}">
             <Grid>
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
@@ -44,7 +50,7 @@
                          MaxHeight="200"
                          Grid.Row="1">
                     <ListBox.ItemTemplate>
-                        <DataTemplate x:DataType="{x:Type kwc:ComicChapter}">
+                        <DataTemplate>
                             <TextBlock Text="{Binding Title}">
                                 <ToolTipService.ToolTip>
                                     <TextBlock Text="{Binding TargetUrl}"/>
@@ -57,9 +63,7 @@
         </Popup>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-        <ToggleButton Classes="control part"
-                  Background="{x:Null}"
-                  IsChecked="{Binding Transverse,Mode=TwoWay}">
+        <ToggleButton  IsChecked="{Binding Transverse,Mode=TwoWay}">
             <ToolTipService.ToolTip>
                 <TextBlock Text="横向模式"/>
             </ToolTipService.ToolTip>
@@ -67,10 +71,8 @@
         </ToggleButton>
     </StackPanel>
     <StackPanel Grid.Column="1" VerticalAlignment="Center" Orientation="Horizontal" 
-                IsVisible="{Binding Transverse}">
-        <ToggleButton x:Name="ControlToggle"
-                  Classes="control part"
-                  Background="{x:Null}">
+                Visibility="{Binding Transverse}">
+        <ToggleButton x:Name="ControlToggle" >
             <ToolTipService.ToolTip>
                 <TextBlock Text="观察模式"/>
             </ToolTipService.ToolTip>
@@ -78,34 +80,29 @@
         </ToggleButton>
     </StackPanel>
     <StackPanel Orientation="Horizontal">
-        <ToggleButton x:Name="SharedBtn"
-                  Classes="control"
-                  Background="{x:Null}">
+        <ToggleButton x:Name="SharedBtn" >
             <ToolTipService.ToolTip>
                 <TextBlock Text="分享"/>
             </ToolTipService.ToolTip>
             <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE72D;" FontSize="{Binding TitleService.AdviseFontSize}"/>
         </ToggleButton>
-        <ToggleButton Classes="control"
-                  IsChecked="{Binding HasStoreBox}"
-                  Command="{Binding ToggleStoreCommand}"
-                  Background="{x:Null}">
+        <ToggleButton Command="{Binding ToggleStoreCommand}" >
             <ToolTipService.ToolTip>
                 <TextBlock Text="喜欢"/>
             </ToolTipService.ToolTip>
             <Grid>
-                <TextBlock Style="{StaticResource TextBlock.segoblock}" FontSize="{Binding TitleService.AdviseFontSize}" Text="&#xE735;" IsVisible="{Binding HasStoreBox,Converter={StaticResource RevBoolConverter}}"/>
-                <TextBlock Style="{StaticResource TextBlock.segoblock}" FontSize="{Binding TitleService.AdviseFontSize}" Foreground="OrangeRed" Text="&#xE735;" IsVisible="{Binding HasStoreBox}"/>
+                <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE735;" Visibility="{Binding HasStoreBox,Converter={StaticResource BoolVisibilityConverter},ConverterParameter=rev}"/>
+                <TextBlock Style="{StaticResource TextBlock.segoblock}" Foreground="OrangeRed" Text="&#xE735;" Visibility="{Binding HasStoreBox,Converter={StaticResource BoolVisibilityConverter}}"/>
             </Grid>
         </ToggleButton>
         <!--<ToggleButton Classes="control"
-                  Background="{x:Null}"
+                  
                   ToolTip.Tip="非超喜欢"
                   IsChecked="{Binding SuperFavorite}"
                   Command="{Binding ToggleSuperFavoriteCommand}"
-                  IsVisible="{Binding HasStoreBox,Converter={StaticResource RevBoolConverter}}">
+                  IsVisible="{Binding HasStoreBox,Converter={StaticResource BoolVisibilityConverter}}">
       <Grid>
-        <TextBlock Classes="segoblock" Text="&#xE735;" IsVisible="{Binding SuperFavorite,Converter={StaticResource RevBoolConverter}}"/>
+        <TextBlock Classes="segoblock" Text="&#xE735;" IsVisible="{Binding SuperFavorite,Converter={StaticResource BoolVisibilityConverter}}"/>
         <TextBlock Classes="segoblock" Foreground="Gold" Text="&#xE735;" IsVisible="{Binding SuperFavorite}"/>
       </Grid>
     </ToggleButton>-->
@@ -114,19 +111,15 @@
         <ToolTipService.ToolTip>
             <TextBlock Text="状态"/>  
         </ToolTipService.ToolTip>
-        <ToggleButton Background="{x:Null}"
-                  IsChecked="{Binding StatusShow,Mode=TwoWay}"
-                  IsVisible="{Binding ResourceLoadDone}">
-            <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE8FB;" Foreground="Green" FontSize="{Binding TitleService.AdviseFontSize}"/>
+        <ToggleButton IsChecked="{Binding StatusShow,Mode=TwoWay}"
+                      Visibility="{Binding ResourceLoadDone,Converter={StaticResource BoolVisibilityConverter}}">
+            <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE8FB;" Foreground="Green" />
         </ToggleButton>
-        <ToggleButton Background="{x:Null}"
-                  IsChecked="{Binding StatusShow,Mode=TwoWay}"
-                  IsVisible="{Binding ResourceLoadDone,Converter={StaticResource RevBoolConverter}}">
-            <ProgressBar Minimum="0"
-                    Classes="notdone"
-                    Maximum="{Binding Resources.Count}"
-                    Value="{Binding ResourceLoadCount}"
-                    Foreground="Gray">
+        <ToggleButton IsChecked="{Binding StatusShow,Mode=TwoWay}"
+                      Visibility="{Binding ResourceLoadDone,Converter={StaticResource BoolVisibilityConverter},ConverterParameter=rev}">
+            <ProgressBar Minimum="0" Width="30"
+                        Maximum="{Binding Resources.Count}"
+                        Value="{Binding ResourceLoadCount}">
                 <ToolTipService.ToolTip>
                     <ToolTip>
                         <StackPanel Orientation="Horizontal">
@@ -141,10 +134,8 @@
             </ProgressBar>
         </ToggleButton>
     </Grid>
-    <Popup IsOpen="{Binding StatusShow,Mode=TwoWay}"
-           StaysOpen="False"
-           PlacementTarget="{Binding ElementName=StatusBtn}">
-        <Border CornerRadius="6" Padding="12">
+    <Popup IsOpen="{Binding StatusShow,Mode=TwoWay}">
+        <Border CornerRadius="6" Padding="12" Background="{ThemeResource AppBarBackgroundThemeBrush}">
             <StackPanel Orientation="Vertical">
                 <StackPanel Orientation="Horizontal"
                     VerticalAlignment="Center"
@@ -165,7 +156,7 @@
                                             <MenuFlyoutItem Text="复制" Command="{Binding CopyCommand}"/>
                                             <MenuFlyoutItem Text="打开" Command="{Binding OpenCommand}"/>
                                             <MenuFlyoutItem Text="重新加载" Command="{Binding ReLoadCommand}"/>
-                                            <MenuFlyoutItem Text="复制异常" IsVisible="{Binding HasException}" Command="{Binding CopyExceptionCommand}"/>
+                                            <MenuFlyoutItem Text="复制异常" Visibility="{Binding HasException}" Command="{Binding CopyExceptionCommand}"/>
                                         </MenuFlyout>
                                     </Grid.ContextFlyout>
                                     <Grid.ColumnDefinitions>
@@ -185,8 +176,8 @@
                                                 Grid.Column="1"
                                                 Margin="6,0,0,0"
                                                 VerticalAlignment="Center">
-                                        <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE894;" Foreground="Red" IsVisible="{Binding HasException}"/>
-                                        <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE8FB;" Foreground="Green" IsVisible="{Binding LoadSucceed}"/>
+                                        <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE894;" Foreground="Red" Visibility="{Binding HasException}"/>
+                                        <TextBlock Style="{StaticResource TextBlock.segoblock}" Text="&#xE8FB;" Foreground="Green" Visibility="{Binding LoadSucceed}"/>
                                     </StackPanel>
                                     <Button Grid.Column="2"
                                             Margin="6,0,0,0"
@@ -196,7 +187,7 @@
                                         </ToolTipService.ToolTip>
                                         <TextBlock Text="&#xE8C8;" Style="{StaticResource TextBlock.segoblock}"/>
                                     </Button>
-                                    <ProgressBar Height="1.5" VerticalAlignment="Bottom" IsVisible="{Binding Loading}" IsIndeterminate="True"/>
+                                    <ProgressBar Height="1.5" VerticalAlignment="Bottom" Visibility="{Binding Loading}" IsIndeterminate="True"/>
                                 </Grid>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -205,11 +196,7 @@
             </StackPanel>
         </Border>
     </Popup>
-    <Popup IsOpen="{Binding ElementName=SharedBtn,Path=IsChecked,Mode=TwoWay}"
-           PlacementMode="Bottom"
-           PlacementAnchor="Bottom"
-           StaysOpen="False"
-           PlacementTarget="{Binding ElementName=SharedBtn}">
+    <Popup IsOpen="{Binding ElementName=SharedBtn,Path=IsChecked,Mode=TwoWay}">
         <Border Background="{StaticResource SystemControlBackgroundChromeMediumBrush}"
                 CornerRadius="6"
                 Padding="12"
@@ -301,10 +288,7 @@
             </Grid>
         </Border>
     </Popup>
-    <Popup IsOpen="{Binding ElementName=ControlToggle,Mode=TwoWay,Path=IsChecked}"
-         PlacementTarget="{Binding ElementName=ControlToggle}"
-         PlacementMode="Bottom"
-         StaysOpen="False">
+    <Popup IsOpen="{Binding ElementName=ControlToggle,Mode=TwoWay,Path=IsChecked}">
         <Border Background="{StaticResource SystemControlBackgroundBaseLowBrush}"
             Padding="6"
             CornerRadius="6">
@@ -328,36 +312,32 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
                 <TextBlock Text="手势" Grid.Column="0" Grid.Row="0"/>
-                <ToggleSwitch Classes="control part forcehover"
-                              Margin="3,0"
+                <ToggleSwitch Margin="3,0"
                               IsOn="{Binding EnableGesture,Mode=TwoWay}"
                        Grid.Column="1" Grid.Row="0">
                 </ToggleSwitch>
                 <TextBlock Margin="{StaticResource ItemMargin}" Text="缩放" Grid.Column="0" Grid.Row="1"/>
-                <ToggleSwitch Classes="control part forcehover"
-                              Margin="{StaticResource ControlItemMargin}"
+                <ToggleSwitch Margin="{StaticResource ControlItemMargin}"
                               IsOn="{Binding EnableZoom,Mode=TwoWay}"
                               Grid.Column="1" Grid.Row="1">
                 </ToggleSwitch>
                 <TextBlock Margin="{StaticResource ItemMargin}" Text="容器" Grid.Column="0" Grid.Row="2"/>
-                <ToggleSwitch Classes="control part item forcehover"
-                              Margin="{StaticResource ControlItemMargin}"
+                <ToggleSwitch Margin="{StaticResource ControlItemMargin}"
                               IsOn="{Binding EnableConstrains,Mode=TwoWay}"
                               Grid.Column="1" Grid.Row="2">
                 </ToggleSwitch>
-                <TextBlock Margin="{StaticResource ItemMargin}" Text="模式" Grid.Column="0" Grid.Row="3"/>
-                <ComboBox Classes="center item"
-                          Padding="3"
+                <!--<TextBlock Margin="{StaticResource ItemMargin}" Text="模式" Grid.Column="0" Grid.Row="3"/>
+                <ComboBox Padding="3"
                           Margin="{StaticResource ControlItemMargin}"
                           Grid.Column="1" Grid.Row="3"
-                          ItemsSource="{Binding StretchModes}}"
+                          ItemsSource="{Binding StretchModes}"
                           SelectedItem="{Binding StretchMode,Mode=TwoWay,Converter={StaticResource StretchModeConverter}}">
                     <ComboBox.ItemTemplate>
                         <DataTemplate>
                             <TextBlock Text="{Binding Converter={StaticResource StretchModeConverter}}"/>
                         </DataTemplate>
                     </ComboBox.ItemTemplate>
-                </ComboBox>
+                </ComboBox>-->
             </Grid>
         </Border>
     </Popup>

@@ -64,6 +64,9 @@ namespace Anf
             AppEngine.Services.AddSingleton(configRoot);
             AppEngine.Services.AddSingleton<IConfiguration>(configRoot);
             AppEngine.Services.AddSingleton<IConfigurationRoot>(configRoot);
+            AppEngine.Services.AddSingleton(new UnoRuntime());
+            AppEngine.Services.AddSingleton<UnoNavigationService>();
+            AppEngine.Services.AddSingleton<IComicTurnPageService>(x => x.GetRequiredService<UnoNavigationService>());
             AppEngine.Services.AddLogging(x =>
             {
                 x.ClearProviders();
@@ -73,6 +76,8 @@ namespace Anf
             });
 
             AppEngine.Services.AddSingleton<UnoHomeViewModel>();
+            AppEngine.Services.AddSingleton(new AppBarService());
+            AppEngine.Services.AddSingleton(new UnoTtileService());
         }
         private AnfSettings CreateSettings(IServiceProvider provider)
         {

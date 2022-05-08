@@ -693,7 +693,8 @@ namespace Anf.ViewModels
                 }
                 var setting = StoreFetchSettings.DefaultCache.Clone();
                 setting.DisposeStream = false;
-                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync<TResource,TImage>(address,
+                setting.DisposeStream = false;
+                LogoImage = await StoreFetchHelper.GetOrFromCacheAsync<TResource, TImage>(address,
                     async () => logoStream = await httpClient.GetStreamAsync(address),
                     s => streamImageConverter.ToImageAsync(s),
                     setting);

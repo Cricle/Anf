@@ -1,6 +1,8 @@
-﻿using Anf.ViewModels;
+﻿using Anf.Services;
+using Anf.ViewModels;
 using Anf.Views;
 using Ao.Lang.Runtime;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.UI.Xaml.Controls;
 using System;
 using System.Collections.Generic;
@@ -9,8 +11,11 @@ using System.Linq;
 using System.Net.Http;
 using System.Runtime.InteropServices.WindowsRuntime;
 using System.Threading.Tasks;
+using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
+using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Controls.Primitives;
@@ -33,6 +38,17 @@ namespace Anf
         {
             this.InitializeComponent();
             Loaded += MainPage_Loaded;
+            var appBarSer = AppEngine.Provider.GetRequiredService<AppBarService>();
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
+            //var tb = ApplicationView.GetForCurrentView().TitleBar;
+            //tb.BackgroundColor = Colors.Khaki;
+            //tb.ButtonBackgroundColor = Colors.Transparent;
+            AppBarContent.SetBinding(ContentControl.ContentProperty, new Binding
+            {
+                Source = appBarSer,
+                Path = new PropertyPath(nameof(AppBarService.AppBar) + "." + nameof(IAppBar.Root))
+            });
+            //Window.Current.SetTitleBar(AppBarContent);
             //Nv.Content = new ComicView
             //{
             //    DataContext = new UnoComicViewModel(new ComicSnapshot

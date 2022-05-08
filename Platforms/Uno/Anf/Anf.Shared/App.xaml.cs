@@ -12,14 +12,29 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using Anf.KnowEngines;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Anf
 {
+    internal class UnoRuntime
+    {
+        public UnoRuntime()
+        {
+            RootFrame = new Frame();
+            ContentFrame = new Frame();
+        }
+
+        public Frame RootFrame { get; }
+
+        public Frame ContentFrame { get; }
+
+    }
     /// <summary>
     /// Provides application-specific behavior to supplement the default Application class.
     /// </summary>
     public sealed partial class App : Application
     {
+        public readonly IServiceProvider Provider;
         private Window _window;
 
         /// <summary>
@@ -35,6 +50,7 @@ namespace Anf
 #if HAS_UNO || NETFX_CORE
             this.Suspending += OnSuspending;
 #endif
+            Provider = AppEngine.Provider;
         }
 
         /// <summary>
@@ -47,7 +63,7 @@ namespace Anf
 #if DEBUG
             if (System.Diagnostics.Debugger.IsAttached)
             {
-                // this.DebugSettings.EnableFrameRateCounter = true;
+                DebugSettings.IsBindingTracingEnabled = true;
             }
 #endif
 
@@ -65,7 +81,7 @@ namespace Anf
             if (rootFrame == null)
             {
                 // Create a Frame to act as the navigation context and navigate to the first page
-                rootFrame = new Frame();
+                rootFrame = Provider.GetRequiredService<UnoRuntime>().RootFrame;
 
                 rootFrame.NavigationFailed += OnNavigationFailed;
 

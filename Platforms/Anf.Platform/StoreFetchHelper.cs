@@ -125,7 +125,7 @@ namespace Anf.Platform
             {
                 if (settings.DisposeStream)
                 {
-                    //image?.Dispose();
+                    image?.Dispose();
                 }
             }
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Anf.Services;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -22,18 +23,18 @@ namespace Anf.Views
     /// </summary>
     public sealed partial class VisitingControlView : StackPanel
     {
-        private readonly TitleService titleService;
+        private readonly UnoTtileService titleService;
         public VisitingControlView()
         {
             this.InitializeComponent();
-            titleService = AppEngine.GetRequiredService<TitleService>();
-            foreach (var item in Children)
-            {
-                if (item is Button btn)
-                {
-                    btn.Bind(TemplatedControl.FontSizeProperty, new Binding(nameof(TitleService.AdviseFontSize)) { Source = titleService });
-                }
-            }
+            titleService = AppEngine.GetRequiredService<UnoTtileService>();
+            //foreach (var item in Children)
+            //{
+            //    if (item is Button btn)
+            //    {
+            //        btn.Bind(TemplatedControl.FontSizeProperty, new Binding(nameof(TitleService.AdviseFontSize)) { Source = titleService });
+            //    }
+            //}
         }
     }
 }

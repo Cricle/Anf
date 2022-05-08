@@ -10,30 +10,13 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="48"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid x:Name="AppTitleBar" Height="48">
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition x:Name="LeftPaddingColumn" Width="0"/>
-                <ColumnDefinition x:Name="IconColumn" Width="Auto"/>
-                <ColumnDefinition x:Name="TitleColumn" Width="Auto"/>
-                <ColumnDefinition x:Name="LeftDragColumn" Width="*"/>
-                <ColumnDefinition x:Name="SearchColumn" Width="Auto"/>
-                <ColumnDefinition x:Name="RightDragColumn" Width="*"/>
-                <ColumnDefinition x:Name="RightPaddingColumn" Width="0"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock x:Name="TitleTextBlock" 
-               Text="App title" 
-               Style="{StaticResource CaptionTextBlockStyle}"
-               Grid.Column="1"
-               VerticalAlignment="Center"
-               Margin="4,0,0,0"/>
-            <AutoSuggestBox Grid.Column="2" QueryIcon="Find"
-                    PlaceholderText="Search"
-                    VerticalAlignment="Center"
-                    Width="260" Margin="4,0"/>
-        </Grid>
+        <ContentControl x:Name="AppBarContent"
+                        HorizontalContentAlignment="Stretch">
+            
+        </ContentControl>
         <Grid Grid.Row="1">
             <NavigationView x:Name="Nv" IsPaneOpen="False" PaneDisplayMode="LeftCompact">
                 <NavigationView.MenuItems>

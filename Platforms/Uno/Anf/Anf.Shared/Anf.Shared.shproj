@@ -14,6 +14,7 @@
     <_Globbed_Compile Remove="App.Service.cs" />
     <_Globbed_Compile Remove="AppEngine.cs" />
     <_Globbed_Compile Remove="Markups\Lang.cs" />
+    <_Globbed_Compile Remove="Services\AppBarService.cs" />
     <_Globbed_Compile Remove="Services\DependencyAppService.cs" />
     <_Globbed_Compile Remove="Services\PlatformFileService.cs" />
     <_Globbed_Compile Remove="Services\PlatformService.cs" />

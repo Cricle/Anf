@@ -1,4 +1,5 @@
-﻿using Anf.ViewModels;
+﻿using Anf.Services;
+using Anf.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,6 +9,7 @@ using System.Threading.Tasks;
 using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using Windows.UI;
 using Windows.UI.ViewManagement;
 using Windows.UI.WindowManagement;
 using Windows.UI.Xaml;
@@ -32,7 +34,7 @@ namespace Anf.Views
             this.InitializeComponent();
             LoadVm(address);
             Sv.ViewChanged += Sv_ViewChanged;
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+
         }
 
         private async void Sv_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
@@ -54,6 +56,11 @@ namespace Anf.Views
         {
             vm = new UnoVisitingViewModel();
             DataContext = vm;
+            var titleBar = new VisitingControlView { DataContext = vm };
+            var appBar = AppEngine.GetRequiredService<AppBarService>();
+            appBar.GetAsDefault()
+                .Lefts.Add(titleBar);
+
             try
             {
                 await vm.InitAsync(address);
