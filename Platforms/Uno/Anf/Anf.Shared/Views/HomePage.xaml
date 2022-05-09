@@ -51,7 +51,7 @@
                         </ItemsControl>
                     </StackPanel>
                 </ToolTipService.ToolTip>
-                <Image Source="{Binding LogoImage,Mode=OneWay}" Width="200"/>
+                <Image Source="{Binding LogoImage.Image,Mode=OneWay}" Width="200"/>
                 <Border Background="#A1666666"
                         VerticalAlignment="Bottom">
                     <TextBlock Text="{Binding Snapshot.Name,Mode=OneTime}"
@@ -149,10 +149,10 @@
                                 <Border Padding="4">
                                     <ToolTipService.ToolTip>
                                         <ToolTip>
-                                            <StackPanel Orientation="Vertical">
-                                                <TextBlock Text="{Binding Condition.EnginName}"/>
-                                                <TextBlock Text="{Binding Condition.Address}"/>
-                                            </StackPanel>
+                                            <TextBlock>
+                                                <Run Text="{Binding Condition.EnginName}"/>
+                                                <Run Text="{Binding Condition.Address}"/>
+                                            </TextBlock>
                                         </ToolTip>
                                     </ToolTipService.ToolTip>
                                     <Border.ContextFlyout>
@@ -161,7 +161,7 @@
                                             <MenuFlyoutItem Text="复制" Command="{Binding CopyCommand}"/>
                                         </MenuFlyout>
                                     </Border.ContextFlyout>
-                                    <Image Source="{Binding Bitmap}" Width="24"/>
+                                    <Image Source="{Binding Bitmap.Image}" Width="24"/>
                                 </Border>
                             </DataTemplate>
                         </ItemsControl.ItemTemplate>
@@ -226,11 +226,11 @@
                 <Border HorizontalAlignment="Left" 
                         VerticalAlignment="Bottom"
                         Margin="8,0,0,8">
-                    <ComboBox SelectedItem="{Binding StartupSettings.StartupType}"
+                    <ComboBox SelectedItem="{Binding StartupSettings.StartupType,Mode=TwoWay}"
                               ItemsSource="{x:Bind conv:StartupTypeStringConverter.IncludeTypes}">
                         <ComboBox.ItemTemplate>
                             <DataTemplate>
-                                <TextBlock Text="{Binding Converter={StaticResource StartupTypeStringConverter}}"></TextBlock>
+                                <TextBlock Text="{Binding Converter={StaticResource StartupTypeStringConverter}}"/>
                             </DataTemplate>
                         </ComboBox.ItemTemplate>
                     </ComboBox>

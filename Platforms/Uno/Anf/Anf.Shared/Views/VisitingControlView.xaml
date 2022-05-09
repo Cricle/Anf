@@ -134,7 +134,7 @@
             </ProgressBar>
         </ToggleButton>
     </Grid>
-    <Popup IsOpen="{Binding StatusShow,Mode=TwoWay}" IsLightDismissEnabled="False">
+    <Popup IsOpen="{Binding StatusShow,Mode=TwoWay}">
         <Border CornerRadius="6" 
                 Padding="12" 
                 Background="{ThemeResource AppBarBackgroundThemeBrush}">

@@ -26,6 +26,7 @@ namespace Anf.ViewModels
         public UnoHomeViewModel(AnfSettings settings)
         {
             StartupSettings = settings.Startup;
+            StartupSettings.StartupType= StartupTypes.Providers;
             InitDatas();
         }
         public UnoHomeViewModel()
@@ -38,10 +39,9 @@ namespace Anf.ViewModels
             if (info is WithImageComicSnapshotInfo<ImageBox, ImageBox> sn)
             {
                 var vm = new UnoComicViewModel(info.Snapshot, sn.LogoImage.Image);
-                //var navSer = AppEngine.GetRequiredService<MainNavigationService>();
+                var navSer = AppEngine.GetRequiredService<UnoNavigationService>();
 
-                //var c = navSer.Navigate<ComicView>();
-                //c.DataContext = vm;
+                navSer.Navigate(new ComicView { DataContext=vm});
             }
         }
 

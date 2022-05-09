@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage.Streams;
 using Windows.UI.Core;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Media;
@@ -39,9 +40,13 @@ namespace Anf.Services
         public async Task<ImageBox> ToImageAsync(Stream stream)
         {
             var bitmap = new BitmapImage();
-            var rs = stream.AsRandomAccessStream();
-            await bitmap.SetSourceAsync(rs);
-            return new ImageBox(bitmap, stream);
+            using (var rand = new InMemoryRandomAccessStream())
+            {
+                await RandomAccessStream.CopyAsync(stream.AsInputStream(), rand);
+                rand.Seek(0);
+                await bitmap.SetSourceAsync(rand);
+                return new ImageBox(bitmap, stream);
+            }
         }
     }
 }

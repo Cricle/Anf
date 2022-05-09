@@ -43,9 +43,16 @@ namespace Anf.Converters
     {
         public object Convert(object value, Type targetType, object parameter, string culture)
         {
-            if (value is StartupTypes type&&parameter is StartupTypes destype)
+            if (value is StartupTypes type)
             {
-                return type == destype;
+                if (parameter is StartupTypes destype)
+                {
+                    return type == destype;
+                }
+                else if (Enum.TryParse(parameter?.ToString(), out destype))
+                {
+                    return type == destype;
+                }
             }
             return false;
         }

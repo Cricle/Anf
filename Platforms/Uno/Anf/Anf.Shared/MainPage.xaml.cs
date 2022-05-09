@@ -37,7 +37,7 @@ namespace Anf
         public MainPage()
         {
             this.InitializeComponent();
-            Loaded += MainPage_Loaded;
+            //Loaded += MainPage_Loaded;
             var appBarSer = AppEngine.Provider.GetRequiredService<AppBarService>();
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
             //var tb = ApplicationView.GetForCurrentView().TitleBar;
@@ -48,6 +48,7 @@ namespace Anf
                 Source = appBarSer,
                 Path = new PropertyPath(nameof(AppBarService.AppBar) + "." + nameof(IAppBar.Root))
             });
+            Nv.Content = new HomePage();
             //Window.Current.SetTitleBar(AppBarContent);
             //Nv.Content = new ComicView
             //{
@@ -73,7 +74,7 @@ namespace Anf
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Nv.Content = new VisitingView("https://manga.bilibili.com/detail/mc25872");
+            Nv.Content = new VisitingView("https://ac.qq.com/Comic/comicInfo/id/536332");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
