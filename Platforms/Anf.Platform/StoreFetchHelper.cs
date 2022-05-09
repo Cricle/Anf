@@ -37,6 +37,7 @@ namespace Anf.Platform
             {
                 settings = DefaultStoreFetchSettings;
             }
+            var recyclableMemoryStreamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
             if (!settings.ForceNoCache && storeService != null)
             {
                 var str = await storeService.GetPathAsync(address);
@@ -45,12 +46,17 @@ namespace Anf.Platform
                     if (settings.ExpiresTime == null ||
                         (DateTime.Now - File.GetLastWriteTime(str)) < settings.ExpiresTime)
                     {
-                        stream = File.OpenRead(str);
+                        var recmem = recyclableMemoryStreamManager.GetStream();
+                        using (var fs = File.OpenRead(str))
+                        {
+                            await fs.CopyToAsync(recmem);
+                        }
+                        recmem.Position = 0;
+                        stream = recmem;
                         return stream;
                     }
                 }
             }
-            var recyclableMemoryStreamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
             var mem = await streamCreator();
             if (storeService is null)
             {

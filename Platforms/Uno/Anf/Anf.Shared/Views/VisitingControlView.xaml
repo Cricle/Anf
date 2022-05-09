@@ -161,6 +161,10 @@
                                      Visibility="{Binding ResourceLoadDone,Converter={StaticResource BoolVisibilityConverter},ConverterParameter=rev}">
                         <TextBlock>全部加载</TextBlock>
                     </HyperlinkButton>
+                    <HyperlinkButton Command="{Binding SaveAllCommand}"
+                                     Visibility="{Binding ResourceLoadDone,Converter={StaticResource BoolVisibilityConverter}}">
+                        <TextBlock>保存全部</TextBlock>
+                    </HyperlinkButton>
                 </StackPanel>
                 <ScrollViewer VerticalScrollBarVisibility="Auto"
                       HorizontalScrollBarVisibility="Hidden"

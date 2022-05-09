@@ -10,11 +10,14 @@ namespace Anf.Platform
     {
         public bool EnableCache { get; set; } = true;
 
+        public StoreFetchSettings StoreFetchSettings { get; set; }
+
         public Task<IResourceFactory<TImage>> CreateAsync(ResourceFactoryCreateContext<TImage> context)
         {
-            return Task.FromResult<IResourceFactory<TImage>>(new PlatformResourceCreator<TResource,TImage>(context.SourceProvider) 
+            return Task.FromResult<IResourceFactory<TImage>>(new PlatformResourceCreator<TResource, TImage>(context.SourceProvider)
             {
-                EnableCache= EnableCache
+                EnableCache = EnableCache,
+                StoreFetchSettings = StoreFetchSettings,
             });
         }
     }

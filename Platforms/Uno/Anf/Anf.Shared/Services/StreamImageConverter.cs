@@ -38,19 +38,10 @@ namespace Anf.Services
     {
         public async Task<ImageBox> ToImageAsync(Stream stream)
         {
-            try
-            {
-                var bitmap = new BitmapImage();
-                using (var rs = stream.AsRandomAccessStream())
-                {
-                    await bitmap.SetSourceAsync(rs);
-                }
-                return new ImageBox(bitmap, stream);
-            }
-            catch (Exception ex)
-            {
-                throw;
-            }
+            var bitmap = new BitmapImage();
+            var rs = stream.AsRandomAccessStream();
+            await bitmap.SetSourceAsync(rs);
+            return new ImageBox(bitmap, stream);
         }
     }
 }

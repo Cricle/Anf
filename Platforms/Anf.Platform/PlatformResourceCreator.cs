@@ -23,11 +23,13 @@ namespace Anf.Platform
 
         public bool EnableCache { get; set; } = true;
 
+        public StoreFetchSettings StoreFetchSettings { get; set; }
+
         public async Task<TImage> GetAsync(string address)
         {
             if (EnableCache)
             {
-                var bitmap = await StoreFetchHelper.GetOrFromCacheAsync<TResource,TImage>(address, () => provider.GetImageStreamAsync(address));
+                var bitmap = await StoreFetchHelper.GetOrFromCacheAsync<TResource, TImage>(address, () => provider.GetImageStreamAsync(address), StoreFetchSettings);
                 return bitmap;
             }
             else

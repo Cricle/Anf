@@ -48,7 +48,11 @@ namespace Anf
             AppEngine.Services.AddSingleton<IStoreService>(store);
             AppEngine.Services.AddSingleton<IPlatformService, PlatformService>();
             AppEngine.Services.AddSingleton<IStreamImageConverter<ImageBox>, StreamImageConverter>();
-            AppEngine.Services.AddSingleton<IResourceFactoryCreator<ImageBox>, PlatformResourceCreatorFactory<ImageBox, ImageBox>>();
+            AppEngine.Services.AddSingleton<IResourceFactoryCreator<ImageBox>>(new PlatformResourceCreatorFactory<ImageBox, ImageBox>
+            {
+                EnableCache = true,
+                StoreFetchSettings = StoreFetchSettings.DefaultNoDisposeStream.Clone()
+            });
             AppEngine.Services.AddSingleton<ExceptionService>();
             var storeSer = new WithImageComicStoreService<ImageBox, ImageBox>(new DirectoryInfo(Path.Combine(Workstation, XComicConst.CacheFolderName, XComicConst.StoreFolderName)));
             AppEngine.Services.AddSingleton(storeSer);

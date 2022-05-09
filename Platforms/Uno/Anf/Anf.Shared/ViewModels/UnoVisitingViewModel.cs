@@ -11,10 +11,16 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IO;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
+using System.Linq;
 using System.Net.Http;
+using System.Text;
 using System.Threading.Tasks;
+using Windows.Storage;
 using Windows.Storage.Pickers;
+using Windows.UI.Popups;
 using Windows.UI.Xaml.Controls;
 using Windows.UI.Xaml.Media;
 
@@ -92,6 +98,7 @@ namespace Anf.ViewModels
         public ReadingSettings ReadingSettings { get; private set; }
         public RelayCommand OpenPaneCommand { get; private set; }
         public AsyncRelayCommand LoadAllCommand { get; private set; }
+        public AsyncRelayCommand SaveAllCommand { get; private set; }
         public RelayCommand ClosePaneCommand { get; private set; }
         public RelayCommand SaveLogoCommand { get; private set; }
         public RelayCommand<ComicPageInfo<ImageBox>> SaveImageCommand { get; private set; }
@@ -146,6 +153,43 @@ namespace Anf.ViewModels
         public Task LoadAllPage()
         {
             return LoadAllAsync();
+        }
+        public async Task SaveAllPage()
+        {
+            if (!ResourceLoadDone)
+            {
+                await new MessageDialog("只有完全加载才允许").ShowAsync();
+            }
+            else
+            {
+                try
+                {
+                    var folderPicker = new FolderPicker();
+                    var folder = await folderPicker.PickSingleFolderAsync();
+                    if (folder != null)
+                    {
+                        foreach (var item in Resources)
+                        {
+                            var stream = item.Resource?.Stream;
+                            if (stream != null && stream.CanRead && stream.CanSeek)
+                            {
+                                stream.Seek(0, SeekOrigin.Begin);
+                                var fn = string.Concat(ComicEntity.Name, "-", CurrentChapter.Title, "-", item.Index, ".png");
+                                fn = PathHelper.EnsureName(fn);
+                                var fi = await folder.CreateFileAsync(fn);
+                                using (var fs = await fi.OpenAsync(FileAccessMode.ReadWrite))
+                                {
+                                    await stream.CopyToAsync(fs.AsStream());
+                                }
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    await new MessageDialog(ex.Message).ShowAsync();
+                }
+            }
         }
 
         public async Task InitAsync(string address)
@@ -204,6 +248,7 @@ namespace Anf.ViewModels
             OpenPaneCommand = new RelayCommand(OpenPane);
             ClosePaneCommand = new RelayCommand(ClosePane);
             LoadAllCommand = new AsyncRelayCommand(LoadAllPage);
+            SaveAllCommand=new AsyncRelayCommand(SaveAllPage);
 
             PageCursorMoved += AvalonVisitingViewModel_PageCursorMoved;
             //TitleService = AppEngine.GetRequiredService<TitleService>();
@@ -232,18 +277,22 @@ namespace Anf.ViewModels
         public async void SaveLogo()
         {
             var logo = LogoImage;
-            if (logo != null)
+            if (logo?.Stream != null&&logo.Stream.CanRead)
             {
                 var name = $"{PathHelper.EnsureName(Name)}-logo.jpg";
-                LogoStream.Position = 0;
+                logo.Stream.Seek(0, SeekOrigin.Begin);
                 var fp = new FileSavePicker
                 {
                     SuggestedFileName = name
                 };
+                fp.FileTypeChoices.Add("图片文件", new string[] { ".png" });
                 var file = await fp.PickSaveFileAsync();
                 if (file != null)
                 {
-                    await LogoStream.CopyToAsync(LogoStream);
+                    using (var fs = await file.OpenStreamForWriteAsync())
+                    {
+                        await logo.Stream.CopyToAsync(fs);
+                    }
                 }
                 //await logo.PickSaveAsync(name);
             }
@@ -256,13 +305,17 @@ namespace Anf.ViewModels
                 //await info.Resource.PickSaveAsync(name);
                 var fp = new FileSavePicker
                 {
-                    SuggestedFileName = name
+                    SuggestedFileName = name,
                 };
+                fp.FileTypeChoices.Add("图片文件", new string[] { ".png" });
                 var file = await fp.PickSaveFileAsync();
                 if (file != null)
                 {
                     info.Resource.Stream.Position = 0;
-                    await LogoStream.CopyToAsync(info.Resource.Stream);
+                    using (var fs = await file.OpenStreamForWriteAsync())
+                    {
+                        await info.Resource.Stream.CopyToAsync(fs);
+                    }
                 }
             }
             catch (Exception ex)
