@@ -48,7 +48,9 @@ namespace Anf
                 Source = appBarSer,
                 Path = new PropertyPath(nameof(AppBarService.AppBar) + "." + nameof(IAppBar.Root))
             });
-            Nv.Content = new HomePage();
+            var rt = AppEngine.Provider.GetRequiredService<UnoRuntime>();
+            Nv.Content = rt.ContentFrame;
+            rt.ContentFrame.Content = new HomePage();
             //Window.Current.SetTitleBar(AppBarContent);
             //Nv.Content = new ComicView
             //{

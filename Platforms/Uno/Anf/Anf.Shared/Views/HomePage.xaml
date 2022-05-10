@@ -9,6 +9,8 @@
     xmlns:kwce="using:Anf"
     xmlns:conv="using:Anf.Converters"
     xmlns:s="using:Anf.Platform.Settings"
+    xmlns:i="using:Microsoft.Xaml.Interactivity"
+    xmlns:core="using:Microsoft.Xaml.Interactions.Core"
     mc:Ignorable="d"
     x:Name="HomePg"
     d:DataContext="{d:DesignInstance Type=vm:UnoHomeViewModel}"
@@ -78,7 +80,7 @@
                 <ColumnDefinition Width="Auto"/>
             </Grid.ColumnDefinitions>
             <ComboBox ItemsSource="{Binding SearchProviders}"
-                SelectedItem="{Binding CurrentSearchProvider,Mode=TwoWay}">
+                      SelectedItem="{Binding CurrentSearchProvider,Mode=TwoWay}">
                 <ComboBox.ItemTemplate>
                     <DataTemplate>
                         <TextBlock Text="{Binding EngineName}"/>
@@ -89,11 +91,16 @@
                             HorizontalAlignment="Stretch"
                             IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}"
                             Text="{Binding Keyword,Mode=TwoWay}"
-                            ItemsSource="{Binding HistoryService.Lines}">
+                            ItemsSource="{Binding HistoryService.Lines}"
+                            BorderThickness="0"
+                            CornerRadius="0"
+                            QueryIcon="Find">
+                <i:Interaction.Behaviors>
+                    <core:EventTriggerBehavior EventName="QuerySubmitted">
+                        <core:InvokeCommandAction Command="{Binding SearchCommand}"/>
+                    </core:EventTriggerBehavior>
+                </i:Interaction.Behaviors>
             </AutoSuggestBox>
-            <Button Grid.Column="2" VerticalAlignment="Stretch" Background="Transparent" Padding="16,8" Command="{Binding SearchCommand}" IsEnabled="{Binding Searching,Converter={StaticResource RevBoolConverter}}" >
-                <FontIcon Glyph="&#xE71E;" VerticalAlignment="Center"></FontIcon>
-            </Button>
             <Border Grid.Column="3" Visibility="{Binding HasAvaliableCondition}" Padding="3,0,0,0">
                 <Button Background="{x:Null}" HorizontalAlignment="Center" Command="{Binding GoSourceCommand}"
                         ToolTipService.ToolTip="此地址可能可以被直接解析">
