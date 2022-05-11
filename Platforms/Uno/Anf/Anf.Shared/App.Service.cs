@@ -85,19 +85,27 @@ namespace Anf
         }
         private AnfSettings CreateSettings(IServiceProvider provider)
         {
-            var root = provider.GetRequiredService<SavableConfigurationRoot>();
-            var instType = ProxyHelper.Default.CreateComplexProxy<AnfSettings>();
-            var inst = (AnfSettings)instType.Build(root);
-            _ = root.BindTwoWay(inst, JsonChangeTransferCondition.Instance);
-            return inst;
+            return new AnfSettings
+            {
+                Performace = new Platform.Settings.PerformaceSettings(),
+                DotShowException = true,
+                Reading = new Platform.Settings.ReadingSettings(),
+                Startup = new Platform.Settings.StartupSettings(),
+                Window = new WindowSettings(),
+            };
+            //var root = provider.GetRequiredService<SavableConfigurationRoot>();
+            //var instType = ProxyHelper.Default.CreateComplexProxy<AnfSettings>();
+            //var inst = (AnfSettings)instType.Build(root);
+            //_ = root.BindTwoWay(inst, JsonChangeTransferCondition.Instance);
+            //return inst;
         }
 
-        private SavableConfigurationRoot BuildConfiguration()
+        private IConfigurationRoot BuildConfiguration()
         {
             var configBuilder = new ConfigurationBuilder();
             configBuilder.SetBasePath(Workstation);
-            configBuilder.AddJsonFile(XComicConst.SettingFileFolder, true, true);
-            return configBuilder.BuildSavable();
+            configBuilder.AddJsonFile(XComicConst.SettingFileFolder, true, false);
+            return configBuilder.Build();
         }
     }
 }

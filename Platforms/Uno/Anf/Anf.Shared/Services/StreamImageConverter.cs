@@ -37,15 +37,29 @@ namespace Anf.Services
     }
     internal class StreamImageConverter : IStreamImageConverter<ImageBox>
     {
+        private readonly RecyclableMemoryStreamManager streamManager;
+
+        public StreamImageConverter(RecyclableMemoryStreamManager streamManager)
+        {
+            this.streamManager = streamManager;
+        }
+
         public async Task<ImageBox> ToImageAsync(Stream stream)
         {
-            var bitmap = new BitmapImage();
-            using (var rand = new InMemoryRandomAccessStream())
+            try
             {
-                await RandomAccessStream.CopyAsync(stream.AsInputStream(), rand);
-                rand.Seek(0);
-                await bitmap.SetSourceAsync(rand);
-                return new ImageBox(bitmap, stream);
+                var bitmap = new BitmapImage();
+                using (var rand = streamManager.GetStream())
+                {
+                    await stream.CopyToAsync(rand);
+                    rand.Seek(0,  SeekOrigin.Begin);
+                    await bitmap.SetSourceAsync(rand);
+                    return new ImageBox(bitmap, stream);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw;
             }
         }
     }

@@ -53,7 +53,7 @@
                         </ItemsControl>
                     </StackPanel>
                 </ToolTipService.ToolTip>
-                <Image Source="{Binding LogoImage.Image,Mode=OneWay}" Width="200"/>
+                <Image Source="{Binding LogoImage.Image,Mode=OneWay}" Width="200" Stretch="Fill"/>
                 <Border Background="#A1666666"
                         VerticalAlignment="Bottom">
                     <TextBlock Text="{Binding Snapshot.Name,Mode=OneTime}"
