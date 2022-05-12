@@ -13,6 +13,8 @@ namespace Anf.Web
 {
     internal class AnfAuthenticationHandler : IAuthenticationHandler
     {
+        private static readonly PathString ApiPrefxPath = new PathString(AnfConst.ApiPrefx.TrimEnd('/'));
+
         public const string SchemeName = "Anf";
         public const string AuthenticateHeader = "ANF-TOKEN";
 
@@ -51,7 +53,7 @@ namespace Anf.Web
             var tick = GetAuthTicket(string.Empty);
             return AuthenticateResult.Success(tick);
         }
-        AuthenticationTicket GetAuthTicket(string name)
+        public static AuthenticationTicket GetAuthTicket(string name)
         {
             var claimsIdentity = new ClaimsIdentity(new Claim[]
             {
@@ -75,7 +77,7 @@ namespace Anf.Web
         public Task InitializeAsync(AuthenticationScheme scheme, HttpContext context)
         {
             this.context = context;
-            isApiQuery = context.Request.Path.Value.StartsWith(AnfConst.ApiPrefx);
+            isApiQuery = context.Request.Path.StartsWithSegments(ApiPrefxPath);
             return Task.CompletedTask;
         }
     }
