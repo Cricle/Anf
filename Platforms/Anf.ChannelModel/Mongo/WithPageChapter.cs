@@ -1,6 +1,6 @@
 ﻿namespace Anf.ChannelModel.Mongo
 {
-    public class WithPageChapterInfoOnly: ComicChapter, IUpdatableData, IRefableData
+    public class WithPageChapterInfoOnly : ComicChapter, IUpdatableData, IRefableData
     {
         public long RefCount { get; set; }
 

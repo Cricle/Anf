@@ -1,12 +1,8 @@
-﻿using Anf.ChannelModel.Helpers;
+﻿using Anf.ChannelModel.Response;
 using Anf.ChannelModel.Results;
 using Anf.WebService;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Anf.Web.Controllers
@@ -23,11 +19,14 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(EntityResult<RSAKeyIdentity>),200)]
+        [ProducesResponseType(typeof(EntityResult<FlushKeyResponse>),200)]
         public async Task<IActionResult> FlushKey()
         {
-            var key = await userService.FlushRSAKey();
-            var res = new EntityResult<RSAKeyIdentity> { Data = key };
+            var key = await userService.FlushKeyAsync();
+            var res = new EntityResult<FlushKeyResponse>
+            {
+                Data = new FlushKeyResponse { Identity = key.Identity, PublicKey = key.PublicKey }
+            };
             return Ok(res);
         }
         [AllowAnonymous]

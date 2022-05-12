@@ -1,20 +1,20 @@
 ﻿using Anf.ChannelModel.Entity;
-using Anf.ChannelModel.KeyGenerator;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using RedLockNet;
+using SecurityLogin;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.Threading.Tasks;
-using RedLockNet.SERedis;
-using RedLockNet;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using Microsoft.Extensions.Options;
+using System.Threading.Tasks;
 
 namespace Anf.WebService
 {
     public class BookshelfService
     {
+        private static readonly TimeSpan RedKeyOutTime = TimeSpan.FromSeconds(5);
+
         private static readonly string RedLoadBookshelfKey = "Red.Anf.ResourceFetcher.Services.BookshelfService.LoadBookshelf";
         private static readonly string BookshelfKey = "Anf.ResourceFetcher.Services.BookshelfService.Bookshelf";
         private static readonly string BookshelfItemCreateKey = "Anf.ResourceFetcher.Services.BookshelfService.BookshelfItemCreate";
@@ -76,32 +76,32 @@ namespace Anf.WebService
 
         private async Task<AnfBookshelf> GetBookshelfFromCahceAsync(long id)
         {
-            var key = RedisKeyGenerator.Concat(BookshelfKey, id);
+            var key = KeyGenerator.Concat(BookshelfKey, id);
             var entities = await redisDatabase.HashGetAllAsync(key);
             return ToBookself(entities);
         }
         public async Task<bool> DeleteBookshelfAsync(long userId, long id)
         {
-            var lockKey = RedisKeyGenerator.Concat(RedBookshelfOpKey, id);
-            using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedisKeyGenerator.RedKeyOutTime))
+            var lockKey = KeyGenerator.Concat(RedBookshelfOpKey, id);
+            using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedKeyOutTime))
             {
                 if (locker.IsAcquired)
                 {
                     return false;
                 }
                 await dbContext.Bookshelves.AsNoTracking()
-                    .Where(x => x.Id == id&&x.UserId==userId)
+                    .Where(x => x.Id == id && x.UserId == userId)
                     .Take(1)
                     .DeleteFromQueryAsync();
-                var bkkey = RedisKeyGenerator.Concat(BookshelfKey, id);
+                var bkkey = KeyGenerator.Concat(BookshelfKey, id);
                 await redisDatabase.KeyDeleteAsync(bkkey);
                 return true;
             }
         }
         public async Task<bool> DeleteBookshelfItemAsync(long bookshelfId, string address)
         {
-            var lockKey = RedisKeyGenerator.Concat(RedBookshelfItemOpKey, bookshelfId, address);
-            using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedisKeyGenerator.RedKeyOutTime))
+            var lockKey = KeyGenerator.Concat(RedBookshelfItemOpKey, bookshelfId, address);
+            using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedKeyOutTime))
             {
                 if (locker.IsAcquired)
                 {
@@ -111,7 +111,7 @@ namespace Anf.WebService
                     .Where(x => x.BookshelfId == bookshelfId && x.Address == address)
                     .Take(1)
                     .DeleteFromQueryAsync();
-                var createKey = RedisKeyGenerator.Concat(BookshelfItemCreateKey, bookshelfId, address);
+                var createKey = KeyGenerator.Concat(BookshelfItemCreateKey, bookshelfId, address);
                 await redisDatabase.KeyDeleteAsync(createKey);
                 await readingManager.RemoveAsync(bookshelfId, address);
                 return true;
@@ -149,8 +149,8 @@ namespace Anf.WebService
         }
         public async Task<bool> UpdateBookshelfAsync(long id, string name, bool like)
         {
-            var lockKey = RedisKeyGenerator.Concat(RedLoadBookshelfKey, id);
-            using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedisKeyGenerator.RedKeyOutTime))
+            var lockKey = KeyGenerator.Concat(RedLoadBookshelfKey, id);
+            using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedKeyOutTime))
             {
                 if (!locker.IsAcquired)
                 {
@@ -165,7 +165,7 @@ namespace Anf.WebService
                     });
                 if (count != 0)
                 {
-                    var bkkey = RedisKeyGenerator.Concat(BookshelfKey, id);
+                    var bkkey = KeyGenerator.Concat(BookshelfKey, id);
                     await redisDatabase.HashSetAsync(bkkey, nameof(AnfBookshelf.Name), name, When.Exists);
                     await redisDatabase.HashSetAsync(bkkey, nameof(AnfBookshelf.Like), like, When.Exists);
                 }
@@ -174,12 +174,12 @@ namespace Anf.WebService
         }
         public async Task<bool> UpdateBookshelfItemAsync(long userId, long bookshelfId, string address, int? chapter, int? page, bool? like)
         {
-            var createKey = RedisKeyGenerator.Concat(BookshelfItemCreateKey, bookshelfId, address);
+            var createKey = KeyGenerator.Concat(BookshelfItemCreateKey, bookshelfId, address);
             var exists = await redisDatabase.KeyExistsAsync(createKey);
             if (!exists)
             {
-                var lockKey = RedisKeyGenerator.Concat(RedBookshelfItemOpKey, bookshelfId, address);
-                using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedisKeyGenerator.RedKeyOutTime))
+                var lockKey = KeyGenerator.Concat(RedBookshelfItemOpKey, bookshelfId, address);
+                using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedKeyOutTime))
                 {
                     if (locker.IsAcquired)
                     {
@@ -211,7 +211,7 @@ namespace Anf.WebService
                     }
                 }
             }
-            await readingManager.SetAsync(userId,bookshelfId, address, chapter, page, like);
+            await readingManager.SetAsync(userId, bookshelfId, address, chapter, page, like);
             return true;
         }
         public async Task<AnfBookshelfItem> GetBookshelfItemAsync(long userId, long bookshelfId, string address)
@@ -219,8 +219,8 @@ namespace Anf.WebService
             var res = await readingManager.GetAsync(bookshelfId, address);
             if (res is null)
             {
-                var lockKey = RedisKeyGenerator.Concat(RedBookshelfItemOpKey, bookshelfId, address);
-                using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedisKeyGenerator.RedKeyOutTime))
+                var lockKey = KeyGenerator.Concat(RedBookshelfItemOpKey, bookshelfId, address);
+                using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedKeyOutTime))
                 {
                     if (!locker.IsAcquired)
                     {
@@ -236,7 +236,7 @@ namespace Anf.WebService
                         .FirstOrDefaultAsync();
                     if (res != null)
                     {
-                        await readingManager.SetAsync(userId,res.BookshelfId, res.Address, res.ReadChatper, res.ReadPage, res.Like);
+                        await readingManager.SetAsync(userId, res.BookshelfId, res.Address, res.ReadChatper, res.ReadPage, res.Like);
                     }
                 }
             }
@@ -259,8 +259,8 @@ namespace Anf.WebService
             var res = await GetBookshelfFromCahceAsync(id);
             if (res is null)
             {
-                var lockKey = RedisKeyGenerator.Concat(RedLoadBookshelfKey, id);
-                using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedisKeyGenerator.RedKeyOutTime))
+                var lockKey = KeyGenerator.Concat(RedLoadBookshelfKey, id);
+                using (var locker = await distributedLockFactory.CreateLockAsync(lockKey, RedKeyOutTime))
                 {
                     if (!locker.IsAcquired)
                     {
@@ -276,7 +276,7 @@ namespace Anf.WebService
                         .FirstOrDefaultAsync();
                     if (res != null)
                     {
-                        var bkkey = RedisKeyGenerator.Concat(BookshelfKey, id);
+                        var bkkey = KeyGenerator.Concat(BookshelfKey, id);
                         var hashs = AsEntities(res);
                         await redisDatabase.HashSetAsync(bkkey, hashs);
                         await redisDatabase.KeyExpireAsync(bkkey, bookshelfOptions.Value.BookshelfTimeout);

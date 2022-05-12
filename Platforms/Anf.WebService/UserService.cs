@@ -1,47 +1,37 @@
 ﻿using Anf.ChannelModel;
 using Anf.ChannelModel.Entity;
-using Anf.ChannelModel.Helpers;
-using Anf.ChannelModel.KeyGenerator;
 using Microsoft.AspNetCore.Identity;
-using StackExchange.Redis;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
+using SecurityLogin;
+using SecurityLogin.Mode.RSA;
 using System.Threading.Tasks;
 
 namespace Anf.WebService
 {
-    public class UserService
+    public class UserService : RSALoginService
     {
-        private static readonly string RSAKey = "Anf.Web.Services.UserService.RSAKey";
-        private static readonly TimeSpan RSAKeyCacheTime = TimeSpan.FromMinutes(3);
-
-        private readonly IDatabase database;
         private readonly UserIdentityService userIdentityService;
         private readonly UserManager<AnfUser> userManager;
 
-        public UserService(IDatabase database,
+        public UserService(ILockerFactory lockerFactory,
+            ICacheVisitor cacheVisitor,
             UserIdentityService userIdentityService,
             UserManager<AnfUser> userManager)
+            : base(lockerFactory, cacheVisitor)
         {
             this.userIdentityService = userIdentityService;
-            this.database = database;
             this.userManager = userManager;
         }
-
-        public async Task<RSAKeyIdentity> FlushRSAKey()
+        protected override string GetSharedIdentityKey()
         {
-            var rsaKey = RSAHelper.GenerateRSASecretKey();
-            var identity = Guid.NewGuid().ToString();
-            var key = RedisKeyGenerator.Concat(RSAKey,identity);
-            await database.StringSetAsync(key, rsaKey.PrivateKey, RSAKeyCacheTime);
-            return new RSAKeyIdentity
-            {
-                Key = rsaKey.PublicKey,
-                Identity = identity
-            };
+            return "Anf.WebService.UserService.IdentityKey";
+        }
+        protected override string GetSharedLockKey()
+        {
+            return "Anf.WebService.UserService.SharedLockKey";
+        }
+        protected override string GetHeader()
+        {
+            return "Anf.WebService.UserService.Header";
         }
         public Task<string> GenerateResetTokenAsync(string userName)
         {
@@ -50,12 +40,7 @@ namespace Anf.WebService
         }
         public async Task<bool> RestPasswordAsync(string connectId, string userName, string resetToken, string @new)
         {
-            var privateKey = await GetPrivateKeyAsync(connectId);
-            if (privateKey is null)
-            {
-                return false;
-            }
-            var pwdNew = RSAHelper.RSADecrypt(privateKey, @new);
+            var pwdNew = await DecryptAsync(connectId, @new);
             if (string.IsNullOrEmpty(pwdNew))
             {
                 return false;
@@ -66,17 +51,12 @@ namespace Anf.WebService
         }
         public async Task<bool> RestPasswordWithOldAsync(string connectId, string userName, string old, string @new)
         {
-            var privateKey = await GetPrivateKeyAsync(connectId);
-            if (privateKey is null)
-            {
-                return false;
-            }
-            var pwdOld = RSAHelper.RSADecrypt(privateKey, old);
+            var pwdOld = await DecryptAsync(connectId, old);
             if (string.IsNullOrEmpty(pwdOld))
             {
                 return false;
             }
-            var pwdNew = RSAHelper.RSADecrypt(privateKey, @new);
+            var pwdNew = await DecryptAsync(connectId, @new);
             if (string.IsNullOrEmpty(pwdNew))
             {
                 return false;
@@ -87,12 +67,7 @@ namespace Anf.WebService
         }
         public async Task<bool> RegisteAsync(string connectId, string userName, string passwordHash)
         {
-            var privateKey = await GetPrivateKeyAsync(connectId);
-            if (privateKey is null)
-            {
-                return false;
-            }
-            var pwd = RSAHelper.RSADecrypt(privateKey, passwordHash);
+            var pwd = await DecryptAsync(connectId, passwordHash);
             if (string.IsNullOrEmpty(pwd))
             {
                 return false;
@@ -101,24 +76,9 @@ namespace Anf.WebService
             var identity = await userManager.CreateAsync(user, pwd);
             return identity.Succeeded;
         }
-        private async Task<string> GetPrivateKeyAsync(string connectId)
-        {
-            var key = RedisKeyGenerator.Concat(RSAKey, connectId);
-            var privateKeyValue = await database.StringGetAsync(key);
-            if (!privateKeyValue.HasValue)
-            {
-                return null;
-            }
-            return privateKeyValue.ToString();
-        }
         public async Task<string> LoginAsync(string connectId, string userName, string passwordHash)
         {
-            var privateKey = await GetPrivateKeyAsync(connectId);
-            if (privateKey is null)
-            {
-                return null;
-            }
-            var val = RSAHelper.RSADecrypt(privateKey, passwordHash);
+            var val = await DecryptAsync(connectId, passwordHash);
             if (string.IsNullOrEmpty(val))
             {
                 return null;
@@ -127,8 +87,6 @@ namespace Anf.WebService
             var ok = await userManager.CheckPasswordAsync(u, val);
             if (ok)
             {
-                var key = RedisKeyGenerator.Concat(RSAKey, connectId);
-                await database.KeyDeleteAsync(key);
                 var identity = new UserSnapshot
                 {
                     Email = u.Email,

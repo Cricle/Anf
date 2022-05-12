@@ -59,7 +59,7 @@ namespace Anf.ResourceFetcher.Fetchers
         {
             return Task.WhenAll(context.Select(x => DoneFetchChapterAsync(x)).ToArray());
         }
-        private async Task CoreDoneFetchEntityAsync(IResourceFetchContext ctx,AnfComicEntityTruck val)
+        private async Task CoreDoneFetchEntityAsync(IResourceFetchContext ctx, AnfComicEntityTruck val)
         {
             var set = dbContextTransfer.GetComicEntitySet();
             var now = DateTime.Now.Ticks;
@@ -97,7 +97,7 @@ namespace Anf.ResourceFetcher.Fetchers
                     var chp = val.Chapters[i];
                     if (!existsHash.Contains(chp.TargetUrl))
                     {
-                        if (id==-1)
+                        if (id == -1)
                         {
                             id = await set.AsNoTracking()
                                 .Where(x => x.ComicUrl == ctx.Url)
@@ -172,7 +172,7 @@ namespace Anf.ResourceFetcher.Fetchers
             var data = await query
                 .ToArrayAsync();
             var now = DateTime.Now.Ticks;
-            return data.Where(x => (now - x.UpdateTime) >= fetchOptions.Value.DataTimeout.Ticks&&!string.IsNullOrEmpty(x.Pages))
+            return data.Where(x => (now - x.UpdateTime) >= fetchOptions.Value.DataTimeout.Ticks && !string.IsNullOrEmpty(x.Pages))
                 .Select(x => new WithPageChapter
                 {
                     Pages = JsonSerializer.Deserialize<ComicPage[]>(x.Pages),
@@ -189,7 +189,7 @@ namespace Anf.ResourceFetcher.Fetchers
             var datas = await FetchEntityAsync(new[] { context });
             return datas.FirstOrDefault();
         }
-        protected virtual IQueryable<KvComicEntity> MakeWhereFilter(IQueryable<KvComicEntity> query,string[] addresses)
+        protected virtual IQueryable<KvComicEntity> MakeWhereFilter(IQueryable<KvComicEntity> query, string[] addresses)
         {
             return query.Where(x => addresses.Contains(x.ComicUrl));
         }
@@ -213,7 +213,7 @@ namespace Anf.ResourceFetcher.Fetchers
                     x.Name,
                     x.UpdateTime,
                     x.RefCount,
-                    Chapters = x.Chapters.OrderBy(y=>y.Order).Select(y => new ComicChapter
+                    Chapters = x.Chapters.OrderBy(y => y.Order).Select(y => new ComicChapter
                     {
                         TargetUrl = y.TargetUrl,
                         Title = y.Title,

@@ -37,18 +37,29 @@ namespace Anf.Services
     }
     internal class StreamImageConverter : IStreamImageConverter<ImageBox>
     {
+#if !WINDOWS_UWP
         private readonly RecyclableMemoryStreamManager streamManager;
 
         public StreamImageConverter(RecyclableMemoryStreamManager streamManager)
         {
             this.streamManager = streamManager;
         }
+#endif
 
         public async Task<ImageBox> ToImageAsync(Stream stream)
         {
             try
             {
                 var bitmap = new BitmapImage();
+#if WINDOWS_UWP
+                using (var rand = new InMemoryRandomAccessStream())
+                {
+                    await RandomAccessStream.CopyAsync(stream.AsInputStream(),rand);
+                    rand.Seek(0);
+                    await bitmap.SetSourceAsync(rand);
+                    return new ImageBox(bitmap, stream);
+                }
+#else
                 using (var rand = streamManager.GetStream())
                 {
                     await stream.CopyToAsync(rand);
@@ -56,6 +67,7 @@ namespace Anf.Services
                     await bitmap.SetSourceAsync(rand);
                     return new ImageBox(bitmap, stream);
                 }
+#endif
             }
             catch (Exception ex)
             {

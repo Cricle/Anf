@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Anf.ChannelModel.Requests
+﻿namespace Anf.ChannelModel.Requests
 {
     public class LoginRequest
     {

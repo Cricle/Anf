@@ -1,10 +1,6 @@
 ﻿using Anf.ChannelModel.Entity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Anf.WebService
 {
@@ -28,7 +24,7 @@ namespace Anf.WebService
         public DbSet<KvComicChapter> ComicChapters { get; set; }
 
         public DbSet<AnfDayComicRank> DayRanks { get; set; }
-        
+
         public DbSet<AnfHourComicRank> HourRanks { get; set; }
 
         public DbSet<AnfMonthComicRank> MonthRanks { get; set; }
@@ -64,7 +60,7 @@ namespace Anf.WebService
             InitRank<AnfDayComicRank>();
             InitRank<AnfMonthComicRank>();
             void InitRank<T>()
-                where T:AnfComicRank
+                where T : AnfComicRank
             {
                 var entityBuilder = builder.Entity<T>();
                 entityBuilder.HasKey(nameof(AnfComicRank.Time), nameof(AnfComicRank.No));

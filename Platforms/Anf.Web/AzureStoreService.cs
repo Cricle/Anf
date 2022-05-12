@@ -40,10 +40,6 @@ namespace Anf.Web
             return client.GetBlobClient(key);
         }
 
-        public void Dispose()
-        {
-        }
-
         public async Task<bool> ExistsAsync(string address)
         {
             var client = await GetFileAsync(address);
@@ -80,6 +76,11 @@ namespace Anf.Web
         public Task SaveAsync(ComicDownloadContext context)
         {
             return SaveAsync(context.Page.TargetUrl, context.SourceStream);
+        }
+
+        public virtual void Dispose()
+        {
+            GC.SuppressFinalize(this);
         }
     }
 }

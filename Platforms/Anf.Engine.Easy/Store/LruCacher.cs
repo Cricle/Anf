@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 
 namespace Anf.Easy.Store
@@ -63,18 +64,19 @@ namespace Anf.Easy.Store
         {
             if (caches.ContainsKey(key))
             {
+                bool ok = false;
                 lock (locker)
                 {
                     var val = caches[key];
                     linkedList.Remove(val);
                     value = val.Value.Value;
-                    var ok= caches.Remove(key);
-                    if (ok)
-                    {
-                        Removed?.Invoke(key, value);
-                    }
-                    return ok;
+                    ok= caches.Remove(key);
                 }
+                if (ok)
+                {
+                    Removed?.Invoke(key, value);
+                }
+                return ok;
             }
             value = default;
             return false;
@@ -133,9 +135,9 @@ namespace Anf.Easy.Store
                 return caches.ContainsKey(key);
             }
         }
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private void UnsafeAdd(TKey key, TValue value)
         {
-
             if (caches.ContainsKey(key))
             {
                 var cacheEntity = caches[key];

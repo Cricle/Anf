@@ -30,32 +30,5 @@ namespace Quartz
             }
             return default;
         }
-        /// <summary>
-        /// 从任务数据图中获取类型<see cref="IServiceProvider"/>
-        /// </summary>
-        /// <param name="map">任务数据图</param>
-        /// <returns></returns>
-        public static IServiceProvider GetServiceProvider(this JobDataMap map)
-        {
-            return map.GetAs<IServiceProvider>(QuartzConst.ServiceProviderKey);
-        }
-        /// <summary>
-        /// 从任务数据图中获取类型<see cref="IServiceScopeFactory"/>
-        /// </summary>
-        /// <param name="map">任务数据图</param>
-        /// <returns></returns>
-        public static IServiceScopeFactory GetServiceScopeFactory(this JobDataMap map)
-        {
-            return map.GetAs<IServiceScopeFactory>(QuartzConst.ServiceScopeFactoryKey);
-        }
-        /// <summary>
-        /// 从任务数据图中获取类型<see cref="IScheduler"/>
-        /// </summary>
-        /// <param name="map">任务数据图</param>
-        /// <returns></returns>
-        public static IScheduler GetScheduler(this JobDataMap map)
-        {
-            return map.GetAs<IScheduler>(QuartzConst.SchedulerKey);
-        }
     }
 }

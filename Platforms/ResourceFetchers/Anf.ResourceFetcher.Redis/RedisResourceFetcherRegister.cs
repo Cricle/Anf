@@ -1,14 +1,11 @@
-﻿using Anf.ResourceFetcher.Fetchers;
-using Anf.ResourceFetcher.Redis;
+﻿using Anf.ResourceFetcher.Redis;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RedLockNet;
 using RedLockNet.SERedis;
 using RedLockNet.SERedis.Configuration;
 using StackExchange.Redis;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Anf.ResourceFetcher
 {

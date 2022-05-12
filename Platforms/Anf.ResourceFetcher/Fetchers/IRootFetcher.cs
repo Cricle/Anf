@@ -13,7 +13,7 @@ namespace Anf.ResourceFetcher.Fetchers
         Task<WithPageChapter[]> FetchChaptersAsync(FetchChapterIdentity[] identities);
         Task<AnfComicEntityTruck[]> FetchEntitysAsync(FetchChapterIdentity[] identities);
     }
-    public interface IRootFetcher : IRootSingleFetcher,IBatchResourceFetcher
+    public interface IRootFetcher : IRootSingleFetcher, IBatchResourceFetcher
     {
 
     }

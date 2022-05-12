@@ -70,7 +70,7 @@
     <Folder Include="Assets\" />
     <Folder Include="Styles\" />
   </ItemGroup>
-  <ItemGroup Condition="'$(UsingNetFramework)' == 'true' and '$(Configuration)' == 'Release'">
+  <ItemGroup Condition="'$(UsingNetFramework)' == 'true'">
     <PackageReference Include="Microsoft.DotNet.Framework.NativeImageCompiler" Version="1.0.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

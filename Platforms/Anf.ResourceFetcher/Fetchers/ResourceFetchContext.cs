@@ -1,4 +1,4 @@
-﻿using Anf.ChannelModel.KeyGenerator;
+﻿using SecurityLogin;
 using System;
 using System.Threading.Tasks;
 
@@ -16,7 +16,7 @@ namespace Anf.ResourceFetcher.Fetchers
         private bool isFromCache;
         private bool requireReloop;
 
-        public ResourceFetchContext(IResourceLockerFactory resourceLockerFactory, 
+        public ResourceFetchContext(IResourceLockerFactory resourceLockerFactory,
             string url,
             ISingleResourceFetcher requireReloopFetcher,
             ISingleResourceFinder root,
@@ -52,7 +52,7 @@ namespace Anf.ResourceFetcher.Fetchers
             {
                 throw new NotSupportedException("The IResourceLockerFactory is not provided, the function is not support");
             }
-            var key = RedisKeyGenerator.Concat(FetckKey, part, Url);
+            var key = KeyGenerator.Concat(FetckKey, part, Url);
             return resourceLockerFactory.CreateLockerAsync(key);
         }
         public void SetRequireReloop()
@@ -62,7 +62,7 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public IResourceFetchContext Copy(string url)
         {
-            return new ResourceFetchContext(resourceLockerFactory, url, RequireReloopFetcher, Root,EntityUrl);
+            return new ResourceFetchContext(resourceLockerFactory, url, RequireReloopFetcher, Root, EntityUrl);
         }
 
         public void SetIsCache()

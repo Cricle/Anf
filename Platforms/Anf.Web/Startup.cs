@@ -27,9 +27,7 @@ using Quartz;
 using Anf.Web.Jobs;
 using System.Linq;
 using Microsoft.Extensions.Azure;
-using Azure.Storage.Queues;
 using Azure.Storage.Blobs;
-using Azure.Core.Extensions;
 
 namespace Anf.Web
 {
@@ -48,10 +46,10 @@ namespace Anf.Web
             AppEngine.Reset(services);
             AppEngine.AddServices(NetworkAdapterTypes.HttpClient);
             //var store = FileStoreService.FromMd5Default(Path.Combine(Environment.CurrentDirectory, XComicConst.CacheFolderName));
-            
+
             services.AddSingleton(provider => new AzureStoreService(
                 provider.GetRequiredService<BlobServiceClient>(), MD5AddressToFileNameProvider.Instance, 512));
-            services.AddSingleton<IComicSaver>(provider=>provider.GetRequiredService<AzureStoreService>());
+            services.AddSingleton<IComicSaver>(provider => provider.GetRequiredService<AzureStoreService>());
             services.AddSingleton<IStoreService>(provider => provider.GetRequiredService<AzureStoreService>());
             services.AddSingleton<IResourceFactoryCreator<Stream>, WebResourceFactoryCreator>();
             services.AddSingleton<ProposalEngine>();
@@ -66,7 +64,7 @@ namespace Anf.Web
             });
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTSCONNECTIONSTRING"]);
             services.AddSignalR()
-                .AddAzureSignalR(opt=> 
+                .AddAzureSignalR(opt =>
                 {
                     opt.ConnectionString = Configuration["ConnectionStrings:Signalr"];
                 });
@@ -75,18 +73,18 @@ namespace Anf.Web
                 var config = x.GetRequiredService<IConfiguration>();
                 y.UseSqlServer(config["ConnectionStrings:anfdb"]);
             }, optionsLifetime: ServiceLifetime.Singleton)
-            .AddDbContextPool<AnfDbContext>((x,y)=> 
+            .AddDbContextPool<AnfDbContext>((x, y) =>
             {
                 var config = x.GetRequiredService<IConfiguration>();
                 y.UseSqlServer(config["ConnectionStrings:anfdb"]);
-            }).AddIdentity<AnfUser,AnfRole>(x=> 
-            {
-                x.Password.RequireDigit = false;
-                x.Password.RequiredUniqueChars = 0;
-                x.Password.RequireLowercase = false;
-                x.Password.RequireNonAlphanumeric = false;
-                x.Password.RequireUppercase = false;
-            })
+            }).AddIdentity<AnfUser, AnfRole>(x =>
+             {
+                 x.Password.RequireDigit = false;
+                 x.Password.RequiredUniqueChars = 0;
+                 x.Password.RequireLowercase = false;
+                 x.Password.RequireNonAlphanumeric = false;
+                 x.Password.RequireUppercase = false;
+             })
             .AddEntityFrameworkStores<AnfDbContext>();
             services.AddSingleton<IDistributedCache, RedisCache>();
             services.AddOptions<RedisCacheOptions>()
@@ -94,7 +92,7 @@ namespace Anf.Web
             services.AddResponseCompression();
             services.AddScoped<UserService>();
             services.AddScoped<UserIdentityService>();
-            services.AddSwaggerGen(c=> 
+            services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("Anf", new OpenApiInfo
                 {
@@ -109,7 +107,7 @@ namespace Anf.Web
             });
             services.AddMemoryCache();
             services.AddAuthorization();
-            services.AddAuthentication(options => 
+            services.AddAuthentication(options =>
             {
                 options.AddScheme<AnfAuthenticationHandler>(AnfAuthenticationHandler.SchemeName, "default scheme");
                 options.DefaultAuthenticateScheme = AnfAuthenticationHandler.SchemeName;
@@ -136,28 +134,25 @@ namespace Anf.Web
             services.AddScoped<IDbContextTransfer, AnfDbContextTransfer>();
             services.AddRedis();
             services.AddScoped<ReadingManager>();
-            AddQuartzAsync(services).GetAwaiter().GetResult();
+            AddQuartz(services);
             services.AddAzureClients(builder =>
             {
                 builder.AddBlobServiceClient(Configuration["Azure:Store:Blob:blob"], preferMsi: true);
                 builder.AddQueueServiceClient(Configuration["Azure:Store:Blob:queue"], preferMsi: true);
             });
+            services.AddNormalSecurityService();
         }
-        private async Task AddQuartzAsync(IServiceCollection services)
+        private void AddQuartz(IServiceCollection services)
         {
             services.AddScoped<StoreBookshelfJob>();
             services.AddScoped<SaveRankJob>();
 
-            var factory = new StdSchedulerFactory();
-            var schedule =await factory.GetScheduler();
-            await schedule.Start();
-            services.AddSingleton<ISchedulerFactory>(factory);
-            services.AddSingleton<ISingletonJobFactory>(x=> 
+            services.AddQuartz(x =>
             {
-                var fc = x.GetRequiredService<IServiceScopeFactory>();
-                var w = x.GetRequiredService<ISchedulerFactory>();
-                return new SingletonJobFactory(fc,w);
+                x.UseMicrosoftDependencyInjectionJobFactory();
             });
+            services.AddQuartzServer();
+            services.AddQuartzHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -218,7 +213,7 @@ namespace Anf.Web
             app.ApplicationServices.UseKnowEngines();
             var eng = app.ApplicationServices.GetComicEngine();
             var tx = eng.FirstOrDefault(x => x is TencentComicSourceCondition);
-            if (tx!=null)
+            if (tx != null)
             {
                 eng.Remove(tx);
             }
@@ -236,13 +231,14 @@ namespace Anf.Web
         {
             using (scope)
             {
-                var f = scope.ServiceProvider.GetRequiredService<ISingletonJobFactory>();
+
+                var scheduler = scope.ServiceProvider.GetRequiredService<IScheduler>();
 
                 var now = DateTime.Now;
                 async Task ScheduleSaveRankeAsync(RankLevels level)
                 {
                     var jobIdentity = JobBuilder.Create<SaveRankJob>()
-                        .WithIdentity(nameof(SaveRankJob)+ level.ToString())
+                        .WithIdentity(nameof(SaveRankJob) + level.ToString())
                         .RequestRecovery()
                         .Build();
                     TimeSpan rep = default;
@@ -255,7 +251,7 @@ namespace Anf.Web
                     else if (level == RankLevels.Day)
                     {
                         rep = TimeSpan.FromDays(1);
-                        startTime = new DateTime(now.Year, now.Month, now.Day, 0, 30, 0).AddDays(1);;
+                        startTime = new DateTime(now.Year, now.Month, now.Day, 0, 30, 0).AddDays(1); ;
                     }
                     else if (level == RankLevels.Month)
                     {
@@ -270,7 +266,6 @@ namespace Anf.Web
                             b.WithInterval(rep).RepeatForever();
                         })
                         .Build();
-                    var scheduler = await f.GetSchedulerAsync();
                     var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
                 }
 
@@ -282,7 +277,7 @@ namespace Anf.Web
 
                 var syncInterval = config.GetValue<int>("BookshelfSync:IntervalS");
 
-                if (syncInterval<=0)
+                if (syncInterval <= 0)
                 {
                     syncInterval = 60 * 5;
                 }
@@ -298,33 +293,7 @@ namespace Anf.Web
                         b.WithIntervalInSeconds(syncInterval).RepeatForever();
                     })
                     .Build();
-                var scheduler = await f.GetSchedulerAsync();
                 var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
-            }
-        }
-    }
-    internal static class StartupExtensions
-    {
-        public static IAzureClientBuilder<BlobServiceClient, BlobClientOptions> AddBlobServiceClient(this AzureClientFactoryBuilder builder, string serviceUriOrConnectionString, bool preferMsi)
-        {
-            if (preferMsi && Uri.TryCreate(serviceUriOrConnectionString, UriKind.Absolute, out Uri serviceUri))
-            {
-                return builder.AddBlobServiceClient(serviceUri);
-            }
-            else
-            {
-                return builder.AddBlobServiceClient(serviceUriOrConnectionString);
-            }
-        }
-        public static IAzureClientBuilder<QueueServiceClient, QueueClientOptions> AddQueueServiceClient(this AzureClientFactoryBuilder builder, string serviceUriOrConnectionString, bool preferMsi)
-        {
-            if (preferMsi && Uri.TryCreate(serviceUriOrConnectionString, UriKind.Absolute, out Uri serviceUri))
-            {
-                return builder.AddQueueServiceClient(serviceUri);
-            }
-            else
-            {
-                return builder.AddQueueServiceClient(serviceUriOrConnectionString);
             }
         }
     }

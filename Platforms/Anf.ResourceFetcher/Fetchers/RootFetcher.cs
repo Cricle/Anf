@@ -34,7 +34,7 @@ namespace Anf.ResourceFetcher.Fetchers
             var requiredReloop = ctx.Where(x => x.RequireReloop).ToArray();
             if (requiredReloop.Length != 0)
             {
-                var thenCtx = requiredReloop.Select(x =>new FetchChapterIdentity(x.Url,x.EntityUrl)).ToArray();
+                var thenCtx = requiredReloop.Select(x => new FetchChapterIdentity(x.Url, x.EntityUrl)).ToArray();
                 var thenRes = await FetchChaptersAsync(thenCtx);
                 return res.Concat(thenRes).ToArray();
             }

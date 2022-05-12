@@ -1,6 +1,6 @@
-﻿using Anf.ChannelModel.KeyGenerator;
-using Microsoft.Extensions.Options;
+﻿using Microsoft.Extensions.Options;
 using RedLockNet;
+using SecurityLogin;
 using System;
 using System.Threading.Tasks;
 
@@ -17,16 +17,16 @@ namespace Anf.ResourceFetcher.Redis
             this.resourceLockOptions = resourceLockOptions;
         }
 
-        private TimeSpan LockTime => resourceLockOptions?.Value?.ResourceLockTimeout ?? RedisKeyGenerator.RedKeyOutTime;
+        private TimeSpan LockTime => resourceLockOptions?.Value?.ResourceLockTimeout ?? TimeSpan.FromSeconds(5);
         public IResourceLocker CreateLocker(string resource)
         {
-            var locker= distributedLockFactory.CreateLock(resource, LockTime);
+            var locker = distributedLockFactory.CreateLock(resource, LockTime);
             return new ResourceLocker(locker);
         }
 
         public async Task<IResourceLocker> CreateLockerAsync(string resource)
         {
-            var locker =await distributedLockFactory.CreateLockAsync(resource, LockTime);
+            var locker = await distributedLockFactory.CreateLockAsync(resource, LockTime);
             return new ResourceLocker(locker);
         }
     }

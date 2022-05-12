@@ -20,32 +20,19 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.1" />
-    <PackageReference Include="Azure.Identity" Version="1.5.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.3.0" />
-    <PackageReference Include="Azure.Storage.Files.Shares" Version="12.1.0" />
-    <PackageReference Include="Azure.Storage.Queues" Version="12.2.0" />
+    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />
+    <PackageReference Include="Azure.Storage.Queues" Version="12.10.0" />
     <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.SignalR" Version="1.1.0" />
-    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.2" />
-    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.15.1" />
-    <PackageReference Include="Microsoft.Bcl.AsyncInterfaces" Version="6.0.0" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.2" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="6.0.2">
-      <PrivateAssets>all</PrivateAssets>
-      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-    </PackageReference>
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.0.0" />
-    <PackageReference Include="MongoDB.Driver" Version="2.14.1" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.2" />
-    <PackageReference Include="RedLock.net" Version="2.3.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.2.3" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.2.3" />
-    <PackageReference Include="RedLock.net" Version="2.3.1" />
-    <PackageReference Include="Quartz" Version="3.3.3" />
-<PackageReference Include="Microsoft.DotNet.ILCompiler" Version="7.0.0-preview.3.22175.4" />
+    <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.5" />
+    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.17.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />
+    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.5" />
+    <PackageReference Include="Quartz.AspNetCore" Version="3.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.1" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.3.1" />
+    <PackageReference Include="Quartz" Version="3.4.0" />
   </ItemGroup>
 
   <ItemGroup>
@@ -96,7 +83,7 @@
   </Target>
   <ItemGroup>
     <Compile Include="..\Anf.Platform\AppEngine.cs" />
-    <Compile Include="..\Anf.Platform\XComicConst.cs" />
+    <!--<Compile Include="..\Anf.Platform\XComicConst.cs" />-->
     <Compile Include="..\Shareds\AnfDbContextTransfer.cs"></Compile>
   </ItemGroup>
 </Project>

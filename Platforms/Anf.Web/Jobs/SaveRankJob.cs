@@ -10,6 +10,10 @@ namespace Anf.Web.Jobs
 {
     internal class SaveRankJob : ServicingJobBase
     {
+        public SaveRankJob(IServiceProvider provider) : base(provider)
+        {
+        }
+
         protected override Task OnExecute(IJobExecutionContext context, IServiceProvider serviceProvider)
         {
             var level = context.MergedJobDataMap.GetAs<RankLevels>(nameof(RankLevels));

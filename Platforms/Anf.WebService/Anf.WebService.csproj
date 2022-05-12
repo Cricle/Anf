@@ -3,12 +3,17 @@
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RedLock.net" Version="2.3.1" />
-    <PackageReference Include="StackExchange.Redis" Version="2.2.88" />
+    <PackageReference Include="SecurityLogin.Normal" Version="1.1.5" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.15" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />
     <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="3.1.36" />
   </ItemGroup>
@@ -28,10 +33,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
-    <ProjectReference Include="..\Anf.ResourceFetcher\Anf.ResourceFetcher.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
   </ItemGroup>
 
 </Project>

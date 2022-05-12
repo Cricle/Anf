@@ -1,10 +1,5 @@
-﻿using Anf.ChannelModel.Entity;
-using Anf.ResourceFetcher.Fetchers;
-using Microsoft.Extensions.Configuration;
+﻿using Anf.ResourceFetcher.Fetchers;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Anf.ResourceFetcher
 {

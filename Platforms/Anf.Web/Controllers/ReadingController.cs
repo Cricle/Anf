@@ -5,13 +5,13 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
-using Anf.ChannelModel.KeyGenerator;
 using Anf.ChannelModel.Mongo;
 using Anf.Web.Models;
 using Anf.ChannelModel.Results;
 using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Anf.Easy.Store;
+using SecurityLogin;
 
 namespace Anf.Web.Controllers
 {
@@ -76,7 +76,7 @@ namespace Anf.Web.Controllers
                     prov = searchEngine[0];
                 }
             }
-            var key = RedisKeyGenerator.Concat(SearchKey, provider, keyword);
+            var key = KeyGenerator.Concat(SearchKey, provider, keyword);
             var ds = memoryCache.Get(key);
             if (ds != null)
             {
@@ -126,7 +126,7 @@ namespace Anf.Web.Controllers
             {
                 return BadRequest();
             }
-            var key = RedisKeyGenerator.Concat(ChapterKey, url);
+            var key = KeyGenerator.Concat(ChapterKey, url);
             var res = memoryCache.Get<WithPageChapter>(key);
             if (res != null)
             {
@@ -152,7 +152,7 @@ namespace Anf.Web.Controllers
             {
                 return BadRequest();
             }
-            var key = RedisKeyGenerator.Concat(EntityKey, url);
+            var key = KeyGenerator.Concat(EntityKey, url);
             var res = memoryCache.Get<AnfComicEntityTruck>(key);
             if (res != null)
             {

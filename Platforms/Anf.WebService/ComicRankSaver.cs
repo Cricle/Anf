@@ -2,9 +2,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Anf.WebService
@@ -38,8 +36,8 @@ namespace Anf.WebService
             }
             return Task.FromResult<AnfComicRank[]>(null);
         }
-        public async Task<AnfComicRank[]> SaveAsync<T>(RankLevels level,DbSet<T> rankSet)
-            where T: AnfComicRank,new()
+        public async Task<AnfComicRank[]> SaveAsync<T>(RankLevels level, DbSet<T> rankSet)
+            where T : AnfComicRank, new()
         {
             var datas = await comicRankService.RangeAsync(rankOptions.Value.SaveRankCount);
             if (datas.Length == 0)
@@ -47,9 +45,9 @@ namespace Anf.WebService
                 return Array.Empty<AnfComicRank>();
             }
             var time = DateTime.Now;
-            if (level== RankLevels.Hour)
+            if (level == RankLevels.Hour)
             {
-                time = new DateTime(time.Year, time.Month, time.Day, time.Hour,0,0);
+                time = new DateTime(time.Year, time.Month, time.Day, time.Hour, 0, 0);
             }
             else if (level == RankLevels.Day)
             {

@@ -13,14 +13,16 @@ namespace Anf.Web.Jobs
     /// </summary>
     public abstract class ServicingJobBase : IJob
     {
+        private readonly IServiceProvider provider;
+
+        protected ServicingJobBase(IServiceProvider provider)
+        {
+            this.provider = provider;
+        }
+
         /// <inheritdoc/>
         public async Task Execute(IJobExecutionContext context)
         {
-            var provider = context.MergedJobDataMap.GetServiceProvider();
-            if (provider == null)
-            {
-                throw new InvalidOperationException("MergedJobDataMap has not containes ServiceProvider object!");
-            }
             try
             {
                 var canExecute = await CanExecuteAsync(context, provider);

@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
-namespace Anf.ChannelModel
+﻿namespace Anf.ChannelModel
 {
     public class UserSnapshot
     {

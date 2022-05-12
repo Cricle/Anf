@@ -1,7 +1,5 @@
 ﻿using RedLockNet;
 using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Anf.ResourceFetcher.Redis
 {

@@ -1,11 +1,10 @@
 ﻿using Anf.ChannelModel.Entity;
-using Anf.ChannelModel.KeyGenerator;
 using Microsoft.Extensions.Options;
+using SecurityLogin;
 using StackExchange.Redis;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Anf.WebService
@@ -32,13 +31,13 @@ namespace Anf.WebService
 
         public async Task<AnfBookshelfItem> GetAsync(long bookshelfId, string address)
         {
-            var key = RedisKeyGenerator.Concat(ReadingKey, bookshelfId, address);
+            var key = KeyGenerator.Concat(ReadingKey, bookshelfId, address);
             var entities = await database.HashGetAllAsync(key);
             return ToBookselfItem(entities);
         }
         public async Task<AnfBookshelfItem[]> BatchGetAsync(ReadingIdentity[] identities)
         {
-            var keys = identities.Select(x => RedisKeyGenerator.Concat(ReadingKey, x.BookshelfId, x.Address));
+            var keys = identities.Select(x => KeyGenerator.Concat(ReadingKey, x.BookshelfId, x.Address));
             var batch = database.CreateBatch();
             var tasks = keys.Select(x => batch.HashGetAllAsync(x)).ToArray();
             batch.Execute();
@@ -133,13 +132,13 @@ namespace Anf.WebService
         }
         public async Task RemoveAsync(long bookshelfId, string address)
         {
-            var key = RedisKeyGenerator.Concat(ReadingKey, bookshelfId, address);
-            await database.SetRemoveAsync(ReadingKeysKey,key);
+            var key = KeyGenerator.Concat(ReadingKey, bookshelfId, address);
+            await database.SetRemoveAsync(ReadingKeysKey, key);
             await database.KeyDeleteAsync(key);
         }
-        public async Task SetAsync(long userId, long bookshelfId, string address, int? chapter, int? page,bool? like)
+        public async Task SetAsync(long userId, long bookshelfId, string address, int? chapter, int? page, bool? like)
         {
-            var key = RedisKeyGenerator.Concat(ReadingKey, bookshelfId, address);
+            var key = KeyGenerator.Concat(ReadingKey, bookshelfId, address);
             var exists = await database.KeyExistsAsync(key);
             var now = DateTime.Now;
             if (exists)
@@ -153,7 +152,7 @@ namespace Anf.WebService
                 {
                     page++;
                 }
-                if (like!=null)
+                if (like != null)
                 {
                     page++;
                 }
@@ -170,7 +169,7 @@ namespace Anf.WebService
                 {
                     entity.Add(new HashEntry(nameof(AnfBookshelfItem.ReadPage), page.Value));
                 }
-                if (like!=null)
+                if (like != null)
                 {
                     entity.Add(new HashEntry(nameof(AnfBookshelfItem.Like), like.Value));
                 }
@@ -187,7 +186,7 @@ namespace Anf.WebService
                     UpdateTime = now,
                     BookshelfId = bookshelfId,
                     Like = like ?? false,
-                    UserId= userId
+                    UserId = userId
                 };
                 var hashs = AsEntities(model);
                 await database.HashSetAsync(key, hashs);

@@ -1,12 +1,9 @@
-﻿using Anf.ChannelModel.KeyGenerator;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace Anf.ResourceFetcher.Redis
 {
     public class ResourceLockOptions
     {
-        public TimeSpan ResourceLockTimeout { get; set; } = RedisKeyGenerator.RedKeyOutTime;
+        public TimeSpan ResourceLockTimeout { get; set; } = TimeSpan.FromSeconds(5);
     }
 }

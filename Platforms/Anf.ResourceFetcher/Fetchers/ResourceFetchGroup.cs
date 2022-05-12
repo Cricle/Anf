@@ -1,8 +1,6 @@
 ﻿using Anf.ChannelModel.Mongo;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace Anf.ResourceFetcher.Fetchers
@@ -35,7 +33,7 @@ namespace Anf.ResourceFetcher.Fetchers
             {
                 var c = this[i];
                 var res = await c.FetchChapterAsync(context);
-                if (res !=null)
+                if (res != null)
                 {
                     return res;
                 }

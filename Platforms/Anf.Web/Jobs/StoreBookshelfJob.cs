@@ -10,6 +10,10 @@ namespace Anf.Web.Jobs
 {
     internal class StoreBookshelfJob : ServicingJobBase
     {
+        public StoreBookshelfJob(IServiceProvider provider) : base(provider)
+        {
+        }
+
         protected override Task OnExecute(IJobExecutionContext context, IServiceProvider serviceProvider)
         {
             var ser = serviceProvider.GetRequiredService<BookshelfService>();

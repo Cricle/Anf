@@ -1,10 +1,5 @@
-﻿using StackExchange.Redis;
-using System;
+﻿using System;
 using System.Collections.Concurrent;
-using System.Collections.Generic;
-using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.Json;
 
 namespace StackExchange.Redis
@@ -12,8 +7,8 @@ namespace StackExchange.Redis
     internal static class RedisValueExtensions
     {
         private static readonly ConcurrentDictionary<Type, object> emptyStructs = new ConcurrentDictionary<Type, object>();
-        
-        public static object Get(this RedisValue value,Type type)
+
+        public static object Get(this RedisValue value, Type type)
         {
             if (!value.HasValue || value.IsNull)
             {
@@ -76,7 +71,7 @@ namespace StackExchange.Redis
             }
             return default;
         }
-        private static bool TryParseEnum(Type type,string val,out object res)
+        private static bool TryParseEnum(Type type, string val, out object res)
         {
 #if NETSTANDARD2_0
             try
