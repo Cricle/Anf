@@ -8,7 +8,6 @@ namespace Anf.Easy.Downloading
 {
     public abstract class AsyncDownloadManager : KwSynchronizedCollection<DownloadTask>, IDownloadManager
     {
-
         public static readonly TimeSpan DefaultWaitTime = TimeSpan.FromMilliseconds(200);
 
         protected AsyncDownloadManager()

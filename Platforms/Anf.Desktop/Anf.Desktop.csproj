@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <NgenR2R>true</NgenR2R>
+    <NgenR2R>false</NgenR2R>
     <UseFody>false</UseFody>
     <RenderSystem>D2D</RenderSystem>
     <EnableCache>true</EnableCache>

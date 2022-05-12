@@ -29,6 +29,14 @@ namespace Anf.WebService
 
         public DbSet<AnfMonthComicRank> MonthRanks { get; set; }
 
+#if NET6_0_OR_GREATER&&!COMPILE_EF_TIME
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            base.OnConfiguring(optionsBuilder);
+            optionsBuilder.UseModel(AnfDbContextModel.Instance);
+        }
+#endif
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);

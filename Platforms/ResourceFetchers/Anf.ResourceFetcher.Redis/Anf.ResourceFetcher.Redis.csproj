@@ -2,9 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
+    <Configurations>Debug;Release;CompileModel</Configurations>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="RedLock.net" Version="2.3.1" />
+    <PackageReference Include="RedLock.net" Version="2.3.2" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\Shareds\RedisValueExtensions.cs"></Compile>

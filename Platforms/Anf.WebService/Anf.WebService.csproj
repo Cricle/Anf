@@ -2,15 +2,18 @@
 
   <PropertyGroup>
     <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+    <Configurations>Debug;Release;CompileModel</Configurations>
   </PropertyGroup>
-
-  <ItemGroup>
-    <Compile Remove="Models\**" />
-    <EmbeddedResource Remove="Models\**" />
-    <None Remove="Models\**" />
+  <PropertyGroup Condition="'$(Configuration)'=='CompileModel'">
+    <DefineConstants>$(DefineConstants);COMPILE_EF_TIME</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'!='net6.0'">
+    <Compile Remove="CompiledModels\**" />
+    <EmbeddedResource Remove="CompiledModels\**" />
+    <None Remove="CompiledModels\**" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="RedLock.net" Version="2.3.1" />
+    <PackageReference Include="RedLock.net" Version="2.3.2" />
     <PackageReference Include="SecurityLogin.Normal" Version="1.1.5" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
@@ -23,16 +26,25 @@
     <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="5.13.9" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.2" />
-    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Include="Z.EntityFramework.Plus.EFCore" Version="6.13.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.5" Condition="'$(Configuration)'=='CompileModel'" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Shareds\AnfDbContext.cs"></Compile>
+    <Compile Include="..\Shareds\AnfContextFactory.cs"></Compile>
     <Compile Include="..\Shareds\RedisValueExtensions.cs"></Compile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
   </ItemGroup>
-
+  <Target Name="Compile db model" BeforeTargets="Build" Condition="'$(Configuration)'=='Release'">
+    <Message Importance="high" Text="Now compiling db context"></Message>
+    <Exec Command="builddb.cmd" />
+  </Target>
 </Project>
