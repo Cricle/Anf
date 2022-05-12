@@ -13,6 +13,11 @@ using System.Globalization;
 using System.IO;
 using Anf.KnowEngines;
 using Microsoft.Extensions.DependencyInjection;
+using Windows.UI;
+using Windows.ApplicationModel.Core;
+using Windows.UI.ViewManagement;
+using Anf.Services;
+using Windows.UI.Core;
 
 namespace Anf
 {
@@ -51,6 +56,25 @@ namespace Anf
             this.Suspending += OnSuspending;
 #endif
             Provider = AppEngine.Provider;
+
+        }
+        private void InitWindow()
+        {
+            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
+            var tb = ApplicationView.GetForCurrentView().TitleBar;
+            var navSer = SystemNavigationManager.GetForCurrentView();
+            navSer.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
+            navSer.BackRequested += NavSer_BackRequested;
+            tb.ButtonBackgroundColor = Colors.Transparent;
+        }
+
+        private void NavSer_BackRequested(object sender, BackRequestedEventArgs e)
+        {
+            var ser = Provider.GetRequiredService<UnoRuntime>();
+            if (ser.ContentFrame.CanGoBack)
+            {
+                ser.ContentFrame.GoBack();
+            }
         }
 
         /// <summary>
@@ -108,6 +132,7 @@ namespace Anf
                 // Ensure the current window is active
                 _window.Activate();
             }
+            InitWindow();
         }
 
         /// <summary>

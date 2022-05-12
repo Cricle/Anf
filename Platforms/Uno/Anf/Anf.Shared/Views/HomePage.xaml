@@ -21,7 +21,7 @@
         <conv:StartupTypeBoolConverter x:Key="StartupTypeBoolConverter"/>
         <conv:RevBoolConverter x:Key="RevBoolConverter"></conv:RevBoolConverter>
         <DataTemplate x:Key="CsiDt">
-            <Grid VerticalAlignment="Stretch">
+            <Grid VerticalAlignment="Stretch" HorizontalAlignment="Stretch">
                 <Grid.ContextFlyout>
                     <MenuFlyout>
                         <MenuFlyoutItem Text="详细" Command="{Binding DataContext.SetCurrentCommand,ElementName=HomePg}" CommandParameter="{Binding}"/>
@@ -257,6 +257,11 @@
                         <ItemsWrapGrid Orientation="Horizontal"/>
                     </ItemsPanelTemplate>
                 </ListView.ItemsPanel>
+                <ListView.ItemContainerStyle>
+                    <Style TargetType="ListViewItem">
+                        <Setter Property="Margin" Value="0,0,0,8"/>
+                    </Style>
+                </ListView.ItemContainerStyle>
             </ListView>
         </Grid>
 

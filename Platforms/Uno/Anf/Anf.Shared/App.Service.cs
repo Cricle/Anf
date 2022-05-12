@@ -27,6 +27,7 @@ using Windows.UI.Xaml.Media;
 using Anf.Settings;
 using Windows.UI.Xaml;
 using Windows.Storage;
+using Anf.Views;
 
 namespace Anf
 {
@@ -80,7 +81,10 @@ namespace Anf
             });
 
             AppEngine.Services.AddSingleton<UnoHomeViewModel>();
-            AppEngine.Services.AddSingleton(new AppBarService());
+            var appBarSer = new AppBarService();
+            appBarSer.GetAsDefault()
+                .Lefts.Add(new DefaultControlView());
+            AppEngine.Services.AddSingleton(appBarSer);
             AppEngine.Services.AddSingleton(new UnoTtileService());
         }
         private AnfSettings CreateSettings(IServiceProvider provider)

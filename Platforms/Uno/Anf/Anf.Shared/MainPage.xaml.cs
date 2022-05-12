@@ -15,6 +15,7 @@ using Windows.ApplicationModel.Core;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
 using Windows.UI;
+using Windows.UI.Core;
 using Windows.UI.ViewManagement;
 using Windows.UI.Xaml;
 using Windows.UI.Xaml.Controls;
@@ -39,10 +40,6 @@ namespace Anf
             this.InitializeComponent();
             //Loaded += MainPage_Loaded;
             var appBarSer = AppEngine.Provider.GetRequiredService<AppBarService>();
-            CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = false;
-            //var tb = ApplicationView.GetForCurrentView().TitleBar;
-            //tb.BackgroundColor = Colors.Khaki;
-            //tb.ButtonBackgroundColor = Colors.Transparent;
             AppBarContent.SetBinding(ContentControl.ContentProperty, new Binding
             {
                 Source = appBarSer,
@@ -51,7 +48,7 @@ namespace Anf
             var rt = AppEngine.Provider.GetRequiredService<UnoRuntime>();
             Nv.Content = rt.ContentFrame;
             rt.ContentFrame.Content = new HomePage();
-            //Window.Current.SetTitleBar(AppBarContent);
+            Window.Current.SetTitleBar(AppBarContent);
             //Nv.Content = new ComicView
             //{
             //    DataContext = new UnoComicViewModel(new ComicSnapshot

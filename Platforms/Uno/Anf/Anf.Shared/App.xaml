@@ -10,13 +10,13 @@
                 <XamlControlsResources xmlns="using:Microsoft.UI.Xaml.Controls" />
                 <ResourceDictionary Source="Styles\Generic.xaml"/>
 
-                <ToolkitResources xmlns="using:Uno.Toolkit.UI" />
+                <!--<ToolkitResources xmlns="using:Uno.Toolkit.UI" />-->
 
-                <MaterialColors xmlns="using:Uno.Material" />
+                <!--<MaterialColors xmlns="using:Uno.Material" />
                 
                 <MaterialResources xmlns="using:Uno.Material" />
 
-                <MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />
+                <MaterialToolkitResources xmlns="using:Uno.Toolkit.UI.Material" />-->
 
             </ResourceDictionary.MergedDictionaries>
         </ResourceDictionary>

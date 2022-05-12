@@ -10,7 +10,7 @@
     Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
     <Grid>
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="38"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <ContentControl x:Name="AppBarContent"
@@ -18,14 +18,8 @@
             
         </ContentControl>
         <Grid Grid.Row="1">
-            <NavigationView x:Name="Nv" IsPaneOpen="False" PaneDisplayMode="LeftCompact">
-                <NavigationView.MenuItems>
-                    <NavigationViewItem Content="aaa"></NavigationViewItem>
-                    <NavigationViewItem Content="aaa"></NavigationViewItem>
-                    <NavigationViewItem Content="aaa"></NavigationViewItem>
-                    <NavigationViewItem Content="aaa"></NavigationViewItem>
-                </NavigationView.MenuItems>
-            </NavigationView>
+            <ContentControl x:Name="Nv" HorizontalContentAlignment="Stretch" VerticalContentAlignment="Stretch">
+            </ContentControl>
             <Border x:Name="WraperExcetionBorder" VerticalAlignment="Stretch"
                     HorizontalAlignment="Stretch"
                     Visibility="Collapsed">

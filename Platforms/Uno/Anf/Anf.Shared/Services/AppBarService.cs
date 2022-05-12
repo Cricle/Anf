@@ -43,6 +43,7 @@ namespace Anf.Services
             Rights = new ObservableCollection<object>();
 
             var root = new Grid { Background=new SolidColorBrush(Colors.Transparent)};
+            root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(48, GridUnitType.Pixel) });
             root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
             root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
@@ -50,23 +51,23 @@ namespace Anf.Services
             root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
 
             var cc = CreateContent(nameof(Icon));
-            Grid.SetColumn(cc, 0);
-            root.Children.Add(cc);
-
-            cc = CreateContent(nameof(Title));
             Grid.SetColumn(cc, 1);
             root.Children.Add(cc);
 
+            cc = CreateContent(nameof(Title));
+            Grid.SetColumn(cc, 2);
+            root.Children.Add(cc);
+
             var ics = CreateItems(nameof(Lefts));
-            Grid.SetColumn(ics, 2);
+            Grid.SetColumn(ics, 3);
             root.Children.Add(ics);
 
             cc = CreateContent(nameof(Search));
-            Grid.SetColumn(cc, 3);
+            Grid.SetColumn(cc, 4);
             root.Children.Add(cc);
 
             ics = CreateItems(nameof(Rights));
-            Grid.SetColumn(ics, 4);
+            Grid.SetColumn(ics, 5);
             root.Children.Add(ics);
 
             Root = root;
