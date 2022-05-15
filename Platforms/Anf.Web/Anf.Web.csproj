@@ -12,7 +12,7 @@
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
     <UserSecretsId>5b620487-ab61-4117-a668-3eba5a05b15e</UserSecretsId>
-    <ApplicationInsightsResourceId>/subscriptions/99a95d96-c9ef-433f-bffd-0dfc7d373245/resourcegroups/Anf/providers/Microsoft.Insights/components/Anf.Web</ApplicationInsightsResourceId>
+    <ApplicationInsightsResourceId>/subscriptions/99a95d96-c9ef-433f-bffd-0dfc7d373245/resourceGroups/Anf/providers/microsoft.insights/components/anfwebc</ApplicationInsightsResourceId>
     <Configurations>Debug;Release;CompileModel</Configurations>
   </PropertyGroup>
 
@@ -29,6 +29,10 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.5" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.17.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.5" />
     <PackageReference Include="Quartz.AspNetCore" Version="3.4.0" />

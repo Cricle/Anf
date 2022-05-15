@@ -217,12 +217,12 @@ namespace Anf.Web
             {
                 eng.Remove(tx);
             }
-            //using (var s = app.ApplicationServices.GetServiceScope())
-            //{
-            //    var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();
-            //    db.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
-            //    db.Database.EnsureCreated();
-            //}
+            using (var s = app.ApplicationServices.GetServiceScope())
+            {
+                var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();
+                db.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+                db.Database.EnsureCreated();
+            }
             var scope = app.ApplicationServices.CreateScope();
             //_ = AnfMongoDbExtensions.InitMongoAsync(scope);
             InitJobAsync(scope).GetAwaiter().GetResult();
