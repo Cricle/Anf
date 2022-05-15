@@ -31,7 +31,7 @@ namespace Anf.Test
             var arr = visitor.ToArray();
             var count = arr.Count();
             Assert.AreEqual(obj.Length, count);
-            Assert.AreEqual("1", arr.First().ToString());
+            Assert.AreEqual("1", arr.First().Value.ToString());
         }
         [TestMethod]
         public void GivenNullString_MustParsed()

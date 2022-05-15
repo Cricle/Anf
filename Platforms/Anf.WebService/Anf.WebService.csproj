@@ -7,11 +7,6 @@
   <PropertyGroup Condition="'$(Configuration)'=='CompileModel'">
     <DefineConstants>$(DefineConstants);COMPILE_EF_TIME</DefineConstants>
   </PropertyGroup>
-  <ItemGroup Condition="'$(TargetFramework)'!='net6.0'">
-    <Compile Remove="CompiledModels\**" />
-    <EmbeddedResource Remove="CompiledModels\**" />
-    <None Remove="CompiledModels\**" />
-  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RedLock.net" Version="2.3.2" />
     <PackageReference Include="SecurityLogin.Normal" Version="1.1.5" />
@@ -43,7 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
   </ItemGroup>
-  <Target Name="Compile db model" BeforeTargets="Build" Condition="'$(Configuration)'=='Release'">
+  <Target Name="Compile db model" BeforeTargets="Build;Publish" Condition="'$(Configuration)'=='Release'">
     <Message Importance="high" Text="Now compiling db context"></Message>
     <Exec Command="builddb.cmd" />
   </Target>

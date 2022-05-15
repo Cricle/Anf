@@ -72,10 +72,22 @@ namespace Anf
 
         public IEnumerator<KeyValuePair<string, IJsonVisitor>> GetEnumerator()
         {
-            foreach (var item in doc.EnumerateObject())
+            if (doc.ValueKind == JsonValueKind.Array)
             {
-                yield return new KeyValuePair<string, IJsonVisitor>(
-                    item.Name, new JsonVisitor(item.Value, docx));
+                var i = 0;
+                foreach (var item in doc.EnumerateArray())
+                {
+                    yield return new KeyValuePair<string, IJsonVisitor>(i++.ToString(),
+                        new JsonVisitor(item));
+                }
+            }
+            else
+            {
+                foreach (var item in doc.EnumerateObject())
+                {
+                    yield return new KeyValuePair<string, IJsonVisitor>(
+                        item.Name, new JsonVisitor(item.Value, docx));
+                }
             }
         }
 
@@ -175,19 +187,31 @@ namespace Anf
         public IEnumerator<KeyValuePair<string, IJsonVisitor>> GetEnumerator()
         {
             ThrowIfNullValue();
-            foreach (var item in @object)
+            if (@object.Type == JTokenType.Array)
             {
-                var visitor = new JsonVisitor(item);
-                var name = string.Empty;
-                IJsonVisitor pvisitor = visitor;
-                if (item is JProperty prop)
+                var i = 0;
+                foreach (var item in (JArray)@object)
                 {
-                    name = prop.Name;
-                    pvisitor = new JsonVisitor(prop.Value);
+                    yield return new KeyValuePair<string, IJsonVisitor>(i++.ToString(),
+                        new JsonVisitor(item));
                 }
-                yield return new KeyValuePair<string, IJsonVisitor>(
-                    name, pvisitor);
+            }
+            else
+            {
+                foreach (var item in @object)
+                {
+                    var visitor = new JsonVisitor(item);
+                    var name = string.Empty;
+                    IJsonVisitor pvisitor = visitor;
+                    if (item is JProperty prop)
+                    {
+                        name = prop.Name;
+                        pvisitor = new JsonVisitor(prop.Value);
+                    }
+                    yield return new KeyValuePair<string, IJsonVisitor>(
+                        name, pvisitor);
 
+                }
             }
         }
 
