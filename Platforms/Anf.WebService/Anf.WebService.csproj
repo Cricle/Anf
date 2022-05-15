@@ -38,7 +38,7 @@
   <ItemGroup>
     <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
   </ItemGroup>
-  <Target Name="Compile db model" BeforeTargets="Build;Publish" Condition="'$(Configuration)'=='Release'">
+  <Target Name="Compile db model" BeforeTargets="Build;Publish" Condition="'$(Configuration)'=='CompileModel'">
     <Message Importance="high" Text="Now compiling db context"></Message>
     <Exec Command="builddb.cmd" />
   </Target>
