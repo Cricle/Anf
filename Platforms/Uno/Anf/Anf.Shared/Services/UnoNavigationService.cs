@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using Windows.UI.Xaml.Controls;
+using Windows.UI.Xaml.Media.Animation;
+using Windows.UI.Xaml.Navigation;
 
 namespace Anf.Services
 {
@@ -34,13 +36,18 @@ namespace Anf.Services
                 runtime.ContentFrame.GoForward();
             }
         }
-        public void Navigate(Type sourcePageType,object paramter)
+        private Type oldPageType;
+        private object oldParamter;
+        public void Navigate(Type sourcePageType, object paramter)
         {
+            if (oldPageType != null)
+            {
+                runtime.ContentFrame.BackStack
+                    .Add(new PageStackEntry(oldPageType, oldParamter, new SlideNavigationTransitionInfo()));
+            }
             runtime.ContentFrame.Navigate(sourcePageType, paramter);
-        }
-        public void Navigate(object content)
-        {
-            runtime.ContentFrame.Content = content;
+            oldPageType = sourcePageType;
+            oldParamter = paramter;
         }
         public void GoSource(ComicSourceInfo info)
         {
@@ -48,8 +55,7 @@ namespace Anf.Services
         }
         public void GoSource(string address)
         {
-            var view = new VisitingView(address);
-            Navigate(view);
+            Navigate(typeof(VisitingView), address);
         }
     }
 }

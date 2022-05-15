@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Anf.Platform.Models.Impl;
+using Anf.Services;
+using Anf.ViewModels;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -25,6 +28,14 @@ namespace Anf.Views
         public ComicView()
         {
             this.InitializeComponent();
+        }
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter is WithImageComicSnapshotInfo<ImageBox, ImageBox> sn)
+            {
+                var vm = new UnoComicViewModel(sn.Snapshot, sn.LogoImage?.Image);
+                DataContext = vm;
+            }
         }
     }
 }

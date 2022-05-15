@@ -38,10 +38,11 @@ namespace Anf.ViewModels
         {
             if (info is WithImageComicSnapshotInfo<ImageBox, ImageBox> sn)
             {
-                var vm = new UnoComicViewModel(info.Snapshot, sn.LogoImage.Image);
                 var navSer = AppEngine.GetRequiredService<UnoNavigationService>();
 
-                navSer.Navigate(new ComicView { DataContext=vm});
+                navSer.Navigate(typeof(ComicView), sn);
+                //var vm = new UnoComicViewModel(info.Snapshot, sn.LogoImage.Image);
+                //navSer.Navigate(new ComicView { DataContext = vm });
             }
         }
 

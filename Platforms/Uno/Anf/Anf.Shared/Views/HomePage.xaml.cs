@@ -27,7 +27,12 @@ namespace Anf.Views
         public HomePage()
         {
             this.InitializeComponent();
-            DataContext = AppEngine.GetRequiredService<UnoHomeViewModel>();
+        }
+
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            DataContext = e.Parameter as UnoHomeViewModel ??
+                AppEngine.GetRequiredService<UnoHomeViewModel>();
         }
     }
 }

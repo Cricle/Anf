@@ -1,4 +1,5 @@
-﻿using Microsoft.Toolkit.Mvvm.ComponentModel;
+﻿using Anf.Views;
+using Microsoft.Toolkit.Mvvm.ComponentModel;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -17,7 +18,7 @@ namespace Anf.Services
     }
     public class AppBarService : ObservableObject
     {
-        private IAppBar appBar = new DefaultAppBar();
+        private IAppBar appBar = new DefaultAppBarView().AppBar;
 
         public IAppBar AppBar
         {
@@ -37,60 +38,11 @@ namespace Anf.Services
         private object title;
         private object search;
 
-        public DefaultAppBar()
+        public DefaultAppBar(UIElement root, ObservableCollection<object> lefts, ObservableCollection<object> rights)
         {
-            Lefts = new ObservableCollection<object>();
-            Rights = new ObservableCollection<object>();
-
-            var root = new Grid { Background=new SolidColorBrush(Colors.Transparent)};
-            root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(48, GridUnitType.Pixel) });
-            root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-            root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Auto) });
-            root.ColumnDefinitions.Add(new ColumnDefinition { Width = new GridLength(1, GridUnitType.Star) });
-
-            var cc = CreateContent(nameof(Icon));
-            Grid.SetColumn(cc, 1);
-            root.Children.Add(cc);
-
-            cc = CreateContent(nameof(Title));
-            Grid.SetColumn(cc, 2);
-            root.Children.Add(cc);
-
-            var ics = CreateItems(nameof(Lefts));
-            Grid.SetColumn(ics, 3);
-            root.Children.Add(ics);
-
-            cc = CreateContent(nameof(Search));
-            Grid.SetColumn(cc, 4);
-            root.Children.Add(cc);
-
-            ics = CreateItems(nameof(Rights));
-            Grid.SetColumn(ics, 5);
-            root.Children.Add(ics);
-
             Root = root;
-        }
-        private ContentControl CreateContent(string name)
-        {
-            var cc = new ContentControl();
-            cc.SetBinding(ContentControl.ContentProperty, new Binding
-            {
-                Path = new PropertyPath(name),
-                Source = this
-            });
-            return cc;
-        }
-        private ItemsControl CreateItems(string name)
-        {
-            var cc = new ItemsControl();
-            cc.SetBinding(ItemsControl.ItemsSourceProperty, new Binding
-            {
-                Path = new PropertyPath(name),
-                Source = this
-            });
-            return cc;
+            Lefts = lefts;
+            Rights = rights;
         }
 
         public object Search

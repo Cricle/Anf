@@ -142,6 +142,7 @@
                     <StackPanel.Resources>
                         <Style x:Key="Tbx" TargetType="TextBlock">
                             <Setter Property="FontSize" Value="10"/>
+                            <Setter Property="Foreground" Value="Black"/>
                         </Style>
                     </StackPanel.Resources>
                     <TextBlock Text="{Binding ChapterName}"/>

@@ -29,14 +29,19 @@ namespace Anf.Views
     /// </summary>
     public sealed partial class VisitingView : Page
     {
-        public VisitingView(string address)
+        public VisitingView()
         {
             this.InitializeComponent();
-            LoadVm(address);
-            Sv.ViewChanged += Sv_ViewChanged;
 
         }
-
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            if (e.Parameter is string s)
+            {
+                LoadVm(s);
+            }
+            Sv.ViewChanged += Sv_ViewChanged;
+        }
         private async void Sv_ViewChanged(object sender, ScrollViewerViewChangedEventArgs e)
         {
             if (!vm.ReadingSettings.LoadAll)

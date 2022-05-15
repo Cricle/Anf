@@ -28,6 +28,7 @@ using Anf.Settings;
 using Windows.UI.Xaml;
 using Windows.Storage;
 using Anf.Views;
+using Anf.Platform.Settings;
 
 namespace Anf
 {
@@ -83,7 +84,7 @@ namespace Anf
             AppEngine.Services.AddSingleton<UnoHomeViewModel>();
             var appBarSer = new AppBarService();
             appBarSer.GetAsDefault()
-                .Lefts.Add(new DefaultControlView());
+                .Rights.Add(new DefaultControlView());
             AppEngine.Services.AddSingleton(appBarSer);
             AppEngine.Services.AddSingleton(new UnoTtileService());
         }
@@ -91,10 +92,13 @@ namespace Anf
         {
             return new AnfSettings
             {
-                Performace = new Platform.Settings.PerformaceSettings(),
+                Performace = new PerformaceSettings(),
                 DotShowException = true,
-                Reading = new Platform.Settings.ReadingSettings(),
-                Startup = new Platform.Settings.StartupSettings(),
+                Reading = new ReadingSettings(),
+                Startup = new StartupSettings
+                {
+                    DisplayProposalCount = 10
+                },
                 Window = new WindowSettings(),
             };
             //var root = provider.GetRequiredService<SavableConfigurationRoot>();

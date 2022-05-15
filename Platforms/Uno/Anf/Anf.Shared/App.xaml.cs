@@ -66,6 +66,7 @@ namespace Anf
             navSer.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             navSer.BackRequested += NavSer_BackRequested;
             tb.ButtonBackgroundColor = Colors.Transparent;
+            tb.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
 
         private void NavSer_BackRequested(object sender, BackRequestedEventArgs e)

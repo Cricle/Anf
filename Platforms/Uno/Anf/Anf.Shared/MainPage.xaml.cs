@@ -38,7 +38,7 @@ namespace Anf
         public MainPage()
         {
             this.InitializeComponent();
-            //Loaded += MainPage_Loaded;
+            Loaded += MainPage_Loaded;
             var appBarSer = AppEngine.Provider.GetRequiredService<AppBarService>();
             AppBarContent.SetBinding(ContentControl.ContentProperty, new Binding
             {
@@ -47,8 +47,8 @@ namespace Anf
             });
             var rt = AppEngine.Provider.GetRequiredService<UnoRuntime>();
             Nv.Content = rt.ContentFrame;
-            rt.ContentFrame.Content = new HomePage();
-            Window.Current.SetTitleBar(AppBarContent);
+            var navSer=AppEngine.Provider.GetRequiredService<UnoNavigationService>();
+            navSer.Navigate(typeof(HomePage), null);
             //Nv.Content = new ComicView
             //{
             //    DataContext = new UnoComicViewModel(new ComicSnapshot
@@ -73,7 +73,9 @@ namespace Anf
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Nv.Content = new VisitingView("https://ac.qq.com/Comic/comicInfo/id/536332");
+            Window.Current.SetTitleBar(AppBarContent);
+
+            //Nv.Content = new VisitingView("https://ac.qq.com/Comic/comicInfo/id/536332");
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)

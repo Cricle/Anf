@@ -58,7 +58,6 @@
                         VerticalAlignment="Bottom">
                     <TextBlock Text="{Binding Snapshot.Name,Mode=OneTime}"
                                FontSize="16"
-                               Margin="0,16"
                                HorizontalAlignment="Center"/>
                 </Border>
             </Grid>
@@ -141,7 +140,7 @@
                                FontWeight="Bold"
                                Margin="0,10"
                                HorizontalAlignment="Center"
-                               Text="可用引擎">                            
+                               Text="可用引擎">
                     </TextBlock>
                     <ItemsControl Grid.Row="2"
                                   ItemsSource="{Binding EngineIcons}"
@@ -246,23 +245,25 @@
         </Grid>
         <Grid Grid.Row="3"
               Visibility="{Binding EmptySet,Converter={StaticResource RevBoolConverter}}">
-            <ListView Grid.Row="1"
+            <ScrollViewer HorizontalContentAlignment="Center">
+                <ListView HorizontalAlignment="Center"
                      Background="{x:Null}"
                      ItemsSource="{Binding Snapshots}"
                      SelectionMode="Single"
                      ItemTemplate="{StaticResource CsiDt}"
                      SelectedItem="{Binding CurrentComicSnapshot,Mode=OneWay}">
-                <ListView.ItemsPanel>
-                    <ItemsPanelTemplate>
-                        <ItemsWrapGrid Orientation="Horizontal"/>
-                    </ItemsPanelTemplate>
-                </ListView.ItemsPanel>
-                <ListView.ItemContainerStyle>
-                    <Style TargetType="ListViewItem">
-                        <Setter Property="Margin" Value="0,0,0,8"/>
-                    </Style>
-                </ListView.ItemContainerStyle>
-            </ListView>
+                    <ListView.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <ItemsWrapGrid Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ListView.ItemsPanel>
+                    <ListView.ItemContainerStyle>
+                        <Style TargetType="ListViewItem">
+                            <Setter Property="Margin" Value="0,0,8,8"/>
+                        </Style>
+                    </ListView.ItemContainerStyle>
+                </ListView>
+            </ScrollViewer>
         </Grid>
 
     </Grid>
