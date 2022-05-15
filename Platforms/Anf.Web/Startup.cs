@@ -152,7 +152,6 @@ namespace Anf.Web
                 x.UseMicrosoftDependencyInjectionJobFactory();
             });
             services.AddQuartzServer();
-            services.AddQuartzHostedService();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -217,22 +216,24 @@ namespace Anf.Web
             {
                 eng.Remove(tx);
             }
-            //using (var s = app.ApplicationServices.GetServiceScope())
-            //{
-            //    var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();
-            //    db.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
-            //    db.Database.EnsureCreated();
-            //}
-            var scope = app.ApplicationServices.CreateScope();
+            using (var s = app.ApplicationServices.GetServiceScope())
+            {
+                var db = s.ServiceProvider.GetRequiredService<AnfDbContext>();
+                db.Database.SetCommandTimeout(TimeSpan.FromMinutes(5));
+                db.Database.EnsureCreated();
+            }
+            //var scope = app.ApplicationServices.CreateScope();
             //_ = AnfMongoDbExtensions.InitMongoAsync(scope);
-            InitJobAsync(scope).GetAwaiter().GetResult();
+            //InitJobAsync(scope).GetAwaiter().GetResult();
         }
         private async Task InitJobAsync(IServiceScope scope)
         {
             using (scope)
             {
 
-                var scheduler = scope.ServiceProvider.GetRequiredService<IScheduler>();
+                var schedulerFc = scope.ServiceProvider.GetRequiredService<ISchedulerFactory>();
+
+                var scheduler = await schedulerFc.GetScheduler();
 
                 var now = DateTime.Now;
                 async Task ScheduleSaveRankeAsync(RankLevels level)

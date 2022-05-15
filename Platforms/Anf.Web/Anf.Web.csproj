@@ -12,7 +12,7 @@
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
     <UserSecretsId>5b620487-ab61-4117-a668-3eba5a05b15e</UserSecretsId>
-    <ApplicationInsightsResourceId>/subscriptions/99a95d96-c9ef-433f-bffd-0dfc7d373245/resourcegroups/Anf/providers/Microsoft.Insights/components/Anf.Web</ApplicationInsightsResourceId>
+    <ApplicationInsightsResourceId>/subscriptions/99a95d96-c9ef-433f-bffd-0dfc7d373245/resourceGroups/Anf/providers/microsoft.insights/components/anfwebc</ApplicationInsightsResourceId>
     <Configurations>Debug;Release;CompileModel</Configurations>
   </PropertyGroup>
 
@@ -29,6 +29,10 @@
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.5" />
     <PackageReference Include="Microsoft.Azure.SignalR" Version="1.17.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="6.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Tools" Version="5.0.1">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.2.0" />
     <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.5" />
     <PackageReference Include="Quartz.AspNetCore" Version="3.4.0" />
@@ -42,7 +46,6 @@
     <Content Remove="$(SpaRoot)**" />
     <None Remove="$(SpaRoot)**" />
     <None Include="$(SpaRoot)**" Exclude="$(SpaRoot)node_modules\**" />
-    <None Remove="ClientApp/**"></None>
   </ItemGroup>
 
   <ItemGroup>
@@ -56,19 +59,19 @@
     <ProjectReference Include="..\ResourceFetchers\Anf.ResourceFetcher.Sql\Anf.ResourceFetcher.Sql.csproj" />
   </ItemGroup>
 
-  <!--<Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
-     --><!--Ensure Node.js is installed--><!-- 
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+     <!--Ensure Node.js is installed--> 
     <Exec Command="node -v" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
     </Exec>
     <Error Condition="'$(ErrorCode)' != '0'" Text="Node.js is required to build and run this project. To continue, please install Node.js from https://nodejs.org/, and then restart your command prompt or IDE." />
     <Message Importance="high" Text="Restoring dependencies using 'npm'. This may take several minutes..." />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm install" />
-  </Target>-->
+  </Target>
 
-  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish" Condition="false">
+  <Target Name="PublishRunWebpack" AfterTargets="ComputeFilesToPublish">
     <!-- As part of publishing, ensure the JS resources are freshly built in production mode -->
-    <Exec WorkingDirectory="$(SpaRoot)" Command="cnpm install" />
+    <Exec WorkingDirectory="$(SpaRoot)" Command="npm install --legacy-peer-deps" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build.prod" />
     <Exec WorkingDirectory="$(SpaRoot)" Command="npm run build:ssr -- --prod" Condition=" '$(BuildServerSideRenderer)' == 'true' " />
 
