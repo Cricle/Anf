@@ -8,6 +8,11 @@
   <PropertyGroup Condition="'$(Configuration)'=='CompileModel'">
     <DefineConstants>$(DefineConstants);COMPILE_EF_TIME</DefineConstants>
   </PropertyGroup>
+  <ItemGroup Condition="'$(TargetFramework)'!='net6.0'">
+    <Compile Remove="CompiledModels\**" />
+    <EmbeddedResource Remove="CompiledModels\**" />
+    <None Remove="CompiledModels\**" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RedLock.net" Version="2.3.2" />
     <PackageReference Include="SecurityLogin.Normal" Version="1.1.5" />
