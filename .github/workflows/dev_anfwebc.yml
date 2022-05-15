@@ -28,6 +28,8 @@ jobs:
           node-version: '16'
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
+      - name: Install cnpm
+        run: npm install -g cnpm
       - name: Build with dotnet
         run: dotnet build "Platforms\Anf.Web\Anf.Web.csproj" --configuration Release
 

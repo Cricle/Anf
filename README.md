@@ -18,21 +18,18 @@
 
 |Build Info|Status|
 |:-:|:-|
-|Web Linux|[![.NET Build Web Linux](https://github.com/Cricle/Anf/actions/workflows/dotnet.web.linux.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.web.linux.yml)|
-|Web Windows|[![.NET Build Web windows](https://github.com/Cricle/Anf/actions/workflows/dotnet.web.windows.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.web.windows.yml)|
-|Desktop Linux|[![.NET Build Linux](https://github.com/Cricle/Anf/actions/workflows/dotnet.desktop.linux.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.desktop.linux.yml)|
-|Desktop Windows|[![.NET Build Windows](https://github.com/Cricle/Anf/actions/workflows/dotnet.desktop.windows.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.desktop.windows.yml)|
+|a|[![.NET Build](https://github.com/Cricle/Anf/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.yml)|
 |Azure Pipelines|[![Build Status](https://hcricle.visualstudio.com/Kw.Comic/_apis/build/status/Cricle.Anf?branchName=dev)](https://hcricle.visualstudio.com/Kw.Comic/_build/latest?definitionId=7&branchName=dev)|
 
 # Test Status
 
 |Provider|Status|
 |:-:|:-|
-|Github|[![.NET Test](https://github.com/Cricle/Anf/actions/workflows/dotnet.test.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.test.yml)|
+|Github|[![.NET Test & Upload](https://github.com/Cricle/Anf/actions/workflows/dotnet.test.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.test.yml)|
 
 # Publish Status
 
-[![Build and deploy ASP.Net Core app to Azure Web App - Anfw](https://github.com/Cricle/Anf/actions/workflows/azure_dev.yml/badge.svg)](https://anf.azureedge.net/)
+[![Build and deploy ASP.Net Core app to Azure Web App - anfwebc](https://github.com/Cricle/Anf/actions/workflows/dev_anfwebc.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dev_anfwebc.yml)
 
 # What is this
 
@@ -52,6 +49,19 @@ To easyly watch comic at desktop, phone or web, and it can run at standalone, or
 |iOS|To see MAUI support platforms|
 |Angular(PWA)|To see Angular support platforms|
 
+OR
+
+|OS|Version|
+|:-:|:-:|
+|Windows|win7/8.1/10 x86/x64|
+|Microsoft Store|win10(Using Uno platform)|
+|Linux|Using Uno platform|
+|MacOS|Using Uno platform|
+|Android|Using Uno platform|
+|iOS|Using Uno platform|
+|Angular(PWA)|To see Angular support platforms|
+
+
 # Render System
 
 |OS|Render Engine|
@@ -60,6 +70,16 @@ To easyly watch comic at desktop, phone or web, and it can run at standalone, or
 |Windows x64|SkiaSharp(See Avalonia.Desktop)|
 |Linux/MacOS|SkiaSharp/X11(See Avalonia.Desktop)|
 |Android/iOS|MAUI|
+|Web/PWA|Angular|
+
+OR
+
+|OS|Render Engine|
+|:-:|:-:|
+|Windows x86|See Uno platform|
+|Windows x64|See Uno platform|
+|Linux/MacOS|See Uno platform|
+|Android/iOS|See Uno platform|
 |Web/PWA|Angular|
 
 # How to accelerated comic analysis
@@ -76,8 +96,13 @@ To easyly watch comic at desktop, phone or web, and it can run at standalone, or
 dotnet build Platforms\Anf.Desktop\Anf.Desktop.csproj -f net472
 ```
 
+OR
+
+Uno platform 
+
 # What's Next
 
-- [ ] Make all logic unification
+- [x] Make all logic unification
 - [ ] Add test to conver code
 - [ ] Accelerate start-up speed
+- [ ] Support uno platform
