@@ -436,5 +436,4 @@ $RECYCLE.BIN/
 **\uploadtest.cmd
 .sonarqube\*.*
 Platforms\.sonarqube\*.*
-**/CompiledModels/*.*
 

@@ -23,8 +23,6 @@ jobs:
           include-prerelease: true
       - name: Install dotnet-ef
         run: dotnet tool install --global dotnet-ef
-      - name: Build db context
-        run: dotnet ef dbcontext optimize --configuration CompileModel --framework net6.0 -n Anf.WebService -p "Platforms\Anf.WebService\Anf.WebService.csproj"
       - name: Build with dotnet
         run: dotnet build "Platforms\Anf.Web\Anf.Web.csproj" --configuration Release
 
