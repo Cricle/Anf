@@ -28,6 +28,9 @@ using Anf.Web.Jobs;
 using System.Linq;
 using Microsoft.Extensions.Azure;
 using Azure.Storage.Blobs;
+using Microsoft.AspNetCore.SignalR;
+using StackExchange.Redis;
+using Anf.Statistical;
 
 namespace Anf.Web
 {
@@ -62,7 +65,9 @@ namespace Anf.Web
             {
                 configuration.RootPath = "ClientApp/dist";
             });
+#if !DEBUG
             services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTSCONNECTIONSTRING"]);
+#endif
             services.AddSignalR()
                 .AddAzureSignalR(opt =>
                 {
@@ -117,9 +122,8 @@ namespace Anf.Web
 
             services.AddScoped<AnfAuthenticationHandler>();
             services.AddScoped<ComicRankService>();
-            services.AddScoped<ComicRankSaver>();
             services.AddScoped<BookshelfService>();
-            services.AddScoped<HotSearchService>();
+            services.AddScoped<StatisticalService>();
 
             services.AddOptions<BookshelfOptions>();
             services.AddOptions<ComicRankOptions>();
@@ -194,6 +198,7 @@ namespace Anf.Web
                 endpoints.MapControllerRoute(
                     name: "default",
                     pattern: "{controller}/{action=Index}/{id?}");
+
             });
 
             app.UseSpa(spa =>
@@ -227,76 +232,76 @@ namespace Anf.Web
             //_ = AnfMongoDbExtensions.InitMongoAsync(scope);
             //InitJobAsync(scope).GetAwaiter().GetResult();
         }
-        private async Task InitJobAsync(IServiceScope scope)
-        {
-            using (scope)
-            {
+        //private async Task InitJobAsync(IServiceScope scope)
+        //{
+        //    using (scope)
+        //    {
 
-                var schedulerFc = scope.ServiceProvider.GetRequiredService<ISchedulerFactory>();
+        //        var schedulerFc = scope.ServiceProvider.GetRequiredService<ISchedulerFactory>();
 
-                var scheduler = await schedulerFc.GetScheduler();
+        //        var scheduler = await schedulerFc.GetScheduler();
 
-                var now = DateTime.Now;
-                async Task ScheduleSaveRankeAsync(RankLevels level)
-                {
-                    var jobIdentity = JobBuilder.Create<SaveRankJob>()
-                        .WithIdentity(nameof(SaveRankJob) + level.ToString())
-                        .RequestRecovery()
-                        .Build();
-                    TimeSpan rep = default;
-                    DateTime startTime = default;
-                    if (level == RankLevels.Hour)
-                    {
-                        rep = TimeSpan.FromHours(1);
-                        startTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, 1, 0).AddHours(1);
-                    }
-                    else if (level == RankLevels.Day)
-                    {
-                        rep = TimeSpan.FromDays(1);
-                        startTime = new DateTime(now.Year, now.Month, now.Day, 0, 30, 0).AddDays(1); ;
-                    }
-                    else if (level == RankLevels.Month)
-                    {
-                        rep = TimeSpan.FromDays(32);
-                        startTime = new DateTime(now.Year, now.Month, 1, 1, 0, 0).AddMonths(1);
-                    }
+        //        var now = DateTime.Now;
+        //        async Task ScheduleSaveRankeAsync(RankLevels level)
+        //        {
+        //            var jobIdentity = JobBuilder.Create<SaveRankJob>()
+        //                .WithIdentity(nameof(SaveRankJob) + level.ToString())
+        //                .RequestRecovery()
+        //                .Build();
+        //            TimeSpan rep = default;
+        //            DateTime startTime = default;
+        //            if (level == RankLevels.Hour)
+        //            {
+        //                rep = TimeSpan.FromHours(1);
+        //                startTime = new DateTime(now.Year, now.Month, now.Day, now.Hour, 1, 0).AddHours(1);
+        //            }
+        //            else if (level == RankLevels.Day)
+        //            {
+        //                rep = TimeSpan.FromDays(1);
+        //                startTime = new DateTime(now.Year, now.Month, now.Day, 0, 30, 0).AddDays(1); ;
+        //            }
+        //            else if (level == RankLevels.Month)
+        //            {
+        //                rep = TimeSpan.FromDays(32);
+        //                startTime = new DateTime(now.Year, now.Month, 1, 1, 0, 0).AddMonths(1);
+        //            }
 
-                    var trigger = TriggerBuilder.Create()
-                        .StartAt(new DateTimeOffset(startTime))
-                        .WithSimpleSchedule(b =>
-                        {
-                            b.WithInterval(rep).RepeatForever();
-                        })
-                        .Build();
-                    var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
-                }
+        //            var trigger = TriggerBuilder.Create()
+        //                .StartAt(new DateTimeOffset(startTime))
+        //                .WithSimpleSchedule(b =>
+        //                {
+        //                    b.WithInterval(rep).RepeatForever();
+        //                })
+        //                .Build();
+        //            var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
+        //        }
 
-                await ScheduleSaveRankeAsync(RankLevels.Hour);
-                await ScheduleSaveRankeAsync(RankLevels.Day);
-                await ScheduleSaveRankeAsync(RankLevels.Month);
+        //        await ScheduleSaveRankeAsync(RankLevels.Hour);
+        //        await ScheduleSaveRankeAsync(RankLevels.Day);
+        //        await ScheduleSaveRankeAsync(RankLevels.Month);
 
-                var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
+        //        var config = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
-                var syncInterval = config.GetValue<int>("BookshelfSync:IntervalS");
+        //        var syncInterval = config.GetValue<int>("BookshelfSync:IntervalS");
 
-                if (syncInterval <= 0)
-                {
-                    syncInterval = 60 * 5;
-                }
+        //        if (syncInterval <= 0)
+        //        {
+        //            syncInterval = 60 * 5;
+        //        }
 
-                var jobIdentity = JobBuilder.Create<StoreBookshelfJob>()
-                        .WithIdentity(nameof(StoreBookshelfJob))
-                        .RequestRecovery()
-                        .Build();
-                var trigger = TriggerBuilder.Create()
-                    .StartNow()
-                    .WithSimpleSchedule(b =>
-                    {
-                        b.WithIntervalInSeconds(syncInterval).RepeatForever();
-                    })
-                    .Build();
-                var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
-            }
-        }
+        //        var jobIdentity = JobBuilder.Create<StoreBookshelfJob>()
+        //                .WithIdentity(nameof(StoreBookshelfJob))
+        //                .RequestRecovery()
+        //                .Build();
+        //        var trigger = TriggerBuilder.Create()
+        //            .StartNow()
+        //            .WithSimpleSchedule(b =>
+        //            {
+        //                b.WithIntervalInSeconds(syncInterval).RepeatForever();
+        //            })
+        //            .Build();
+        //        var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
+        //    }
+        //}
     }
 }

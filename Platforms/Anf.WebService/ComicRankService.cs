@@ -5,7 +5,8 @@ namespace Anf.WebService
 {
     public class ComicRankService
     {
-        private const string RankKey = "Anf.WebService.ComicRankService.Rank";
+        private static readonly RedisKey RankKey = "Anf.WebService.ComicRankService.Visit";
+        private static readonly RedisKey SearchKey = "Anf.WebService.ComicRankService.Search";
 
         private readonly IDatabase redisDatabase;
 
@@ -14,17 +15,25 @@ namespace Anf.WebService
             this.redisDatabase = redisDatabase;
         }
 
-        public Task<SortedSetEntry[]> RangeAsync(int start = 0, int stop = -1, Order order = Order.Descending)
+        public Task<SortedSetEntry[]> RangeVisitAsync(int start = 0, int stop = -1, Order order = Order.Descending)
         {
             return redisDatabase.SortedSetRangeByRankWithScoresAsync(RankKey, start, stop, order);
+        }
+        public Task<SortedSetEntry[]> RangeSearchAsync(int start = 0, int stop = -1, Order order = Order.Descending)
+        {
+            return redisDatabase.SortedSetRangeByRankWithScoresAsync(SearchKey, start, stop, order);
         }
         public Task<long> SizeAsync()
         {
             return redisDatabase.SortedSetLengthAsync(RankKey);
         }
-        public async Task AddScopeAsync(string address)
+        public async Task IncVisitAsync(string address,int scope)
         {
-            await redisDatabase.SortedSetIncrementAsync(RankKey, address, 1);
+            await redisDatabase.SortedSetIncrementAsync(RankKey, address, scope);
+        }
+        public async Task IncSearchAsync(string content, int scope)
+        {
+            await redisDatabase.SortedSetIncrementAsync(SearchKey, content, scope);
         }
     }
 }

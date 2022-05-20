@@ -53,6 +53,7 @@
     <ProjectReference Include="..\Anf.Engine.Easy\Anf.Easy.csproj" />
     <ProjectReference Include="..\Anf.Engine\Anf.Engine.csproj" />
     <ProjectReference Include="..\Anf.ResourceFetcher\Anf.ResourceFetcher.csproj" />
+    <ProjectReference Include="..\Anf.Statistical\Anf.Statistical.csproj" />
     <ProjectReference Include="..\Anf.WebService\Anf.WebService.csproj" />
     <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
     <ProjectReference Include="..\ResourceFetchers\Anf.ResourceFetcher.Redis\Anf.ResourceFetcher.Redis.csproj" />

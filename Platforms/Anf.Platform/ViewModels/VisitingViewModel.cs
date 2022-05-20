@@ -527,64 +527,74 @@ namespace Anf.ViewModels
         {
 
         }
+        protected virtual void OnCurrentChaterCursorMovedError(IDataCursor<IComicChapterManager<TImage>> arg1, int arg2,Exception ex)
+        {
 
+        }
         private async void OnCurrentChaterCursorMoved(IDataCursor<IComicChapterManager<TImage>> arg1, int arg2)
         {
-            loadCancellationTokenSource?.Cancel();
-            loadCancellationTokenSource?.Dispose();
-            if (!DoNotDisposeVisiting)
+            try
             {
+                loadCancellationTokenSource?.Cancel();
+                loadCancellationTokenSource?.Dispose();
+                if (!DoNotDisposeVisiting)
+                {
+                    foreach (var item in Resources)
+                    {
+                        if (item.Resource is IDisposable disposable)
+                        {
+                            disposable.Dispose();
+                        }
+                        item.LoadDone -= OnItemLoadDone;
+                    }
+                }
+                ResourceLoadCount = 0;
+                Resources.Clear();
+
+                var ps = PageSlots;
+                if (ps != null)
+                {
+                    if (!DoNotDisposeVisiting)
+                    {
+                        ps.Dispose();
+                    }
+                    PageSlots = null;
+                }
+                var cpc = CurrentPageCursor;
+                if (cpc != null)
+                {
+                    CurrentPageCursor.Moved -= OnCurrentPageCursorMoved;
+                    if (!DoNotDisposeVisiting)
+                    {
+                        cpc.Dispose();
+                    }
+                }
+                CurrentPage = 0;
+                ps = ChapterSlots[arg2].CreatePageSlots();
+                PageSlots = ps;
+                var datas = Enumerable.Range(0, PageSlots.Size)
+                    .Select(x => CreatePageInfo(ps, x));
+                observableCollectionFactory.AddRange(Resources, datas);
                 foreach (var item in Resources)
                 {
-                    if (item.Resource is IDisposable disposable)
-                    {
-                        disposable.Dispose();
-                    }
-                    item.LoadDone -= OnItemLoadDone;
+                    item.LoadDone += OnItemLoadDone;
                 }
-            }
-            ResourceLoadCount = 0;
-            Resources.Clear();
-
-            var ps = PageSlots;
-            if (ps != null)
-            {
-                if (!DoNotDisposeVisiting)
+                var pageCursor = PageSlots.ToDataCursor();
+                await pageCursor.MoveNextAsync();
+                CurrentPageCursor = pageCursor;
+                TotalPage = pageCursor.Count;
+                CurrentChapterWithPage = PageSlots.ChapterManager.ChapterWithPage;
+                CurrentPageCursor.Moved += OnCurrentPageCursorMoved;
+                loadCancellationTokenSource = new CancellationTokenSource();
+                OnCurrentChaterCursorChanged(arg1);
+                if (SwitchChapterGC)
                 {
-                    ps.Dispose();
-                }
-                PageSlots = null;
-            }
-            var cpc = CurrentPageCursor;
-            if (cpc != null)
-            {
-                CurrentPageCursor.Moved -= OnCurrentPageCursorMoved;
-                if (!DoNotDisposeVisiting)
-                {
-                    cpc.Dispose();
+                    GC.Collect(0, GCCollectionMode.Optimized);
                 }
             }
-            CurrentPage = 0;
-            ps = ChapterSlots[arg2].CreatePageSlots();
-            PageSlots = ps;
-            var datas = Enumerable.Range(0, PageSlots.Size)
-                .Select(x => CreatePageInfo(ps, x));
-            observableCollectionFactory.AddRange(Resources, datas);
-            foreach (var item in Resources)
+            catch (Exception ex)
             {
-                item.LoadDone += OnItemLoadDone;
-            }
-            var pageCursor = PageSlots.ToDataCursor();
-            await pageCursor.MoveNextAsync();
-            CurrentPageCursor = pageCursor;
-            TotalPage = pageCursor.Count;
-            CurrentChapterWithPage = PageSlots.ChapterManager.ChapterWithPage;
-            CurrentPageCursor.Moved += OnCurrentPageCursorMoved;
-            loadCancellationTokenSource = new CancellationTokenSource();
-            OnCurrentChaterCursorChanged(arg1);
-            if (SwitchChapterGC)
-            {
-                GC.Collect(0, GCCollectionMode.Optimized);
+                OnCurrentChaterCursorMovedError(arg1, arg2, ex);
             }
         }
         private void OnItemLoadDone(ComicPageInfo<TImage> obj)

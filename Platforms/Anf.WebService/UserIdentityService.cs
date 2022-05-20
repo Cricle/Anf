@@ -27,7 +27,7 @@ namespace Anf.WebService
         }
         public async Task<string> SetIdentityAsync(UserSnapshot snapshot)
         {
-            var tk = Guid.NewGuid().ToString();
+            var tk = Guid.NewGuid().ToString("N");
             var key = KeyGenerator.Concat(UserMapKey, tk);
             var bytes = JsonSerializer.SerializeToUtf8Bytes(snapshot);
             await database.StringSetAsync(key, bytes, ExpireTime);

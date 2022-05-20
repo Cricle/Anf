@@ -23,11 +23,13 @@ namespace Anf.WebService
 
         public DbSet<KvComicChapter> ComicChapters { get; set; }
 
-        public DbSet<AnfDayComicRank> DayRanks { get; set; }
+        public DbSet<AnfComicSearchRank> SearchRanks { get; set; }
 
-        public DbSet<AnfHourComicRank> HourRanks { get; set; }
+        public DbSet<AnfComicVisitRank> VisitRanks { get; set; }
 
-        public DbSet<AnfMonthComicRank> MonthRanks { get; set; }
+        public DbSet<AnfComicVisit> Visits { get; set; }
+
+        public DbSet<AnfComicSearch> Searchs { get; set; }
 
 #if NET6_0_OR_GREATER&&!COMPILE_EF_TIME
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -64,16 +66,24 @@ namespace Anf.WebService
                 x.HasKey(y => new { y.TargetUrl, y.EnitityId });
                 x.HasIndex(y => y.UpdateTime);
             });
-            InitRank<AnfHourComicRank>();
-            InitRank<AnfDayComicRank>();
-            InitRank<AnfMonthComicRank>();
-            void InitRank<T>()
-                where T : AnfComicRank
+            builder.Entity<AnfComicSearchRank>(x => 
             {
-                var entityBuilder = builder.Entity<T>();
-                entityBuilder.HasKey(nameof(AnfComicRank.Time), nameof(AnfComicRank.No));
-                entityBuilder.HasIndex(nameof(AnfComicRank.Address));
-            }
+                x.HasIndex(x => x.Content);
+            }); 
+            builder.Entity<AnfComicSearchRank>(x =>
+            {
+                x.HasIndex(x => x.Content);
+            });
+            builder.Entity<AnfComicVisit>(x =>
+            {
+                x.HasIndex(x => x.Address);
+                x.HasIndex(x => x.Time);
+            });
+            builder.Entity<AnfComicSearch>(x =>
+            {
+                x.HasIndex(x => x.Content);
+                x.HasIndex(x => x.Time);
+            });
         }
     }
 }

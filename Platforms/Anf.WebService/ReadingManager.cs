@@ -88,26 +88,14 @@ namespace Anf.WebService
         }
 
         public async Task<int> DoKeysAsync(Func<AnfBookshelfItem[], Task<bool>> func, int pageSize = 250)
-        {
-            var sc = database.SetScanAsync(ReadingKeysKey, default, pageSize);
+        {            
+            var sc = database.SetScanAsync(ReadingKeysKey+"*", pageSize);
             var cur = sc.GetAsyncEnumerator();
-            var ps = new List<string>(pageSize);
             var okCount = 0;
             while (await cur.MoveNextAsync())
             {
-                ps.Add(cur.Current);
-                if (ps.Count >= pageSize)
-                {
-                    await HandleKeysAsync(ps);
-                    okCount += ps.Count;
-                    ps.Clear();
-                }
-            }
-            if (ps.Count != 0)
-            {
-                await HandleKeysAsync(ps);
-                okCount += ps.Count;
-                ps.Clear();
+                await HandleKeysAsync(cur.Current);
+                okCount += cur.Current.Length;
             }
             return okCount;
             async Task HandleKeysAsync(IEnumerable<string> keys)
@@ -124,7 +112,7 @@ namespace Anf.WebService
                     var earse = await func(entitys);
                     if (earse)
                     {
-                        var values = keys.Select(x => new RedisValue(x)).ToArray();
+                        var values = keys.Select(x => (RedisValue)x).ToArray();
                         await database.SetRemoveAsync(ReadingKeysKey, values);
                     }
                 }
@@ -195,8 +183,4 @@ namespace Anf.WebService
             await database.SetAddAsync(ReadingKeysKey, key);
         }
     }
-    /*
-     * set->(阅读键s)
-     * 使用时增加阅读键，任何定时同步
-     */
 }

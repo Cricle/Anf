@@ -13,7 +13,8 @@
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
         <ContentControl x:Name="AppBarContent"
-                        HorizontalContentAlignment="Stretch">
+                        HorizontalContentAlignment="Stretch"
+                        Background="Transparent">
             
         </ContentControl>
         <Grid Grid.Row="1">

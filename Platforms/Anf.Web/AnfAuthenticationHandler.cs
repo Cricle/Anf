@@ -30,28 +30,27 @@ namespace Anf.Web
 
         public async Task<AuthenticateResult> AuthenticateAsync()
         {
-            if (isApiQuery)
+            var authToken = context.Request.Headers[AuthenticateHeader];
+            var authTk = authToken.ToString();
+            if (isApiQuery && (string.IsNullOrEmpty(authTk) || !Guid.TryParse(authTk, out _)))
             {
-                var authToken = context.Request.Headers[AuthenticateHeader];
-                var authTk = authToken.ToString();
-                if (string.IsNullOrEmpty(authTk) || !Guid.TryParse(authTk, out _))
-                {
-                    if (!context.Request.Cookies.TryGetValue(AuthenticateHeader, out authTk))
-                    {
-                        return AuthenticateResult.Fail("No authenticate!");
-                    }
-                }
-                var tk = await userIdentityService.GetTokenInfoAsync(authTk);
-                if (tk is null)
+                if (!context.Request.Cookies.TryGetValue(AuthenticateHeader, out authTk))
                 {
                     return AuthenticateResult.Fail("No authenticate!");
                 }
-                context.Features.Set(tk);
-                var t = GetAuthTicket(tk.Name);
-                return AuthenticateResult.Success(t);
             }
-            var tick = GetAuthTicket(string.Empty);
-            return AuthenticateResult.Success(tick);
+            var tk = await userIdentityService.GetTokenInfoAsync(authTk);
+            if (tk is null)
+            {
+                if (isApiQuery)
+                {
+                    return AuthenticateResult.Fail("No authenticate!");
+                }
+                return AuthenticateResult.Success(GetAuthTicket(string.Empty));
+            }
+            context.Features.Set(tk);
+            var t = GetAuthTicket(tk.Name);
+            return AuthenticateResult.Success(t);
         }
         public static AuthenticationTicket GetAuthTicket(string name)
         {

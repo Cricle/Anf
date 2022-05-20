@@ -15,7 +15,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RedLock.net" Version="2.3.2" />
-    <PackageReference Include="SecurityLogin.Normal" Version="1.1.5" />
+    <PackageReference Include="SecurityLogin.Normal" Version="1.1.6-preview6" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />

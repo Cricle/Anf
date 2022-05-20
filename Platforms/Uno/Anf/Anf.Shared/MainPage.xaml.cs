@@ -49,6 +49,8 @@ namespace Anf
             Nv.Content = rt.ContentFrame;
             var navSer=AppEngine.Provider.GetRequiredService<UnoNavigationService>();
             navSer.Navigate(typeof(HomePage), null);
+            App.InitWindow();
+            Window.Current.SetTitleBar(AppBarContent);
             //Nv.Content = new ComicView
             //{
             //    DataContext = new UnoComicViewModel(new ComicSnapshot
@@ -73,7 +75,7 @@ namespace Anf
 
         private void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            Window.Current.SetTitleBar(AppBarContent);
+            //Window.Current.SetTitleBar(AppBarContent);
 
             //Nv.Content = new VisitingView("https://ac.qq.com/Comic/comicInfo/id/536332");
         }

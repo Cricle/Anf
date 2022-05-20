@@ -26,7 +26,7 @@ namespace Anf.ResourceFetcher
             services.AddSingleton<IConnectionMultiplexer>(x =>
             {
                 var c = x.GetRequiredService<IConfiguration>();
-                var config = c["ConnectionStrings:CacheConnection"];
+                var config = c["ConnectionStringsCacheConnection"];
                 return ConnectionMultiplexer.Connect(config);
             });
             services.AddScoped(x => x.GetRequiredService<IConnectionMultiplexer>().GetDatabase());

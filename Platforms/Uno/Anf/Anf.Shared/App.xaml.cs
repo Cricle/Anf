@@ -39,7 +39,7 @@ namespace Anf
     /// </summary>
     public sealed partial class App : Application
     {
-        public readonly IServiceProvider Provider;
+        public static IServiceProvider Provider;
         private Window _window;
 
         /// <summary>
@@ -58,18 +58,18 @@ namespace Anf
             Provider = AppEngine.Provider;
 
         }
-        private void InitWindow()
+        internal static void InitWindow()
         {
             CoreApplication.GetCurrentView().TitleBar.ExtendViewIntoTitleBar = true;
             var tb = ApplicationView.GetForCurrentView().TitleBar;
             var navSer = SystemNavigationManager.GetForCurrentView();
             navSer.AppViewBackButtonVisibility = AppViewBackButtonVisibility.Visible;
             navSer.BackRequested += NavSer_BackRequested;
-            tb.ButtonBackgroundColor = Colors.Transparent;
-            tb.ButtonInactiveBackgroundColor = Colors.Transparent;
+            //tb.ButtonBackgroundColor = Colors.Transparent;
+            //tb.ButtonInactiveBackgroundColor = Colors.Transparent;
         }
 
-        private void NavSer_BackRequested(object sender, BackRequestedEventArgs e)
+        private static void NavSer_BackRequested(object sender, BackRequestedEventArgs e)
         {
             var ser = Provider.GetRequiredService<UnoRuntime>();
             if (ser.ContentFrame.CanGoBack)
@@ -133,7 +133,6 @@ namespace Anf
                 // Ensure the current window is active
                 _window.Activate();
             }
-            InitWindow();
         }
 
         /// <summary>

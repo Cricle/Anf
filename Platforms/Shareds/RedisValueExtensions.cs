@@ -20,21 +20,21 @@ namespace StackExchange.Redis
             }
             if (type.IsPrimitive)
             {
-                if (type.IsEquivalentTo(typeof(long)))
+                if (type == typeof(long))
                 {
                     if (value.TryParse(out long l))
                         return l;
                     else
                         return default;
                 }
-                else if (type.IsEquivalentTo(typeof(int)))
+                else if (type == typeof(int))
                 {
                     if (value.TryParse(out int l))
                         return l;
                     else
                         return default;
                 }
-                else if (type.IsEquivalentTo(typeof(double)))
+                else if (type == typeof(double))
                 {
                     if (value.TryParse(out double l))
                         return l;
@@ -52,7 +52,7 @@ namespace StackExchange.Redis
                     catch (Exception) { }
                 }
             }
-            else if (type.IsEquivalentTo(typeof(string)))
+            else if (type == typeof(string))
             {
                 return value.ToString();
             }
@@ -103,21 +103,21 @@ namespace StackExchange.Redis
             var type = typeof(T);
             if (type.IsPrimitive)
             {
-                if (type.IsEquivalentTo(typeof(long)))
+                if (type == typeof(long))
                 {
                     if (value.TryParse(out long l))
                         return ((T)(object)l);
                     else
                         return default;
                 }
-                else if (type.IsEquivalentTo(typeof(int)))
+                else if (type == typeof(int))
                 {
                     if (value.TryParse(out int l))
                         return ((T)(object)l);
                     else
                         return default;
                 }
-                else if (type.IsEquivalentTo(typeof(double)))
+                else if (type == typeof(double))
                 {
                     if (value.TryParse(out double l))
                         return ((T)(object)l);
@@ -135,7 +135,7 @@ namespace StackExchange.Redis
                     catch (Exception) { }
                 }
             }
-            else if (type.IsEquivalentTo(typeof(string)))
+            else if (type == typeof(string))
             {
                 return ((T)(object)value.ToString());
             }

@@ -12,6 +12,9 @@ using System.Linq;
 using Microsoft.Extensions.DependencyInjection;
 using Anf.Easy.Store;
 using SecurityLogin;
+using Anf.Statistical;
+using Anf.ChannelModel.Entity;
+using Anf.ChannelModel;
 
 namespace Anf.Web.Controllers
 {
@@ -31,18 +34,19 @@ namespace Anf.Web.Controllers
         private readonly IMemoryCache memoryCache;
         private readonly SearchEngine searchEngine;
         private readonly ComicEngine comicEngine;
-        private readonly HotSearchService hotSearchService;
+        private readonly StatisticalService statisticalService;
+
         public ReadingController(ComicRankService comicRankService,
             IRootFetcher rootFetcher,
             IMemoryCache memoryCache,
             SearchEngine searchEngine,
             ComicEngine comicEngine,
-            HotSearchService hotSearchService,
-            IServiceScopeFactory scopeFactory)
+            IServiceScopeFactory scopeFactory,
+            StatisticalService statisticalService)
         {
+            this.statisticalService = statisticalService;
             this.scopeFactory = scopeFactory;
             this.comicEngine = comicEngine;
-            this.hotSearchService = hotSearchService;
             this.searchEngine = searchEngine;
             this.memoryCache = memoryCache;
             this.comicRankService = comicRankService;
@@ -63,6 +67,10 @@ namespace Anf.Web.Controllers
         [ProducesResponseType(typeof(EntityResult<SearchComicResult>), 200)]
         public async Task<IActionResult> Search([FromQuery] string provider, [FromQuery] string keyword, [FromQuery] int skip = 0, [FromQuery] int take = 20)
         {
+            if (string.IsNullOrEmpty(keyword))
+            {
+                return base.Problem("The keyword can't be null");
+            }
             if (searchEngine.Count == 0)
             {
                 return base.Problem("The search engine nothing");
@@ -80,13 +88,20 @@ namespace Anf.Web.Controllers
             var ds = memoryCache.Get(key);
             if (ds != null)
             {
-                await hotSearchService.AddSearch(keyword);
+                await comicRankService.IncSearchAsync(keyword, 1);
                 return Ok(ds);
             }
             using var scope = searchEngine.ServiceScopeFactory.CreateScope();
             var eng = (ISearchProvider)scope.ServiceProvider.GetService(prov);
             var data = await eng.SearchAsync(keyword, skip, take);
-            await hotSearchService.AddSearch(keyword);
+            await comicRankService.IncSearchAsync(keyword, 1);
+            await statisticalService.AddSearchAsync(new AnfComicSearch
+            {
+                Content = keyword,
+                IP = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                Time = DateTime.Now,
+                UserId = HttpContext.Features.Get<UserSnapshot>()?.Id
+            });
             var r = new EntityResult<SearchComicResult> { Data = data };
             memoryCache.Set(key, r, new MemoryCacheEntryOptions
             {
@@ -113,7 +128,7 @@ namespace Anf.Web.Controllers
                 await storeSer.SaveAsync(url, imgRes);
             }
             var stream = await storeSer.GetStreamAsync(url);
-            
+
             HttpContext.Response.RegisterForDispose(stream);
             return File(stream, "application/octet-stream");
         }
@@ -154,20 +169,23 @@ namespace Anf.Web.Controllers
             }
             var key = KeyGenerator.Concat(EntityKey, url);
             var res = memoryCache.Get<AnfComicEntityTruck>(key);
-            if (res != null)
+            if (res == null)
             {
-                await comicRankService.AddScopeAsync(url);
-                return Ok(res);
-            }
-            res = await rootFetcher.FetchEntityAsync(url);
-            if (res != null)
-            {
-                await comicRankService.AddScopeAsync(url);
+                res = await rootFetcher.FetchEntityAsync(url);
                 memoryCache.Set(key, res, new MemoryCacheEntryOptions
                 {
                     SlidingExpiration = CacheTime
                 });
+
             }
+            await comicRankService.IncVisitAsync(url, 1);
+            await statisticalService.AddVisitAsync(new AnfComicVisit
+            {
+                Address = url,
+                IP = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                Time = DateTime.Now,
+                UserId = HttpContext.Features.Get<UserSnapshot>()?.Id
+            });
             return Ok(res);
         }
     }

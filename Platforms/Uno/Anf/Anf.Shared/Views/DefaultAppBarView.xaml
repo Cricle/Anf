@@ -6,7 +6,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     mc:Ignorable="d"
-    Background="Transparent">
+    Background="{x:Null}">
     <Grid.ColumnDefinitions>
         <ColumnDefinition Width="48"/>
         <ColumnDefinition Width="Auto"/>
@@ -22,6 +22,6 @@
     <ContentControl x:Name="Search" Grid.Column="4"/>
     <ItemsControl x:Name="Rights" 
                   HorizontalAlignment="Right"
-                  Grid.Column="5">
+                  Grid.Column="5" Background="Transparent">
     </ItemsControl>
 </Grid>
