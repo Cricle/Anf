@@ -7,15 +7,15 @@
   IgnorableNamespaces="uap mp">
 
   <Identity
-    Name="6ffa991d-6aa3-4860-bc23-65d06c9eb537"
-    Publisher="CN=HuaJi"
-    Version="1.0.0.0" />
+    Name="40833Cricle.Anf"
+    Publisher="CN=8D6E32F4-C9CC-48C9-82ED-3C75928FB79B"
+    Version="1.0.6.0" />
 
-  <mp:PhoneIdentity PhoneProductId="298a099f-e98a-49da-ae43-e963f03f9345" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
+  <mp:PhoneIdentity PhoneProductId="4b66d91e-5256-4d8a-acdd-0194daa1f2b7" PhonePublisherId="00000000-0000-0000-0000-000000000000"/>
 
   <Properties>
     <DisplayName>Anf</DisplayName>
-    <PublisherDisplayName>Anf</PublisherDisplayName>
+    <PublisherDisplayName>Cricle</PublisherDisplayName>
     <Logo>Assets\StoreLogo.png</Logo>
   </Properties>
 

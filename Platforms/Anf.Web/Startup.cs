@@ -66,17 +66,18 @@ namespace Anf.Web
             services.AddSignalR()
                 .AddAzureSignalR(opt =>
                 {
-                    opt.ConnectionString = Configuration["ConnectionStrings:Signalr"];
+                    opt.ConnectionString = Configuration["ConnectionStringsSignalr"];
                 });
+
             services.AddDbContext<AnfDbContext>((x, y) =>
             {
                 var config = x.GetRequiredService<IConfiguration>();
-                y.UseSqlServer(config["ConnectionStrings:anfdb"]);
+                y.UseSqlServer(config["ConnectionStringsAnfdb"]);
             }, optionsLifetime: ServiceLifetime.Singleton)
             .AddDbContextPool<AnfDbContext>((x, y) =>
             {
                 var config = x.GetRequiredService<IConfiguration>();
-                y.UseSqlServer(config["ConnectionStrings:anfdb"]);
+                y.UseSqlServer(config["ConnectionStringsAnfdb"]);
             }).AddIdentity<AnfUser, AnfRole>(x =>
              {
                  x.Password.RequireDigit = false;
@@ -88,7 +89,7 @@ namespace Anf.Web
             .AddEntityFrameworkStores<AnfDbContext>();
             services.AddSingleton<IDistributedCache, RedisCache>();
             services.AddOptions<RedisCacheOptions>()
-                .Configure(x => x.Configuration = Configuration["ConnectionStrings:CacheConnection"]);
+                .Configure(x => x.Configuration = Configuration["ConnectionStringsCacheConnection"]);
             services.AddResponseCompression();
             services.AddScoped<UserService>();
             services.AddScoped<UserIdentityService>();
@@ -137,8 +138,8 @@ namespace Anf.Web
             AddQuartz(services);
             services.AddAzureClients(builder =>
             {
-                builder.AddBlobServiceClient(Configuration["Azure:Store:Blob:blob"], preferMsi: true);
-                builder.AddQueueServiceClient(Configuration["Azure:Store:Blob:queue"], preferMsi: true);
+                builder.AddBlobServiceClient(Configuration["AzureStoreBlobblob"], preferMsi: true);
+                builder.AddQueueServiceClient(Configuration["AzureStoreBlobqueue"], preferMsi: true);
             });
             services.AddNormalSecurityService();
         }

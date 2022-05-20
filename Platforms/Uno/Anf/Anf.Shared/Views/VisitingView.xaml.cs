@@ -65,6 +65,7 @@ namespace Anf.Views
             var appBar = AppEngine.GetRequiredService<AppBarService>();
             appBar.GetAsDefault()
                 .Lefts.Add(titleBar);
+            Window.Current.SetTitleBar(appBar.AppBar.Root);
 
             try
             {
