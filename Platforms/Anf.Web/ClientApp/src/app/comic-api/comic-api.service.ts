@@ -67,8 +67,8 @@ export class ComicApiService{
     return this.http.get<EntityResult<SearchComicResult>>(`${readingPart}/search?provider=${provider}&keyword=${keyword}&skip=${skip}&take=${take}`);
   }
   public makeImgUrl(entityUrl:string,url:string):string{
-    return url;
-    // return `${readingPart}/GetImage?entityUrl=${entityUrl}&url=${url}`;
+    // return url;
+    return `${readingPart}/GetImage?entityUrl=${entityUrl}&url=${url}`;
   }
   public getHotSearch30():Observable<SetResult<SortedItem>>{
     return this .http.get<SetResult<SortedItem>>(`${rankPart}/GetHotSearch30`);

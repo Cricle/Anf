@@ -150,7 +150,6 @@ namespace Anf.Web
         private void AddQuartz(IServiceCollection services)
         {
             services.AddScoped<StoreBookshelfJob>();
-            services.AddScoped<SaveRankJob>();
 
             services.AddQuartz(x =>
             {
@@ -230,7 +229,28 @@ namespace Anf.Web
             }
             //var scope = app.ApplicationServices.CreateScope();
             //_ = AnfMongoDbExtensions.InitMongoAsync(scope);
-            //InitJobAsync(scope).GetAwaiter().GetResult();
+            InitJobAsync(app.ApplicationServices).GetAwaiter().GetResult();
+        }
+        private async Task InitJobAsync(IServiceProvider provider)
+        {
+            using (var scope=provider.CreateScope())
+            {
+                var schedulerFc = scope.ServiceProvider.GetRequiredService<ISchedulerFactory>();
+                var scheduler = await schedulerFc.GetScheduler();
+                var jobIdentity = JobBuilder.Create<StoreLazyInsertJob>()
+                    .RequestRecovery()
+                    .Build();
+                var trigger = TriggerBuilder.Create()
+                    .StartNow()
+                    .WithSimpleSchedule(b =>
+                    {
+                        b.WithIntervalInSeconds(10)
+                            .RepeatForever();
+                    })
+                    .Build();
+                var offset = await scheduler.ScheduleJob(jobIdentity, trigger);
+
+            }
         }
         //private async Task InitJobAsync(IServiceScope scope)
         //{

@@ -9,7 +9,7 @@ namespace Anf.Web
 {
     public class AzureStoreService : IStoreService, IComicSaver
     {
-        public static readonly string ContainerName = "cache-";
+        public static readonly string ContainerName = "cache";
 
         private readonly BlobServiceClient blobServiceClient;
         private readonly IAddressToFileNameProvider addressToFileNameProvider;
@@ -29,7 +29,7 @@ namespace Anf.Web
         }
         private async Task<BlobClient> GetFileAsync(string address)
         {
-            var hash = ContainerName + Md5Helper.MakeMd5(address);
+            var hash = ContainerName + Md5Helper.MakeMd5(address).ToLower();
             var client = blobServiceClient.GetBlobContainerClient(ContainerName);
             if (!createdCacher.Get(hash))
             {

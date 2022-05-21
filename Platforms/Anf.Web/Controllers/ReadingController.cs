@@ -15,6 +15,7 @@ using SecurityLogin;
 using Anf.Statistical;
 using Anf.ChannelModel.Entity;
 using Anf.ChannelModel;
+using System.IO;
 
 namespace Anf.Web.Controllers
 {
@@ -121,16 +122,17 @@ namespace Anf.Web.Controllers
             using var scope = scopeFactory.CreateScope();
             var provider = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(prov.ProviderType);
             var storeSer = scope.ServiceProvider.GetRequiredService<IStoreService>();
-            var exist = await storeSer.ExistsAsync(url);
-            if (!exist)
+            var d=Md5Helper.MakeMd5(url);
+            var imgRes = await storeSer.GetStreamAsync(d);
+            if (imgRes == null)
             {
-                var imgRes = await provider.GetImageStreamAsync(url);
-                await storeSer.SaveAsync(url, imgRes);
+                imgRes = await provider.GetImageStreamAsync(url);
+                await storeSer.SaveAsync(d, imgRes);
+                imgRes.Seek(0, SeekOrigin.Begin);
             }
-            var stream = await storeSer.GetStreamAsync(url);
 
-            HttpContext.Response.RegisterForDispose(stream);
-            return File(stream, "application/octet-stream");
+            HttpContext.Response.RegisterForDispose(imgRes);
+            return File(imgRes, "application/octet-stream");
         }
         [AllowAnonymous]
         [HttpGet("[action]")]

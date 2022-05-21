@@ -44,6 +44,7 @@ import { LoginComponent } from './login/login.component'
 
 import { SearchService } from './comic-api/comic-search.service';
 import { VisitManager } from './comic-api/comic-visit.mgr'
+import { ErrorComponent } from './error/error.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -92,7 +93,8 @@ import { VisitManager } from './comic-api/comic-visit.mgr'
       { path: 'about', component: AboutComponent },
       { path: 'bookshelf', component: BookshelfComponent },
       { path: 'login', component: LoginComponent },
-      { path: 'visit/:url',component:VisitComponent}
+      { path: 'visit/:url',component:VisitComponent},
+      { path: 'error', component:ErrorComponent}
     ]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })
   ],

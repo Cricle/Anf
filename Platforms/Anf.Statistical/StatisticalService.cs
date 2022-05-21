@@ -10,6 +10,7 @@ using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using System.Text.Json;
 using ValueBuffer;
+using EFCore.BulkExtensions;
 
 namespace Anf.Statistical
 {
@@ -91,7 +92,7 @@ namespace Anf.Statistical
                 }).ToListAsync();
             if (data.Count != 0)
             {
-                await DbContext.VisitRanks.BulkInsertAsync(data);
+                await DbContext.BulkInsertAsync(data);
             }
             Logger.LogInformation("Alread store {0} count visit rank!",data.Count);
             return data.Count;
@@ -112,7 +113,7 @@ namespace Anf.Statistical
                 }).ToListAsync();
             if (data.Count != 0)
             {
-                await DbContext.SearchRanks.BulkInsertAsync(data);
+                await DbContext.BulkInsertAsync(data);
             }
             Logger.LogInformation("Alread store {0} count search rank!", data.Count);
             return data.Count;

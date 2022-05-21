@@ -24,7 +24,6 @@ export class ComicListComponent implements OnInit {
   @Output()
   visitComic: AnfComicEntityTruck;
   @Output()
-  @Output()
   loadingVisit: boolean;
   @Output()
   emptyEntity: boolean;
@@ -48,15 +47,21 @@ export class ComicListComponent implements OnInit {
     this.emptyEntity = false;
     this.visitComic = null;
     this.drawerWidth = Math.max(300, document.body.clientWidth * coff);
-    this.api.getEntity(item.address).subscribe(x => {
-      if (this.selectedItem == locItem) {
-        this.visitComic = x;
-        this.emptyEntity = x == null;
-        console.log(x);
+    this.api.getEntity(item.address).subscribe({
+      next:x => {
+        if (this.selectedItem == locItem) {
+          this.visitComic = x;
+          this.emptyEntity = x == null;
+          console.log(this.visitComic);
+        }
+      },
+      error:err => {
+        this.notify.error('Loading visit entity fail!', err);
+      },
+      complete:() =>{
+        this.loadingVisit = false;
       }
-    }, err => {
-      this.notify.error('Loading visit entity fail!', err);
-    }, () => this.loadingVisit = false);
+    });
   }
   close() {
     this.showVisit = false;
@@ -69,10 +74,14 @@ export class ComicListComponent implements OnInit {
     }
     this.loading=true;
     const provider=dataProivder();
-    provider.subscribe(x=>{
-      this.rank=x;
-    },err=>{
-      this.loading=false;
-    },()=>this.loading=false);
+    provider.subscribe({
+      next:x => {
+        this.rank=x;
+      },
+      error:err => {
+        this.loading=false;
+      },
+      complete:() => this.loading = false
+    });
   }
 }

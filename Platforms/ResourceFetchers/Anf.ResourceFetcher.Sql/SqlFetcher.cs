@@ -1,5 +1,6 @@
 ﻿using Anf.ChannelModel.Entity;
 using Anf.ChannelModel.Mongo;
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using System;
@@ -34,7 +35,7 @@ namespace Anf.ResourceFetcher.Fetchers
                 {
                     return chpSet.Where(x => x.TargetUrl == context.Url)
                         .Take(1)
-                        .UpdateFromQueryAsync(x => new KvComicChapter
+                        .BatchUpdateAsync(x => new KvComicChapter
                         {
                             Pages = pageJson,
                             Title = context.Value.Title,
@@ -66,7 +67,7 @@ namespace Anf.ResourceFetcher.Fetchers
             var upRes = await set.AsNoTracking()
                 .Where(x => x.ComicUrl == ctx.Url)
                 .Take(1)
-                .UpdateFromQueryAsync(x => new KvComicEntity
+                .BatchUpdateAsync(x => new KvComicEntity
                 {
                     ComicUrl = val.ComicUrl,
                     Name = val.Name,
@@ -81,8 +82,7 @@ namespace Anf.ResourceFetcher.Fetchers
                 var query = chpSet.AsNoTracking();
                 if (includeUrls.Length > 50)
                 {
-                    var urlEntity = includeUrls.Select(x => new { TargetUrl = x }).ToArray();
-                    query = query.WhereBulkContains(urlEntity, nameof(KvComicChapter.TargetUrl));
+                    query = query.Where(x=> includeUrls.Contains(x.TargetUrl));
                 }
                 else
                 {
@@ -117,7 +117,7 @@ namespace Anf.ResourceFetcher.Fetchers
                 }
                 if (notExists.Count != 0)
                 {
-                    await chpSet.BulkInsertAsync(notExists);
+                    await dbContextTransfer.Context.BulkInsertAsync(notExists);
                 }
             }
             else
@@ -138,9 +138,8 @@ namespace Anf.ResourceFetcher.Fetchers
                         Title = x.Title,
                     }).ToArray(),
                 };
-                await set.SingleInsertAsync(entity);
-                var chpSet = dbContextTransfer.GetComicChapterSet();
-                await chpSet.BulkInsertAsync(entity.Chapters);
+                await dbContextTransfer.Context.BulkInsertAsync(new[] { entity });
+                await dbContextTransfer.Context.BulkInsertAsync(entity.Chapters.ToList());
             }
         }
 

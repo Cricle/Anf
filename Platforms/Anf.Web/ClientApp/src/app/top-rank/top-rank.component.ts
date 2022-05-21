@@ -22,13 +22,17 @@ export class TopRankComponent implements OnInit {
     this.flushRank(false);
   }
   flushRank(notify:boolean=false){
-    this.api.getTop50().subscribe(x=>{
-      this.rank=x;
-      if(notify){
-        this.notify.success('Flush hot rank succeed','Alreadly flush the relay hot rank!');
-      }
-    },err=>{
-      this.notify.error('Loading rank fail!',err);
-    },()=>this.loading=false);
+    this.api.getTop50().subscribe({
+      next:x=>{
+        this.rank=x;
+        if(notify){
+          this.notify.success('Flush hot rank succeed','Alreadly flush the relay hot rank!');
+        }
+      },
+      error:err=>{
+        this.notify.error('Loading rank fail!',err);
+      },
+      complete:()=>this.loading=false
+    });
   }
 }

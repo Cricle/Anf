@@ -1,4 +1,5 @@
 ﻿using Anf.ChannelModel.Entity;
+using EFCore.BulkExtensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using RedLockNet;
@@ -92,7 +93,7 @@ namespace Anf.WebService
                 await dbContext.Bookshelves.AsNoTracking()
                     .Where(x => x.Id == id && x.UserId == userId)
                     .Take(1)
-                    .DeleteFromQueryAsync();
+                    .BatchDeleteAsync();
                 var bkkey = KeyGenerator.Concat(BookshelfKey, id);
                 await redisDatabase.KeyDeleteAsync(bkkey);
                 return true;
@@ -110,7 +111,7 @@ namespace Anf.WebService
                 await dbContext.BookshelfItems.AsNoTracking()
                     .Where(x => x.BookshelfId == bookshelfId && x.Address == address)
                     .Take(1)
-                    .DeleteFromQueryAsync();
+                    .BatchDeleteAsync();
                 var createKey = KeyGenerator.Concat(BookshelfItemCreateKey, bookshelfId, address);
                 await redisDatabase.KeyDeleteAsync(createKey);
                 await readingManager.RemoveAsync(bookshelfId, address);
@@ -126,7 +127,8 @@ namespace Anf.WebService
                 Name = name,
                 CreateTime = DateTime.Now
             };
-            await dbContext.Bookshelves.SingleInsertAsync(entity);
+            dbContext.Bookshelves.Add(entity);
+            await dbContext.SaveChangesAsync();
         }
         public Task StoreAsync(int pageSize = 250)
         {
@@ -140,11 +142,7 @@ namespace Anf.WebService
                 nameof(AnfBookshelfItem.ReadPage),
                 nameof(AnfBookshelfItem.Like),
             };
-            await dbContext.BookshelfItems.BulkUpdateAsync(items, opt =>
-            {
-                opt.UpdateMatchedAndConditionNames = updateColumns;
-                opt.ColumnPrimaryKeyExpression = x => new { x.BookshelfId, x.Address };
-            });
+            await dbContext.BookshelfItems.BatchUpdateAsync(items, updateColumns);
             return true;
         }
         public async Task<bool> UpdateBookshelfAsync(long id, string name, bool like)
@@ -158,7 +156,8 @@ namespace Anf.WebService
                 }
                 var count = await dbContext.Bookshelves.AsNoTracking()
                     .Where(x => x.Id == id)
-                    .UpdateFromQueryAsync(x => new AnfBookshelf
+                    .Take(1)
+                    .BatchUpdateAsync(x => new AnfBookshelf
                     {
                         Name = name,
                         Like = like
@@ -205,7 +204,8 @@ namespace Anf.WebService
                                 UpdateTime = now,
                                 UserId = userId
                             };
-                            await dbContext.BookshelfItems.SingleInsertAsync(item);
+                            dbContext.BookshelfItems.Add(item);
+                            await dbContext.SaveChangesAsync();
                         }
                         await redisDatabase.StringSetAsync(createKey, true, bookshelfOptions.Value.BookshelfCreateCacheTimeout);
                     }

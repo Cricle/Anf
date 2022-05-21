@@ -95,4 +95,7 @@ export class VisitComponent implements OnInit {
       this.loading=false;
     }, () => this.loading = false);
   }
+  createImgUrl(url:string):string{
+    return this.api.makeImgUrl(this.entity.comicUrl,url);
+  }
 }

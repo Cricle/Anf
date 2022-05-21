@@ -17,13 +17,10 @@ namespace Anf.Web.Controllers
         private const string Top50Key = "Anf.Web.Controllers.RankController.Top50";
         private readonly ComicRankService comicRankService;
         private readonly IMemoryCache memoryCache;
-        private readonly HotSearchService hotSearchService;
 
         public RankController(ComicRankService comicRankService, 
-            IMemoryCache memoryCache,
-            HotSearchService hotSearchService)
+            IMemoryCache memoryCache)
         {
-            this.hotSearchService = hotSearchService;
             this.memoryCache = memoryCache;
             this.comicRankService = comicRankService;
         }
@@ -32,8 +29,8 @@ namespace Anf.Web.Controllers
         [ProducesResponseType(typeof(SetResult<SortedItem>), 200)]
         public async Task <IActionResult> GetHotSearch30()
         {
-            var res = await hotSearchService.GetHotSearchAsync(0, 30);
-            var size = await hotSearchService.SizeAsync();
+            var res = await comicRankService.RangeSearchAsync(0, 30);
+            var size = await comicRankService.SizeSearchAsync();
             var items = res.Select(x => new SortedItem
             {
                 Address = x.Element.ToString(),
@@ -58,8 +55,8 @@ namespace Anf.Web.Controllers
             {
                 return Ok(ds);
             }
-            var res = await comicRankService.RangeAsync(0, 50);
-            var size = await comicRankService.SizeAsync();
+            var res = await comicRankService.RangeVisitAsync(0, 50);
+            var size = await comicRankService.SizeVisitAsync();
             var items = res.Select(x => new SortedItem
             {
                 Address = x.Element.ToString(),

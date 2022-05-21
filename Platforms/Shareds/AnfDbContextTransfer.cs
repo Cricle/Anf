@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Text;
+using System.Threading.Tasks;
 
 namespace Anf.WebService
 {
@@ -16,6 +17,8 @@ namespace Anf.WebService
             this.dbContext = dbContext;
         }
 
+        public DbContext Context => dbContext;
+
         public DbSet<KvComicChapter> GetComicChapterSet()
         {
             return dbContext.ComicChapters;
@@ -25,6 +28,5 @@ namespace Anf.WebService
         {
             return dbContext.ComicEntities;
         }
-
     }
 }

@@ -31,7 +31,7 @@ namespace Anf.WebService
 
         public DbSet<AnfComicSearch> Searchs { get; set; }
 
-#if NET6_0_OR_GREATER&&!COMPILE_EF_TIME
+#if false&&NET6_0_OR_GREATER&&!COMPILE_EF_TIME
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);

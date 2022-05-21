@@ -27,7 +27,7 @@
         </div>
         <div *ngIf="this.wcp" style="margin-left: 8px;margin-right: 8px;">
             <div *ngFor="let pg of this.wcp.pages" style="text-align: center;">
-                <img nz-image [nzSrc]="pg.targetUrl" [alt]="pg.name" style="display:inline-block;max-width:100%;overflow:hidden;"/>
+                <img nz-image [nzSrc]="this.createImgUrl(pg.targetUrl)" [alt]="pg.name" style="display:inline-block;max-width:100%;overflow:hidden;"/>
             </div>
         </div>
         <div *ngIf="this.entity" style="text-align: center;margin: 30px 0px;margin-bottom: 8px;">

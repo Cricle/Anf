@@ -17,7 +17,7 @@
     [(nzVisible)]="showVisit" [nzTitle]="this.visitComic?.name" (nzOnClose)="close()">
     <nz-spin nzSimple [nzIndicator]="indicatorTemplate" [nzSpinning]='loadingVisit'>
     </nz-spin>
-    <div *ngIf="this.visitComic&&!loadingVisit">
+    <div *ngIf="this.visitComic&&!this.loadingVisit">
         <article nz-typography>
             <h1 nz-typography><a>{{this.visitComic.name}}</a></h1>
             <p nz-typography nzEllipsis nzExpandable [nzEllipsisRows]="4">
