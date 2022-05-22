@@ -27,7 +27,7 @@ namespace Anf.ChannelModel.Entity
         public DateTime CreateTime { get; set; }
 
         [Required]
-        public TimeTypes Type { get; set; }
+        public StatisticLevels Type { get; set; }
 
         [Required]
         public long VisitCount { get; set; }

@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore.Design;
 
 namespace Anf.WebService
 {
-    public class BloggingContextFactory : IDesignTimeDbContextFactory<AnfDbContext>
+    public class AnfContextFactory : IDesignTimeDbContextFactory<AnfDbContext>
     {
         public AnfDbContext CreateDbContext(string[] args)
         {

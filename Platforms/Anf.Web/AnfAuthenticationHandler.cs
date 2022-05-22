@@ -15,8 +15,6 @@ namespace Anf.Web
     {
         private static readonly PathString ApiPrefxPath = new PathString(AnfConst.ApiPrefx.TrimEnd('/'));
 
-        public const string SchemeName = "Anf";
-        public const string AuthenticateHeader = "ANF-TOKEN";
 
         private readonly UserIdentityService userIdentityService;
 
@@ -30,11 +28,11 @@ namespace Anf.Web
 
         public async Task<AuthenticateResult> AuthenticateAsync()
         {
-            var authToken = context.Request.Headers[AuthenticateHeader];
+            var authToken = context.Request.Headers[AuthenticationConst.AuthHeader];
             var authTk = authToken.ToString();
             if (isApiQuery && (string.IsNullOrEmpty(authTk) || !Guid.TryParse(authTk, out _)))
             {
-                if (!context.Request.Cookies.TryGetValue(AuthenticateHeader, out authTk))
+                if (!context.Request.Cookies.TryGetValue(AuthenticationConst.AuthHeader, out authTk))
                 {
                     return AuthenticateResult.Fail("No authenticate!");
                 }
@@ -57,10 +55,10 @@ namespace Anf.Web
             var claimsIdentity = new ClaimsIdentity(new Claim[]
             {
                  new Claim(ClaimTypes.Name, name)
-            }, SchemeName);
+            }, AuthenticationConst.SchemeName);
 
             var principal = new ClaimsPrincipal(claimsIdentity);
-            return new AuthenticationTicket(principal, SchemeName);
+            return new AuthenticationTicket(principal, AuthenticationConst.SchemeName);
         }
         public Task ChallengeAsync(AuthenticationProperties properties)
         {

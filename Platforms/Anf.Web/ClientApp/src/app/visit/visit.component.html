@@ -1,39 +1,50 @@
 <div class="m-container">
-    <div style="margin-top: 70px;">
-        <div *ngIf="this.loading" style="text-align: center;margin:auto;">
-            <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
-            <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
-            <span>Now loading...</span>
-        </div>
-        <div *ngIf="!this.loading&&!this.entity">
-            <article nz-typography style="margin-top: 20px;text-align: center;">
-                <h2 nz-typography>Fail to load url <a [href]="this.url">{{url}}</a></h2>
-                <h2 nz-typography>You can clike <a (click)="loadEntity()">me to reload</a></h2>
-            </article>
-        </div>
-        <div *ngIf="this.entity">
-            <article nz-typography style="margin-top: 20px;text-align: center;">
-                <h2 nz-typography>{{this.entity.name}}<span *ngIf="this.watchingChapter">({{this.watchingChapter.title}})</span></h2>
-                <div *ngIf="!this.entity.chapters||this.entity.chapters.length==0">
-                    <h4 nz-typography style="margin-top: 20px;">
-                        There is no chapters found!
-                    </h4>
-                    <h4 nz-typography style="margin-top: 20px;">
-                        If this is error result, you can click <a [href]="this.entity.comicUrl" target="_blank">me</a> to origin website.
-                    </h4>
-                </div>
-                <h4 *ngIf="this.visitPos!=null&&this.visitIndex!=this.chapter nz-typography">Found last visited at {{this.visitIndex+1}} click <a (click)="this.loadChapter(this.visitIndex);this.visitPos=null">me</a> to go. <a (click)="this.visitPos=null">got it</a></h4>
-            </article>
-        </div>
-        <div *ngIf="this.wcp" style="margin-left: 8px;margin-right: 8px;">
-            <div *ngFor="let pg of this.wcp.pages" style="text-align: center;">
-                <img nz-image [nzSrc]="this.createImgUrl(pg.targetUrl)" [alt]="pg.name" style="display:inline-block;max-width:100%;overflow:hidden;"/>
-            </div>
-        </div>
-        <div *ngIf="this.entity" style="text-align: center;margin: 30px 0px;margin-bottom: 8px;">
-            <!-- <nz-affix [nzOffsetBottom]="6">
-            </nz-affix> -->
-            <nz-pagination [(nzPageIndex)]="chapter" [nzPageSize]="1" [nzTotal]="this.totalChapterCount" (nzPageIndexChange)="this.loadChapter($event)"></nz-pagination>
-        </div>
+  <div style="margin-top: 70px;">
+    <div *ngIf="this.loading" style="text-align: center;margin:auto;">
+      <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+      <nz-spin nzSimple [nzIndicator]="indicatorTemplate"> </nz-spin>
+      <span>Now loading...</span>
     </div>
+    <div *ngIf="!this.loading&&!this.entity">
+      <article nz-typography style="margin-top: 20px;text-align: center;">
+        <h2 nz-typography>Fail to load url <a [href]="this.url">{{url}}</a></h2>
+        <h2 nz-typography>You can clike <a (click)="loadEntity()">me to reload</a></h2>
+      </article>
+    </div>
+    <div *ngIf="this.entity">
+      <article nz-typography style="margin-top: 20px;text-align: center;">
+        <h2 nz-typography>{{this.entity.name}}<span *ngIf="this.watchingChapter">({{this.watchingChapter.title}})</span>
+        </h2>
+        <div *ngIf="!this.entity.chapters||this.entity.chapters.length==0">
+          <h4 nz-typography style="margin-top: 20px;">
+            There is no chapters found!
+          </h4>
+          <h4 nz-typography style="margin-top: 20px;">
+            If this is error result, you can click <a [href]="this.entity.comicUrl" target="_blank">me</a> to origin
+            website.
+          </h4>
+        </div>
+        <h4 *ngIf="this.visitPos!=null&&this.visitIndex!=this.chapter nz-typography">Found last visited at
+          {{this.visitIndex+1}} click <a (click)="this.loadChapter(this.visitIndex);this.visitPos=null">me</a> to go. <a
+            (click)="this.visitPos=null">got it</a></h4>
+      </article>
+    </div>
+    <div *ngIf="this.wcp" style="margin-left: 8px;margin-right: 8px;">
+      <div *ngFor="let pg of this.wcp.pages" style="text-align: center;">
+        <div style="display:inline-block;max-width:100%;overflow:hidden;">
+          <nz-spin nzSimple [nzIndicator]="indicatorTemplate" [nzSpinning]="!pg.actualUrl">
+            <img *ngIf="pg.actualUrl" nz-image  [nzSrc]="pg.actualUrl" [alt]="pg.name"/>
+            <!-- <img *ngIf="pg.actualUrl" [lazyLoad]="pg.actualUrl" [alt]="pg.name" /> -->
+          </nz-spin>
+        </div>
+      </div>
+      <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+    </div>
+    <div *ngIf="this.entity" style="text-align: center;margin: 30px 0px;margin-bottom: 8px;">
+      <!-- <nz-affix [nzOffsetBottom]="6">
+            </nz-affix> -->
+      <nz-pagination [(nzPageIndex)]="chapter" [nzPageSize]="1" [nzTotal]="this.totalChapterCount"
+        (nzPageIndexChange)="this.loadChapter($event)"></nz-pagination>
+    </div>
+  </div>
 </div>

@@ -1,0 +1,26 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\Anf.WebService\Anf.WebService.csproj" />
+    <PackageReference Include="Ao.Cache.Core" Version="1.0.1-preview.3" />
+    <PackageReference Include="Ao.Cache.DependencyInjection" Version="1.0.1-preview.3" />
+    <PackageReference Include="Structing" Version="1.3.2-preview.1" />
+    <PackageReference Include="Structing.AspNetCore" Version="1.3.2-preview.1" />
+    <PackageReference Include="Structing.Quartz" Version="1.3.2-preview.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Services\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="sentences\*.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

@@ -1,17 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
-using Anf.Web;
-using Microsoft.Extensions.DependencyInjection;
 
 namespace Quartz
 {
-    /// <summary>
-    /// 对类型<see cref="JobDataMap"/>的扩展
-    /// </summary>
     public static class JobMapExtensions
     {
-        public static T GetAs<T>(this JobDataMap map,string key)
+        public static T GetAs<T>(this IDictionary<string, object> map, string key)
         {
             if (map is null)
             {

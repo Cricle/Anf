@@ -7,17 +7,26 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Azure.Identity;
+using DryIoc;
+using DryIoc.Microsoft.DependencyInjection;
+using Structing.Core;
 
 namespace Anf.Web
 {
     public class Program
     {
+        internal static readonly IModuleEntry moduleEntries = new ModuleCollection
+        {
+            new WebModuleEntry()
+        };
+
         public static void Main(string[] args)
         {
             var builder = CreateHostBuilder(args).Build();
             AppEngine.UseProvider(builder.Services);
             builder.Run();
         }
+        static Rules WithMyRules(Rules currentRules) => currentRules;
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
@@ -36,9 +45,11 @@ namespace Anf.Web
                         new DefaultAzureCredential());
                     }
                 })
+                .UseServiceProviderFactory(
+                    new DryIocServiceProviderFactory(new Container(rules=> WithMyRules(rules))))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup<Startup>();
+                    webBuilder.UseStartup(moduleEntries);
                 });
     }
 }

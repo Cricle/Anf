@@ -25,6 +25,7 @@ export interface ComicInfo {
 }
 export interface ComicRef {
     targetUrl?: string;
+    actualUrl?:string;
 }
 export interface ComicChapter extends ComicRef {
     title: string;

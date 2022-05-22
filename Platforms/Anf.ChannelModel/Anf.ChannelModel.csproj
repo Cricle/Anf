@@ -10,10 +10,11 @@
     <Compile Remove="Mongo\AnfComicEntity.cs"></Compile>
   </ItemGroup>
   <ItemGroup Condition="'$(EnableMongo)'==true">
-    <PackageReference Include="MongoDB.Bson" Version="2.12.3"/>
+    <PackageReference Include="MongoDB.Bson" Version="2.12.3" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Identity.Stores" Version="6.0.3" />
+    <PackageReference Include="SecurityLogin.AppLogin" Version="1.1.6-preview6" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Anf.Engine\Anf.Engine.csproj" />

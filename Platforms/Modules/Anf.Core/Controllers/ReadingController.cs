@@ -122,17 +122,17 @@ namespace Anf.Web.Controllers
             using var scope = scopeFactory.CreateScope();
             var provider = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(prov.ProviderType);
             var storeSer = scope.ServiceProvider.GetRequiredService<IStoreService>();
-            var d=Md5Helper.MakeMd5(url);
-            var imgRes = await storeSer.GetStreamAsync(d);
-            if (imgRes == null)
+            var imgRes = await storeSer.GetPathAsync(url);
+            var exists = await storeSer.ExistsAsync(url);
+            if (!exists)
             {
-                imgRes = await provider.GetImageStreamAsync(url);
-                await storeSer.SaveAsync(d, imgRes);
-                imgRes.Seek(0, SeekOrigin.Begin);
+                using (var img = await provider.GetImageStreamAsync(url))
+                {
+                    await storeSer.SaveAsync(url, img);
+                }
             }
 
-            HttpContext.Response.RegisterForDispose(imgRes);
-            return File(imgRes, "application/octet-stream");
+            return Ok(new EntityResult<string> { Data = imgRes });
         }
         [AllowAnonymous]
         [HttpGet("[action]")]

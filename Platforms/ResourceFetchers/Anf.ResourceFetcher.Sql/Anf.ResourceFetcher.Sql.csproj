@@ -17,7 +17,10 @@
   <ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5" />
-    <PackageReference Include="EFCore.BulkExtensions" Version="6.5.0"/>
+    <PackageReference Include="EFCore.BulkExtensions" Version="6.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="SecurityLogin" Version="1.1.6-preview6" />
   </ItemGroup>
 
   <ItemGroup>

@@ -37,7 +37,7 @@ namespace Anf.Web.Controllers
             var tk = await userService.LoginAsync(connectId, userName, passwordHash);
             if (!string.IsNullOrEmpty(tk))
             {
-                HttpContext.Response.Cookies.Append(AnfAuthenticationHandler.AuthenticateHeader, tk, new Microsoft.AspNetCore.Http.CookieOptions
+                HttpContext.Response.Cookies.Append(AuthenticationConst.AuthHeader, tk, new Microsoft.AspNetCore.Http.CookieOptions
                 {
                     MaxAge = UserIdentityService.ExpireTime
                 });

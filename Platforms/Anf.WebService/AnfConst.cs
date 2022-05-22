@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace Anf.Web
+namespace Anf.WebService
 {
-    internal class AnfConst
+    public class AnfConst
     {
         public const string ApiPrefx = "/api/v1/";
     }

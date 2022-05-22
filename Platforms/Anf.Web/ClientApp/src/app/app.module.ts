@@ -41,6 +41,7 @@ import { ThemeService } from './theme.service'
 import { BookshelfComponent } from './bookshelf/bookshelf.component'
 import { ComicListComponent } from './comic-list/comic-list.component'
 import { LoginComponent } from './login/login.component'
+// import { LazyLoadImageModule,LAZYLOAD_IMAGE_HOOKS, ScrollHooks } from 'ng-lazyload-image';
 
 import { SearchService } from './comic-api/comic-search.service';
 import { VisitManager } from './comic-api/comic-visit.mgr'
@@ -65,7 +66,7 @@ import { ErrorComponent } from './error/error.component';
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
     HttpClientModule,
     FormsModule,
-    
+
     NzButtonModule,
     NzListModule,
     NzSpinModule,
@@ -83,7 +84,7 @@ import { ErrorComponent } from './error/error.component';
     NzAffixModule,
     NzDropDownModule,
     NzFormModule,
-    
+
     BrowserAnimationsModule,
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
@@ -104,6 +105,7 @@ import { ErrorComponent } from './error/error.component';
     ThemeService,
     SearchService,
     VisitManager
+    // { provide: LAZYLOAD_IMAGE_HOOKS, useClass: ScrollHooks }
   ],
   bootstrap: [AppComponent]
 })

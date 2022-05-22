@@ -31,7 +31,24 @@ namespace Anf.WebService
 
         public DbSet<AnfComicSearch> Searchs { get; set; }
 
-#if false&&NET6_0_OR_GREATER&&!COMPILE_EF_TIME
+        public DbSet<AnfApp> Apps { get; set; }
+
+        public DbSet<HWord> Words { get; set; }
+
+        public DbSet<HWordLike> WordLikes { get; set; }
+
+        public DbSet<HWordVisit> WordVisits { get; set; }
+
+        public DbSet<HWordReadStatistic> WordReadStatistics { get; set; }
+
+        public DbSet<HWordUpdateStatistic> WordUpdateStatistics { get; set; }
+
+        public DbSet<HWordUserStatistic> WordUserStatistics { get; set; }
+
+        public DbSet<HQueryStatistic> QueryStatistics { get; set; }
+
+
+#if NET6_0_OR_GREATER&&!COMPILE_EF_TIME
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             base.OnConfiguring(optionsBuilder);
@@ -83,6 +100,54 @@ namespace Anf.WebService
             {
                 x.HasIndex(x => x.Content);
                 x.HasIndex(x => x.Time);
+            });
+
+
+            builder.Entity<AnfApp>(b =>
+            {
+            });
+            builder.Entity<HWord>(b =>
+            {
+                b.HasIndex(x => x.Length);
+                b.HasIndex(x => x.Type);
+            });
+
+            builder.Entity<HWordLike>(b =>
+            {
+                b.HasIndex(x => new { x.WordId, x.UserId });
+                b.HasIndex(x => new { x.WordId, x.Ip });
+
+                b.HasOne(x => x.Word)
+                    .WithMany(x => x.Likes)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+            builder.Entity<HWordVisit>(b =>
+            {
+                b.HasIndex(x => new { x.WordId, x.UserId });
+                b.HasIndex(x => new { x.WordId, x.Ip });
+
+                b.HasOne(x => x.Word)
+                    .WithMany(x => x.Visits)
+                    .OnDelete(DeleteBehavior.NoAction);
+            });
+            builder.Entity<HWordReadStatistic>(b =>
+            {
+                b.HasIndex(x => x.WordId);
+                b.HasIndex(x => x.Time);
+            });
+            builder.Entity<HWordUpdateStatistic>(b =>
+            {
+                b.HasIndex(x => x.Time);
+            });
+            builder.Entity<HWordUserStatistic>(b =>
+            {
+                b.HasIndex(x => x.UserId);
+                b.HasIndex(x => x.Time);
+            });
+            builder.Entity<HQueryStatistic>(b =>
+            {
+                b.HasIndex(x => x.Path);
+                b.HasIndex(x => x.Time);
             });
         }
     }

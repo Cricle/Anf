@@ -21,22 +21,8 @@ namespace Anf.ResourceFetcher
             services.AddScoped<RedisFetcher>();
             return services;
         }
-        public static IServiceCollection AddRedis(this IServiceCollection services)
+        public static IServiceCollection AddRedisResourceFetch(this IServiceCollection services)
         {
-            services.AddSingleton<IConnectionMultiplexer>(x =>
-            {
-                var c = x.GetRequiredService<IConfiguration>();
-                var config = c["ConnectionStringsCacheConnection"];
-                return ConnectionMultiplexer.Connect(config);
-            });
-            services.AddScoped(x => x.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
-
-
-            services.AddSingleton<IDistributedLockFactory>(x =>
-            {
-                var conn = x.GetRequiredService<IConnectionMultiplexer>();
-                return RedLockFactory.Create(new List<RedLockMultiplexer> { new RedLockMultiplexer(conn) });
-            });
             services.AddSingleton<IResourceLockerFactory, ResourceLockerFactory>();
             services.AddScoped<InRedisComicService>();
             return services;

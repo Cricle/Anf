@@ -1,10 +1,16 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
     <Configurations>Debug;Release;CompileModel</Configurations>
     <LangVersion>8.0</LangVersion>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='CompileModel'">
+    <TargetFramework>net6.0</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'!='CompileModel'">
+    <TargetFrameworks>netstandard2.0;netstandard2.1;net6.0</TargetFrameworks>
+  </PropertyGroup>
+
   <PropertyGroup Condition="'$(Configuration)'=='CompileModel'">
     <DefineConstants>$(DefineConstants);COMPILE_EF_TIME</DefineConstants>
   </PropertyGroup>
@@ -15,7 +21,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="RedLock.net" Version="2.3.2" />
-    <PackageReference Include="SecurityLogin.Normal" Version="1.1.6-preview6" />
   </ItemGroup>
   <ItemGroup Condition="'$(TargetFramework)'=='netstandard2.0'">
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="2.2.0" />
@@ -29,12 +34,12 @@
   <ItemGroup Condition="'$(TargetFramework)'=='net6.0'">
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="6.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="6.0.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.5" Condition="'$(Configuration)'=='CompileModel'" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="6.0.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="6.0.5">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="EFCore.BulkExtensions" Version="6.5.0"/>
+    <PackageReference Include="EFCore.BulkExtensions" Version="6.5.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\Shareds\AnfDbContext.cs"></Compile>
