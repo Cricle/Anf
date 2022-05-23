@@ -24,12 +24,6 @@
       "type": "storage.azure",
       "connectionId": "BlobStore"
     },
-    "mssql1": {
-      "secretStore": "AzureKeyVault",
-      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/anfc/databases/Anfdb",
-      "type": "mssql.azure",
-      "connectionId": "anfdb"
-    },
     "signalr1": {
       "secretStore": "AzureKeyVault",
       "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.SignalRService/SignalR/anfc",
@@ -41,6 +35,12 @@
       "resourceId": null,
       "type": "secrets.user",
       "connectionId": null
+    },
+    "mssql1": {
+      "secretStore": "AzureKeyVault",
+      "resourceId": "/subscriptions/[parameters('subscriptionId')]/resourceGroups/[parameters('resourceGroupName')]/providers/Microsoft.Sql/servers/anfc/databases/Anfdb",
+      "type": "mssql.azure",
+      "connectionId": "anfdb"
     }
   }
 }

@@ -11,7 +11,12 @@ namespace Anf.Web
     {
         public WebModuleEntry AddEF(IServiceCollection services, IConfiguration configuration)
         {
-            services.AddDbContextPool<AnfDbContext>((x, y) =>
+            services.AddDbContext<AnfDbContext>((x, y) =>
+            {
+                var config = x.GetRequiredService<IConfiguration>();
+                y.UseSqlServer(config["ConnectionStringsAnfdb"]);
+            },optionsLifetime: ServiceLifetime.Singleton)
+            .AddDbContextPool<AnfDbContext>((x, y) =>
             {
                 var config = x.GetRequiredService<IConfiguration>();
                 y.UseSqlServer(config["ConnectionStringsAnfdb"]);

@@ -16,10 +16,6 @@
       "type": "storage",
       "connectionId": "BlobStore"
     },
-    "mssql1": {
-      "type": "mssql",
-      "connectionId": "anfdb"
-    },
     "signalr1": {
       "type": "signalr",
       "connectionId": "Azure__SignalR__ConnectionString"
@@ -27,6 +23,10 @@
     "secrets1": {
       "type": "secrets",
       "connectionId": null
+    },
+    "mssql1": {
+      "type": "mssql",
+      "connectionId": "anfdb"
     }
   }
 }

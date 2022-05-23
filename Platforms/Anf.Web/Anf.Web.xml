@@ -4,34 +4,5 @@
         <name>Anf.Web</name>
     </assembly>
     <members>
-        <member name="T:Anf.Web.Jobs.ServicingJobBase">
-            <summary>
-            表示使用服务的基本任务
-            </summary>
-        </member>
-        <member name="M:Anf.Web.Jobs.ServicingJobBase.Execute(Quartz.IJobExecutionContext)">
-            <inheritdoc/>
-        </member>
-        <member name="M:Anf.Web.Jobs.ServicingJobBase.OnExecute(Quartz.IJobExecutionContext,System.IServiceProvider)">
-            <summary>
-            执行任务
-            </summary>
-            <param name="context">任务执行上下文</param>
-            <param name="serviceProvider">服务提供者</param>
-            <returns></returns>
-        </member>
-        <member name="M:Anf.Web.Jobs.ServicingJobBase.CanExecuteAsync(Quartz.IJobExecutionContext,System.IServiceProvider)">
-            <summary>
-            是否可以执行任务
-            </summary>
-            <param name="context"></param>
-            <param name="serviceProvider"></param>
-            <returns></returns>
-        </member>
-        <member name="T:Quartz.JobMapExtensions">
-            <summary>
-            对类型<see cref="T:Quartz.JobDataMap"/>的扩展
-            </summary>
-        </member>
     </members>
 </doc>

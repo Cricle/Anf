@@ -47,7 +47,7 @@ namespace Anf.Web
             var services = context.Services;
             var config = context.Features.GetConfiguration();
 
-            services.AddSingleton(Program.moduleEntries);
+            services.AddSingleton(Program.modules);
 
             //var store = FileStoreService.FromMd5Default(Path.Combine(Environment.CurrentDirectory, XComicConst.CacheFolderName));
             AddComicAnalysis(services)

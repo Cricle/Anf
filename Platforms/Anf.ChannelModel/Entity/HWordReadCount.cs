@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Anf.ChannelModel.Entity
 {
-    public class HWordReadStatistic : CountStatistic
+    public class HWordReadCount : CountStatistic
     {
         [MaxLength(36)]
         public string IP { get; set; }
@@ -16,7 +16,7 @@ namespace Anf.ChannelModel.Entity
 
         [Required]
         [ForeignKey(nameof(Word))]
-        public long WordId { get; set; }
+        public ulong WordId { get; set; }
 
         public HWord Word { get; set; }
 

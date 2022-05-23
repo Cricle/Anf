@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Anf.ChannelModel.Entity
 {
-    public class HWordUpdateStatistic: CountStatistic
+    public class HWordUpdateCount : CountStatistic
     {
     }
 }

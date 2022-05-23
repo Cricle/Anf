@@ -15,7 +15,7 @@ namespace Anf.Web
 {
     public class Program
     {
-        internal static readonly IModuleEntry moduleEntries = new ModuleCollection
+        internal static readonly IEnumerable<IModuleEntry> modules = new ModuleCollection
         {
             new WebModuleEntry()
         };
@@ -49,7 +49,7 @@ namespace Anf.Web
                     new DryIocServiceProviderFactory(new Container(rules=> WithMyRules(rules))))
                 .ConfigureWebHostDefaults(webBuilder =>
                 {
-                    webBuilder.UseStartup(moduleEntries);
+                    webBuilder.UseStartup(new ModuleCollection(modules));
                 });
     }
 }

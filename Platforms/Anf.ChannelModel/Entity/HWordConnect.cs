@@ -18,7 +18,7 @@ namespace Anf.ChannelModel.Entity
 
         [Required]
         [ForeignKey(nameof(Word))]
-        public long WordId { get; set; }
+        public ulong WordId { get; set; }
 
         [Required]
         public bool Enable { get; set; }

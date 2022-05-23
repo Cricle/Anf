@@ -76,7 +76,7 @@ namespace Anf.Statistical
             return StoreAsync<AnfComicSearch>(StatisticalSearchey, size);
         }
 
-        public async Task<int> SaveVisitAsync(TimeTypes type, DateTime left, DateTime right)
+        public async Task<int> SaveVisitAsync(StatisticLevels type, DateTime left, DateTime right)
         {
             DbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(10));
             var now = DateTime.Now;
@@ -97,7 +97,7 @@ namespace Anf.Statistical
             Logger.LogInformation("Alread store {0} count visit rank!",data.Count);
             return data.Count;
         }
-        public async Task<int> SaveSearchAsync(TimeTypes type, DateTime left, DateTime right)
+        public async Task<int> SaveSearchAsync(StatisticLevels type, DateTime left, DateTime right)
         {
             DbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(10));
             var now = DateTime.Now;

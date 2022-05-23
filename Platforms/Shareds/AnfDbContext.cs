@@ -39,11 +39,11 @@ namespace Anf.WebService
 
         public DbSet<HWordVisit> WordVisits { get; set; }
 
-        public DbSet<HWordReadStatistic> WordReadStatistics { get; set; }
+        public DbSet<HWordReadCount> WordReadStatistics { get; set; }
 
-        public DbSet<HWordUpdateStatistic> WordUpdateStatistics { get; set; }
+        public DbSet<HWordUpdateCount> WordUpdateStatistics { get; set; }
 
-        public DbSet<HWordUserStatistic> WordUserStatistics { get; set; }
+        public DbSet<HWordUserCount> WordUserStatistics { get; set; }
 
         public DbSet<HQueryStatistic> QueryStatistics { get; set; }
 
@@ -130,16 +130,16 @@ namespace Anf.WebService
                     .WithMany(x => x.Visits)
                     .OnDelete(DeleteBehavior.NoAction);
             });
-            builder.Entity<HWordReadStatistic>(b =>
+            builder.Entity<HWordReadCount>(b =>
             {
                 b.HasIndex(x => x.WordId);
                 b.HasIndex(x => x.Time);
             });
-            builder.Entity<HWordUpdateStatistic>(b =>
+            builder.Entity<HWordUpdateCount >(b =>
             {
                 b.HasIndex(x => x.Time);
             });
-            builder.Entity<HWordUserStatistic>(b =>
+            builder.Entity<HWordUserCount>(b =>
             {
                 b.HasIndex(x => x.UserId);
                 b.HasIndex(x => x.Time);
