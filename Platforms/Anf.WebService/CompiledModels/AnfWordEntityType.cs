@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Anf.WebService
 {
-    internal partial class HWordEntityType
+    internal partial class AnfWordEntityType
     {
         public static RuntimeEntityType Create(RuntimeModel model, RuntimeEntityType baseEntityType = null)
         {
             var runtimeEntityType = model.AddEntityType(
-                "Anf.ChannelModel.Entity.HWord",
-                typeof(HWord),
+                "Anf.ChannelModel.Entity.AnfWord",
+                typeof(AnfWord),
                 baseEntityType);
 
             var id = runtimeEntityType.AddProperty(
@@ -30,15 +30,15 @@ namespace Anf.WebService
             var authorId = runtimeEntityType.AddProperty(
                 "AuthorId",
                 typeof(long?),
-                propertyInfo: typeof(HWord).GetProperty("AuthorId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<AuthorId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(AnfWord).GetProperty("AuthorId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<AuthorId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true);
 
             var commitType = runtimeEntityType.AddProperty(
                 "CommitType",
                 typeof(CommitTypes),
-                propertyInfo: typeof(HWord).GetProperty("CommitType", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<CommitType>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfWord).GetProperty("CommitType", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<CommitType>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             var createTime = runtimeEntityType.AddProperty(
                 "CreateTime",
@@ -49,41 +49,42 @@ namespace Anf.WebService
             var creatorId = runtimeEntityType.AddProperty(
                 "CreatorId",
                 typeof(long),
-                propertyInfo: typeof(HWord).GetProperty("CreatorId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<CreatorId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfWord).GetProperty("CreatorId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<CreatorId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+            creatorId.AddAnnotation("SqlServer:Sparse", true);
 
             var from = runtimeEntityType.AddProperty(
                 "From",
                 typeof(string),
-                propertyInfo: typeof(HWord).GetProperty("From", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<From>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(AnfWord).GetProperty("From", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<From>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true,
                 maxLength: 128);
 
             var length = runtimeEntityType.AddProperty(
                 "Length",
                 typeof(ushort),
-                propertyInfo: typeof(HWord).GetProperty("Length", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<Length>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfWord).GetProperty("Length", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<Length>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             var likeCount = runtimeEntityType.AddProperty(
                 "LikeCount",
                 typeof(ulong),
-                propertyInfo: typeof(HWord).GetProperty("LikeCount", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<LikeCount>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfWord).GetProperty("LikeCount", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<LikeCount>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             var text = runtimeEntityType.AddProperty(
                 "Text",
                 typeof(string),
-                propertyInfo: typeof(HWord).GetProperty("Text", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<Text>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(AnfWord).GetProperty("Text", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<Text>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 maxLength: 512);
 
             var timestamp = runtimeEntityType.AddProperty(
                 "Timestamp",
                 typeof(byte[]),
-                propertyInfo: typeof(HWord).GetProperty("Timestamp", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<Timestamp>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                propertyInfo: typeof(AnfWord).GetProperty("Timestamp", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<Timestamp>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 nullable: true,
                 concurrencyToken: true,
                 valueGenerated: ValueGenerated.OnAddOrUpdate,
@@ -93,14 +94,14 @@ namespace Anf.WebService
             var type = runtimeEntityType.AddProperty(
                 "Type",
                 typeof(WordType),
-                propertyInfo: typeof(HWord).GetProperty("Type", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<Type>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfWord).GetProperty("Type", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<Type>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             var visitCount = runtimeEntityType.AddProperty(
                 "VisitCount",
                 typeof(ulong),
-                propertyInfo: typeof(HWord).GetProperty("VisitCount", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<VisitCount>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfWord).GetProperty("VisitCount", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<VisitCount>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });
@@ -131,8 +132,8 @@ namespace Anf.WebService
                 runtimeForeignKey,
                 onDependent: true,
                 typeof(AnfUser),
-                propertyInfo: typeof(HWord).GetProperty("Author", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<Author>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfWord).GetProperty("Author", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<Author>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }
@@ -149,8 +150,8 @@ namespace Anf.WebService
                 runtimeForeignKey,
                 onDependent: true,
                 typeof(AnfUser),
-                propertyInfo: typeof(HWord).GetProperty("Creator", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(HWord).GetField("<Creator>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfWord).GetProperty("Creator", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfWord).GetField("<Creator>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }

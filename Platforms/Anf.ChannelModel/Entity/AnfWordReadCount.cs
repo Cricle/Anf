@@ -5,11 +5,16 @@ using System.Text;
 
 namespace Anf.ChannelModel.Entity
 {
-    public class HWordReadCount : CountStatistic
+    public class AnfWorkReadStatistic:AnfStatistic
     {
-        [MaxLength(36)]
-        public string IP { get; set; }
+        [Required]
+        [ForeignKey(nameof(Word))]
+        public ulong WordId { get; set; }
 
+        public AnfWord Word { get; set; }
+    }
+    public class AnfWordReadCount : AnfCount
+    {
         [Required]
         [ForeignKey(nameof(User))]
         public long UserId { get; set; }
@@ -18,7 +23,7 @@ namespace Anf.ChannelModel.Entity
         [ForeignKey(nameof(Word))]
         public ulong WordId { get; set; }
 
-        public HWord Word { get; set; }
+        public AnfWord Word { get; set; }
 
         public AnfUser User { get; set; }
 

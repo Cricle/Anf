@@ -3,10 +3,15 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Anf.ChannelModel.Entity
 {
-    public class HQueryStatistic : AnfCount
+    public class AnfQueryCount : AnfCount
     {
-        public const string AllPath = "*";
+        [Required]
+        [MaxLength(256)]
+        public string Path { get; set; }
 
+    }
+    public class AnfQueryStatistic : AnfStatistic
+    {
         [Required]
         [MaxLength(256)]
         public string Path { get; set; }

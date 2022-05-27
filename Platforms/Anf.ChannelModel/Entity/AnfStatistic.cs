@@ -4,11 +4,17 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Anf.ChannelModel.Entity
 {
-    public class CountStatistic
+    public class AnfStatistic
     {
-        [Required]
+        [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public ulong Id { get; set; }
+
+        [Required]
+        public StatisticLevels Type { get; set; }
+
+        [Required]
+        public long Count { get; set; }
 
         [Required]
         public DateTime Time { get; set; }

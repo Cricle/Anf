@@ -1,6 +1,6 @@
 ﻿namespace Anf.ChannelModel.Entity
 {
-    public class HWordLike: HWordConnect
+    public class AnfWordVisit : AnfWordAction
     {
     }
 }

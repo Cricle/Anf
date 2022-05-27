@@ -25,7 +25,12 @@ namespace Anf.Core
 
             services.AddScoped<ComicRankService>();
             services.AddScoped<BookshelfService>();
-            services.AddScoped<StatisticalService>();
+
+            services.AddScoped<SearchStatisticalService>();
+            services.AddScoped<VisitStatisticalService>();
+            services.AddScoped<WorkReadStatisticalService>();
+            services.AddScoped<WordUpdateStatisticalService>();
+            services.AddScoped<WordUserStatisticalService>();
 
             services.AddOptions<BookshelfOptions>();
             services.AddOptions<ComicRankOptions>();

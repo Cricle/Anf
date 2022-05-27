@@ -4,15 +4,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Anf.ChannelModel.Entity
 {
-    public abstract class HWordConnect
+    public abstract class AnfWordAction : AnfCount
     {
-        [Key]
-        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public long Id { get; set; }
-
-        [MaxLength(36)]
-        public string Ip { get; set; }
-
         [ForeignKey(nameof(User))]
         public long? UserId { get; set; }
 
@@ -23,12 +16,9 @@ namespace Anf.ChannelModel.Entity
         [Required]
         public bool Enable { get; set; }
 
-        [Required]
-        public DateTime CreateTime { get; set; }
-
         public DateTime? UpdateTime { get; set; }
 
-        public HWord Word { get; set; }
+        public AnfWord Word { get; set; }
 
         public AnfUser User { get; set; }
     }

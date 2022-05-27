@@ -53,7 +53,7 @@ namespace Anf.Hitokoto
                         UserName = "test",
                     }, "test123");
                     var u = await um.FindByNameAsync("test");
-                    var word = new List<HWord>();
+                    var word = new List<AnfWord>();
                     foreach (var item in Directory.EnumerateFiles(Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "sentences"), "*.json"))
                     {
                         using (var fs = File.Open(item, FileMode.Open))
@@ -74,7 +74,7 @@ namespace Anf.Hitokoto
                                         }
                                         t = TimeHelper.GetCsTime(lts);
                                     }
-                                    var w = new HWord
+                                    var w = new AnfWord
                                     {
                                         Text = enu.Current.GetProperty("hitokoto").ToString(),
                                         From = enu.Current.GetProperty("from").ToString(),

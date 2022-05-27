@@ -5,7 +5,7 @@ using System.Text;
 
 namespace Anf.ChannelModel.Entity
 {
-    public class HWord : IdentityDbEntityBase
+    public class AnfWord : IdentityDbEntityBase
     {
         [Required]
         public WordType Type { get; set; }
@@ -44,9 +44,9 @@ namespace Anf.ChannelModel.Entity
         public virtual AnfUser Author { get; set; }
 
         [NotMapped]
-        public IEnumerable<HWordLike> Likes { get; set; }
+        public IEnumerable<AnfWordLike> Likes { get; set; }
 
         [NotMapped]
-        public IEnumerable<HWordVisit> Visits { get; set; }
+        public IEnumerable<AnfWordVisit> Visits { get; set; }
     }
 }

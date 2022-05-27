@@ -1,122 +1,78 @@
 ﻿using Anf.WebService;
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.EntityFrameworkCore;
 using Anf.ChannelModel.Entity;
 using Microsoft.Extensions.Logging;
 using StackExchange.Redis;
 using System.Text.Json;
-using ValueBuffer;
 using EFCore.BulkExtensions;
 
 namespace Anf.Statistical
 {
-    public class StatisticalService
+    public abstract class StatisticalService<TEntity,TStatistical>
+        where TEntity : AnfCount
+        where TStatistical : AnfStatistic
     {
-        private static readonly RedisKey StatisticalVisitKey = "Anf.Statistical.VisitList";
-        private static readonly RedisKey StatisticalSearchey = "Anf.Statistical.SearchList";
-
-        public StatisticalService(AnfDbContext dbContext, IDatabase database, ILogger<StatisticalService> logger)
+        protected StatisticalService(AnfDbContext dbContext, IDatabase database)
         {
             DbContext = dbContext;
             Database = database;
-            Logger = logger;
         }
 
         public AnfDbContext DbContext { get; }
 
         public IDatabase Database { get; }
 
-        public ILogger<StatisticalService> Logger { get; }
+        protected abstract RedisKey GetCountsKey();
 
-        public Task<long> AddVisitAsync(AnfComicVisit visit)
+        public Task<long> AddAsync(TEntity visit)
         {
-            var str = JsonSerializer.Serialize(visit);
+            var str = Serialize(visit);
 
-            return Database.ListLeftPushAsync(StatisticalVisitKey, str);
+            return Database.ListLeftPushAsync(GetCountsKey(), str);
         }
-        public Task<long> AddSearchAsync(AnfComicSearch search)
+        protected virtual RedisValue Serialize(TEntity entity)
         {
-            var str = JsonSerializer.Serialize(search);
-
-            return Database.ListLeftPushAsync(StatisticalSearchey, str);
+            return JsonSerializer.Serialize(entity);
         }
-        private async Task<long> StoreAsync<TCount>(RedisKey popKey,int size)
-            where TCount : class
+        protected virtual TEntity Deserialize(in RedisValue value)
         {
-            using (var list = new ValueList<TCount>())
+            return JsonSerializer.Deserialize<TEntity>(value);
+        }
+        public async Task<long> StoreToDbAsync(int size)
+        {
+            var key = GetCountsKey();
+            var list = new List<TEntity>(size);
+            for (int i = 0; i < size; i++)
             {
-                for (int i = 0; i < size; i++)
+                var ds = await Database.ListLeftPopAsync(key);
+                if (!ds.HasValue)
                 {
-                    var ds = await Database.ListLeftPopAsync(popKey);
-                    if (!ds.HasValue)
-                    {
-                        break;
-                    }
-                    var data = JsonSerializer.Deserialize<TCount>(ds);
-                    list.Add(data);
+                    break;
                 }
-                if (list.Size != 0)
-                {
-                    await DbContext.Set<TCount>().AddRangeAsync(list.ToArray());
-                }
-                return list.Size;
+                var data = Deserialize(ds);
+                list.Add(data);
             }
+            if (list.Count != 0)
+            {
+                await DbContext.BulkInsertAsync(list);
+            }
+            return list.Count;
         }
 
-        public Task<long> StoreVisitsAsync(int size)
-        {
-           return StoreAsync<AnfComicVisit>(StatisticalVisitKey, size);
-        }
-        public Task<long> StoreSearchsAsync(int size)
-        {
-            return StoreAsync<AnfComicSearch>(StatisticalSearchey, size);
-        }
+        protected abstract Task<List<TStatistical>> GetStatisticalsAsync(StatisticLevels type, DateTime left, DateTime right);
 
-        public async Task<int> SaveVisitAsync(StatisticLevels type, DateTime left, DateTime right)
+        public virtual async Task<List<TStatistical>> SaveStatisticalAsync(StatisticLevels type, DateTime left, DateTime right)
         {
-            DbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(10));
             var now = DateTime.Now;
-            var data = await DbContext.Visits.AsNoTracking()
-                .Where(x => x.Time > left && x.Time <= right)
-                .GroupBy(x => x.Address)
-                .Select(x => new AnfComicVisitRank
-                {
-                    Address = x.Key,
-                    CreateTime = now,
-                    Type = type,
-                    VisitCount = x.LongCount()
-                }).ToListAsync();
+            var data = await GetStatisticalsAsync(type,left, right);
             if (data.Count != 0)
             {
                 await DbContext.BulkInsertAsync(data);
             }
-            Logger.LogInformation("Alread store {0} count visit rank!",data.Count);
-            return data.Count;
-        }
-        public async Task<int> SaveSearchAsync(StatisticLevels type, DateTime left, DateTime right)
-        {
-            DbContext.Database.SetCommandTimeout(TimeSpan.FromMinutes(10));
-            var now = DateTime.Now;
-            var data = await DbContext.Searchs.AsNoTracking()
-                .Where(x => x.Time > left && x.Time <= right)
-                .GroupBy(x => x.Content)
-                .Select(x => new AnfComicSearchRank
-                {
-                    Content = x.Key,
-                    CreateTime = now,
-                    Type = type,
-                    VisitCount = x.LongCount()
-                }).ToListAsync();
-            if (data.Count != 0)
-            {
-                await DbContext.BulkInsertAsync(data);
-            }
-            Logger.LogInformation("Alread store {0} count search rank!", data.Count);
-            return data.Count;
+            return data;
         }
     }
 }

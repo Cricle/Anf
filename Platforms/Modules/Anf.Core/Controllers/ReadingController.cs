@@ -35,7 +35,8 @@ namespace Anf.Web.Controllers
         private readonly IMemoryCache memoryCache;
         private readonly SearchEngine searchEngine;
         private readonly ComicEngine comicEngine;
-        private readonly StatisticalService statisticalService;
+        private readonly SearchStatisticalService searchStatisticalService;
+        private readonly VisitStatisticalService visitStatisticalService;
 
         public ReadingController(ComicRankService comicRankService,
             IRootFetcher rootFetcher,
@@ -43,9 +44,11 @@ namespace Anf.Web.Controllers
             SearchEngine searchEngine,
             ComicEngine comicEngine,
             IServiceScopeFactory scopeFactory,
-            StatisticalService statisticalService)
+            SearchStatisticalService searchStatisticalService,
+            VisitStatisticalService visitStatisticalService)
         {
-            this.statisticalService = statisticalService;
+            this.visitStatisticalService = visitStatisticalService;
+            this.searchStatisticalService = searchStatisticalService;
             this.scopeFactory = scopeFactory;
             this.comicEngine = comicEngine;
             this.searchEngine = searchEngine;
@@ -96,7 +99,7 @@ namespace Anf.Web.Controllers
             var eng = (ISearchProvider)scope.ServiceProvider.GetService(prov);
             var data = await eng.SearchAsync(keyword, skip, take);
             await comicRankService.IncSearchAsync(keyword, 1);
-            await statisticalService.AddSearchAsync(new AnfComicSearch
+            await searchStatisticalService.AddAsync(new AnfSearchCount
             {
                 Content = keyword,
                 IP = HttpContext.Connection.RemoteIpAddress?.ToString(),
@@ -181,7 +184,7 @@ namespace Anf.Web.Controllers
 
             }
             await comicRankService.IncVisitAsync(url, 1);
-            await statisticalService.AddVisitAsync(new AnfComicVisit
+            await visitStatisticalService.AddAsync(new AnfVisitCount
             {
                 Address = url,
                 IP = HttpContext.Connection.RemoteIpAddress?.ToString(),

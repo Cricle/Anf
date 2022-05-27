@@ -35,6 +35,7 @@ namespace Anf.Web
                 builder.AddBlobServiceClient(config["AzureStoreBlobblob"], preferMsi: true);
                 builder.AddQueueServiceClient(config["AzureStoreBlobqueue"], preferMsi: true);
             });
+            
             return this;
         }
     }
