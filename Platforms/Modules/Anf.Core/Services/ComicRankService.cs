@@ -1,4 +1,8 @@
-﻿using StackExchange.Redis;
+﻿using Anf.ChannelModel.Mongo;
+using Anf.ResourceFetcher.Fetchers;
+using StackExchange.Redis;
+using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace Anf.WebService
@@ -9,12 +13,26 @@ namespace Anf.WebService
         private static readonly RedisKey SearchKey = "Anf.WebService.ComicRankService.Search";
 
         private readonly IDatabase redisDatabase;
+        private readonly RootFetcher rootFetcher;
 
-        public ComicRankService(IDatabase redisDatabase)
+        public ComicRankService(IDatabase redisDatabase,
+            RootFetcher rootFetcher)
         {
             this.redisDatabase = redisDatabase;
+            this.rootFetcher = rootFetcher;
         }
-
+        public async Task<AnfComicEntityTruck[]> RangeVisitEntityAsync(int start = 0, int stop = -1, Order order = Order.Descending)
+        {
+            var data = await RangeVisitAsync(start, stop, order);
+            var identity = new FetchChapterIdentity[data.Length];
+            for (int i = 0; i < data.Length; i++)
+            {
+                var eleStr=data[i].Element.ToString();
+                identity[i] = new FetchChapterIdentity(eleStr, eleStr);
+            }
+            var truck = await rootFetcher.FetchEntitysAsync(identity);
+            return truck;
+        }
         public Task<SortedSetEntry[]> RangeVisitAsync(int start = 0, int stop = -1, Order order = Order.Descending)
         {
             return redisDatabase.SortedSetRangeByRankWithScoresAsync(RankKey, start, stop, order);
@@ -31,7 +49,7 @@ namespace Anf.WebService
         {
             return redisDatabase.SortedSetLengthAsync(SearchKey);
         }
-        public async Task IncVisitAsync(string address,int scope)
+        public async Task IncVisitAsync(string address, int scope)
         {
             await redisDatabase.SortedSetIncrementAsync(RankKey, address, scope);
         }

@@ -21,11 +21,11 @@ export class SearchService {
     acceptHotSearch:SortedItem[]=[];
     hotSearch: SetResult<SortedItem>;
     result: SearchComicResult;
-    
+
     public get keyword() : string {
       return this._keyword;
     }
-    
+
     public set keyword(v : string) {
       this._keyword = v;
       this.flushAcceptHotSeaech();
@@ -39,11 +39,11 @@ export class SearchService {
         }else{
           const lowerV=v.toLowerCase();
           this.acceptHotSearch=this.hotSearch.datas
-            .filter(x=>x.address.toLowerCase().indexOf(lowerV)!=-1);
+            .filter(x=>x.keyword.toLowerCase().indexOf(lowerV)!=-1);
         }
       }
     }
-    
+
     constructor(private api: ComicApiService,
         private notify:NzNotificationService) {
         this.hotSearch = {
@@ -59,7 +59,7 @@ export class SearchService {
             this.providers = x.data;
         });
     }
-    
+
   searchForce(){
     this.api.getHotSearch30().subscribe(x=>{
       this.hotSearch=x;

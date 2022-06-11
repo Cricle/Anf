@@ -1,6 +1,6 @@
 import { Component, Input, OnInit, Output } from '@angular/core';
 import { ComicApiService } from '../comic-api/comic-api.service';
-import { AnfComicEntityTruck, SetResult, SortedItem } from '../comic-api/model';
+import { AnfComicEntityTruck, EntityResult, RangeVisitEntity, SetResult, SortedItem } from '../comic-api/model';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 import { Observable } from 'rxjs'
@@ -18,9 +18,9 @@ export class ComicListComponent implements OnInit {
   loading: boolean;
   @Input()
   @Output()
-  rank: SetResult<SortedItem>;
+  rank: EntityResult<RangeVisitEntity>;
   @Output()
-  selectedItem: SortedItem;
+  selectedItem: AnfComicEntityTruck;
   @Output()
   visitComic: AnfComicEntityTruck;
   @Output()
@@ -39,7 +39,7 @@ export class ComicListComponent implements OnInit {
   ngOnInit(): void {
   }
 
-  loadEntity(item: SortedItem) {
+  loadEntity(item: AnfComicEntityTruck) {
     const locItem = item;
     this.selectedItem = item;
     this.showVisit = true;
@@ -47,7 +47,7 @@ export class ComicListComponent implements OnInit {
     this.emptyEntity = false;
     this.visitComic = null;
     this.drawerWidth = Math.max(300, document.body.clientWidth * coff);
-    this.api.getEntity(item.address).subscribe({
+    this.api.getEntity(item.comicUrl).subscribe({
       next:x => {
         if (this.selectedItem == locItem) {
           this.visitComic = x;
@@ -68,7 +68,7 @@ export class ComicListComponent implements OnInit {
   }
   copy(event: MouseEvent) {
   }
-  loadAsync(dataProivder:()=>Observable<SetResult<SortedItem>>){
+  loadAsync(dataProivder:()=>Observable<EntityResult<RangeVisitEntity>>){
     if(this.loading){
       return;
     }

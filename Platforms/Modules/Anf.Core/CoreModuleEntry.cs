@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Anf.Core.Finders;
+using Anf.Core.Jobs;
 using Anf.Core.Services;
 using Anf.Statistical;
 using Anf.WebService;
@@ -37,6 +39,10 @@ namespace Anf.Core
             services.AddScoped<ReadingManager>();
 
             services.AddScoped<AppService>();
+
+            services.AddScoped<VisitRankFinder>();
+            services.AddScoped<VisitRankFinder50FlushJob>();
+            services.AddOptions<VisitRankFetcherOptions>("VisitRank");
         }
     }
 }

@@ -1,5 +1,11 @@
 ﻿namespace Anf.ResourceFetcher.Fetchers
 {
+    public class ComicEntityUrl
+    {
+        public string Url { get; set; }
+
+        public string EntityUrl { get; set; }
+    }
     public readonly struct FetchChapterIdentity
     {
         public readonly string Url;

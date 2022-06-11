@@ -28,7 +28,7 @@ export class BookshelfComponent implements OnInit {
       const datas:SortedItem[]=[];
       for (const iterator of set) {
         datas.push({
-          address:iterator,
+          keyword:iterator,
           scope:-1
         });
       }

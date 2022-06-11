@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs';
 
-import {AnfComicEntityTruck, SortedItem as SortedItem, EntityResult, RSAKeyIdentity, SearchComicResult, SetResult, WithPageChapter} from './model'
+import {AnfComicEntityTruck,SortedItem,RangeVisitEntity, EntityResult, RSAKeyIdentity, SearchComicResult, SetResult, WithPageChapter} from './model'
 
 import * as JsEncryptModule from 'jsencrypt';
 
@@ -17,22 +17,21 @@ const userPart:string=part+'user';
   providedIn: 'root'
 })
 export class ComicApiService{
-  
 
   constructor(private http: HttpClient) {
   }
-  public getTop50():Observable<SetResult<SortedItem>>{
-    return this.http.get<SetResult<SortedItem>>(`${rankPart}/GetRank50`);
+  public getTop50():Observable<EntityResult<RangeVisitEntity>>{
+    return this.http.get<EntityResult<RangeVisitEntity>>(`${rankPart}/GetRank50`);
   }
   public getChapter(url:string,entityUrl:string):Observable<WithPageChapter>{
-    return this.http.get<WithPageChapter>(`${readingPart}/GetChapter?url=${url}&entityUrl=${entityUrl}`); 
+    return this.http.get<WithPageChapter>(`${readingPart}/GetChapter?url=${url}&entityUrl=${entityUrl}`);
   }
   public getEntity(url:string):Observable<AnfComicEntityTruck>{
-    return this.http.get<AnfComicEntityTruck>(`${readingPart}/GetEntity?url=${url}`); 
+    return this.http.get<AnfComicEntityTruck>(`${readingPart}/GetEntity?url=${url}`);
   }
   public flushKey():Observable<EntityResult<RSAKeyIdentity>>{
     const r=Math.random();
-    return this.http.get<EntityResult<RSAKeyIdentity>>(`${userPart}/FlushKey?r=${r}`); 
+    return this.http.get<EntityResult<RSAKeyIdentity>>(`${userPart}/FlushKey?r=${r}`);
   }
   public encrypt(publicKey:string,data:string,keyLen:string='2048'):string|false{
     const enc=new JsEncryptModule.JSEncrypt({default_key_size:keyLen});
@@ -67,7 +66,6 @@ export class ComicApiService{
     return this.http.get<EntityResult<SearchComicResult>>(`${readingPart}/search?provider=${provider}&keyword=${keyword}&skip=${skip}&take=${take}`);
   }
   public makeImgUrl(entityUrl:string,url:string):Observable<EntityResult<string>>{
-    // return url;
     const r= `${readingPart}/GetImage?entityUrl=${entityUrl}&url=${url}`;
     return this.http.get<EntityResult<string>>(r);
   }

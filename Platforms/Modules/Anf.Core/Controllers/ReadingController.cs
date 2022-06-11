@@ -181,16 +181,18 @@ namespace Anf.Web.Controllers
                 {
                     SlidingExpiration = CacheTime
                 });
-
             }
-            await comicRankService.IncVisitAsync(url, 1);
-            await visitStatisticalService.AddAsync(new AnfVisitCount
+            if (res != null)
             {
-                Address = url,
-                IP = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Time = DateTime.Now,
-                UserId = HttpContext.Features.Get<UserSnapshot>()?.Id
-            });
+                await comicRankService.IncVisitAsync(res.ComicUrl, 1);
+                await visitStatisticalService.AddAsync(new AnfVisitCount
+                {
+                    Address = url,
+                    IP = HttpContext.Connection.RemoteIpAddress?.ToString(),
+                    Time = DateTime.Now,
+                    UserId = HttpContext.Features.Get<UserSnapshot>()?.Id
+                });
+            }
             return Ok(res);
         }
     }

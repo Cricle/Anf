@@ -5,9 +5,15 @@ using System.Threading.Tasks;
 
 namespace Anf.Web.Models
 {
+    public class HotSearchItem
+    {
+        public string Keyword { get; set; }
+
+        public double Scope { get; set; }
+    }
     public class SortedItem
     {
-        public string Address { get; set; }
+        public ComicEntity Entity { get; set; }
 
         public double Scope { get; set; }
     }

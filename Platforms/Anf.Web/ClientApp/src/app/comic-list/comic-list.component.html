@@ -1,11 +1,11 @@
 <nz-list>
-    <nz-list-item *ngFor="let dt of this.rank.datas">
+    <nz-list-item *ngFor="let dt of this.rank.data.entityTrucks">
         <ng-container>
             <div>
                 <nz-badge nzStandalone [nzCount]="dt.scope" [nzStyle]="{ backgroundColor: 'transparent', color: '#999', boxShadow: '0 0 0 0.8px #d9d9d9 inset' }" style="margin-right: 8px;"></nz-badge>
-                <a [routerLink]="['/visit',dt.address]">{{dt.address}}</a>
+                <a [routerLink]="['/visit',dt.comicUrl]">{{dt.comicUrl}}</a>
             </div>
-            
+
             <ul nz-list-item-actions style="display: inline-block;">
                 <nz-list-item-action><a (click)="loadEntity(dt)"><i nz-icon nzType="switcher"
                     nzTheme="outline"></i></a></nz-list-item-action>

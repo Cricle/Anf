@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ComicApiService } from '../comic-api/comic-api.service';
-import { AnfComicEntityTruck,SortedItem, SetResult, SearchComicResult } from '../comic-api/model';
+import { AnfComicEntityTruck,SortedItem, SetResult, SearchComicResult, EntityResult, RangeVisitEntity } from '../comic-api/model';
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 
 
@@ -12,10 +12,10 @@ import { NzNotificationService } from 'ng-zorro-antd/notification';
 })
 export class TopRankComponent implements OnInit {
   loading:boolean;
-  rank: SetResult<SortedItem>;
+  rank: EntityResult<RangeVisitEntity>;
   constructor(private api: ComicApiService,
     private notify: NzNotificationService) {
-    
+
   }
 
   ngOnInit() {

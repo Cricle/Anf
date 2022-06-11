@@ -38,7 +38,7 @@ namespace Anf.Web
             {
                 return null;
             }
-            await comicRankService.IncVisitAsync(address,1);
+            await comicRankService.IncVisitAsync(entity.ComicUrl, 1);
             return new ComicEntity
             {
                 Chapters = entity.Chapters,

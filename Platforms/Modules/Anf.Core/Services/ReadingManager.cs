@@ -88,8 +88,8 @@ namespace Anf.WebService
         }
 
         public async Task<int> DoKeysAsync(Func<AnfBookshelfItem[], Task<bool>> func, int pageSize = 250)
-        {            
-            var sc = database.SetScanAsync(ReadingKeysKey+"*", pageSize);
+        {
+            var sc = database.ScanKeys(ReadingKeysKey + "*", pageSize);
             var cur = sc.GetAsyncEnumerator();
             var okCount = 0;
             while (await cur.MoveNextAsync())
@@ -98,7 +98,7 @@ namespace Anf.WebService
                 okCount += cur.Current.Length;
             }
             return okCount;
-            async Task HandleKeysAsync(IEnumerable<string> keys)
+            async Task HandleKeysAsync(RedisKey[] keys)
             {
                 var batch = database.CreateBatch();
                 var tasks = keys.Select(x => batch.HashGetAllAsync(x)).ToArray();
@@ -112,7 +112,7 @@ namespace Anf.WebService
                     var earse = await func(entitys);
                     if (earse)
                     {
-                        var values = keys.Select(x => (RedisValue)x).ToArray();
+                        var values = keys.Select(x => new RedisValue(x)).ToArray();
                         await database.SetRemoveAsync(ReadingKeysKey, values);
                     }
                 }

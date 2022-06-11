@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace StackExchange.Redis
 {
-    public static class RedisValueExtensions
+    internal static class RedisValueExtensions
     {
         private static readonly ConcurrentDictionary<Type, object> emptyStructs = new ConcurrentDictionary<Type, object>();
 

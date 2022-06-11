@@ -7,6 +7,8 @@ using Microsoft.Extensions.Caching.Memory;
 using Anf.Web.Models;
 using System;
 using Anf.ChannelModel.Results;
+using Anf.Core.Finders;
+using Anf.Core.Models;
 
 namespace Anf.Web.Controllers
 {
@@ -14,29 +16,28 @@ namespace Anf.Web.Controllers
     [Route(AnfConst.ApiPrefx + "[controller]")]
     public class RankController : ControllerBase
     {
-        private const string Top50Key = "Anf.Web.Controllers.RankController.Top50";
         private readonly ComicRankService comicRankService;
-        private readonly IMemoryCache memoryCache;
+        private readonly VisitRankFinder visitRankFinder;
 
         public RankController(ComicRankService comicRankService, 
-            IMemoryCache memoryCache)
+            VisitRankFinder visitRankFinder)
         {
-            this.memoryCache = memoryCache;
+            this.visitRankFinder = visitRankFinder;
             this.comicRankService = comicRankService;
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(SetResult<SortedItem>), 200)]
+        [ProducesResponseType(typeof(SetResult<HotSearchItem>), 200)]
         public async Task <IActionResult> GetHotSearch30()
         {
             var res = await comicRankService.RangeSearchAsync(0, 30);
             var size = await comicRankService.SizeSearchAsync();
-            var items = res.Select(x => new SortedItem
+            var items = res.Select(x => new HotSearchItem
             {
-                Address = x.Element.ToString(),
+                Keyword = x.Element.ToString(),
                 Scope = x.Score
             }).ToArray();
-            var ds = new SetResult<SortedItem>
+            var ds = new SetResult<HotSearchItem>
             {
                 Skip = 0,
                 Take = 50,
@@ -47,32 +48,14 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
-        [ProducesResponseType(typeof(SetResult<SortedItem>),200)]
+        [ProducesResponseType(typeof(EntityResult<RangeVisitEntity>),200)]
         public async Task<IActionResult> GetRank50()
         {
-            var ds = memoryCache.Get<SetResult<SortedItem>>(Top50Key);
-            if (ds!=null)
+            var res = await visitRankFinder.FindInCahceAsync(50);
+            var ds = new EntityResult<RangeVisitEntity>
             {
-                return Ok(ds);
-            }
-            var res = await comicRankService.RangeVisitAsync(0, 50);
-            var size = await comicRankService.SizeVisitAsync();
-            var items = res.Select(x => new SortedItem
-            {
-                Address = x.Element.ToString(),
-                Scope = x.Score
-            }).ToArray();
-            ds = new SetResult<SortedItem>
-            {
-                Skip = 0,
-                Take = 50,
-                Total = size,
-                Datas = items,
+                Data = res
             };
-            memoryCache.Set(Top50Key, ds, new MemoryCacheEntryOptions
-            {
-                SlidingExpiration = TimeSpan.FromSeconds(2)
-            });
             return Ok(ds);
         }
     }

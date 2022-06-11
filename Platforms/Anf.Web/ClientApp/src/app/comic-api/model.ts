@@ -59,8 +59,14 @@ export interface AnfComicEntityInfoOnly extends ComicInfo{
     updateTime:number;
 }
 export interface SortedItem{
-    address:string;
+    keyword:string;
     scope:number;
+}
+export interface RangeVisitEntity{
+  entityTrucks:AnfComicEntityTruck[];
+  size:number;
+  hitCount:number;
+  createTime:Date
 }
 export interface AnfComicEntityTruck extends AnfComicEntityInfoOnly{
     chapters:ComicChapter[];
