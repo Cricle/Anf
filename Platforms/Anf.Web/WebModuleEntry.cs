@@ -34,6 +34,9 @@ using StackExchange.Redis;
 using Anf.Statistical;
 using System.Collections;
 using Structing.AspNetCore;
+using Ao.Cache.Redis.Converters;
+using Ao.Cache.Redis;
+using System.Text.Json;
 
 namespace Anf.Web
 {
@@ -72,6 +75,8 @@ namespace Anf.Web
 
 
             services.AddOptions<ResourceLockOptions>();
+
+            KnowsCacheValueConverter.EndValueConverter = new JsonCacheValueConverter();
 
         }
         public override async Task AfterReadyAsync(IReadyContext context)
@@ -149,6 +154,18 @@ namespace Anf.Web
             });
 
             return base.ReadyAsync(context);
+        }
+    }
+    internal class JsonCacheValueConverter : ICacheValueConverter
+    {
+        public RedisValue Convert(object instance, object value, ICacheColumn column)
+        {
+            return JsonSerializer.Serialize(value);
+        }
+
+        public object ConvertBack(in RedisValue value, ICacheColumn column)
+        {
+            return JsonSerializer.Deserialize(value, column.Property.PropertyType);
         }
     }
 }

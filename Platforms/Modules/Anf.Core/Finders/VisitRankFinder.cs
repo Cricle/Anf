@@ -2,6 +2,7 @@
 using Anf.WebService;
 using Ao.Cache.Redis.Finders;
 using Microsoft.Extensions.Caching.Memory;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using System;
@@ -16,13 +17,25 @@ namespace Anf.Core.Finders
     {
         private static readonly RedisValue hitColumn = nameof(RangeVisitEntity.HitCount);
 
+        public VisitRankFinder(IDatabase database, ComicRankService rankService, IMemoryCache memoryCache, IOptions<VisitRankFetcherOptions> options, ILogger<VisitRankFinder> logger)
+        {
+            Database = database;
+            RankService = rankService;
+            MemoryCache = memoryCache;
+            Options = options;
+            Logger = logger;
+            Build();
+        }
+
         public IDatabase Database { get; }
 
         public ComicRankService RankService { get; }
 
         public IMemoryCache MemoryCache { get; }
 
-        public IOptions<VisitRankFetcherOptions> Options { get; set; }
+        public IOptions<VisitRankFetcherOptions> Options { get; }
+
+        public ILogger<VisitRankFinder> Logger { get; }
 
         public override IDatabase GetDatabase()
         {
@@ -46,12 +59,20 @@ namespace Anf.Core.Finders
         }
         private async Task<RangeVisitEntity> FindAndFlushAsync(int identity)
         {
-            var res = await base.FindInCahceAsync(identity);
-            if (res != null)
+            try
             {
-                MemoryCache.Set(GetEntryKey(identity), res, Options.Value.IntervalTime);
+                var res = await base.FindInCahceAsync(identity);
+                if (res != null)
+                {
+                    MemoryCache.Set(GetEntryKey(identity), res, Options.Value.IntervalTime);
+                }
+                return res;
             }
-            return res;
+            catch (Exception ex)
+            {
+                Logger.LogError(ex.ToString());
+                return null;
+            }
         }
         protected override async Task<RangeVisitEntity> OnFindInDbAsync(int identity)
         {
@@ -68,6 +89,10 @@ namespace Anf.Core.Finders
         protected override bool CanRenewal(int identity, HashEntry[] entity)
         {
             return false;
+        }
+        protected override TimeSpan? GetCacheTime(int identity, RangeVisitEntity entity)
+        {
+            return null;
         }
     }
 }

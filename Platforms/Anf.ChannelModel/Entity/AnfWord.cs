@@ -43,10 +43,10 @@ namespace Anf.ChannelModel.Entity
 
         public virtual AnfUser Author { get; set; }
 
-        [NotMapped]
-        public IEnumerable<AnfWordLike> Likes { get; set; }
+        public virtual ICollection<AnfWordLike> Likes { get; set; }
 
-        [NotMapped]
-        public IEnumerable<AnfWordVisit> Visits { get; set; }
+        public virtual ICollection<AnfWordVisit> Visits { get; set; }
+
+        public virtual ICollection<AnfWordReadCount> WordReadCounts { get; set; }
     }
 }

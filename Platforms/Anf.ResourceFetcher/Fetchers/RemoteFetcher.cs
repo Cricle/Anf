@@ -116,7 +116,10 @@ namespace Anf.ResourceFetcher.Fetchers
                 try
                 {
                     var chp = await FetchEntityAsync(item);
-                    chps.Add(chp);
+                    if (chp != null)
+                    {
+                        chps.Add(chp);
+                    }
                 }
                 catch (Exception) { }
             }

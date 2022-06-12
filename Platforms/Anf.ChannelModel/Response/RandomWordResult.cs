@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Anf.ChannelModel
 {
     public class RandomWordResult
-    {        
+    { 
         public List<WordResponse> Words { get; set; }
 
         public int HitCount { get; set; }

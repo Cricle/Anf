@@ -74,6 +74,7 @@ namespace Anf.ResourceFetcher.Fetchers
 
         public async Task<AnfComicEntityTruck[]> FetchEntityAsync(IResourceFetchContext[] context)
         {
+            var ctxs = context;
             var r = new List<AnfComicEntityTruck>(context.Length);
             for (int i = 0; i < Count && context.Length != 0; i++)
             {
@@ -83,7 +84,7 @@ namespace Anf.ResourceFetcher.Fetchers
                 {
                     r.AddRange(res);
                     var includeUrls = new HashSet<string>(res.Select(x => x.ComicUrl));
-                    context = context.Where(x => includeUrls.Contains(x.Url)).ToArray();
+                    context = context.Where(x => !includeUrls.Contains(x.Url)).ToArray();
                 }
             }
             return r.ToArray();

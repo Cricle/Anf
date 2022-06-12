@@ -24,5 +24,28 @@
             EntityUrl = entityUrl;
             ReloopFetcher = fetcher;
         }
+
+        public override bool Equals(object obj)
+        {
+            if (obj is FetchChapterIdentity identity)
+            {
+                return identity.Url == Url &&
+                    identity.EntityUrl == EntityUrl &&
+                    ReloopFetcher == identity.ReloopFetcher;
+            }
+            return false;
+        }
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                var h = 17 * 31;
+                h = h * 31 + Url?.GetHashCode() ?? 0;
+                h = h * 31 + EntityUrl?.GetHashCode() ?? 0;
+                h = h * 31 + ReloopFetcher?.GetHashCode() ?? 0;
+                return h;
+            }
+        }
+
     }
 }

@@ -118,7 +118,7 @@ namespace Anf.WebService
             var visits = principalEntityType.AddNavigation("Visits",
                 runtimeForeignKey,
                 onDependent: false,
-                typeof(IEnumerable<AnfWordVisit>),
+                typeof(ICollection<AnfWordVisit>),
                 propertyInfo: typeof(AnfWord).GetProperty("Visits", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(AnfWord).GetField("<Visits>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 

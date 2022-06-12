@@ -9,7 +9,7 @@ namespace Anf.Core.Models
 {
     public class RangeVisitEntity
     {
-        public AnfComicEntityTruck[] EntityTrucks { get; set; }
+        public AnfComicEntityScoreTruck[] EntityTrucks { get; set; }
 
         public long Size { get; set; }
 

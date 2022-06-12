@@ -29,9 +29,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Statistical", "Anf.Stat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Modules", "Modules", "{CF836E7F-0497-48AD-ADD5-D0C10257163D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anf.Hitokoto", "Modules\Anf.Hitokoto\Anf.Hitokoto.csproj", "{66C83B89-36EB-4294-A993-D602ED607747}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Hitokoto", "Modules\Anf.Hitokoto\Anf.Hitokoto.csproj", "{66C83B89-36EB-4294-A993-D602ED607747}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Anf.Core", "Modules\Anf.Core\Anf.Core.csproj", "{7BD81C5C-394A-438A-8033-BDB19610B891}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Anf.Core", "Modules\Anf.Core\Anf.Core.csproj", "{7BD81C5C-394A-438A-8033-BDB19610B891}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

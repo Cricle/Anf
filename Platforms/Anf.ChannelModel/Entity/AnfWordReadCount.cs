@@ -15,17 +15,12 @@ namespace Anf.ChannelModel.Entity
     }
     public class AnfWordReadCount : AnfCount
     {
-        [Required]
-        [ForeignKey(nameof(User))]
-        public long UserId { get; set; }
 
         [Required]
         [ForeignKey(nameof(Word))]
         public ulong WordId { get; set; }
 
         public AnfWord Word { get; set; }
-
-        public AnfUser User { get; set; }
 
     }
 }

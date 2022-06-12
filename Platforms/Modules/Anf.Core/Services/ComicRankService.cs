@@ -1,6 +1,7 @@
 ﻿using Anf.ChannelModel.Mongo;
 using Anf.ResourceFetcher.Fetchers;
 using StackExchange.Redis;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -21,17 +22,30 @@ namespace Anf.WebService
             this.redisDatabase = redisDatabase;
             this.rootFetcher = rootFetcher;
         }
-        public async Task<AnfComicEntityTruck[]> RangeVisitEntityAsync(int start = 0, int stop = -1, Order order = Order.Descending)
+        public async Task<AnfComicEntityScoreTruck[]> RangeVisitEntityAsync(int start = 0, int stop = -1, Order order = Order.Descending)
         {
             var data = await RangeVisitAsync(start, stop, order);
             var identity = new FetchChapterIdentity[data.Length];
+            var scoreMap = new Dictionary<string, double>(data.Length);
             for (int i = 0; i < data.Length; i++)
             {
-                var eleStr=data[i].Element.ToString();
+                var eleStr = data[i].Element.ToString();
+                scoreMap[eleStr] = data[i].Score;
                 identity[i] = new FetchChapterIdentity(eleStr, eleStr);
             }
             var truck = await rootFetcher.FetchEntitysAsync(identity);
-            return truck;
+            var res = new AnfComicEntityScoreTruck[truck.Length];
+            for (int i = 0; i < truck.Length; i++)
+            {
+                var t = truck[i];
+                var ti = new AnfComicEntityScoreTruck { Truck = t };
+                if (scoreMap.TryGetValue(t.ComicUrl,out var s))
+                {
+                    ti.Score = s;
+                }
+                res[i] = ti;
+            }
+            return res;
         }
         public Task<SortedSetEntry[]> RangeVisitAsync(int start = 0, int stop = -1, Order order = Order.Descending)
         {

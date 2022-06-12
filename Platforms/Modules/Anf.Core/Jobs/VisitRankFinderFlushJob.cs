@@ -10,7 +10,9 @@ using System.Threading.Tasks;
 
 namespace Anf.Core.Jobs
 {
+    [DisallowConcurrentExecution]
     [SimpleConfigJob]
+    [QuartzScheduleType(QuartzScheduleTypes.Simple)]
     [QuartzInterval(TimeTypes.Hour, 1)]
     [QuartzRepeatCount(forevery: true)]
     public class VisitRankFinder50FlushJob : IJob

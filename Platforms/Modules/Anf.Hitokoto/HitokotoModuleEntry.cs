@@ -89,7 +89,7 @@ namespace Anf.Hitokoto
                             }
                         }
                     }
-                    await db.BulkInsertAsync(word);
+                    await db.AddRangeAsync(word);
 
                     db.Apps.Add(new AnfApp
                     {

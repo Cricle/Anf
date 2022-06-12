@@ -2,7 +2,6 @@
 using System;
 using System.Reflection;
 using Anf.ChannelModel.Entity;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
 #pragma warning disable 219, 612, 618
@@ -10,13 +9,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Anf.WebService
 {
-    internal partial class AnfWordUpdateCountEntityType
+    internal partial class AnfSearchCountEntityType
     {
         public static RuntimeEntityType Create(RuntimeModel model, RuntimeEntityType baseEntityType = null)
         {
             var runtimeEntityType = model.AddEntityType(
-                "Anf.ChannelModel.Entity.AnfWordUpdateCount",
-                typeof(AnfWordUpdateCount),
+                "Anf.ChannelModel.Entity.AnfSearchCount",
+                typeof(AnfSearchCount),
                 baseEntityType);
 
             var id = runtimeEntityType.AddProperty(
@@ -26,6 +25,13 @@ namespace Anf.WebService
                 fieldInfo: typeof(AnfCount).GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueGenerated: ValueGenerated.OnAdd,
                 afterSaveBehavior: PropertySaveBehavior.Throw);
+
+            var content = runtimeEntityType.AddProperty(
+                "Content",
+                typeof(string),
+                propertyInfo: typeof(AnfSearchCount).GetProperty("Content", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfSearchCount).GetField("<Content>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                maxLength: 250);
 
             var iP = runtimeEntityType.AddProperty(
                 "IP",
@@ -44,17 +50,21 @@ namespace Anf.WebService
             var userId = runtimeEntityType.AddProperty(
                 "UserId",
                 typeof(long?),
-                propertyInfo: typeof(AnfCount).GetProperty("UserId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(AnfCount).GetField("<UserId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfSearchCount).GetProperty("UserId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfSearchCount).GetField("<UserId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                nullable: true);
 
             var key = runtimeEntityType.AddKey(
                 new[] { id });
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { time });
+                new[] { content });
 
             var index0 = runtimeEntityType.AddIndex(
+                new[] { time });
+
+            var index1 = runtimeEntityType.AddIndex(
                 new[] { userId });
 
             return runtimeEntityType;
@@ -64,16 +74,14 @@ namespace Anf.WebService
         {
             var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("UserId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
-                principalEntityType,
-                deleteBehavior: DeleteBehavior.Cascade,
-                required: true);
+                principalEntityType);
 
             var user = declaringEntityType.AddNavigation("User",
                 runtimeForeignKey,
                 onDependent: true,
                 typeof(AnfUser),
-                propertyInfo: typeof(AnfCount).GetProperty("User", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
-                fieldInfo: typeof(AnfCount).GetField("<User>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
+                propertyInfo: typeof(AnfSearchCount).GetProperty("User", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfSearchCount).GetField("<User>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 
             return runtimeForeignKey;
         }

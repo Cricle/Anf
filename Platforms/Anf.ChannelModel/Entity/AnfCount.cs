@@ -16,6 +16,7 @@ namespace Anf.ChannelModel.Entity
         [Required]
         public DateTime Time { get; set; }
 
+        [Required]
         [ForeignKey(nameof(User))]
         public long? UserId { get; set; }
 

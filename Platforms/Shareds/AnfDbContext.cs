@@ -57,13 +57,13 @@ namespace Anf.WebService
         public DbSet<AnfQueryStatistic> QueryStatistics => Set<AnfQueryStatistic>();
 
 
-#if NET6_0_OR_GREATER&&!COMPILE_EF_TIME
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            base.OnConfiguring(optionsBuilder);
-            optionsBuilder.UseModel(AnfDbContextModel.Instance);
-        }
-#endif
+//#if NET6_0_OR_GREATER&&!COMPILE_EF_TIME
+//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//        {
+//            base.OnConfiguring(optionsBuilder);
+//            optionsBuilder.UseModel(AnfDbContextModel.Instance);
+//        }
+//#endif
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -79,7 +79,7 @@ namespace Anf.WebService
                     .WithMany(y => y.BookshelfItems)
                     .HasForeignKey(nameof(AnfBookshelfItem.UserId))
                     .IsRequired(true)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.SetNull);
             });
             builder.Entity<KvComicEntity>(x =>
             {
@@ -119,10 +119,6 @@ namespace Anf.WebService
             {
                 b.HasIndex(x => x.Length);
                 b.HasIndex(x => x.Type);
-#if NET6_0_OR_GREATER
-                b.Property(x => x.CreatorId)
-                    .IsSparse(true);
-#endif
             });
 
             builder.Entity<AnfWordLike>(b =>
@@ -132,7 +128,7 @@ namespace Anf.WebService
 
                 b.HasOne(x => x.Word)
                     .WithMany(x => x.Likes)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.SetNull);
             });
             builder.Entity<AnfWordVisit>(b =>
             {
@@ -141,12 +137,16 @@ namespace Anf.WebService
 
                 b.HasOne(x => x.Word)
                     .WithMany(x => x.Visits)
-                    .OnDelete(DeleteBehavior.NoAction);
+                    .OnDelete(DeleteBehavior.SetNull);
             });
             builder.Entity<AnfWordReadCount>(b =>
             {
                 b.HasIndex(x => x.WordId);
                 b.HasIndex(x => x.Time);
+
+                b.HasOne(x => x.Word)
+                    .WithMany(x => x.WordReadCounts)
+                    .OnDelete(DeleteBehavior.SetNull);
             });
             builder.Entity<AnfWordUpdateCount >(b =>
             {

@@ -118,7 +118,7 @@ namespace Anf.WebService
             var likes = principalEntityType.AddNavigation("Likes",
                 runtimeForeignKey,
                 onDependent: false,
-                typeof(IEnumerable<AnfWordLike>),
+                typeof(ICollection<AnfWordLike>),
                 propertyInfo: typeof(AnfWord).GetProperty("Likes", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(AnfWord).GetField("<Likes>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
 

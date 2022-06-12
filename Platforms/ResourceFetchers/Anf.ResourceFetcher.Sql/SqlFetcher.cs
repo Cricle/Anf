@@ -136,6 +136,9 @@ namespace Anf.ResourceFetcher.Fetchers
                         Order = index++,
                         CreateTime = now,
                         Title = x.Title,
+                        TargetUrl = x.TargetUrl,
+                        UpdateTime = now,
+                        RefCount = val.RefCount
                     }).ToArray(),
                 };
                 await dbContextTransfer.Context.BulkInsertAsync(new[] { entity });

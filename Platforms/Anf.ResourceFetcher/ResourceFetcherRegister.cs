@@ -20,7 +20,7 @@ namespace Microsoft.Extensions.DependencyInjection
         public static IServiceCollection AddResourceFetcher(this IServiceCollection services)
         {
             services.AddScoped<RemoteFetcher>();
-            services.AddScoped<IRootFetcher>(p =>
+            services.AddScoped(p =>
             {
                 var lockFactor = p.GetRequiredService<IResourceLockerFactory>();
                 var provider = p.GetRequiredService<FetcherProvider>();
@@ -29,6 +29,7 @@ namespace Microsoft.Extensions.DependencyInjection
                 rootFetcher.AddRange(fetchers);
                 return rootFetcher;
             });
+            services.AddScoped<IRootFetcher>(x => x.GetRequiredService<RootFetcher>());
             services.AddScoped<ISingleResourceFetcher>(x => x.GetRequiredService<IRootFetcher>());
             services.AddScoped<IBatchResourceFetcher>(x => x.GetRequiredService<IRootFetcher>());
             return services;

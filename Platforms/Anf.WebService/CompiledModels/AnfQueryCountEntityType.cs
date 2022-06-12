@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Anf.WebService
 {
-    internal partial class AnfWordUpdateCountEntityType
+    internal partial class AnfQueryCountEntityType
     {
         public static RuntimeEntityType Create(RuntimeModel model, RuntimeEntityType baseEntityType = null)
         {
             var runtimeEntityType = model.AddEntityType(
-                "Anf.ChannelModel.Entity.AnfWordUpdateCount",
-                typeof(AnfWordUpdateCount),
+                "Anf.ChannelModel.Entity.AnfQueryCount",
+                typeof(AnfQueryCount),
                 baseEntityType);
 
             var id = runtimeEntityType.AddProperty(
@@ -35,6 +35,13 @@ namespace Anf.WebService
                 nullable: true,
                 maxLength: 36);
 
+            var path = runtimeEntityType.AddProperty(
+                "Path",
+                typeof(string),
+                propertyInfo: typeof(AnfQueryCount).GetProperty("Path", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfQueryCount).GetField("<Path>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                maxLength: 256);
+
             var time = runtimeEntityType.AddProperty(
                 "Time",
                 typeof(DateTime),
@@ -52,9 +59,12 @@ namespace Anf.WebService
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { time });
+                new[] { path });
 
             var index0 = runtimeEntityType.AddIndex(
+                new[] { time });
+
+            var index1 = runtimeEntityType.AddIndex(
                 new[] { userId });
 
             return runtimeEntityType;

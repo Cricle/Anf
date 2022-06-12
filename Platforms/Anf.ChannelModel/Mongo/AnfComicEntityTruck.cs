@@ -4,4 +4,10 @@
     {
         public ComicChapter[] Chapters { get; set; }
     }
+    public class AnfComicEntityScoreTruck
+    {
+        public AnfComicEntityTruck Truck { get; set; }
+
+        public double Score { get; set; }
+    }
 }

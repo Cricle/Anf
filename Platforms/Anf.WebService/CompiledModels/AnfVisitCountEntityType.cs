@@ -10,13 +10,13 @@ using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace Anf.WebService
 {
-    internal partial class AnfWordUpdateCountEntityType
+    internal partial class AnfVisitCountEntityType
     {
         public static RuntimeEntityType Create(RuntimeModel model, RuntimeEntityType baseEntityType = null)
         {
             var runtimeEntityType = model.AddEntityType(
-                "Anf.ChannelModel.Entity.AnfWordUpdateCount",
-                typeof(AnfWordUpdateCount),
+                "Anf.ChannelModel.Entity.AnfVisitCount",
+                typeof(AnfVisitCount),
                 baseEntityType);
 
             var id = runtimeEntityType.AddProperty(
@@ -26,6 +26,13 @@ namespace Anf.WebService
                 fieldInfo: typeof(AnfCount).GetField("<Id>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 valueGenerated: ValueGenerated.OnAdd,
                 afterSaveBehavior: PropertySaveBehavior.Throw);
+
+            var address = runtimeEntityType.AddProperty(
+                "Address",
+                typeof(string),
+                propertyInfo: typeof(AnfVisitCount).GetProperty("Address", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                fieldInfo: typeof(AnfVisitCount).GetField("<Address>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly),
+                maxLength: 512);
 
             var iP = runtimeEntityType.AddProperty(
                 "IP",
@@ -52,9 +59,12 @@ namespace Anf.WebService
             runtimeEntityType.SetPrimaryKey(key);
 
             var index = runtimeEntityType.AddIndex(
-                new[] { time });
+                new[] { address });
 
             var index0 = runtimeEntityType.AddIndex(
+                new[] { time });
+
+            var index1 = runtimeEntityType.AddIndex(
                 new[] { userId });
 
             return runtimeEntityType;

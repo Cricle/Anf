@@ -51,7 +51,6 @@ namespace Anf.WebService
                 typeof(long),
                 propertyInfo: typeof(AnfWord).GetProperty("CreatorId", BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly),
                 fieldInfo: typeof(AnfWord).GetField("<CreatorId>k__BackingField", BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.DeclaredOnly));
-            creatorId.AddAnnotation("SqlServer:Sparse", true);
 
             var from = runtimeEntityType.AddProperty(
                 "From",

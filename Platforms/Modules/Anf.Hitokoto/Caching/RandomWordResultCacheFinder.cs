@@ -5,6 +5,7 @@ using Ao.Cache.Redis.Finders;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using StackExchange.Redis;
 using System;
@@ -24,14 +25,17 @@ namespace Anf.Hitokoto.Caching
         private readonly IServiceScopeFactory serviceScopeFactory;
         private readonly IDatabase database;
         private readonly IMemoryCache memoryCache;
+        private readonly ILogger<RandomWordResultCacheFinder> logger;
 
         public IOptions<WordFetchOptions> Options { get; }
 
         public RandomWordResultCacheFinder(IDatabase database,
             IServiceScopeFactory serviceScopeFactory,
             IMemoryCache memoryCache,
-            IOptions<WordFetchOptions> options)
+            IOptions<WordFetchOptions> options,
+            ILogger<RandomWordResultCacheFinder> logger)
         {
+            this.logger = logger;
             this.database = database;
             this.memoryCache = memoryCache;
             Options = options;
@@ -60,12 +64,20 @@ namespace Anf.Hitokoto.Caching
         }
         private async Task<RandomWordResult> FindAndFlushAsync(int identity)
         {
-            var res = await base.FindInCahceAsync(identity);
-            if (res != null)
+            try
             {
-                memoryCache.Set(GetEntryKey(identity), res, Options.Value.IntervalTime);
+                var res = await base.FindInCahceAsync(identity);
+                if (res != null)
+                {
+                    memoryCache.Set(GetEntryKey(identity), res, Options.Value.IntervalTime);
+                }
+                return res;
             }
-            return res;
+            catch (Exception ex)
+            {
+                logger.LogError(ex.ToString());
+                return null;
+            }
         }
         public Task<RandomWordResult> FindInCahceAsync()
         {
