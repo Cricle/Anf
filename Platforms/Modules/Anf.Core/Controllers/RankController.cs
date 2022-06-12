@@ -9,6 +9,8 @@ using System;
 using Anf.ChannelModel.Results;
 using Anf.Core.Finders;
 using Anf.Core.Models;
+using Anf.Core;
+using Microsoft.Extensions.Options;
 
 namespace Anf.Web.Controllers
 {
@@ -18,13 +20,15 @@ namespace Anf.Web.Controllers
     {
         private readonly ComicRankService comicRankService;
         private readonly VisitRankFinder visitRankFinder;
+        private readonly IOptions<VisitRankFetcherOptions> options;
 
-        public RankController(ComicRankService comicRankService, 
-            VisitRankFinder visitRankFinder)
+        public RankController(ComicRankService comicRankService, VisitRankFinder visitRankFinder, IOptions<VisitRankFetcherOptions> options)
         {
-            this.visitRankFinder = visitRankFinder;
             this.comicRankService = comicRankService;
+            this.visitRankFinder = visitRankFinder;
+            this.options = options;
         }
+
         [AllowAnonymous]
         [HttpGet("[action]")]
         [ProducesResponseType(typeof(SetResult<HotSearchItem>), 200)]
@@ -51,7 +55,7 @@ namespace Anf.Web.Controllers
         [ProducesResponseType(typeof(EntityResult<RangeVisitEntity>),200)]
         public async Task<IActionResult> GetRank50()
         {
-            var res = await visitRankFinder.FindInCahceAsync(50);
+            var res = await visitRankFinder.FindInCahceAsync(options.Value.IntervalCount);
             var ds = new EntityResult<RangeVisitEntity>
             {
                 Data = res

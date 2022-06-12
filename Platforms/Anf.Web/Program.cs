@@ -10,6 +10,8 @@ using Azure.Identity;
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
 using Structing.Core;
+using Anf.Core;
+using Anf.Hitokoto;
 
 namespace Anf.Web
 {
@@ -17,7 +19,9 @@ namespace Anf.Web
     {
         internal static readonly IEnumerable<IModuleEntry> modules = new ModuleCollection
         {
-            new WebModuleEntry()
+            new WebModuleEntry(),
+            new CoreModuleEntry(),
+            new HitokotoModuleEntry()
         };
 
         public static void Main(string[] args)
