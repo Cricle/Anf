@@ -23,7 +23,7 @@ namespace Anf.WebService
         }
         protected override string GetSharedIdentityKey()
         {
-            return "Anf.WebService.UserService.IdentityKey";
+            return "Anf.WebService.UserService.SharedIdentityKey";
         }
         protected override string GetSharedLockKey()
         {
@@ -84,6 +84,10 @@ namespace Anf.WebService
                 return null;
             }
             var u = await userManager.FindByNameAsync(userName);
+            if (u == null)
+            {
+                return null;
+            }
             var ok = await userManager.CheckPasswordAsync(u, val);
             if (ok)
             {

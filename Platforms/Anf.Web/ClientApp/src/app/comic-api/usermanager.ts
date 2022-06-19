@@ -22,6 +22,7 @@ export class UserManager {
 
   public isLogin(): boolean {
     const val = this.getCookie(TK);
+    console.log(val);
     return val != null;
   }
   private getCookie(name: string): string {
@@ -44,6 +45,7 @@ export class UserManager {
         this.coreLogin(userName, pwd).subscribe(z => {
           if (z.succeed) {
             localStorage.setItem(STORE_USER_NAME, userName);
+            localStorage.setItem(TK, z.data);
           }
           x.next(z);
         });
@@ -54,13 +56,23 @@ export class UserManager {
     return new Observable<EntityResult<boolean>>(x => {
       this.api.flushKey().subscribe(y => {
         this.identity = y.data;
-        const pwdHash = this.api.encrypt(this.identity.key, pwd);
+        const pwdHash = this.api.encrypt(this.identity.publicKey, pwd);
         this.api.registe(userName, pwdHash.toString(), this.identity.identity);
       });
     });
   }
   private coreLogin(userName: string, pwd: string): Observable<EntityResult<string>> {
-    const pwdHash = this.api.encrypt(this.identity.key, pwd);
+    const pwdHash = this.api.encrypt(this.identity.publicKey, pwd);
+    if (!pwdHash) {
+      return new Observable<EntityResult<string>>(x=>x.next(
+        {
+          code: 1,
+          msg: 'Error pwd encrypt',
+          succeed: false,
+          data:''
+        }
+      ));
+    }
     return this.api.login(userName, pwdHash.toString(), this.identity.identity);
   }
 }

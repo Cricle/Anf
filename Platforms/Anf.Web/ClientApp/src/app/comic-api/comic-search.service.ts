@@ -28,9 +28,9 @@ export class SearchService {
 
     public set keyword(v : string) {
       this._keyword = v;
-      this.flushAcceptHotSeaech();
+      this.flushAcceptHotSearch();
     }
-    public flushAcceptHotSeaech(){
+    public flushAcceptHotSearch(){
       this.acceptHotSearch=[];
       const v=this.keyword;
       if(v&&this.hotSearch?.datas){
@@ -63,7 +63,7 @@ export class SearchService {
   searchForce(){
     this.api.getHotSearch30().subscribe(x=>{
       this.hotSearch=x;
-      this.flushAcceptHotSeaech();
+      this.flushAcceptHotSearch();
     });
   }
   search(){

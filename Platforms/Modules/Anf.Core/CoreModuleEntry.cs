@@ -43,6 +43,7 @@ namespace Anf.Core
             services.AddScoped<VisitRankFinder>();
             services.AddScoped<VisitRankFinder50FlushJob>();
             services.AddOptions<VisitRankFetcherOptions>("VisitRank");
+            services.AddSingleton<ComicImageFinder>();
         }
     }
 }

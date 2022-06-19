@@ -3,7 +3,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http'
 import { Observable } from 'rxjs';
 
-import {AnfComicEntityTruck,SortedItem,RangeVisitEntity, EntityResult, RSAKeyIdentity, SearchComicResult, SetResult, WithPageChapter} from './model'
+import {AnfComicEntityTruck,SortedItem,RangeVisitEntity, EntityResult, RSAKeyIdentity, SearchComicResult, SetResult, WithPageChapter, RandomWordResult, WordResponse} from './model'
 
 import * as JsEncryptModule from 'jsencrypt';
 
@@ -12,6 +12,7 @@ const part: string = "/api/v1/";
 const rankPart:string=part+'rank';
 const readingPart:string=part+'reading';
 const userPart:string=part+'user';
+const hitokotoPart:string=part+'word';
 
 @Injectable({
   providedIn: 'root'
@@ -19,6 +20,12 @@ const userPart:string=part+'user';
 export class ComicApiService{
 
   constructor(private http: HttpClient) {
+  }
+  public getRandom():Observable<EntityResult<RandomWordResult>>{
+    return this.http.get<EntityResult<RandomWordResult>>(`${hitokotoPart}/GetRandom`);
+  }
+  public getWord(wordId:number):Observable<EntityResult<WordResponse>>{
+    return this.http.get<EntityResult<WordResponse>>(`${hitokotoPart}/GetWord?wordId=${wordId}`);
   }
   public getTop50():Observable<EntityResult<RangeVisitEntity>>{
     return this.http.get<EntityResult<RangeVisitEntity>>(`${rankPart}/GetRank50`);

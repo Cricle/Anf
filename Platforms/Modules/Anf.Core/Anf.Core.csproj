@@ -6,6 +6,7 @@
   <ItemGroup>
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Ao.Cache.Core" Version="1.0.1-preview.6" />
+    <PackageReference Include="Ao.Cache.MessagePack.Redis" Version="1.0.1-preview.6" />
     <PackageReference Include="Ao.Cache.Redis" Version="1.0.1-preview.6" />
     <PackageReference Include="Structing" Version="1.3.2-preview.3" />
     <PackageReference Include="Structing.AspNetCore" Version="1.3.2-preview.3" />

@@ -29,12 +29,12 @@ namespace Anf.Web
         }
         private async Task<BlobClient> GetFileAsync(string address)
         {
-            var hash = ContainerName + Md5Helper.MakeMd5(address).ToLower();
+            //var hash = ContainerName + Md5Helper.MakeMd5(address).ToLower();
             var client = blobServiceClient.GetBlobContainerClient(ContainerName);
-            if (!createdCacher.Get(hash))
+            if (!createdCacher.Get(ContainerName))
             {
                 await client.CreateIfNotExistsAsync();
-                createdCacher.Add(hash, true);
+                createdCacher.Add(ContainerName, true);
             }
             var key = GetFileName(address);
             return client.GetBlobClient(key);
@@ -43,8 +43,13 @@ namespace Anf.Web
         public async Task<bool> ExistsAsync(string address)
         {
             var client = await GetFileAsync(address);
-            var rep=await client.ExistsAsync();
-            return rep.Value;
+            var rep = await client.ExistsAsync();
+            if (!rep.Value)
+            {
+                return false;
+            }
+            var prop = await client.GetPropertiesAsync();
+            return (DateTime.Now - prop.Value.CreatedOn) > TimeSpan.FromDays(1);
         }
 
         public async Task<string> GetPathAsync(string address)

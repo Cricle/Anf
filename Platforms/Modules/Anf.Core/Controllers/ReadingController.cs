@@ -16,6 +16,8 @@ using Anf.Statistical;
 using Anf.ChannelModel.Entity;
 using Anf.ChannelModel;
 using System.IO;
+using Anf.Core.Finders;
+using Ao.Cache;
 
 namespace Anf.Web.Controllers
 {
@@ -29,7 +31,7 @@ namespace Anf.Web.Controllers
         private const string ChapterKey = "Anf.Web.Controllers.ReadingController.Chapter";
         private const string SearchKey = "Anf.Web.Controllers.ReadingController.Search";
 
-        private readonly IServiceScopeFactory scopeFactory;
+        private readonly ComicImageFinder comicImageFinder;
         private readonly ComicRankService comicRankService;
         private readonly IRootFetcher rootFetcher;
         private readonly IMemoryCache memoryCache;
@@ -43,13 +45,13 @@ namespace Anf.Web.Controllers
             IMemoryCache memoryCache,
             SearchEngine searchEngine,
             ComicEngine comicEngine,
-            IServiceScopeFactory scopeFactory,
+            ComicImageFinder comicImageFinder,
             SearchStatisticalService searchStatisticalService,
             VisitStatisticalService visitStatisticalService)
         {
             this.visitStatisticalService = visitStatisticalService;
             this.searchStatisticalService = searchStatisticalService;
-            this.scopeFactory = scopeFactory;
+            this.comicImageFinder = comicImageFinder;
             this.comicEngine = comicEngine;
             this.searchEngine = searchEngine;
             this.memoryCache = memoryCache;
@@ -117,24 +119,7 @@ namespace Anf.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetImage([FromQuery] string entityUrl, [FromQuery] string url)
         {
-            var prov = comicEngine.GetComicSourceProviderType(entityUrl);
-            if (prov is null)
-            {
-                return NotFound(url);
-            }
-            using var scope = scopeFactory.CreateScope();
-            var provider = (IComicSourceProvider)scope.ServiceProvider.GetRequiredService(prov.ProviderType);
-            var storeSer = scope.ServiceProvider.GetRequiredService<IStoreService>();
-            var imgRes = await storeSer.GetPathAsync(url);
-            var exists = await storeSer.ExistsAsync(url);
-            if (!exists)
-            {
-                using (var img = await provider.GetImageStreamAsync(url))
-                {
-                    await storeSer.SaveAsync(url, img);
-                }
-            }
-
+            var imgRes = await comicImageFinder.FindAsync(new ComicImageIdentity(entityUrl, url));
             return Ok(new EntityResult<string> { Data = imgRes });
         }
         [AllowAnonymous]

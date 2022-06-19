@@ -30,6 +30,14 @@
       </article>
     </div>
     <div *ngIf="this.wcp" style="margin-left: 8px;margin-right: 8px;">
+      <!-- <cdk-virtual-scroll-viewport [itemSize]="73" class="demo-infinite-container">
+        <nz-list>
+          <nz-list-item *cdkVirtualFor="let pg of this.wcp.pages">
+            <nz-skeleton *ngIf="!pg.actualUrl" [nzAvatar]="true" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
+            <img nz-image [nzSrc]="pg.actualUrl" [alt]="pg.name"/>
+          </nz-list-item>
+        </nz-list>
+      </cdk-virtual-scroll-viewport> -->
       <div *ngFor="let pg of this.wcp.pages" style="text-align: center;">
         <div style="display:inline-block;max-width:100%;overflow:hidden;">
           <nz-spin nzSimple [nzIndicator]="indicatorTemplate" [nzSpinning]="!pg.actualUrl">

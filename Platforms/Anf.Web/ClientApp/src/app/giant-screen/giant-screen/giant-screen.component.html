@@ -1,28 +1,18 @@
 <div>
     <div class="jumbotron">
         <div class="page-header" style="margin-top: 5%;">
-            <h1 style="text-align: center;">Anf for Comic!</h1>
+            <h1 style="text-align: center;">Anf</h1>
         </div>
-        <div class="bages" style="text-align: center;">
-            <nz-tag nzColor="geekblue" ><span nz-tooltip nzTooltipTitle="Done can off-line, on-line or mix!">Win</span></nz-tag>
-            <nz-tag nzColor="cyan"  nz-tooltip nzTooltipTitle="Will be use app bridge or develop native!">Win10</nz-tag>
-            <nz-tag nzColor="cyan" nz-tooltip nzTooltipTitle="Will be compile!">Linux</nz-tag>
-            <nz-tag nzColor="cyan" nz-tooltip nzTooltipTitle="Will be compile!">MacOS(Comming)</nz-tag>
-            <nz-tag nzColor="purple" nz-tooltip nzTooltipTitle="Is developing">Android(Comming)</nz-tag>
-            <nz-tag nzColor="cyan" nz-tooltip nzTooltipTitle="I am here, on-line is developing!">H5</nz-tag>
-            <nz-tag nzColor="geekblue" nz-tooltip nzTooltipTitle="It is in α test!">OpenApi</nz-tag>
-            <nz-tag nzColor="purple" nz-tooltip nzTooltipTitle="Will be public in 2021-6!">Github(Comming)</nz-tag>
+
+        <div *ngIf="this.result?.words&&this.result.words.length!=0" style="text-align: center;margin-left: 2%;margin-right: 2%;">
+          <nz-comment>
+            <nz-comment-content>
+              <span>
+                {{this.result.words[0].text}}
+              </span>
+              <h3 style="display: inline;font-weight: bold;">-- {{this.result.words[0].from}}</h3>
+            </nz-comment-content>
+          </nz-comment>
         </div>
-        <!-- <div style="text-align: center;margin-top:20px;">
-            <img src="https://img.shields.io/appveyor/build/Cricle/Anf"/>
-            <img src="https://codecov.io/gh/Cricle/Anf/branch/dev/graph/badge.svg?token=XMIT1MFLDZ"/>
-            <img src="https://app.codacy.com/project/badge/Grade/a2248df890a242b081e6719bb795f6c6"/>
-            <img src="https://img.shields.io/codeclimate/issues/Cricle/Anf"/>
-        </div>
-        <div style="text-align: center;margin-top:20px;">
-            <a href="https://github.com/Cricle/Anf">    
-                <img src="https://img.shields.io/badge/github-anf-lightgrey"/>
-            </a>
-        </div> -->
     </div>
 </div>

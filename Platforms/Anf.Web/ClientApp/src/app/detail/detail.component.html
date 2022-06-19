@@ -1,5 +1,5 @@
 <div class="m-container">
-    <div style="margin-top: 60px;margin-bottom:10px;margin-left:5%;margin-right: 5%;">
+    <div style="margin-top: 30px;margin-bottom:10px;margin-left:5%;margin-right: 5%;">
         <div>
             <nz-input-group [nzSuffix]="this.searcher.loading?indicatorTemplateSpin:suffixIcon"
                 (keydown)="searchKeydown($event)">
@@ -14,14 +14,14 @@
                 <i nz-icon nzType="search" (click)="search()"></i>
             </ng-template>
             <nz-autocomplete #auto>
-                <nz-auto-option *ngFor="let option of searcher.acceptHotSearch" [nzValue]="option.address">{{ option.address }}
+                <nz-auto-option *ngFor="let option of searcher.acceptHotSearch" [nzValue]="option.keyword">{{ option.keyword }}
                 </nz-auto-option>
             </nz-autocomplete>
         </div>
         <nz-list *ngIf="this.searcher.result">
             <article nz-typography style="margin-top: 20px;">
                 <h2 nz-typography>Searched <strong>{{this.searchedText}}</strong> has {{this.searcher.result.total}} results</h2>
-            </article>  
+            </article>
             <nz-list nzItemLayout="vertical">
                 <nz-list-item *ngFor="let item of this.searcher.result.snapshots">
                     <ng-template #resultSnapshotTitle>
