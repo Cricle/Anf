@@ -66,7 +66,7 @@ namespace Anf.Web
 
 
 #if !DEBUG
-            services.AddApplicationInsightsTelemetry(Configuration["APPINSIGHTSCONNECTIONSTRING"]);
+            services.AddApplicationInsightsTelemetry(config["APPINSIGHTSCONNECTIONSTRING"]);
 #endif
 
             services.AddControllersWithViews();
@@ -114,7 +114,6 @@ namespace Anf.Web
             app.UseHttpsRedirection();
 #endif
             app.UseResponseCompression();
-            app.UseStaticFiles();
             if (!picker.IsDevelopment)
             {
                 app.UseSpaStaticFiles();

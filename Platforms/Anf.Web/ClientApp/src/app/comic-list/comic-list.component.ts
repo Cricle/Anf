@@ -39,6 +39,10 @@ export class ComicListComponent implements OnInit {
   ngOnInit(): void {
   }
 
+  getRawJson():string{
+    return JSON.stringify(this.visitComic,null,4);
+  }
+
   loadEntity(item: AnfComicEntityTruck) {
     const locItem = item;
     this.selectedItem = item;
@@ -48,17 +52,17 @@ export class ComicListComponent implements OnInit {
     this.visitComic = null;
     this.drawerWidth = Math.max(300, document.body.clientWidth * coff);
     this.api.getEntity(item.comicUrl).subscribe({
-      next:x => {
+      next: x => {
         if (this.selectedItem == locItem) {
           this.visitComic = x;
           this.emptyEntity = x == null;
           console.log(this.visitComic);
         }
       },
-      error:err => {
+      error: err => {
         this.notify.error('Loading visit entity fail!', err);
       },
-      complete:() =>{
+      complete: () => {
         this.loadingVisit = false;
       }
     });
@@ -68,20 +72,29 @@ export class ComicListComponent implements OnInit {
   }
   copy(event: MouseEvent) {
   }
-  loadAsync(dataProivder:()=>Observable<EntityResult<RangeVisitEntity>>){
-    if(this.loading){
+  loadAsync(dataProivder: () => Observable<EntityResult<RangeVisitEntity>>) {
+    if (this.loading) {
       return;
     }
-    this.loading=true;
-    const provider=dataProivder();
+    this.loading = true;
+    const provider = dataProivder();
     provider.subscribe({
-      next:x => {
-        this.rank=x;
+      next: x => {
+        this.rank = x;
       },
-      error:err => {
-        this.loading=false;
+      error: err => {
+        this.loading = false;
       },
-      complete:() => this.loading = false
+      complete: () => this.loading = false
     });
+  }
+  convertInJs(input:number): Date {
+    let epochTicks = 621355968000000000,    // the number of .net ticks at the unix epoch
+      ticksPerMillisecond = 10000,        // there are 10000 .net ticks per millisecond
+      jsTicks = 0;                        // ticks in javascript environment
+
+    jsTicks = (input - epochTicks) / ticksPerMillisecond;
+
+    return new Date(jsTicks); // N.B. Js applies local timezone in automatic
   }
 }

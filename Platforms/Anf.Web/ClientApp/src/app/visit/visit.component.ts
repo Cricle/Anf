@@ -4,8 +4,11 @@ import { ActivatedRoute } from '@angular/router'
 import { NzNotificationService } from 'ng-zorro-antd/notification';
 import { ComicApiService } from '../comic-api/comic-api.service';
 import { ComicScope, VisitManager, VisitPos } from '../comic-api/comic-visit.mgr';
-import { AnfComicEntityTruck, ComicChapter, WithPageChapter } from '../comic-api/model';
-import { firstValueFrom } from 'rxjs'
+import { AnfComicEntityTruck, ComicChapter, ComicPage, WithPageChapter } from '../comic-api/model';
+import { BehaviorSubject, firstValueFrom, Observable, Subject } from 'rxjs'
+import { CollectionViewer, DataSource } from '@angular/cdk/collections';
+import { catchError, takeUntil } from 'rxjs/operators';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-visit',
@@ -23,15 +26,21 @@ export class VisitComponent implements OnInit {
   totalChapterCount: number;
   comicScope: ComicScope;
   visitPos: VisitPos | null;
-  visitIndex: number | null;
+  visitIndex: number;
+  chpPrefx:number;
+
   constructor(private route: ActivatedRoute,
+    private router:Router,
     private api: ComicApiService,
     private notif: NzNotificationService,
     private visit: VisitManager) {
     this.visitPos = null;
     this.route.paramMap.subscribe(x => {
       this.url = x.get("url");
-      console.log(x);
+      this.visitIndex=Number(x.get("index"));
+      if (!this.visitIndex) {
+        this.visitIndex=0;
+      }
       if (!this.url) {
         this.notif.error("Input error", "No url input!");
       } else {
@@ -56,7 +65,6 @@ export class VisitComponent implements OnInit {
       next: y => {
         this.entity = y;
         this.totalChapterCount = y?.chapters.length || 0;
-        console.log(this.totalChapterCount);
         if (!y) {
           this.notif.error("Can't load comic entity!", this.url);
         } else {
@@ -64,8 +72,6 @@ export class VisitComponent implements OnInit {
             if (scopeOk) {
               this.comicScope.getStatus().subscribe(pos => {
                 this.visitPos = pos;
-                this.visitIndex = this.entity.chapters.findIndex(c => c.targetUrl == this.visitPos.chapter);
-                console.log(pos, this.chapter, this.visitIndex);
               });
             }
           });
@@ -75,6 +81,10 @@ export class VisitComponent implements OnInit {
             this.chapter = 0;
             this.loadChapter(0, false);
           }
+          if(!this.visitIndex){
+            this.visitIndex=0;
+          }
+          this.chpPrefx=((this.visitIndex+1)/this.entity.chapters.length)*100;
         }
       },
       error: err => {
@@ -85,6 +95,9 @@ export class VisitComponent implements OnInit {
     });
   }
   private token: number;
+  goChapter(index:number){
+    this.router.navigate(['/visit', this.url,index]);
+  }
   loadChapter(index: number, record: boolean = true) {
     this.loading = true;
     this.wcp = null;
@@ -98,9 +111,10 @@ export class VisitComponent implements OnInit {
             chapter: x.targetUrl
           });
         }
-        if(x){
-          this.goDownload(x,this.token);
-        }
+
+        // if(x){
+        //   this.goDownload(x,this.token);
+        // }
       },
       error: err => {
         this.notif.error("Fail in load chapter", this.watchingChapter.targetUrl);
@@ -119,4 +133,7 @@ export class VisitComponent implements OnInit {
       });
     }
   }
+
+
 }
+

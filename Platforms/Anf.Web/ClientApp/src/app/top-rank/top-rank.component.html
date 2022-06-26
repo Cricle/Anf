@@ -1,8 +1,8 @@
 <div style="margin-top:50px;margin-left: 5%;margin-right:5%;">
     <div *ngIf="!loading&&rank">
         <article nz-typography>
-            <h3 nz-typography>Hot top <strong>{{this.rank.entityTrucks.length}}</strong>
-                (In rank <strong>{{this.rank.size}}</strong>)
+            <h3 nz-typography>Hot top <strong>{{this.rank.data.entityTrucks.length}}</strong>
+                (In rank <strong>{{this.rank.data.size}}</strong>)
                 <a style="margin-left:8px;" nz-tooltip nzTooltipTitle="Flush the rank" nz-button nzType="text"
                     (click)="flushRank(true)">
                     <i nz-icon nzType="redo"></i>

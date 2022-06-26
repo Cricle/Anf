@@ -5,14 +5,7 @@
         </div>
 
         <div *ngIf="this.result?.words&&this.result.words.length!=0" style="text-align: center;margin-left: 2%;margin-right: 2%;">
-          <nz-comment>
-            <nz-comment-content>
-              <span>
-                {{this.result.words[0].text}}
-              </span>
-              <h3 style="display: inline;font-weight: bold;">-- {{this.result.words[0].from}}</h3>
-            </nz-comment-content>
-          </nz-comment>
+          <span nz-tooltip [nzTooltipTitle]="'From: '+this.result.words[0].from">{{this.result.words[0].text}}</span>
         </div>
     </div>
 </div>

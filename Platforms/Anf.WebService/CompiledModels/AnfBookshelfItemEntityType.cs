@@ -127,7 +127,7 @@ namespace Anf.WebService
             var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("UserId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
-                deleteBehavior: DeleteBehavior.NoAction,
+                deleteBehavior: DeleteBehavior.SetNull,
                 required: true);
 
             var user = declaringEntityType.AddNavigation("User",

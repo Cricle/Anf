@@ -61,10 +61,12 @@ export class SearchService {
     }
 
   searchForce(){
-    this.api.getHotSearch30().subscribe(x=>{
-      this.hotSearch=x;
-      this.flushAcceptHotSearch();
-    });
+    if (!this.hotSearch) {
+      this.api.getHotSearch30().subscribe(x=>{
+        this.hotSearch=x;
+        this.flushAcceptHotSearch();
+      });
+    }
   }
   search(){
     if (this.loading) {

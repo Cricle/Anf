@@ -3,7 +3,9 @@ import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HttpClientModule } from '@angular/common/http';
 import { RouterModule } from '@angular/router';
+import { ScrollingModule } from "@angular/cdk/scrolling";
 
+import { NzBackTopModule } from 'ng-zorro-antd/back-top';
 import {NzListModule} from 'ng-zorro-antd/list'
 import {NzButtonModule} from 'ng-zorro-antd/button'
 import {NzSpinModule} from 'ng-zorro-antd/spin'
@@ -21,6 +23,7 @@ import {NzPaginationModule} from 'ng-zorro-antd/pagination'
 import {NzAffixModule } from 'ng-zorro-antd/affix'
 import {NzDropDownModule } from 'ng-zorro-antd/dropdown'
 import {NzFormModule } from 'ng-zorro-antd/form'
+import { NzProgressModule } from 'ng-zorro-antd/progress'
 
 import { ComicApiService } from './comic-api/comic-api.service';
 import { AppComponent } from './app.component';
@@ -46,6 +49,8 @@ import { LoginComponent } from './login/login.component'
 import { SearchService } from './comic-api/comic-search.service';
 import { VisitManager } from './comic-api/comic-visit.mgr'
 import { ErrorComponent } from './error/error.component';
+import { NzToolTipModule } from 'ng-zorro-antd/tooltip';
+import { ImgOfComponent } from './img-of/img-of.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -60,7 +65,8 @@ import { ErrorComponent } from './error/error.component';
     VisitComponent,
     BookshelfComponent,
     ComicListComponent,
-    LoginComponent
+    LoginComponent,
+    ImgOfComponent
   ],
   imports: [
     BrowserModule.withServerTransition({ appId: 'ng-cli-universal' }),
@@ -85,6 +91,11 @@ import { ErrorComponent } from './error/error.component';
     NzAffixModule,
     NzDropDownModule,
     NzFormModule,
+    NzToolTipModule,
+    NzProgressModule,
+    NzBackTopModule,
+
+    ScrollingModule,
 
     BrowserAnimationsModule,
     RouterModule.forRoot([
@@ -95,7 +106,7 @@ import { ErrorComponent } from './error/error.component';
       { path: 'about', component: AboutComponent },
       { path: 'bookshelf', component: BookshelfComponent },
       { path: 'login', component: LoginComponent },
-      { path: 'visit/:url',component:VisitComponent},
+      { path: 'visit/:url/:index',component:VisitComponent},
       { path: 'error', component:ErrorComponent}
     ]),
     ServiceWorkerModule.register('ngsw-worker.js', { enabled: environment.production })

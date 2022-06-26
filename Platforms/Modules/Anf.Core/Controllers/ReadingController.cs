@@ -119,6 +119,13 @@ namespace Anf.Web.Controllers
         [HttpGet("[action]")]
         public async Task<IActionResult> GetImage([FromQuery] string entityUrl, [FromQuery] string url)
         {
+            if (string.IsNullOrEmpty(entityUrl) ||
+                string.IsNullOrEmpty(url) ||
+                !Uri.TryCreate(entityUrl, UriKind.Absolute,out _)||
+                !Uri.TryCreate(url, UriKind.Absolute, out _))
+            {
+                return BadRequest();
+            }
             var imgRes = await comicImageFinder.FindAsync(new ComicImageIdentity(entityUrl, url));
             return Ok(new EntityResult<string> { Data = imgRes });
         }

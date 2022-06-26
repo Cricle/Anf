@@ -105,7 +105,7 @@ namespace Anf.WebService
             var runtimeForeignKey = declaringEntityType.AddForeignKey(new[] { declaringEntityType.FindProperty("WordId") },
                 principalEntityType.FindKey(new[] { principalEntityType.FindProperty("Id") }),
                 principalEntityType,
-                deleteBehavior: DeleteBehavior.NoAction,
+                deleteBehavior: DeleteBehavior.SetNull,
                 required: true);
 
             var word = declaringEntityType.AddNavigation("Word",

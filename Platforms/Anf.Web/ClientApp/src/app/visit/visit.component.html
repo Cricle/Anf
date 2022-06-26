@@ -25,34 +25,24 @@
           </h4>
         </div>
         <h4 *ngIf="this.visitPos!=null&&this.visitIndex!=this.chapter nz-typography">Found last visited at
-          {{this.visitIndex+1}} click <a (click)="this.loadChapter(this.visitIndex);this.visitPos=null">me</a> to go. <a
+          {{this.visitIndex+1}} click <a (click)="this.goChapter(this.visitIndex);this.visitPos=null">me</a> to go. <a
             (click)="this.visitPos=null">got it</a></h4>
       </article>
     </div>
-    <div *ngIf="this.wcp" style="margin-left: 8px;margin-right: 8px;">
-      <!-- <cdk-virtual-scroll-viewport [itemSize]="73" class="demo-infinite-container">
-        <nz-list>
-          <nz-list-item *cdkVirtualFor="let pg of this.wcp.pages">
-            <nz-skeleton *ngIf="!pg.actualUrl" [nzAvatar]="true" [nzParagraph]="{ rows: 1 }"></nz-skeleton>
-            <img nz-image [nzSrc]="pg.actualUrl" [alt]="pg.name"/>
-          </nz-list-item>
-        </nz-list>
-      </cdk-virtual-scroll-viewport> -->
-      <div *ngFor="let pg of this.wcp.pages" style="text-align: center;">
-        <div style="display:inline-block;max-width:100%;overflow:hidden;">
-          <nz-spin nzSimple [nzIndicator]="indicatorTemplate" [nzSpinning]="!pg.actualUrl">
-            <img *ngIf="pg.actualUrl" nz-image  [nzSrc]="pg.actualUrl" [alt]="pg.name"/>
-            <!-- <img *ngIf="pg.actualUrl" [lazyLoad]="pg.actualUrl" [alt]="pg.name" /> -->
-          </nz-spin>
-        </div>
-      </div>
-      <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
+    <div *ngIf="this.wcp&&this.wcp.pages" style="margin-left: 8px;margin-right: 8px;">
+      <app-img-of [pages]="this.wcp.pages"></app-img-of>
     </div>
-    <div *ngIf="this.entity" style="text-align: center;margin: 30px 0px;margin-bottom: 8px;">
-      <!-- <nz-affix [nzOffsetBottom]="6">
-            </nz-affix> -->
+    <div *ngIf="this.entity" style="text-align: center;margin: 30px 0px;margin-bottom: 20px;">
       <nz-pagination [(nzPageIndex)]="chapter" [nzPageSize]="1" [nzTotal]="this.totalChapterCount"
-        (nzPageIndexChange)="this.loadChapter($event)"></nz-pagination>
+        (nzPageIndexChange)="this.goChapter($event)"></nz-pagination>
     </div>
+    <nz-back-top [nzTemplate]="tpl" [nzVisibilityHeight]="100">
+      <ng-template #tpl>
+        <div>
+          <nz-progress [nzPercent]="this.chpPrefx" [nzShowInfo]="false" style="height:40px"></nz-progress>
+        </div>
+    </ng-template>
+    </nz-back-top>
+    <div style="height:15px"></div>
   </div>
 </div>

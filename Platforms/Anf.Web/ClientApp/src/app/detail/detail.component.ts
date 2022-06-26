@@ -43,7 +43,6 @@ export class DetailComponent implements OnInit {
   ngOnInit() {
   }
   goVisit(source: ComicSource) {
-    console.log(source);
-    this.rt.navigate(['/visit', source.targetUrl]);
+    this.rt.navigate(['/visit', source.targetUrl,0]);
   }
 }
