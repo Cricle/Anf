@@ -70,6 +70,7 @@ namespace Anf.Web
 #endif
 
             services.AddControllersWithViews();
+            services.AddResponseCaching();
             services.AddResponseCompression();
             services.AddNormalSecurityService();
 
@@ -113,6 +114,7 @@ namespace Anf.Web
 #if !DEBUG
             app.UseHttpsRedirection();
 #endif
+            app.UseResponseCaching();
             app.UseResponseCompression();
             if (!picker.IsDevelopment)
             {

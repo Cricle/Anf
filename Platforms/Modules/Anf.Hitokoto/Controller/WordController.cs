@@ -28,6 +28,7 @@ namespace Anf.Hitokoto.Controller
         }
 
         [HttpGet("[action]")]
+        [ResponseCache(Duration = 1,Location = ResponseCacheLocation.Any)]
         [ProducesResponseType(typeof(EntityResult<RandomWordResult>), 200)]
         public async Task<IActionResult> GetRandom()
         {

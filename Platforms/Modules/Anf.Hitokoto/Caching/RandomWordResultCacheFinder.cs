@@ -66,10 +66,16 @@ namespace Anf.Hitokoto.Caching
         {
             try
             {
-                var res = await base.FindInCahceAsync(identity);
+                var key = GetEntryKey(identity);
+                var res = memoryCache.Get<RandomWordResult>(key);
                 if (res != null)
                 {
-                    memoryCache.Set(GetEntryKey(identity), res, Options.Value.IntervalTime);
+                    return res;
+                }
+                res = await base.FindInCahceAsync(identity);
+                if (res != null)
+                {
+                    memoryCache.Set(key, res, Options.Value.IntervalTime);
                 }
                 return res;
             }

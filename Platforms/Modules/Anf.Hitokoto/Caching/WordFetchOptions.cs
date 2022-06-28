@@ -4,9 +4,9 @@ namespace Anf.Hitokoto
 {
     public class WordFetchOptions
     {
-        public static readonly TimeSpan DefaultIntervalTime = TimeSpan.FromMilliseconds(500);
+        public static readonly TimeSpan DefaultIntervalTime = TimeSpan.FromMilliseconds(600);
 
-        public static readonly int DefaultIntervalCount = 9;
+        public static readonly int DefaultIntervalCount = 1;
 
         public TimeSpan IntervalTime { get; set; } = DefaultIntervalTime;
 

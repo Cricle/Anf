@@ -24,6 +24,8 @@ import {NzAffixModule } from 'ng-zorro-antd/affix'
 import {NzDropDownModule } from 'ng-zorro-antd/dropdown'
 import {NzFormModule } from 'ng-zorro-antd/form'
 import { NzProgressModule } from 'ng-zorro-antd/progress'
+import { NzStepsModule } from 'ng-zorro-antd/steps';
+import { NzAlertModule } from 'ng-zorro-antd/alert';
 
 import { ComicApiService } from './comic-api/comic-api.service';
 import { AppComponent } from './app.component';
@@ -94,6 +96,8 @@ import { ImgOfComponent } from './img-of/img-of.component';
     NzToolTipModule,
     NzProgressModule,
     NzBackTopModule,
+    NzStepsModule,
+    NzAlertModule,
 
     ScrollingModule,
 
