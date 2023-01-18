@@ -1,4 +1,5 @@
-﻿using SecurityLogin;
+﻿using Ao.Cache;
+using SecurityLogin;
 using System;
 using System.Threading.Tasks;
 

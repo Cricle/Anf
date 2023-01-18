@@ -12,7 +12,7 @@ namespace Anf.KnowEngines.SearchProviders
     [ComicSearchProvider]
     public class SomanSearchProvider : ISearchProvider
     {
-        public const string SeachUrl = "https://api.soman.com/soman.ashx?action=getsomancomics2&pageindex={0}&pagesize={1}&keyword={2}";
+        public const string SeachUrl = "http://api.soman.com/soman.ashx?action=getsomancomics2&pageindex={0}&pagesize={1}&keyword={2}&time={3}";
 
         private readonly INetworkAdapter networkAdapter;
 
@@ -23,6 +23,12 @@ namespace Anf.KnowEngines.SearchProviders
 
         public string EngineName => "Soman";
 
+        private static readonly DateTime utcZero = new DateTime(1970, 1, 1);
+
+        public static TimeSpan UTCSpan(DateTime time)
+        {
+            return time.ToUniversalTime() - utcZero;
+        }
         public async Task<SearchComicResult> SearchAsync(string keywork, int skip, int take)
         {
             var page = 1;
@@ -30,7 +36,7 @@ namespace Anf.KnowEngines.SearchProviders
             {
                 page = take / skip;
             }
-            var targetUrl = string.Format(SeachUrl, page, take, keywork);
+            var targetUrl = string.Format(SeachUrl, page, take, keywork, (int)UTCSpan(DateTime.Now).TotalSeconds);
             string str = string.Empty;
             using (var rep = await networkAdapter.GetStreamAsync(new RequestSettings
             {

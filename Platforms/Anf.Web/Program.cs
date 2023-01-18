@@ -1,17 +1,11 @@
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Azure.Identity;
 using DryIoc;
 using DryIoc.Microsoft.DependencyInjection;
 using Structing.Core;
 using Anf.Core;
-using Anf.Hitokoto;
+using System;
 
 namespace Anf.Web
 {
@@ -20,8 +14,7 @@ namespace Anf.Web
         internal static readonly IEnumerable<IModuleEntry> modules = new ModuleCollection
         {
             new WebModuleEntry(),
-            new CoreModuleEntry(),
-            new HitokotoModuleEntry()
+            new CoreModuleEntry()
         };
 
         public static void Main(string[] args)
@@ -34,21 +27,6 @@ namespace Anf.Web
 
         public static IHostBuilder CreateHostBuilder(string[] args) =>
             Host.CreateDefaultBuilder(args)
-                .ConfigureAppConfiguration((context, config) =>
-                {
-                    if (context.HostingEnvironment.IsDevelopment())
-                    {
-                        config.AddUserSecrets<Program>();
-
-                    }
-                    else
-                    {
-                        var keyVaultEndpoint = new Uri(Environment.GetEnvironmentVariable("VaultUri"));
-                        config.AddAzureKeyVault(
-                        keyVaultEndpoint,
-                        new DefaultAzureCredential());
-                    }
-                })
                 .UseServiceProviderFactory(
                     new DryIocServiceProviderFactory(new Container(rules=> WithMyRules(rules))))
                 .ConfigureWebHostDefaults(webBuilder =>

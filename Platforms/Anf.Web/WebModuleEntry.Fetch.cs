@@ -1,13 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Caching.Distributed;
-using Microsoft.Extensions.Caching.StackExchangeRedis;
-using StackExchange.Redis;
-using RedLockNet;
-using RedLockNet.SERedis;
-using RedLockNet.SERedis.Configuration;
-using System.Collections.Generic;
 using Anf.ResourceFetcher;
 
 namespace Anf.Web
@@ -17,15 +9,12 @@ namespace Anf.Web
         public WebModuleEntry AddFetch(IServiceCollection services, IConfiguration configuration)
         {
             services.AddFetcherProvider()
-               .AddRedisFetcherProvider()
-               .AddMssqlResourceFetcher()
-               .AddDefaultFetcherProvider();
+               .AddDefaultFetcherProvider()
+               .AddRedisFetcherProvider();
             services.AddResourceFetcher()
-                .AddMssqlResourceFetcher()
-                .AddRedisFetcherProvider();
-            services.AddOptions<FetchOptions>();
+                .AddRedisResourceFetch();
 
-            services.AddRedisResourceFetch();
+            services.AddOptions<FetchOptions>();
             return this;
         }
     }

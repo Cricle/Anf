@@ -1,10 +1,6 @@
 ﻿using Anf.Easy;
 using Microsoft.Extensions.DependencyInjection;
 using System;
-#if EnableBookshelfService
-using Microsoft.EntityFrameworkCore;
-using Microsoft.Data.Sqlite;
-#endif
 using JavaScriptEngineSwitcher.Core;
 using JavaScriptEngineSwitcher.Jint;
 using Anf.KnowEngines;

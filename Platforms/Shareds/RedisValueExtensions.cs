@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Concurrent;
+using System.Collections.Generic;
 using System.Text.Json;
 
 namespace StackExchange.Redis
@@ -7,7 +8,19 @@ namespace StackExchange.Redis
     internal static class RedisValueExtensions
     {
         private static readonly ConcurrentDictionary<Type, object> emptyStructs = new ConcurrentDictionary<Type, object>();
-
+#if NET5_0_OR_GREATER
+        public static async IAsyncEnumerable<RedisKey[]> SetScanAsync(this IDatabase db, string patter, int pageSize)
+        {
+            var count = 0L;
+            do
+            {
+                var res = await db.ExecuteAsync("scan", count, "match", patter, "count", pageSize);
+                var f = ((RedisResult[])res);
+                count = ((long)f[0]);
+                yield return (((RedisKey[])f[1]));
+            } while (count != 0);
+        }
+#endif
         public static object Get(this in RedisValue value, Type type)
         {
             if (!value.HasValue || value.IsNull)
@@ -88,12 +101,6 @@ namespace StackExchange.Redis
             return Enum.TryParse(type, val, out res);
 #endif
         }
-        /// <summary>
-        /// 从目标结构体制作类型<typeparamref name="T"/>的实例
-        /// </summary>
-        /// <typeparam name="T">目标类型</typeparam>
-        /// <param name="value">目标值</param>
-        /// <returns>类型为<typeparamref name="T"/>的实例，如果失败返回<see langword="default"/></returns>
         public static T Get<T>(this in RedisValue value)
         {
             return (T)Get(value, typeof(T));

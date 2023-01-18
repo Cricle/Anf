@@ -16,13 +16,9 @@ namespace Anf.ResourceFetcher
             provider.Add(typeof(RedisFetcher));
             return provider;
         }
-        public static IServiceCollection AddRedisFetcherProvider(this IServiceCollection services)
-        {
-            services.AddScoped<RedisFetcher>();
-            return services;
-        }
         public static IServiceCollection AddRedisResourceFetch(this IServiceCollection services)
         {
+            services.AddScoped<RedisFetcher>();
             services.AddSingleton<IResourceLockerFactory, ResourceLockerFactory>();
             services.AddScoped<InRedisComicService>();
             return services;

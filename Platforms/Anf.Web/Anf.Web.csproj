@@ -1,19 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk.Web">
 
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
-  </PropertyGroup>
-
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
-  </PropertyGroup>
-
-  <PropertyGroup Label="Configuration" Condition="'$(Configuration)|$(Platform)'=='CompileModel|AnyCPU'">
-    <TypeScriptCompileOnSaveEnabled>False</TypeScriptCompileOnSaveEnabled>
-  </PropertyGroup>
-
   <PropertyGroup>
-    <TargetFramework>net6.0</TargetFramework>
+    <TargetFramework>net7.0</TargetFramework>
     <TypeScriptCompileBlocked>true</TypeScriptCompileBlocked>
     <TypeScriptToolsVersion>Latest</TypeScriptToolsVersion>
     <IsPackable>false</IsPackable>
@@ -23,15 +11,12 @@
 
     <!-- Set this to true if you enable server-side prerendering -->
     <BuildServerSideRenderer>false</BuildServerSideRenderer>
-    <UserSecretsId>5b620487-ab61-4117-a668-3eba5a05b15e</UserSecretsId>
     <ApplicationInsightsResourceId>/subscriptions/99a95d96-c9ef-433f-bffd-0dfc7d373245/resourceGroups/Anf/providers/microsoft.insights/components/anfwebc</ApplicationInsightsResourceId>
-    <Configurations>Debug;Release;CompileModel</Configurations>
   </PropertyGroup>
 
   <PropertyGroup>
     <DocumentationFile>Anf.Web.xml</DocumentationFile>
   </PropertyGroup>
-
 
   <ItemGroup>
     <!-- Don't publish the SPA source files, but do show them in the project files list -->
@@ -44,16 +29,12 @@
     <ProjectReference Include="..\Anf.Engine.Easy\Anf.Easy.csproj" />
     <ProjectReference Include="..\Anf.Engine\Anf.Engine.csproj" />
     <ProjectReference Include="..\Anf.ResourceFetcher\Anf.ResourceFetcher.csproj" />
-    <ProjectReference Include="..\Anf.Statistical\Anf.Statistical.csproj" />
-    <ProjectReference Include="..\Anf.WebService\Anf.WebService.csproj" />
     <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
+    <ProjectReference Include="..\Fetchers\Anf.ResourceFetcher.Redis\Anf.ResourceFetcher.Redis.csproj" />
     <ProjectReference Include="..\Modules\Anf.Core\Anf.Core.csproj" />
-    <ProjectReference Include="..\Modules\Anf.Hitokoto\Anf.Hitokoto.csproj" />
-    <ProjectReference Include="..\ResourceFetchers\Anf.ResourceFetcher.Redis\Anf.ResourceFetcher.Redis.csproj" />
-    <ProjectReference Include="..\ResourceFetchers\Anf.ResourceFetcher.Sql\Anf.ResourceFetcher.Sql.csproj" />
   </ItemGroup>
 
-  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Debug' And !Exists('$(SpaRoot)node_modules') ">
+  <Target Name="DebugEnsureNodeEnv" BeforeTargets="Build" Condition=" '$(Configuration)' == 'Release' And !Exists('$(SpaRoot)node_modules') ">
     <!--Ensure Node.js is installed-->
     <Exec Command="node -v" ContinueOnError="true">
       <Output TaskParameter="ExitCode" PropertyName="ErrorCode" />
@@ -82,22 +63,13 @@
   </Target>
   <ItemGroup>
     <Compile Include="..\Anf.Platform\AppEngine.cs" />
-    <!--<Compile Include="..\Anf.Platform\XComicConst.cs" />-->
-    <Compile Include="..\Shareds\AnfDbContextTransfer.cs"></Compile>
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.0.2" />
-    <PackageReference Include="Azure.Extensions.AspNetCore.Configuration.Secrets" Version="1.2.2" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.12.0" />
-    <PackageReference Include="Azure.Storage.Queues" Version="12.10.0" />
-    <PackageReference Include="Microsoft.ApplicationInsights.AspNetCore" Version="2.20.0" />
+    <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.SpaServices.Extensions" Version="6.0.5" />
-    <PackageReference Include="Microsoft.Azure.SignalR" Version="1.17.0" />
-    <PackageReference Include="Microsoft.Extensions.Azure" Version="1.2.0" />
-    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="6.0.5" />
-    <PackageReference Include="Quartz.AspNetCore" Version="3.4.0" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.3.1" />
-    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.3.1" />
+    <PackageReference Include="Microsoft.Extensions.Caching.StackExchangeRedis" Version="7.0.2" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="6.4.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="6.4.0" />
   </ItemGroup>
 
 </Project>

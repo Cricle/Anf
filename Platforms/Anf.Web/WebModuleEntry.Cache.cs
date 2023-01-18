@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.StackExchangeRedis;
 using StackExchange.Redis;
@@ -18,12 +17,12 @@ namespace Anf.Web
         {
             services.AddSingleton<IDistributedCache, RedisCache>();
             services.AddOptions<RedisCacheOptions>()
-                .Configure(x => x.Configuration = configuration["ConnectionStringsCacheConnection"]);
+                .Configure(x => x.Configuration = configuration["ConnectionStrings:Redis"]);
             services.AddMemoryCache();
             services.AddSingleton<IConnectionMultiplexer>(x =>
             {
                 var c = x.GetRequiredService<IConfiguration>();
-                var config = c["ConnectionStringsCacheConnection"];
+                var config = c["ConnectionStrings:Redis"];
                 return ConnectionMultiplexer.Connect(config);
             });
             services.AddScoped(x => x.GetRequiredService<IConnectionMultiplexer>().GetDatabase());
@@ -34,7 +33,6 @@ namespace Anf.Web
                 var conn = x.GetRequiredService<IConnectionMultiplexer>();
                 return RedLockFactory.Create(new List<RedLockMultiplexer> { new RedLockMultiplexer(conn) });
             });
-            services.AddAutoCache();
             return this;
         }
     }

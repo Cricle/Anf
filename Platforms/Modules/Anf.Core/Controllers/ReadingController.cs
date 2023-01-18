@@ -1,28 +1,19 @@
 ﻿using Anf.ResourceFetcher.Fetchers;
-using Anf.WebService;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.Extensions.Caching.Memory;
 using Anf.ChannelModel.Mongo;
-using Anf.Web.Models;
 using Anf.ChannelModel.Results;
 using System.Linq;
-using Microsoft.Extensions.DependencyInjection;
-using Anf.Easy.Store;
-using SecurityLogin;
-using Anf.Statistical;
-using Anf.ChannelModel.Entity;
-using Anf.ChannelModel;
-using System.IO;
-using Anf.Core.Finders;
 using Ao.Cache;
+using Microsoft.Extensions.DependencyInjection;
 
 namespace Anf.Web.Controllers
 {
     [ApiController]
-    [Route(AnfConst.ApiPrefx + "[controller]")]
+    [Route("api/v1/[controller]")]
     public class ReadingController : ControllerBase
     {
         private static readonly TimeSpan CacheTime = TimeSpan.FromMinutes(5);
@@ -31,31 +22,19 @@ namespace Anf.Web.Controllers
         private const string ChapterKey = "Anf.Web.Controllers.ReadingController.Chapter";
         private const string SearchKey = "Anf.Web.Controllers.ReadingController.Search";
 
-        private readonly ComicImageFinder comicImageFinder;
-        private readonly ComicRankService comicRankService;
         private readonly IRootFetcher rootFetcher;
         private readonly IMemoryCache memoryCache;
         private readonly SearchEngine searchEngine;
         private readonly ComicEngine comicEngine;
-        private readonly SearchStatisticalService searchStatisticalService;
-        private readonly VisitStatisticalService visitStatisticalService;
 
-        public ReadingController(ComicRankService comicRankService,
-            IRootFetcher rootFetcher,
+        public ReadingController(IRootFetcher rootFetcher,
             IMemoryCache memoryCache,
             SearchEngine searchEngine,
-            ComicEngine comicEngine,
-            ComicImageFinder comicImageFinder,
-            SearchStatisticalService searchStatisticalService,
-            VisitStatisticalService visitStatisticalService)
+            ComicEngine comicEngine)
         {
-            this.visitStatisticalService = visitStatisticalService;
-            this.searchStatisticalService = searchStatisticalService;
-            this.comicImageFinder = comicImageFinder;
             this.comicEngine = comicEngine;
             this.searchEngine = searchEngine;
             this.memoryCache = memoryCache;
-            this.comicRankService = comicRankService;
             this.rootFetcher = rootFetcher;
         }
         [AllowAnonymous]
@@ -94,20 +73,11 @@ namespace Anf.Web.Controllers
             var ds = memoryCache.Get(key);
             if (ds != null)
             {
-                await comicRankService.IncSearchAsync(keyword, 1);
                 return Ok(ds);
             }
             using var scope = searchEngine.ServiceScopeFactory.CreateScope();
             var eng = (ISearchProvider)scope.ServiceProvider.GetService(prov);
             var data = await eng.SearchAsync(keyword, skip, take);
-            await comicRankService.IncSearchAsync(keyword, 1);
-            await searchStatisticalService.AddAsync(new AnfSearchCount
-            {
-                Content = keyword,
-                IP = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                Time = DateTime.Now,
-                UserId = HttpContext.Features.Get<UserSnapshot>()?.Id
-            });
             var r = new EntityResult<SearchComicResult> { Data = data };
             memoryCache.Set(key, r, new MemoryCacheEntryOptions
             {
@@ -117,7 +87,7 @@ namespace Anf.Web.Controllers
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
-        public async Task<IActionResult> GetImage([FromQuery] string entityUrl, [FromQuery] string url)
+        public async Task<IActionResult> GetImage([FromQuery] string entityUrl, [FromQuery] string url, [FromServices]IServiceProvider provider)
         {
             if (string.IsNullOrEmpty(entityUrl) ||
                 string.IsNullOrEmpty(url) ||
@@ -126,8 +96,14 @@ namespace Anf.Web.Controllers
             {
                 return BadRequest();
             }
-            var imgRes = await comicImageFinder.FindAsync(new ComicImageIdentity(entityUrl, url));
-            return Ok(new EntityResult<string> { Data = imgRes });
+            var prov = comicEngine.GetComicSourceProviderType(entityUrl);
+            if (prov is null)
+            {
+                return Ok(new EntityResult<string> { Data = string.Empty });
+            }
+            var comicProvider = (IComicSourceProvider)provider.GetRequiredService(prov.ProviderType);
+            //var stream=comicProvider.GetImageStreamAsync(url)
+            return Ok(new EntityResult<string> { Data = url });
         }
         [AllowAnonymous]
         [HttpGet("[action]")]
@@ -172,17 +148,6 @@ namespace Anf.Web.Controllers
                 memoryCache.Set(key, res, new MemoryCacheEntryOptions
                 {
                     SlidingExpiration = CacheTime
-                });
-            }
-            if (res != null)
-            {
-                await comicRankService.IncVisitAsync(res.ComicUrl, 1);
-                await visitStatisticalService.AddAsync(new AnfVisitCount
-                {
-                    Address = url,
-                    IP = HttpContext.Connection.RemoteIpAddress?.ToString(),
-                    Time = DateTime.Now,
-                    UserId = HttpContext.Features.Get<UserSnapshot>()?.Id
                 });
             }
             return Ok(res);

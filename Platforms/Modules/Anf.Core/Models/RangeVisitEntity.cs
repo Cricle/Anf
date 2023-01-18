@@ -7,6 +7,15 @@ using System.Threading.Tasks;
 
 namespace Anf.Core.Models
 {
+    public class RangeVisitKey
+    {
+        public int Count { get; set; }
+
+        public override string ToString()
+        {
+            return Count.ToString();
+        }
+    }
     public class RangeVisitEntity
     {
         public AnfComicEntityScoreTruck[] EntityTrucks { get; set; }

@@ -1,25 +1,19 @@
 ﻿using Anf.Easy.Visiting;
 using Anf.ResourceFetcher.Fetchers;
-using Anf.WebService;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace Anf.Web
 {
     internal class WebComicVisiting : ComicVisiting<Stream>
     {
-        private readonly ComicRankService comicRankService;
         private readonly IRootFetcher rootFetcher;
         public WebComicVisiting(IServiceProvider host,
             IResourceFactoryCreator<Stream> resourceFactoryCreator,
-            IRootFetcher rootFetcher,
-            ComicRankService comicRankService)
+            IRootFetcher rootFetcher)
             : base(host, resourceFactoryCreator)
         {
-            this.comicRankService = comicRankService;
             this.rootFetcher = rootFetcher;
         }
         protected override async Task<ComicPage[]> GetPagesAsync(ComicChapter chapter)
@@ -38,7 +32,6 @@ namespace Anf.Web
             {
                 return null;
             }
-            await comicRankService.IncVisitAsync(entity.ComicUrl, 1);
             return new ComicEntity
             {
                 Chapters = entity.Chapters,
