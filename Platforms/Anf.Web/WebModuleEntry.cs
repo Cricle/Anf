@@ -75,8 +75,8 @@ namespace Anf.Web
             app.UseResponseCompression();
             if (!picker.IsDevelopment)
             {
-                app.UseSpaStaticFiles();
             }
+                app.UseSpaStaticFiles();
 
             app.UseRouting();
             app.UseAuthentication();
@@ -99,11 +99,11 @@ namespace Anf.Web
                 // To learn more about options for serving an Angular SPA from ASP.NET Core,
                 // see https://go.microsoft.com/fwlink/?linkid=864501
 
-                spa.Options.SourcePath = "ClientApp/dist";
+                spa.Options.SourcePath = "wwwroot";
 
                 if (picker.IsDevelopment)
                 {
-                    spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
+                    //spa.UseProxyToSpaDevelopmentServer("http://localhost:4200");
                     //spa.UseAngularCliServer(npmScript: "start");
                 }
             });

@@ -42,9 +42,7 @@ namespace Anf.KnowEngines
             return networkAdapter.GetStreamAsync(new RequestSettings
             {
                 Address = address,
-                Host = new Uri(address).Host,
-                Referrer = GetBaseAddress(),
-                Headers = headers
+                Host = new Uri(address).Host
             });
         }
 

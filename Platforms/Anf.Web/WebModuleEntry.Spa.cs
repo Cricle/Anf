@@ -8,7 +8,7 @@ namespace Anf.Web
         {
             services.AddSpaStaticFiles(configuration =>
             {
-                configuration.RootPath = "ClientApp/dist";
+                configuration.RootPath = "wwwroot";
             });
             return this;
         }

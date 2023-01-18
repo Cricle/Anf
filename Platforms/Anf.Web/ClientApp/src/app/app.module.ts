@@ -103,11 +103,11 @@ import { ImgOfComponent } from './img-of/img-of.component';
     RouterModule.forRoot([
       { path: '', component: HomeComponent, pathMatch: 'full' },
       { path: 'download', component: DownloadComponent },
-      { path: 'about', component: AboutComponent },
+      // { path: 'about', component: AboutComponent },
       { path: 'rank', component: TopRankComponent },
-      { path: 'about', component: AboutComponent },
+      // { path: 'about', component: AboutComponent },
       { path: 'bookshelf', component: BookshelfComponent },
-      { path: 'login', component: LoginComponent },
+      // { path: 'login', component: LoginComponent },
       { path: 'visit/:url/:index',component:VisitComponent},
       { path: 'error', component:ErrorComponent}
     ]),
