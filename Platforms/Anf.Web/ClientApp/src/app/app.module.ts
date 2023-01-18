@@ -34,7 +34,6 @@ import { HomeComponent } from './home/home.component';
 import { AboutComponent } from './about/about/about.component';
 import { DownloadComponent } from './download/download/download.component';
 import { ReferenceComponent } from './reference/reference/reference.component';
-import { GiantScreenComponent } from './giant-screen/giant-screen/giant-screen.component';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ServiceWorkerModule } from '@angular/service-worker';
 import { environment } from '../environments/environment';
@@ -61,7 +60,6 @@ import { ImgOfComponent } from './img-of/img-of.component';
     AboutComponent,
     DownloadComponent,
     ReferenceComponent,
-    GiantScreenComponent,
     DetailComponent,
     TopRankComponent,
     VisitComponent,

@@ -102,8 +102,8 @@ namespace Anf.Web.Controllers
                 return Ok(new EntityResult<string> { Data = string.Empty });
             }
             var comicProvider = (IComicSourceProvider)provider.GetRequiredService(prov.ProviderType);
-            //var stream=comicProvider.GetImageStreamAsync(url)
-            return Ok(new EntityResult<string> { Data = url });
+            var stream =await comicProvider.GetImageStreamAsync(url);
+            return File(stream,"image/png");
         }
         [AllowAnonymous]
         [HttpGet("[action]")]

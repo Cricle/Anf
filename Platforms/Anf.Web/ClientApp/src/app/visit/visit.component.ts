@@ -112,9 +112,9 @@ export class VisitComponent implements OnInit {
           });
         }
 
-        // if(x){
-        //   this.goDownload(x,this.token);
-        // }
+        if(x){
+          this.goDownload(x,this.token);
+        }
       },
       error: err => {
         this.notif.error("Fail in load chapter", this.watchingChapter.targetUrl);
@@ -128,9 +128,8 @@ export class VisitComponent implements OnInit {
       if (this.token!=currentToken) {
         break;
       }
-      this.api.makeImgUrl(this.entity.comicUrl,chp.targetUrl).subscribe({
-        next:dt=>chp.actualUrl=dt.data
-      });
+      const url=this.api.makeImgUrl(this.entity.comicUrl,chp.targetUrl);
+      chp.actualUrl=url;
     }
   }
 

@@ -72,9 +72,9 @@ export class ComicApiService{
     }
     return this.http.get<EntityResult<SearchComicResult>>(`${readingPart}/search?provider=${provider}&keyword=${keyword}&skip=${skip}&take=${take}`);
   }
-  public makeImgUrl(entityUrl:string,url:string):Observable<EntityResult<string>>{
+  public makeImgUrl(entityUrl:string,url:string):string{
     const r= `${readingPart}/GetImage?entityUrl=${entityUrl}&url=${url}`;
-    return this.http.get<EntityResult<string>>(r);
+    return r;
   }
   public getHotSearch30():Observable<SetResult<SortedItem>>{
     return this .http.get<SetResult<SortedItem>>(`${rankPart}/GetHotSearch30`);
