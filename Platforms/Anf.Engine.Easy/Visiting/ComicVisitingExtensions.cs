@@ -40,7 +40,6 @@ namespace Anf.Easy.Visiting
                 throw new ArgumentOutOfRangeException(nameof(index));
             }
 
-            var streamMgr = visiting.Host.GetRequiredService<RecyclableMemoryStreamManager>();
             var mgr = await visiting.GetChapterManagerAsync(index);
             if (mgr == null || mgr.ChapterWithPage?.Pages == null)
             {

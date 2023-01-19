@@ -1,9 +1,6 @@
-﻿using Anf.Networks;
-using Microsoft.IO;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ValueBuffer;
@@ -12,13 +9,6 @@ namespace Anf.Easy
 {
     internal class ComicDownloader : IComicDownloader
     {
-        private readonly RecyclableMemoryStreamManager streamManager;
-
-        public ComicDownloader(RecyclableMemoryStreamManager streamManager)
-        {
-            this.streamManager = streamManager ?? throw new ArgumentNullException(nameof(streamManager));
-        }
-
         public Func<Task>[] EmitTasks(ComicDownloadRequest request, CancellationToken token = default)
         {
             if (request is null)

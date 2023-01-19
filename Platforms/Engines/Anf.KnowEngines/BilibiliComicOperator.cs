@@ -1,18 +1,11 @@
 ﻿using Anf.Engine.Annotations;
 using Anf.Networks;
-using HtmlAgilityPack;
-using JavaScriptEngineSwitcher.Core;
-using Jint.Native.Array;
-#if !NETSTANDARD1_3
-using Microsoft.IO;
-#endif
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text;
-using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using ValueBuffer;
 
@@ -31,19 +24,10 @@ namespace Anf.KnowEngines
             ["Content-Type"] = "application/json",
             ["User-Agent"] = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4437.0 Safari/537.36 Edg/91.0.831.1",
         };
-#if !NETSTANDARD1_3
-        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
-        public BilibiliComicOperator(INetworkAdapter networkAdapter, RecyclableMemoryStreamManager recyclableMemoryStreamManager)
-        {
-            this.networkAdapter = networkAdapter;
-            this.recyclableMemoryStreamManager = recyclableMemoryStreamManager;
-        }
-#else
         public BilibiliComicOperator(INetworkAdapter networkAdapter)
         {
             this.networkAdapter = networkAdapter;
         }
-#endif
 
         protected virtual Task<Stream> GetStreamAsync(string address,string method, Stream stream = null)
         {
