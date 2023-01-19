@@ -11,5 +11,5 @@ namespace Anf.Engine
         {
             return JsonSerializer.Deserialize<T>(str, options);
         }
+        }
     }
-}

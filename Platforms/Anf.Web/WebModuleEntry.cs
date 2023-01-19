@@ -38,6 +38,7 @@ namespace Anf.Web
 #endif
 
             services.AddControllersWithViews();
+            services.AddResponseCaching();
             services.AddResponseCompression();
             services.AddNormalSecurityService();
 
@@ -79,11 +80,11 @@ namespace Anf.Web
             app.UseRouting();
             if (picker.IsDevelopment)
             {
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/Anf/swagger.json", "Anf API");
-                });
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
+            {
+                c.SwaggerEndpoint("/swagger/Anf/swagger.json", "Anf API");
+            });
             }
             app.UseEndpoints(endpoints =>
             {

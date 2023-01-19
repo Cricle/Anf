@@ -1,6 +1,9 @@
 ﻿using Anf.Engine;
 using Anf.Engine.Annotations;
 using Anf.Networks;
+#if !NETSTANDARD1_3
+using Microsoft.IO;
+#endif
 using System;
 using System.Collections.Generic;
 using System.IO;

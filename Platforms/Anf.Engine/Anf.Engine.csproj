@@ -5,7 +5,21 @@
     <TargetFrameworks>$(ComicEngineFrameworks)</TargetFrameworks>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="HttpUtility.cs"></Compile>
+  </ItemGroup>
+  <ItemGroup Condition="'$(StandardLib)'==true and '$(TargetFramework)' != 'netstandard1.1'">
     <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="7.0.0" />
     <PackageReference Include="System.Text.Json" Version="7.0.0" />
+  </ItemGroup>
+  <!--Condition="'$(StandardLib)'!=true"-->
+  <ItemGroup Condition="'$(StandardLib)'!='true' or '$(TargetFramework)' == 'netstandard1.1'">
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection.Abstractions" Version="1.1.1" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(StandardLib)'!='true' or '$(TargetFramework)' == 'net461' or '$(TargetFramework)' == 'netstandard1.1'">
+    <Compile Include="..\..\Shareds\HttpUtility.cs"></Compile>
+  </ItemGroup>
+  <ItemGroup Condition="'$(TargetFramework)' != 'netstandard1.3'">
+    <PackageReference Include="System.Net.Http" Version="4.3.4" />
   </ItemGroup>
 </Project>

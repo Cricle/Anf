@@ -1,0 +1,69 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <Import Project="..\..\..\..\engs\cross\cross.props"/>
+  <PropertyGroup>
+		<OutputType>WinExe</OutputType>
+		<TargetFramework>net6.0-windows10.0.19041</TargetFramework>
+		<TargetPlatformMinVersion>10.0.17763.0</TargetPlatformMinVersion>
+		<RootNamespace>Anf.Cross.WinUI</RootNamespace>
+		<ApplicationManifest>Windows\app.manifest</ApplicationManifest>
+		<Platforms>x86;x64;arm64</Platforms>
+		<RuntimeIdentifiers>win10-x86;win10-x64;win10-arm64</RuntimeIdentifiers>
+		<EnableDefaultPageItems>False</EnableDefaultPageItems>
+		<EnableDefaultApplicationDefinition>False</EnableDefaultApplicationDefinition>
+		<StartupObject>Anf.Cross.WinUI.Program</StartupObject>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Microsoft.ProjectReunion" Version="[0.5.6]">
+			<IncludeAssets>build</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="Microsoft.Maui" Version="6.0.100-preview.4.*" />
+		<PackageReference Include="Microsoft.Maui.Controls.Compatibility" Version="6.0.100-preview.4.*" />
+		<PackageReference Include="Microsoft.Maui.Resizetizer" Version="6.0.100-preview.4.*" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" RuntimeFrameworkVersion="10.0.19041.16" />
+		<FrameworkReference Update="Microsoft.Windows.SDK.NET.Ref" TargetingPackVersion="10.0.19041.16" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<Manifest Include="$(ApplicationManifest)" />
+		<ApplicationDefinition Include="Windows\App.xaml">
+			<Generator>MSBuild:Compile</Generator>
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</ApplicationDefinition>
+		<Page Include="Windows\*.xaml" Exclude="Windows\App.xaml">
+			<Generator>MSBuild:Compile</Generator>
+			<XamlRuntime>$(DefaultXamlRuntime)</XamlRuntime>
+		</Page>
+	</ItemGroup>
+
+	<ItemGroup>
+    <Compile Include="..\Anf.Cross\*.cs" Link="%(FileName)%(Extension)" />
+    <Compile Include="..\Anf.Cross\Services\*.cs" Link="Services\%(FileName)%(Extension)" />
+    <Compile Include="..\Anf.Cross\Settings\*.cs" Link="Settings\%(FileName)%(Extension)" />
+    <Compile Include="..\Anf.Cross\ViewModels\*.cs" Link="ViewModels\%(FileName)%(Extension)" />
+    <Compile Include="..\Anf.Cross\Models\*.cs" Link="Models\%(FileName)%(Extension)" />
+    <Compile Include="..\Anf.Cross\Views\*.cs" Link="Views\%(FileName)%(Extension)" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<EmbeddedResource Remove="Windows\*.xaml" />
+    <EmbeddedResource Include="..\Anf.Cross\*.xaml" Link="%(FileName)%(Extension)" />
+    <EmbeddedResource Include="..\Anf.Cross\Views\*.xaml" Link="Views\%(FileName)%(Extension)" />
+  </ItemGroup>
+
+	<ItemGroup>
+		<MauiImage Include="..\Anf.Cross\Resources\**\*.svg" Link="Resources\%(RecursiveDir)%(FileName)%(Extension)" />
+		<MauiFont Include="..\Anf.Cross\Resources\Fonts\**\*.ttf" Link="Resources\Fonts\%(RecursiveDir)%(FileName)%(Extension)" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\..\..\Anf.Engine.Easy\Anf.Easy.csproj" />
+	  <ProjectReference Include="..\..\..\Anf.Engine\Anf.Engine.csproj" />
+	  <ProjectReference Include="..\..\..\Anf.Platform\Anf.Platform.csproj" />
+	  <ProjectReference Include="..\..\..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
+	</ItemGroup>
+
+</Project>
