@@ -1,0 +1,54 @@
+<div class="header" style="white-space: nowrap;width: 100%;overflow-y: hidden;display: flex;justify-content:space-between;">
+    <ul style="display:inline-block;overflow-x: auto;">
+        <li class="normal-li m-li">
+            <a class="nav-link" [routerLink]='["/"]'>
+                <i nz-icon nzType="home" nzTheme="outline"></i>
+            </a>
+        </li>
+        <li class="normal-li m-li">
+            <a class="nav-link" [routerLink]='["/download"]'>
+                <i nz-icon nzType="cloud-download" nzTheme="outline"></i>
+                <span style="margin-left: 6px;">Download</span>
+            </a>
+        </li>
+        <!-- <li class="normal-li m-li">
+            <a class="nav-link" [routerLink]='["/rank"]'>
+                <i nz-icon nzType="bar-chart" nzTheme="outline"></i>
+                <span style="margin-left: 6px;">Rank</span>
+            </a>
+        </li> -->
+        <!--<li class="normal-li m-li">
+            <a class="nav-link" [routerLink]='["/bookshelf"]'>
+                <i nz-icon nzType="unordered-list" nzTheme="outline"></i>
+                <span style="margin-left: 6px;">Bookshelf</span>
+            </a>
+        </li>-->
+        <!-- <li class="normal-li m-li">
+            <a class="nav-link" [routerLink]='["/about"]'>
+                <i nz-icon nzType="branches" nzTheme="outline"></i>
+                <span style="margin-left: 6px;">About</span>
+            </a>
+        </li> -->
+    </ul>
+    <ul style="display:inline-block;float: right;">
+        <!-- <li class="normal-li m-li">
+            <a [routerLink]='["/login"]' >
+                <i nz-icon nzType="user" nzTheme="outline"></i>
+            </a>
+        </li> -->
+        <li class="normal-li m-li" nz-tooltip nzTooltipTitle="Swith the theme">
+            <!--nz-dropdown nzTrigger="click" [nzDropdownMenu]="menu"-->
+            <a (click)='switchTheme()' >
+                <i nz-icon nzType="bulb" nzTheme="outline"
+                    [style.color]="this.themeSer.actualIsDark?'white':'black'"></i>
+            </a>
+        </li>
+    </ul>
+    <!-- <nz-dropdown-menu #menu="nzDropdownMenu">
+        <ul nz-menu>
+            <li nz-menu-item (click)="this.themeSer.switchToDark()">Dark</li>
+            <li nz-menu-item (click)="this.themeSer.switchToLight()">Light</li>
+            <li nz-menu-item (click)="this.themeSer.switchToSystem()">System</li>
+        </ul>
+    </nz-dropdown-menu> -->
+</div>

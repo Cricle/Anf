@@ -1,0 +1,19 @@
+<Project>
+  <ItemGroup>
+    <PackageReference Include="Ao.Lang" Version="4.2.1" />
+    <PackageReference Include="Ao.SavableConfig" Version="2.7.0" />
+    <PackageReference Include="Ao.SavableConfig.TextJson" Version="2.7.0" />
+    <PackageReference Include="Ao.SavableConfig.Binder" Version="2.7.0" />
+    <PackageReference Include="DryIoc.Microsoft.DependencyInjection" Version="6.0.0" />
+    <PackageReference Include="Microsoft.Toolkit.Mvvm" Version="7.1.2" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="Uno.Microsoft.Xaml.Behaviors.Uwp.Managed" Version="2.3.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
+    <ProjectReference Include="..\..\..\Anf.Engine.Easy\Anf.Easy.csproj" />
+    <ProjectReference Include="..\..\..\Anf.Engine\Anf.Engine.csproj" />
+    <ProjectReference Include="..\..\..\Anf.Platform\Anf.Platform.csproj" />
+    <ProjectReference Include="..\..\..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
+  </ItemGroup>
+</Project>

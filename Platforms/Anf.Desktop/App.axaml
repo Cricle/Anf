@@ -1,0 +1,21 @@
+<Application xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:local="using:Anf.Desktop"
+             xmlns:conv="using:Anf.Desktop.Converters"
+             x:Class="Anf.Desktop.App">
+  <Application.DataTemplates>
+    <local:ViewLocator/>
+  </Application.DataTemplates>
+  <Application.Resources>
+    <ResourceDictionary>
+      <conv:AddConverter x:Key="AddConverter"/>
+      <conv:RevBoolConverter x:Key="RevBoolConverter"/>
+      <conv:AddNumberConverter x:Key="AddNumberConverter"/>
+    </ResourceDictionary>
+  </Application.Resources>
+  <Application.Styles>
+    <!--NOTE: 不要移除，占位置的-->
+    <FluentTheme/>
+    <StyleInclude Source="avares://Anf.Desktop/Styles/controling.axaml"/>
+  </Application.Styles>
+</Application>

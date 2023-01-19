@@ -1,0 +1,11 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <Configurations>Debug;Release;CompileModel</Configurations>
+  </PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
+    <ProjectReference Include="..\Anf.Engine\Anf.Engine.csproj" />
+  </ItemGroup>
+</Project>

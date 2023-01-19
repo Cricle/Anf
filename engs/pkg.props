@@ -1,0 +1,14 @@
+<Project>
+    <PropertyGroup>
+        <PackageProjectUrl>https://github.com/Cricle/Anf/</PackageProjectUrl>
+        <Copyright>Anf©2021</Copyright>
+        <Description>A cross platform comic reader lib part.</Description>
+        <RepositoryUrl>https://github.com/Cricle/Anf/</RepositoryUrl>
+        <AssemblyVersion>1.0.1.0</AssemblyVersion>
+        <FileVersion>1.0.1.0</FileVersion>
+        <Version>1.0.1</Version>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)'=='Release'">
+        <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    </PropertyGroup>
+</Project>

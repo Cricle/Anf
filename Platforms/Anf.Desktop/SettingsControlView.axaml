@@ -1,0 +1,89 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="50"
+             Background="{x:Null}"
+             x:Class="Anf.Desktop.SettingsControlView">
+  <UserControl.Styles>
+    <StyleInclude Source="avares://Anf.Desktop/Styles/controling.axaml"/>
+    <Style Selector="ToggleButton">
+      <Setter Property="FontSize" Value="{Binding TitleService.AdviseFontSize}"/>
+    </Style>
+  </UserControl.Styles>
+  <Grid>
+    <StackPanel Orientation="Horizontal">
+      <ToggleButton x:Name="SettingBtn"
+                    Classes="control part"
+                    Background="{x:Null}"
+                    ToolTip.Tip="可以很好看">
+        <TextBlock Classes="segoblock" Text="&#xE8B1;" Foreground="{Binding TitleService.AdviseFontSize}"/>
+      </ToggleButton>
+    </StackPanel>
+    <Popup IsOpen="{Binding ElementName=SettingBtn,Path=IsChecked,Mode=TwoWay}"
+           PlacementMode="Bottom"
+           PlacementAnchor="Bottom"
+           StaysOpen="False"
+           PlacementTarget="{Binding ElementName=SettingBtn}">
+      <Border Background="{DynamicResource SystemControlBackgroundChromeMediumBrush}"
+              CornerRadius="6"
+              Padding="12">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition MinWidth="60"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <Grid.RowDefinitions>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+            <RowDefinition/>
+          </Grid.RowDefinitions>
+          <TextBlock Text="亚克力" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding ThemeSettings.EnableAcrylicBlur,Mode=TwoWay}"
+                        Grid.Column="1"
+                        ToolTip.Tip="高对比背景的时候会看不清文字！"/>
+          <TextBlock Grid.Row="1" Text="黑主题" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding ThemeSettings.EnableDrakTheme,Mode=TwoWay}"
+                        Grid.Column="1"
+                        Grid.Row="1"
+                        ToolTip.Tip="晚上用好呀！"/>
+          <TextBlock Grid.Row="2" Text="立即全部" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding ReadingSettings.LoadAll,Mode=TwoWay}"
+                        Grid.Column="1"
+                        Grid.Row="2"
+                        ToolTip.Tip="加载时立即加载全部而不是被动加载(省内存省流量OvO"/>
+          <TextBlock Grid.Row="3" Text="并行解析" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding PerformaceSettings.EnableRemoteFetch,Mode=TwoWay}"
+                        Grid.Column="1"
+                        Grid.Row="3"
+                        ToolTip.Tip="能加速解析，但会耗费更多流量"/>
+          <TextBlock Grid.Row="4" Text="本地存储" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding PerformaceSettings.EnableStore,Mode=TwoWay}"
+                        Grid.Column="1"
+                        Grid.Row="4"
+                        ToolTip.Tip="在一定时间内，第二次解析会使用本地存储"/>
+          <TextBlock Grid.Row="5" Text="不显示异常" VerticalAlignment="Center"/>
+          <ToggleSwitch Classes="control part forcehover"
+                        Margin="3,0"
+                        IsChecked="{Binding DotShowException,Mode=TwoWay}"
+                        Grid.Column="1"
+                        Grid.Row="5"
+                        ToolTip.Tip="看不懂，不显示"/>
+        </Grid>
+      </Border>
+    </Popup>
+  </Grid>
+</UserControl>

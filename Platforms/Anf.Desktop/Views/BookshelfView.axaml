@@ -1,0 +1,85 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="450"
+             xmlns:vm="using:Anf.Destop.ViewModels"
+             x:Name="Bv"
+             x:Class="Anf.Desktop.Views.BookshelfView">
+  <Design.DataContext>
+    <vm:AvalonBookShelfViewModel></vm:AvalonBookShelfViewModel>
+  </Design.DataContext>
+  <Grid>
+    <ListBox Items="{Binding StoreBoxs}" Background="{x:Null}">
+      <ListBox.ContextMenu>
+        <ContextMenu>
+          <MenuItem Header="刷新" Command="{Binding FlushCommand}"/>
+          <MenuItem Header="更新全部" Command="{Binding UpdateCommand}"/>
+        </ContextMenu>
+      </ListBox.ContextMenu>
+      <ListBox.ItemsPanel>
+        <ItemsPanelTemplate>
+          <WrapPanel Orientation="Horizontal"/>
+        </ItemsPanelTemplate>
+      </ListBox.ItemsPanel>
+      <ListBox.ItemTemplate>
+        <DataTemplate>
+          <Grid Margin="3">
+            <Grid.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="进入" Command="{Binding GoSourceCommand}"/>
+                <MenuItem Header="更新" Command="{Binding UpdateCommand}"/>
+                <MenuItem Header="-" IsEnabled="False"/>
+                <MenuItem Header="刷新" Command="{Binding DataContext.FlushCommand,ElementName=Bv}"/>
+                <MenuItem Header="更新全部" Command="{Binding DataContext.UpdateCommand,ElementName=Bv}"/>
+                <MenuItem Header="-" IsEnabled="False"/>
+                <!--<MenuItem Header="保存为Zip" Command="{Binding StoreZipCommand}"/>
+                <MenuItem Header="-" IsEnabled="False"/>-->
+                <MenuItem Header="删除" Foreground="Red" Command="{Binding RemoveCommand}"/>
+              </ContextMenu>
+            </Grid.ContextMenu>
+            <ToolTip.Tip>
+              <StackPanel Orientation="Vertical">
+                <TextBlock Text="{Binding AttackModel.Descript,Mode=OneTime}"/>
+                <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                  <TextBlock Classes="segoblock" VerticalAlignment="Center" Text="&#xE77C;" Margin="0,0,8,0"/>
+                  <TextBlock Text="已阅读到第"/>
+                  <TextBlock VerticalAlignment="Center" FontWeight="Bold" Text="{Binding AttackModel.CurrentChapter,Converter={StaticResource AddConverter},Mode=OneWay}"/>
+                  <TextBlock Text="章第"/>
+                  <TextBlock VerticalAlignment="Center" FontWeight="Bold" Text="{Binding AttackModel.CurrentPage,Converter={StaticResource AddConverter},Mode=OneWay}"/>
+                  <TextBlock Text="页"/>
+                </StackPanel>
+              </StackPanel>
+            </ToolTip.Tip>
+            <Image Source="{Binding Image}" Width="300"/>
+            <Border Background="#A1666666"
+                    VerticalAlignment="Bottom">
+              <TextBlock Text="{Binding AttackModel.Name}"
+                         FontSize="16"
+                         Margin="0,16"
+                         HorizontalAlignment="Center"/>
+            </Border>
+            <ProgressBar Height="4"
+                         Background="{x:Null}"
+                         VerticalAlignment="Bottom"
+                         Maximum="{Binding AttackModel.Chapters.Length}"
+                         Value="{Binding AttackModel.CurrentChapter,Converter={StaticResource AddNumberConverter},Mode=OneWay}">
+            </ProgressBar>
+            <Border IsVisible="{Binding IsUpdating}" VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Background="{DynamicResource SystemControlBackgroundChromeBlackMediumBrush}">
+              <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+                <TextBlock VerticalAlignment="Center" HorizontalAlignment="Center">正在更新</TextBlock>
+                <ProgressBar Margin="8" IsIndeterminate="{Binding IsUpdating}" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+              </StackPanel>
+            </Border>
+          </Grid>
+        </DataTemplate>
+      </ListBox.ItemTemplate>
+    </ListBox>
+    <ProgressBar VerticalAlignment="Bottom"
+                 IsIndeterminate="{Binding IsUpdating}"
+                 IsVisible="{Binding IsUpdating}"
+                 Height="2"
+                 Maximum="{Binding StoreBoxs.Count,Converter={StaticResource AddNumberConverter},Mode=OneWay}"
+                 Value="{Binding Updated,Converter={StaticResource AddNumberConverter},Mode=OneWay}"/>
+  </Grid>
+</UserControl>

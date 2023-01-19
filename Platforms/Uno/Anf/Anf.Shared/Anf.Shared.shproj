@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>6279c845-92f8-4333-ab99-3d213163593c</ProjectGuid>
+    <MinimumVisualStudioVersion>14.0</MinimumVisualStudioVersion>
+  </PropertyGroup>
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.Default.props" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.Common.props" />
+  <PropertyGroup />
+  <Import Project="Anf.Shared.projitems" Label="Shared" />
+  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)\CodeSharing\Microsoft.CodeSharing.CSharp.targets" />
+  <ItemGroup>
+    <_Globbed_Compile Remove="App.Service.cs" />
+    <_Globbed_Compile Remove="AppEngine.cs" />
+    <_Globbed_Compile Remove="Markups\Lang.cs" />
+    <_Globbed_Compile Remove="Services\AppBarService.cs" />
+    <_Globbed_Compile Remove="Services\DependencyAppService.cs" />
+    <_Globbed_Compile Remove="Services\PlatformFileService.cs" />
+    <_Globbed_Compile Remove="Services\PlatformService.cs" />
+    <_Globbed_Compile Remove="Services\StreamImageConverter.cs" />
+    <_Globbed_Compile Remove="Services\UnoNavigationService.cs" />
+    <_Globbed_Compile Remove="Services\UnoObservableCollectionFactory.cs" />
+    <_Globbed_Compile Remove="Services\UnoStoreComicVisiting.cs" />
+    <_Globbed_Compile Remove="Services\UnoThemeService.cs" />
+    <_Globbed_Compile Remove="ViewModels\UnoBookshelfViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\UnoComicViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\UnoHomeViewModel.cs" />
+    <_Globbed_Compile Remove="ViewModels\UnoVisitingViewModel.cs" />
+    <_Globbed_Compile Remove="Views\ComicView.xaml.cs" />
+    <_Globbed_Compile Remove="Views\DefaultAppBarView.xaml.cs" />
+    <_Globbed_Compile Remove="Views\DefaultControlView.xaml.cs" />
+    <_Globbed_Compile Remove="Views\HomePage.xaml.cs" />
+    <_Globbed_Compile Remove="Views\VisitingControlView.xaml.cs" />
+    <_Globbed_Compile Remove="Views\VisitingView.xaml.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <_Globbed_PRIResource Remove="Styles\Generic.resw" />
+  </ItemGroup>
+  <ItemGroup>
+    <_Globbled_Page Remove="Styles\Generic.xaml" />
+    <_Globbled_Page Remove="Views\ComicView.xaml" />
+    <_Globbled_Page Remove="Views\DefaultAppBarView.xaml" />
+    <_Globbled_Page Remove="Views\DefaultControlView.xaml" />
+    <_Globbled_Page Remove="Views\HomePage.xaml" />
+    <_Globbled_Page Remove="Views\VisitingControlView.xaml" />
+    <_Globbled_Page Remove="Views\VisitingView.xaml" />
+  </ItemGroup>
+</Project>

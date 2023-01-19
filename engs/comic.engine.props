@@ -1,0 +1,14 @@
+<Project>
+  <PropertyGroup>
+    <ComicEngineFrameworks>netstandard2.0;netstandard2.1</ComicEngineFrameworks>
+    <Authors>Anf</Authors>
+    <Company>Anf</Company>
+    <Product>Anf</Product>
+    <Version>0.0.1</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'net461'">
+    <StandardLib>true</StandardLib>
+    <DefineConstants>$(DefineConstants);StandardLib</DefineConstants>
+  </PropertyGroup>
+</Project>

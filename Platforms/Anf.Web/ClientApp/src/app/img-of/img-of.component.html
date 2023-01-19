@@ -1,0 +1,10 @@
+<div style="text-align: center;">
+  <!-- <cdk-virtual-scroll-viewport itemSize="2" *ngIf="this._pages" class="demo-infinite-container">
+    <div *cdkVirtualFor="let pg of this._pages">
+      <img nz-image [nzSrc]="pg.targetUrl" [alt]="pg.name" />
+    </div>
+  </cdk-virtual-scroll-viewport> -->
+  <div *ngFor="let pg of this._pages">
+    <img [lazyLoad]="pg.actualUrl " [alt]="pg.name" />
+  </div>
+</div>

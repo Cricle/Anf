@@ -1,0 +1,98 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <NgenR2R>false</NgenR2R>
+    <UseFody>false</UseFody>
+    <RenderSystem>D2D</RenderSystem>
+    <EnableCache>true</EnableCache>
+    <ApplicationIcon>..\..\assets\Anf.ico</ApplicationIcon>
+    <MSIXBuild>false</MSIXBuild>
+    <AvaloniaVersion>0.10.12</AvaloniaVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MSIXBuild)'!='true'">
+    <TargetFrameworks>net472;net5.0;</TargetFrameworks>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework)'=='net5.0' and '$(Configuration)'=='Release'">
+    <PublishReadyToRun>true</PublishReadyToRun>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(MSIXBuild)'=='true'">
+    <TargetFramework>net472</TargetFramework>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(TargetFramework.Trim(`0123456789`))'=='net'">
+    <DefineConstants>$(DefineConstants);NETFX;</DefineConstants>
+    <UsingNetFramework>true</UsingNetFramework>
+    <PlatformTarget>x86</PlatformTarget>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(EnableCache)'=='true'">
+    <DefineConstants>$(DefineConstants);ENABLE_CACHE;</DefineConstants>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(UseD2D)' == 'true'">
+    <DefineConstants>$(DefineConstants);RENDER_D2D</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <AvaloniaResource Include="Assets\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <AvaloniaXaml Remove="Models\**" />
+    <Compile Remove="Models\**" />
+    <EmbeddedResource Remove="Models\**" />
+    <None Remove="Models\**" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Ao.SavableConfig" Version="2.7.0" />
+    <PackageReference Include="Ao.SavableConfig.Binder" Version="2.7.0" />
+    <PackageReference Include="Ao.SavableConfig.Json" Version="2.7.0" />
+    <PackageReference Include="Avalonia.Controls.PanAndZoom" Version="10.12.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
+    <PackageReference Include="NLog.Extensions.Logging" Version="5.1.0" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UseFody)'=='true'">
+    <PackageReference Include="Costura.Fody" Version="5.1.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <PropertyGroup>
+    <DefineConstants Condition="'$(RenderSystem)' == 'D2D'">$(DefineConstants);RENDERSYSTEM_D2D</DefineConstants>
+    <DefineConstants Condition="'$(RenderSystem)' == 'AUTO'">$(DefineConstants);RENDERSYSTEM_AUTO</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <PackageReference Include="Avalonia.Diagnostics" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(RenderSystem)' == 'D2D'">
+    <PackageReference Include="Avalonia.Direct2D1" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+
+  <ItemGroup Condition="'$(RenderSystem)' != 'D2D'">
+    <PackageReference Include="Avalonia.Desktop" Version="$(AvaloniaVersion)" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Assets\" />
+    <Folder Include="Styles\" />
+  </ItemGroup>
+  <ItemGroup Condition="'$(UsingNetFramework)' == 'true'">
+    <PackageReference Include="Microsoft.DotNet.Framework.NativeImageCompiler" Version="1.0.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Anf.ChannelModel\Anf.ChannelModel.csproj" />
+    <ProjectReference Include="..\Anf.Engine.Easy\Anf.Easy.csproj" />
+    <ProjectReference Include="..\Anf.Platform\Anf.Platform.csproj" />
+    <ProjectReference Include="..\Engines\Anf.KnowEngines\Anf.KnowEngines.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\assets\Anf.ico" Link="Anf.ico">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\assets\NLog.config">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <None Update="anf.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+</Project>

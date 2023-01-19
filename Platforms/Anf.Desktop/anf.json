@@ -1,0 +1,22 @@
+{
+  "Reading": {
+    "LoadAll": "False"
+  },
+  "Theme": {
+    "EnableDrakTheme": "True",
+    "EnableAcrylicBlur": "False"
+  },
+  "Window": {
+    "Topmost": false,
+    "MinHeight": "400",
+    "MinWidth": "650"
+  },
+  "Startup": {
+    "StartupType": "Providers",
+    "DisplayProposalCount": "20"
+  },
+  "Performace": {
+    "EnableCDN": "False",
+    "UseStore": "False"
+  }
+}
