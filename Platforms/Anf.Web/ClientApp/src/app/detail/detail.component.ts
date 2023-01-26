@@ -11,7 +11,7 @@ import { ComicSource, SearchComicResult, SetResult, SortedItem } from '../comic-
   styleUrls: ['./detail.component.css']
 })
 export class DetailComponent implements OnInit {
-  searcher: SearchService;
+  public searcher: SearchService;
   constructor(private route: ActivatedRoute,
     private notify: NzNotificationService,
     searcher: SearchService,
@@ -21,13 +21,9 @@ export class DetailComponent implements OnInit {
       this.searcher.keyword = x.get("k");
       if (this.searcher.keyword) {
         this.searcher.provider = x.get("p");
-        const skipVal = Number.parseInt(x.get("s"));
-        const takeVal = Number.parseInt(x.get("t"));
-        if (!Number.isNaN(skipVal)) {
-          this.searcher.skip = skipVal;
-        }
-        if (!Number.isNaN(takeVal)) {
-          this.searcher.take = takeVal;
+        const currentPage = Number.parseInt(x.get("c"));
+        if (!Number.isNaN(currentPage)) {
+          this.searcher.currentPage = currentPage;
         }
         this.searcher.search();
       }

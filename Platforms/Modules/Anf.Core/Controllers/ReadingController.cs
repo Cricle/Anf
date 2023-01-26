@@ -70,7 +70,7 @@ namespace Anf.Web.Controllers
                     prov = searchEngine[0];
                 }
             }
-            var key = KeyGenerator.Concat(SearchKey, provider, keyword);
+            var key = KeyGenerator.Concat(SearchKey, provider, keyword,skip,take);
             var ds = memoryCache.Get(key);
             if (ds != null)
             {

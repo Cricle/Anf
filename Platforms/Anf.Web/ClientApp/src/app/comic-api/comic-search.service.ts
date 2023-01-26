@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { NzNotificationService } from "ng-zorro-antd/notification";
+import { Observable, Subscription } from "rxjs";
 import { ComicApiService } from "./comic-api.service";
-import { SearchComicResult, SetResult, SortedItem } from "./model";
+import { EntityResult, SearchComicResult, SetResult, SortedItem } from "./model";
 
-
+const pageSize:number=20;
 
 @Injectable({
     providedIn: 'root'
@@ -15,12 +16,32 @@ export class SearchService {
     private _keyword: string='';
     provider: string;
     searchedText: string = '';
-    skip?: number;
-    take?: number;
     providers: string[]=[];
     acceptHotSearch:SortedItem[]=[];
-    hotSearch: SetResult<SortedItem>;
     result: SearchComicResult;
+    _currentPage:number=0;
+    _totalPage:number=0;
+
+    
+    public get totalPage() : number {
+      return this._totalPage;
+    }
+    
+    
+    public set totalPage(v : number) {
+      this._totalPage = v;
+    }
+    
+
+    public get currentPage():number{
+      return this._currentPage;
+    }
+    
+    public set currentPage(v : number) {
+      this._currentPage = v;
+      this.search();
+    }
+    
 
     public get keyword() : string {
       return this._keyword;
@@ -28,45 +49,18 @@ export class SearchService {
 
     public set keyword(v : string) {
       this._keyword = v;
-      this.flushAcceptHotSearch();
-    }
-    public flushAcceptHotSearch(){
-      this.acceptHotSearch=[];
-      const v=this.keyword;
-      if(v&&this.hotSearch?.datas){
-        if(this.hotSearch.datas.length==0){
-          this.acceptHotSearch=this.hotSearch.datas;
-        }else{
-          const lowerV=v.toLowerCase();
-          this.acceptHotSearch=this.hotSearch.datas
-            .filter(x=>x.keyword.toLowerCase().indexOf(lowerV)!=-1);
-        }
-      }
     }
 
     constructor(private api: ComicApiService,
         private notify:NzNotificationService) {
-        this.hotSearch = {
-            datas: [],
-            take: 0,
-            skip: 0,
-            total: 0,
-            msg: '',
-            code: 0,
-            succeed: true
-        };
-        api.getProviders().subscribe(x => {
-            this.providers = x.data;
-        });
+        this.flushProviders();
     }
-
-  searchForce(){
-    if (!this.hotSearch) {
-      this.api.getHotSearch30().subscribe(x=>{
-        this.hotSearch=x;
-        this.flushAcceptHotSearch();
-      });
-    }
+  flushProviders():Observable<EntityResult<string[]>>{
+    const ret= this.api.getProviders();
+    ret.subscribe(x => {
+      this.providers = x.data;
+    });
+    return ret;
   }
   search(){
     if (this.loading) {
@@ -77,18 +71,32 @@ export class SearchService {
       return;
     }
     if (!this.providers||this.providers.length==0) {
-      this.notify.error("Have not search provider!","The search can't run when no search provider!");
+      this.flushProviders().subscribe({
+        next:()=>this.actualSearch(),
+        error:err=>this.notify.error("Have not search provider!","The search can't run when no search provider!")
+      });      
       return;
     }
+    this.actualSearch();
+  }
+  actualSearch(){
     this.searchedText=this.keyword;
     this.isError=false;
     this.loading=true;
     this.result=null;
-    this.api.search(this.provider,this.keyword,this.skip,this.take).subscribe(x=>{
-      this.result=x.data;
-    },err=>{
-      this.isError=true;
-      this.notify.error("The seach return fail",err);
-    },()=>this.loading=false);
+    const skip=Math.max(0,this.currentPage*pageSize);
+    const take=pageSize;
+    this.api.search(this.provider,this.keyword,skip,take).subscribe({
+      next:x=>{
+        this.result=x.data;
+        this.totalPage=x.data.total;
+        this.currentPage=Math.min(this.currentPage,this.totalPage);
+      },
+      error:err=>{
+        this.isError=true;
+        this.notify.error("The seach return fail",err);
+      },
+      complete:()=>this.loading=false
+    });
   }
 }

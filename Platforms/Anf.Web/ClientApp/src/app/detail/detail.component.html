@@ -4,7 +4,7 @@
             <nz-input-group [nzSuffix]="this.searcher.loading?indicatorTemplateSpin:suffixIcon"
                 (keydown)="searchKeydown($event)">
                 <input nzSize="large" placeholder="Input some keywork to search" nz-input [style.disabled]="!this.searcher.loading"
-                    [(ngModel)]="this.searcher.keyword" (focus)="searcher.searchForce()" [nzAutocomplete]="auto" />
+                    [(ngModel)]="this.searcher.keyword" [nzAutocomplete]="auto" />
             </nz-input-group>
             <ng-template #indicatorTemplate><i nz-icon nzType="loading"></i></ng-template>
             <ng-template #indicatorTemplateSpin>
@@ -49,5 +49,8 @@
                 </nz-list-item>
             </nz-list>
         </nz-list>
+        <div style="text-align: center; margin-top: 10px;margin-bottom: 10px;">
+            <nz-pagination [(nzPageIndex)]="this.searcher.currentPage" [(nzTotal)]="this.searcher.totalPage" [nzPageSize]="20"></nz-pagination>
+        </div>
     </div>
 </div>

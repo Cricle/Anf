@@ -34,7 +34,7 @@ namespace Anf.KnowEngines.SearchProviders
             var page = 1;
             if (skip != 0 && skip > take)
             {
-                page = take / skip;
+                page = skip/ take;
             }
             var targetUrl = string.Format(SeachUrl, page, take, keywork, (int)UTCSpan(DateTime.Now).TotalSeconds);
             string str = string.Empty;
