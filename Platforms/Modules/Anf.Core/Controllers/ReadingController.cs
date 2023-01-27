@@ -10,6 +10,7 @@ using System.Linq;
 using Ao.Cache;
 using Microsoft.Extensions.DependencyInjection;
 using StackExchange.Redis;
+using ValueBuffer;
 
 namespace Anf.Web.Controllers
 {
@@ -86,7 +87,6 @@ namespace Anf.Web.Controllers
             });
             return Ok(r);
         }
-        private static readonly string ImageKeyHeader = "Anf.Web.Controllers.GetImage";
         [AllowAnonymous]
         [HttpGet("[action]")]
         public async Task<IActionResult> GetImage([FromQuery] string entityUrl, [FromQuery] string url, [FromServices]IServiceProvider provider)
@@ -98,13 +98,6 @@ namespace Anf.Web.Controllers
             {
                 return BadRequest();
             }
-            var key = KeyGenerator.Concat(ImageKeyHeader, entityUrl, url);
-            var db = provider.GetRequiredService<IDatabase>();
-            var imgCache=await db.StringGetAsync(key);
-            if (imgCache.HasValue)
-            {
-                return File((byte[])imgCache, "image/png");
-            }
             var prov = comicEngine.GetComicSourceProviderType(entityUrl);
             if (prov is null)
             {
@@ -112,6 +105,7 @@ namespace Anf.Web.Controllers
             }
             var comicProvider = (IComicSourceProvider)provider.GetRequiredService(prov.ProviderType);
             var stream =await comicProvider.GetImageStreamAsync(url);
+            HttpContext.Response.RegisterForDispose(stream);
             return File(stream, "image/png");
         }
         [AllowAnonymous]

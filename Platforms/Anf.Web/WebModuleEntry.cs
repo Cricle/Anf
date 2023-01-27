@@ -28,9 +28,9 @@ namespace Anf.Web
             //var store = FileStoreService.FromMd5Default(Path.Combine(Environment.CurrentDirectory, XComicConst.CacheFolderName));
             AddComicAnalysis(services)
                 .AddSpa(services)
-                .AddFetch(services,config)
+                .AddFetch(services, config)
                 .AddSwagger(services)
-                .AddCache(services,config);
+                .AddCache(services, config);
 
 
 #if !DEBUG
@@ -72,19 +72,16 @@ namespace Anf.Web
             app.UseHttpsRedirection();
 #endif
             app.UseResponseCompression();
-            if (!picker.IsDevelopment)
-            {
-                app.UseSpaStaticFiles();
-            }
+            app.UseSpaStaticFiles();
 
             app.UseRouting();
             if (picker.IsDevelopment)
             {
-            app.UseSwagger();
-            app.UseSwaggerUI(c =>
-            {
-                c.SwaggerEndpoint("/swagger/Anf/swagger.json", "Anf API");
-            });
+                app.UseSwagger();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/Anf/swagger.json", "Anf API");
+                });
             }
             app.UseEndpoints(endpoints =>
             {

@@ -3,6 +3,7 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
+    "startNoProxy": "ng serve",
     "start": "ng serve --proxy-config proxy.conf.json",
     "build": "ng build",
     "build:ssr": "ng run Kw.Comic.Web:server:dev",

@@ -437,3 +437,4 @@ $RECYCLE.BIN/
 .sonarqube\*.*
 Platforms\.sonarqube\*.*
 
+/Platforms/Anf.Web/wwwroot
