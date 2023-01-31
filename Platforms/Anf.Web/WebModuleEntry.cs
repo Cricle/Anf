@@ -33,9 +33,6 @@ namespace Anf.Web
                 .AddCache(services, config);
 
 
-#if !DEBUG
-            services.AddApplicationInsightsTelemetry(config["APPINSIGHTSCONNECTIONSTRING"]);
-#endif
 
             services.AddControllersWithViews();
             services.AddResponseCaching();
