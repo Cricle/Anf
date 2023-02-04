@@ -22,7 +22,7 @@ namespace Microsoft.Extensions.DependencyInjection
             services.AddScoped<RemoteFetcher>();
             services.AddScoped(p =>
             {
-                var lockFactor = p.GetRequiredService<IResourceLockerFactory>();
+                var lockFactor = p.GetService<IResourceLockerFactory>();
                 var provider = p.GetRequiredService<FetcherProvider>();
                 var rootFetcher = new RootFetcher(lockFactor);
                 var fetchers = provider.Select(x => (IResourceFetcher)p.GetRequiredService(x)).ToArray();

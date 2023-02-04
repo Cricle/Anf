@@ -1,5 +1,4 @@
 ﻿using Anf.Easy.Visiting;
-using Microsoft.IO;
 using System.Net.Http;
 using Anf.Platform.Services;
 using System.ComponentModel;
@@ -17,8 +16,8 @@ namespace Anf.ViewModels
         {
         }
 
-        public StoreBoxVisitingViewModel(IComicVisiting<TImage> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<TImage> streamImageConverter, IObservableCollectionFactory observableCollectionFactory)
-            : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter, observableCollectionFactory)
+        public StoreBoxVisitingViewModel(IComicVisiting<TImage> visiting, HttpClient httpClient,IStreamImageConverter<TImage> streamImageConverter, IObservableCollectionFactory observableCollectionFactory)
+            : base(visiting, httpClient, streamImageConverter, observableCollectionFactory)
         {
         }
 

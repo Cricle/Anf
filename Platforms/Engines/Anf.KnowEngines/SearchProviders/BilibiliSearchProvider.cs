@@ -1,6 +1,7 @@
 ﻿using Anf.Engine;
 using Anf.Engine.Annotations;
 using Anf.Networks;
+using BetterStreams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -32,7 +33,7 @@ namespace Anf.KnowEngines.SearchProviders
 
         private Stream GetStream()
         {
-            return new ValueBufferMemoryStream();
+            return new PooledMemoryStream();
         }
 
         public async Task<SearchComicResult> SearchAsync(string keywork, int skip, int take)

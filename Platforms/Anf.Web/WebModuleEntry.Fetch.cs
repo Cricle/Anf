@@ -9,10 +9,10 @@ namespace Anf.Web
         public WebModuleEntry AddFetch(IServiceCollection services, IConfiguration configuration)
         {
             services.AddFetcherProvider()
-               .AddDefaultFetcherProvider()
-               .AddRedisFetcherProvider();
-            services.AddResourceFetcher()
-                .AddRedisResourceFetch();
+               .AddDefaultFetcherProvider();
+            //.AddRedisFetcherProvider();
+            services.AddResourceFetcher();
+                //.AddRedisResourceFetch();
 
             services.AddOptions<FetchOptions>();
             return this;

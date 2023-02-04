@@ -1,11 +1,12 @@
 ﻿using Anf.Easy.Store;
-using Microsoft.IO;
+using BetterStreams;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using ValueBuffer;
 
 namespace Anf.Platform
 {
@@ -37,7 +38,6 @@ namespace Anf.Platform
             {
                 settings = DefaultStoreFetchSettings;
             }
-            var recyclableMemoryStreamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
             if (!settings.ForceNoCache && storeService != null)
             {
                 var str = await storeService.GetPathAsync(address);
@@ -46,7 +46,7 @@ namespace Anf.Platform
                     if (settings.ExpiresTime == null ||
                         (DateTime.Now - File.GetLastWriteTime(str)) < settings.ExpiresTime)
                     {
-                        var recmem = recyclableMemoryStreamManager.GetStream();
+                        var recmem = new PooledMemoryStream();
                         using (var fs = File.OpenRead(str))
                         {
                             await fs.CopyToAsync(recmem);
@@ -64,7 +64,7 @@ namespace Anf.Platform
             }
             using (mem)
             {
-                stream = recyclableMemoryStreamManager.GetStream();
+                stream = new PooledMemoryStream();
 
                 await mem.CopyToAsync(stream);
                 stream.Seek(0, SeekOrigin.Begin);

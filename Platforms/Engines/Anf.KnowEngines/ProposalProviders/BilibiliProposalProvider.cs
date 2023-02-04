@@ -1,6 +1,7 @@
 ﻿using Anf.Engine;
 using Anf.Engine.Annotations;
 using Anf.Networks;
+using BetterStreams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -29,7 +30,7 @@ namespace Anf.KnowEngines.ProposalProviders
         {
             var str = string.Empty;
 
-            using(var mem= new ValueBufferMemoryStream())
+            using(var mem= new PooledMemoryStream())
             {
                 var buffer = Encoding.UTF8.GetBytes("{\"page_num\":4,\"seed\":\"0\"}");
                 mem.Write(buffer,0,buffer.Length);

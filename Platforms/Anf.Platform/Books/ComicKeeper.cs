@@ -1,14 +1,15 @@
 ﻿using Anf.Easy.Store;
 using Anf.Easy.Visiting;
 using Anf.Engine;
+using BetterStreams;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using ValueBuffer;
 
 namespace Anf.Platform
 {
@@ -92,11 +93,10 @@ namespace Anf.Platform
                 }
                 if (!tokenSource.IsCancellationRequested)
                 {
-                    var streamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
                     var str = JsonHelper.Serialize(detail);
                     var buffer = Encoding.UTF8.GetBytes(str);
                     var path = ComicIndexName;
-                    using (var stream = streamManager.GetStream())
+                    using (var stream = new PooledMemoryStream())
                     {
                         stream.Write(buffer, 0, buffer.Length);
                         stream.Seek(0, SeekOrigin.Begin);

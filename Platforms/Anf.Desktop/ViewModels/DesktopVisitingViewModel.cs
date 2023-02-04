@@ -11,7 +11,6 @@ using Anf.ViewModels;
 using Avalonia.Controls.PanAndZoom;
 using Avalonia.Media.Imaging;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IO;
 using Microsoft.Toolkit.Mvvm.Input;
 using System;
 using System.ComponentModel;
@@ -43,8 +42,8 @@ namespace Anf.Desktop.ViewModels
             AvalonInit();
         }
 
-        public DesktopVisitingViewModel(IComicVisiting<Bitmap> visiting, HttpClient httpClient, RecyclableMemoryStreamManager recyclableMemoryStreamManager, IStreamImageConverter<Bitmap> streamImageConverter,IObservableCollectionFactory observableCollectionFactory)
-            : base(visiting, httpClient, recyclableMemoryStreamManager, streamImageConverter, observableCollectionFactory)
+        public DesktopVisitingViewModel(IComicVisiting<Bitmap> visiting, HttpClient httpClient, IStreamImageConverter<Bitmap> streamImageConverter,IObservableCollectionFactory observableCollectionFactory)
+            : base(visiting, httpClient, streamImageConverter, observableCollectionFactory)
         {
             AvalonInit();
         }

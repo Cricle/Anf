@@ -29,15 +29,18 @@ namespace Anf.Web
             AddComicAnalysis(services)
                 .AddSpa(services)
                 .AddFetch(services, config)
+#if DEBUG
                 .AddSwagger(services)
-                .AddCache(services, config);
+#endif
+                ;
+            //.AddCache(services, config);
 
 
 
             services.AddControllersWithViews();
             services.AddResponseCaching();
             services.AddResponseCompression();
-            services.AddNormalSecurityService();
+            //services.AddNormalSecurityService();
 
         }
         public override async Task AfterReadyAsync(IReadyContext context)
@@ -65,21 +68,18 @@ namespace Anf.Web
                 // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
                 app.UseHsts();
             }
-#if !DEBUG
-            app.UseHttpsRedirection();
-#endif
+
             app.UseResponseCompression();
             app.UseSpaStaticFiles();
 
             app.UseRouting();
-            if (picker.IsDevelopment)
+#if DEBUG
+            app.UseSwagger();
+            app.UseSwaggerUI(c =>
             {
-                app.UseSwagger();
-                app.UseSwaggerUI(c =>
-                {
-                    c.SwaggerEndpoint("/swagger/Anf/swagger.json", "Anf API");
-                });
-            }
+                c.SwaggerEndpoint("/swagger/Anf/swagger.json", "Anf API");
+            });
+#endif
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllerRoute(

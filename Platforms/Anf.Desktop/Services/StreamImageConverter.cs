@@ -1,34 +1,24 @@
 ﻿using Avalonia.Media.Imaging;
-using Microsoft.IO;
-using System;
-using System.Collections.Generic;
+using BetterStreams;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
+using ValueBuffer;
 
 namespace Anf.Desktop.Services
 {
     internal class StreamImageConverter : IStreamImageConverter<Bitmap>
     {
-        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
-
-        public StreamImageConverter(RecyclableMemoryStreamManager recyclableMemoryStreamManager)
-        {
-            this.recyclableMemoryStreamManager = recyclableMemoryStreamManager;
-        }
-
-        public async Task<Bitmap> ToImageAsync(Stream stream)
+        public Task<Bitmap> ToImageAsync(Stream stream)
         {
             if (stream.CanSeek)
             {
-                return new Bitmap(stream);
+                return Task.FromResult(new Bitmap(stream));
             }
-            using (var mem = recyclableMemoryStreamManager.GetStream())
+            using (var mem = new PooledMemoryStream())
             {
-                await stream.CopyToAsync(mem);
-                mem.Seek(0, SeekOrigin.Begin);
-                return new Bitmap(mem);
+                stream.CopyTo(mem);
+                mem.Position = 0;
+                return Task.FromResult(new Bitmap(mem));
             }
         }
     }

@@ -3,7 +3,6 @@ using Anf.Easy.Visiting;
 using Anf.Engine;
 using Anf.Platform.Engines;
 using Anf.Platform.Services;
-using Microsoft.IO;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,11 +20,9 @@ namespace Anf.Platform
             : base(host, resourceFactoryCreator)
         {
             storeService = AppEngine.GetRequiredService<IStoreService>();
-            recyclableMemoryStreamManager = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
             DelayTime = DefaultDelayTime;
         }
 
-        private readonly RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         private readonly IStoreService storeService;
 
         public virtual bool UseStore { get; set; }

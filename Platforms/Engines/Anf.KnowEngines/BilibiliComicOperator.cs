@@ -1,5 +1,6 @@
 ﻿using Anf.Engine.Annotations;
 using Anf.Networks;
+using BetterStreams;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -44,7 +45,7 @@ namespace Anf.KnowEngines
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
         private Stream GetStream()
         {
-            return new ValueBufferMemoryStream();
+            return new PooledMemoryStream();
         }
         private void WrtieStream(Stream stream,string text)
         {

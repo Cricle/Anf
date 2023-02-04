@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BetterStreams;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Threading;
@@ -60,7 +61,7 @@ namespace Anf.Easy
                     await listener.BeginFetchPageAsync(listenerContext);
                 }
                 using (var stream = await request.Provider.GetImageStreamAsync(page.TargetUrl))
-                using (var destStream = new ValueBufferMemoryStream())
+                using (var destStream = new PooledMemoryStream())
                 {
                     DownloadSaveListenerContext saveCtx = null;
                     if (listener != null)

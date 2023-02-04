@@ -1,7 +1,6 @@
 ﻿using Anf.Easy.Visiting;
 using Anf.Models;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.IO;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -37,12 +36,10 @@ namespace Anf.ViewModels
         public VisitingViewModel(
             IComicVisiting<TImage> visiting,
             HttpClient httpClient,
-            RecyclableMemoryStreamManager recyclableMemoryStreamManager,
             IStreamImageConverter<TImage> streamImageConverter,
             IObservableCollectionFactory observableCollectionFactory)
         {
             this.streamImageConverter = streamImageConverter ?? throw new ArgumentNullException(nameof(streamImageConverter));
-            this.recyclableMemoryStreamManager = recyclableMemoryStreamManager ?? throw new ArgumentNullException(nameof(recyclableMemoryStreamManager));
             this.httpClient = httpClient ?? throw new ArgumentNullException(nameof(httpClient));
             this.visiting = visiting ?? throw new ArgumentNullException(nameof(visiting));
             this.observableCollectionFactory = observableCollectionFactory ?? throw new ArgumentNullException(nameof(observableCollectionFactory));
@@ -55,7 +52,6 @@ namespace Anf.ViewModels
         protected readonly IServiceScope scope;
         protected readonly IServiceProvider provider;
         protected IStreamImageConverter<TImage> streamImageConverter;
-        protected RecyclableMemoryStreamManager recyclableMemoryStreamManager;
         protected HttpClient httpClient;
         protected IComicVisiting<TImage> visiting;
         private bool isLoading;
@@ -279,7 +275,6 @@ namespace Anf.ViewModels
                 this.visiting = visiting?.Invoke(provider) ?? provider.GetRequiredService<IComicVisiting<TImage>>();
             }
             httpClient = provider.GetRequiredService<HttpClient>();
-            recyclableMemoryStreamManager = provider.GetRequiredService<RecyclableMemoryStreamManager>();
             streamImageConverter = provider.GetRequiredService<IStreamImageConverter<TImage>>();
             observableCollectionFactory = provider.GetRequiredService<IObservableCollectionFactory>();
         }

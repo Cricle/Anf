@@ -1,4 +1,6 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿#if DEBUG
+
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using System;
 using System.IO;
@@ -37,3 +39,5 @@ namespace Anf.Web
         }
     }
 }
+
+#endif

@@ -1,13 +1,16 @@
-version: "3.9" 
+version: "3.3" 
 
 services:
   redis:
     container_name: redis
-    image: redis:latest
+    image: redis:6.0-alpine
+    volumes:
+      - ./:/rediscfg
+    command: ["redis-server", "/rediscfg/redis.conf"]
     ports:
-      - 6379:6379
+      - 6379:6379   
   web:
-    build: .
+    image: hcricle/anfweb:latest
     ports:
       - 5000:80
     depends_on:

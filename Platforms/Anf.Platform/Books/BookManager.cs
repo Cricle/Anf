@@ -1,23 +1,22 @@
 ﻿using Anf.Easy;
 using Anf.Easy.Store;
 using Anf.Platform.Stores;
-using Microsoft.IO;
+using BetterStreams;
 using System.IO;
 using System.IO.Compression;
 using System.Runtime.CompilerServices;
 using System.Threading.Tasks;
+using ValueBuffer;
 
 namespace Anf.Platform.Books
 {
     public class BookManager : IStoreService
     {
-        public BookManager(DirectoryInfo folder, RecyclableMemoryStreamManager streamManager)
+        public BookManager(DirectoryInfo folder)
         {
-            this.StreamManager = streamManager;
             Folder = folder;
             PathHelper.EnsureCreated(folder.FullName);
         }
-        public RecyclableMemoryStreamManager StreamManager { get; }
 
         public DirectoryInfo Folder { get; }
 
@@ -58,7 +57,7 @@ namespace Anf.Platform.Books
         }
         public async Task<Stream> StoreStreamAsync(string address)
         {
-            var stream = StreamManager.GetStream();
+            var stream = new PooledMemoryStream();
             var zip = new ZipArchive(stream, ZipArchiveMode.Update, true);
             using (var zipSave = new ZipStoreService(zip))
             {

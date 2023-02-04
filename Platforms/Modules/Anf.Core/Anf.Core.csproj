@@ -7,7 +7,6 @@
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
     <PackageReference Include="Structing" Version="1.3.3-preview.3" />
     <PackageReference Include="Structing.AspNetCore" Version="1.3.3-preview.3" />
-    <PackageReference Include="SecurityLogin.Normal" Version="1.2.0-preview.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Anf.ChannelModel\Anf.ChannelModel.csproj" />

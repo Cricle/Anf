@@ -1,8 +1,9 @@
 ﻿using Avalonia.Controls;
 using Avalonia.Media.Imaging;
-using Microsoft.IO;
+using BetterStreams;
 using System.IO;
 using System.Threading.Tasks;
+using ValueBuffer;
 
 namespace Anf.Desktop
 {
@@ -11,13 +12,12 @@ namespace Anf.Desktop
         public static async Task<string> PickSaveAsync(this Bitmap bitmap,string name)
         {
             var win = AppEngine.GetRequiredService<MainWindow>();
-            var mgr = AppEngine.GetRequiredService<RecyclableMemoryStreamManager>();
             var dig = new SaveFileDialog();
             dig.InitialFileName = name;
             var res = await dig.ShowAsync(win);
             if (res != null)
             {
-                using (var stream = mgr.GetStream())
+                using (var stream = new PooledMemoryStream())
                 {
                     bitmap.Save(stream);
                     stream.Seek(0, SeekOrigin.Begin);
