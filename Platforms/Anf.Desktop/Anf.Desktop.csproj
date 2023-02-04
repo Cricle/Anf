@@ -7,7 +7,7 @@
     <EnableCache>true</EnableCache>
     <ApplicationIcon>..\..\assets\Anf.ico</ApplicationIcon>
     <MSIXBuild>false</MSIXBuild>
-    <AvaloniaVersion>0.10.12</AvaloniaVersion>
+    <AvaloniaVersion>0.10.14</AvaloniaVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(MSIXBuild)'!='true'">
     <TargetFrameworks>net472;net5.0;</TargetFrameworks>
