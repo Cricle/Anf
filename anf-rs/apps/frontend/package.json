@@ -12,7 +12,7 @@
     "@tauri-apps/api": "^2.0.0",
     "pinia": "^2.3.0",
     "vue": "^3.5.0",
-    "vue-router": "^4.5.0",
+    "vue-router": "^5.1.0",
     "vuestic-ui": "^1.10.0"
   },
   "devDependencies": {
