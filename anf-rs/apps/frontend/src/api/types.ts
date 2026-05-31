@@ -56,7 +56,7 @@ export interface ComicAdapter {
   search(keyword: string, skip?: number, take?: number): Promise<SearchComicResult>
   getEntity(url: string): Promise<ComicEntityTruck>
   getChapter(entityUrl: string, chapterUrl: string): Promise<WithPageChapter>
-  getImage(entityUrl: string, url: string): Promise<number[]>
+  getImageUrl(entityUrl: string, url: string): string
   getProposal(engineName?: string, take?: number): Promise<ComicSnapshot[]>
   getBookshelf(): Promise<BookshelfItem[]>
   addToBookshelf(item: Omit<BookshelfItem, 'current_chapter' | 'current_page'>): Promise<void>

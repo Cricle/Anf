@@ -46,7 +46,7 @@ pub async fn create_app() -> anyhow::Result<Router> {
     // Serve frontend static files
     let frontend_dir = std::env::var("ANF_FRONTEND_DIR")
         .map(PathBuf::from)
-        .unwrap_or_else(|_| PathBuf::from("../apps/frontend/dist"));
+        .unwrap_or_else(|_| PathBuf::from("apps/frontend/dist"));
     let frontend_service = ServeDir::new(&frontend_dir);
 
     let app = Router::new()

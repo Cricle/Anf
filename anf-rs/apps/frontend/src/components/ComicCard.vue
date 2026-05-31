@@ -3,7 +3,6 @@ import type { ComicSnapshot } from '@/api/types'
 
 defineProps<{
   snapshot: ComicSnapshot
-  wide?: boolean
 }>()
 
 defineEmits<{
@@ -14,14 +13,13 @@ defineEmits<{
 <template>
   <va-card
     class="comic-card"
-    :class="{ 'comic-card--wide': wide }"
     @click="$emit('click')"
     hoverable
   >
     <va-image
       v-if="snapshot.image_uri"
       :src="snapshot.image_uri"
-      :ratio="wide ? 3 / 4 : 2 / 3"
+      :ratio="2 / 3"
       class="comic-card__image"
     >
       <template #error>
@@ -29,12 +27,17 @@ defineEmits<{
           <va-icon name="image" size="large" />
         </div>
       </template>
+      <template #loading>
+        <div class="comic-card__placeholder">
+          <va-spinner size="small" />
+        </div>
+      </template>
     </va-image>
     <div v-else class="comic-card__placeholder">
       <va-icon name="image" size="large" />
     </div>
     <va-card-content>
-      <div class="comic-card__title">{{ snapshot.name }}</div>
+      <div class="comic-card__title" :title="snapshot.name">{{ snapshot.name }}</div>
       <div v-if="snapshot.author" class="comic-card__author">{{ snapshot.author }}</div>
     </va-card-content>
   </va-card>
@@ -44,10 +47,11 @@ defineEmits<{
 .comic-card {
   cursor: pointer;
   min-width: 150px;
+  transition: transform 0.15s ease;
 }
 
-.comic-card--wide {
-  min-width: 200px;
+.comic-card:hover {
+  transform: translateY(-2px);
 }
 
 .comic-card__image {
@@ -74,5 +78,8 @@ defineEmits<{
   font-size: 0.8rem;
   color: var(--va-text-secondary);
   margin-top: 0.25rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

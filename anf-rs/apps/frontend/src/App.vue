@@ -1,7 +1,11 @@
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
+import { useRouter, useRoute } from 'vue-router'
+import { computed } from 'vue'
 
 const router = useRouter()
+const route = useRoute()
+
+const isHome = computed(() => route.path === '/')
 </script>
 
 <template>
@@ -16,10 +20,22 @@ const router = useRouter()
           </template>
           <template #right>
             <va-navbar-item>
-              <va-button preset="secondary" @click="router.push('/')">Home</va-button>
+              <va-button
+                :preset="isHome ? 'secondary' : 'secondary'"
+                icon="home"
+                @click="router.push('/')"
+              >
+                Home
+              </va-button>
             </va-navbar-item>
             <va-navbar-item>
-              <va-button preset="secondary" @click="router.push('/bookshelf')">Bookshelf</va-button>
+              <va-button
+                preset="secondary"
+                icon="bookmark"
+                @click="router.push('/bookshelf')"
+              >
+                Bookshelf
+              </va-button>
             </va-navbar-item>
           </template>
         </va-navbar>
@@ -46,6 +62,7 @@ const router = useRouter()
   font-size: 1.4rem;
   font-weight: 700;
   cursor: pointer;
+  user-select: none;
 }
 
 .app-main {
@@ -54,5 +71,6 @@ const router = useRouter()
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  box-sizing: border-box;
 }
 </style>

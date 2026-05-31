@@ -1,6 +1,9 @@
 import { invoke } from '@tauri-apps/api/core'
 import type { ComicAdapter, SearchComicResult, ComicEntityTruck, WithPageChapter, ComicSnapshot, BookshelfItem } from './types'
 
+// Cache for Tauri image blob URLs
+const imageUrlCache = new Map<string, string>()
+
 export const tauriAdapter: ComicAdapter = {
   getProviders(): Promise<string[]> {
     return invoke('get_providers')
@@ -18,8 +21,21 @@ export const tauriAdapter: ComicAdapter = {
     return invoke('get_chapter', { entityUrl, chapterUrl })
   },
 
-  getImage(entityUrl: string, url: string): Promise<number[]> {
-    return invoke('get_image', { entityUrl, url })
+  getImageUrl(entityUrl: string, url: string): string {
+    const key = `${entityUrl}|${url}`
+    // Return a placeholder; actual loading happens async
+    if (imageUrlCache.has(key)) {
+      return imageUrlCache.get(key)!
+    }
+    // Start async load, return empty for now
+    invoke<number[]>('get_image', { entityUrl, url }).then(data => {
+      const blob = new Blob([new Uint8Array(data)], { type: 'image/png' })
+      const blobUrl = URL.createObjectURL(blob)
+      imageUrlCache.set(key, blobUrl)
+      // Dispatch event so components can react
+      window.dispatchEvent(new CustomEvent('tauri-image-loaded', { detail: { key, url: blobUrl } }))
+    }).catch(console.error)
+    return ''
   },
 
   getProposal(engineName?: string, take = 20): Promise<ComicSnapshot[]> {

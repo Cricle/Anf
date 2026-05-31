@@ -39,11 +39,8 @@ export const httpAdapter: ComicAdapter = {
     return get<WithPageChapter>('/get-chapter', { url: chapterUrl, entity_url: entityUrl })
   },
 
-  async getImage(entityUrl: string, url: string): Promise<number[]> {
-    const qs = `entity_url=${encodeURIComponent(entityUrl)}&url=${encodeURIComponent(url)}`
-    const res = await fetch(`${BASE}/get-image?${qs}`)
-    const buffer = await res.arrayBuffer()
-    return Array.from(new Uint8Array(buffer))
+  getImageUrl(entityUrl: string, url: string): string {
+    return `${BASE}/get-image?entity_url=${encodeURIComponent(entityUrl)}&url=${encodeURIComponent(url)}`
   },
 
   getProposal(engineName?: string, take = 20): Promise<ComicSnapshot[]> {
@@ -51,7 +48,6 @@ export const httpAdapter: ComicAdapter = {
   },
 
   getBookshelf(): Promise<BookshelfItem[]> {
-    // Web mode has no bookshelf - return empty
     return Promise.resolve([])
   },
 
