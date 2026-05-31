@@ -1,1 +1,0 @@
-dotnet test "Platforms\Anf.Test.sln"

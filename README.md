@@ -1,108 +1,73 @@
-<div align='center' >
+<div align='center'>
 <h1>Anf</h1>
 </div>
 
-<div align='center' >
-	<h5>A cross platforms comic reader</h5>
-</div>
-
 <div align='center'>
-
-[![codecov](https://codecov.io/gh/Cricle/Anf/branch/dev/graph/badge.svg?token=XMIT1MFLDZ)](https://codecov.io/gh/Cricle/Anf)
-[![Codacy Badge](https://app.codacy.com/project/badge/Grade/095c3968b8b243e9b908ec01b7302ca3)](https://www.codacy.com/gh/Cricle/Anf/dashboard?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=Cricle/Anf&amp;utm_campaign=Badge_Grade)
-[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=Cricle_Anf&metric=alert_status)](https://sonarcloud.io/dashboard?id=Cricle_Anf)
-
+<h5>A cross-platform comic reader written in Rust</h5>
 </div>
-
-# Build Status
-
-|Build Info|Status|
-|:-:|:-|
-|a|[![.NET Build](https://github.com/Cricle/Anf/actions/workflows/dotnet.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.yml)|
-|Azure Pipelines|[![Build Status](https://hcricle.visualstudio.com/Kw.Comic/_apis/build/status/Cricle.Anf?branchName=dev)](https://hcricle.visualstudio.com/Kw.Comic/_build/latest?definitionId=7&branchName=dev)|
-
-# Test Status
-
-|Provider|Status|
-|:-:|:-|
-|Github|[![.NET Test & Upload](https://github.com/Cricle/Anf/actions/workflows/dotnet.test.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dotnet.test.yml)|
-
-# Publish Status
-
-[![Build and deploy ASP.Net Core app to Azure Web App - anfwebc](https://github.com/Cricle/Anf/actions/workflows/dev_anfwebc.yml/badge.svg)](https://github.com/Cricle/Anf/actions/workflows/dev_anfwebc.yml)
 
 # What is this
 
-This is a cross platforms comic reader, it support any platforms client, and a web service.
+A cross-platform comic reader with a Rust backend, supporting multiple comic sources through a plugin-based engine system.
 
-To easyly watch comic at desktop, phone or web, and it can run at standalone, or shared.
+# Architecture
 
-# Support platforms
-
-|OS|Version|
-|:-:|:-:|
-|Windows|win7/8.1/10 x86/x64|
-|Microsoft Store|win10(Using Application Bridge)|
-|Linux|To see .NET 5.0 support platforms|
-|MacOS|To see .NET 5.0 support platforms|
-|Android|To see MAUI support platforms|
-|iOS|To see MAUI support platforms|
-|Angular(PWA)|To see Angular support platforms|
-
-OR
-
-|OS|Version|
-|:-:|:-:|
-|Windows|win7/8.1/10 x86/x64|
-|Microsoft Store|win10(Using Uno platform)|
-|Linux|Using Uno platform|
-|MacOS|Using Uno platform|
-|Android|Using Uno platform|
-|iOS|Using Uno platform|
-|Angular(PWA)|To see Angular support platforms|
-
-
-# Render System
-
-|OS|Render Engine|
-|:-:|:-:|
-|Windows x86|DirectX(SharpDX)|
-|Windows x64|SkiaSharp(See Avalonia.Desktop)|
-|Linux/MacOS|SkiaSharp/X11(See Avalonia.Desktop)|
-|Android/iOS|MAUI|
-|Web/PWA|Angular|
-
-OR
-
-|OS|Render Engine|
-|:-:|:-:|
-|Windows x86|See Uno platform|
-|Windows x64|See Uno platform|
-|Linux/MacOS|See Uno platform|
-|Android/iOS|See Uno platform|
-|Web/PWA|Angular|
-
-# How to accelerated comic analysis
-
-- Using fast network
-- Using internal CDN shared parse
-- Using Web analysis
-
-# How to build it
-
-## Build desktop
-
-```powershell
-dotnet build Platforms\Anf.Desktop\Anf.Desktop.csproj -f net472
+```
+anf-rs/
+├── crates/
+│   ├── anf-core          # Core traits and models
+│   ├── anf-easy          # Easy-to-use abstractions
+│   ├── anf-know-engines  # Built-in comic engine implementations
+│   ├── anf-web           # Axum web server
+│   ├── anf-plugins       # Lua plugin system
+│   ├── anf-resource-fetcher
+│   └── anf-channel-model
+└── apps/
+    └── anf-tauri         # Tauri desktop app
 ```
 
-OR
+# Supported Engines
 
-Uno platform 
+| Engine | Search | Proposal | Source |
+|--------|--------|----------|--------|
+| Dm5 | ✓ | ✓ | dm5.com |
+| DMZJ | ✓ | ✓ | dmzj.com |
+| Bilibili | ✓ | ✓ | manga.bilibili.com |
+| Kuaikan | ✓ | ✓ | kuaikanmanhua.com |
+| Tencent | ✓ | ✓ | ac.qq.com |
+| Mangabz | ✓ | ✓ | mangabz.com |
+| Qimiao | ✓ | ✓ | qimiaomh.com |
+| Bikabika | ✓ | ✓ | bikabika.com |
+| Jisu | ✓ | ✓ | 1kkk.com |
+| Xmanhua | ✓ | ✓ | xmanhua.com |
+| Soman | ✓ | - | soman.com |
 
-# What's Next
+# Build
 
-- [x] Make all logic unification
-- [ ] Add test to conver code
-- [ ] Accelerate start-up speed
-- [ ] Support uno platform
+```bash
+# Build all crates
+cargo build
+
+# Build web server
+cargo build -p anf-web
+
+# Build desktop app
+cargo build -p anf-tauri
+
+# Run tests
+cargo test
+```
+
+# Run
+
+```bash
+# Start web server
+cargo run -p anf-web
+
+# Start desktop app
+cargo run -p anf-tauri
+```
+
+# License
+
+MIT

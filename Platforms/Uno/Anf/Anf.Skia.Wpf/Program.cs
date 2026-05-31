@@ -1,3 +1,0 @@
-﻿namespace Anf.Skia.Gtk
-{
-}

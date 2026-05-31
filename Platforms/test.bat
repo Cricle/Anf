@@ -1,1 +1,0 @@
-dotnet test Anf.Test.sln
