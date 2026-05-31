@@ -1,0 +1,26 @@
+[package]
+name = "anf-web"
+version.workspace = true
+edition.workspace = true
+
+[[bin]]
+name = "anf-web"
+path = "src/main.rs"
+
+[dependencies]
+anf-core = { workspace = true }
+anf-easy = { workspace = true }
+anf-channel-model = { workspace = true }
+anf-resource-fetcher = { workspace = true }
+anf-know-engines = { workspace = true }
+anf-plugins = { workspace = true }
+axum = { workspace = true }
+tokio = { workspace = true }
+tower = { workspace = true }
+tower-http = { workspace = true }
+tracing = { workspace = true }
+tracing-subscriber = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+moka = { workspace = true }
+anyhow = { workspace = true }

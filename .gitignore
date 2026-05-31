@@ -438,3 +438,7 @@ $RECYCLE.BIN/
 Platforms\.sonarqube\*.*
 
 /Platforms/Anf.Web/wwwroot
+
+# Rust / Cargo
+anf-rs/target/
+**/*.rs.bk

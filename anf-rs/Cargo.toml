@@ -1,0 +1,77 @@
+[workspace]
+resolver = "2"
+members = [
+    "crates/anf-core",
+    "crates/anf-easy",
+    "crates/anf-channel-model",
+    "crates/anf-resource-fetcher",
+    "crates/anf-know-engines",
+    "crates/anf-web",
+    "apps/anf-tauri",
+    "crates/anf-plugins",
+]
+
+[workspace.package]
+version = "0.1.0"
+edition = "2021"
+license = "MIT"
+
+[workspace.dependencies]
+# Async runtime
+tokio = { version = "1", features = ["full"] }
+tokio-util = { version = "0.7", features = ["rt"] }
+async-trait = "0.1"
+futures = "0.3"
+
+# HTTP
+reqwest = { version = "0.12", default-features = false, features = ["json", "stream", "rustls-tls"] }
+
+# Serialization
+serde = { version = "1", features = ["derive"] }
+serde_json = "1"
+
+# HTML parsing
+scraper = "0.22"
+
+# JS engine
+boa_engine = "0.20"
+boa_gc = "0.20"
+
+# Crypto
+md-5 = "0.10"
+
+# Cache
+lru = "0.14"
+moka = { version = "0.12", features = ["future"] }
+
+# Web framework
+axum = { version = "0.8", features = ["macros"] }
+tower = "0.5"
+tower-http = { version = "0.6", features = ["cors", "compression-full"] }
+
+# Logging
+tracing = "0.1"
+tracing-subscriber = { version = "0.3", features = ["env-filter"] }
+
+# Error handling
+thiserror = "2"
+anyhow = "1"
+
+# Utilities
+urlencoding = "2"
+url = "2"
+bytes = "1"
+chrono = "0.4"
+# SQLite
+rusqlite = { version = "0.32", features = ["bundled"] }
+dirs = "6"
+# Lua scripting
+mlua = { version = "0.10", features = ["luau", "serialize", "send"] }
+
+# Internal crates
+anf-core = { path = "crates/anf-core" }
+anf-easy = { path = "crates/anf-easy" }
+anf-channel-model = { path = "crates/anf-channel-model" }
+anf-resource-fetcher = { path = "crates/anf-resource-fetcher" }
+anf-know-engines = { path = "crates/anf-know-engines" }
+anf-plugins = { path = "crates/anf-plugins" }

@@ -1,0 +1,9 @@
+[package]
+name = "anf-channel-model"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anf-core = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }

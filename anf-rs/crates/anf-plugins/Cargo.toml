@@ -1,0 +1,17 @@
+[package]
+name = "anf-plugins"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anf-core = { workspace = true }
+async-trait = { workspace = true }
+bytes = { workspace = true }
+mlua = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
+scraper = { workspace = true }
+thiserror = { workspace = true }
+glob = "0.3"

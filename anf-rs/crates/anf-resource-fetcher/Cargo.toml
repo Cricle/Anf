@@ -1,0 +1,12 @@
+[package]
+name = "anf-resource-fetcher"
+version.workspace = true
+edition.workspace = true
+
+[dependencies]
+anf-core = { workspace = true }
+anf-channel-model = { workspace = true }
+async-trait = { workspace = true }
+tokio = { workspace = true }
+tracing = { workspace = true }
+chrono = { workspace = true }
