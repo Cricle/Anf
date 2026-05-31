@@ -35,7 +35,7 @@ scraper = "0.22"
 
 # JS engine
 boa_engine = "0.20"
-boa_gc = "0.20"
+boa_gc = "0.21"
 
 # Crypto
 md-5 = "0.10"
