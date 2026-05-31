@@ -109,7 +109,6 @@ name = "anf-know-engines"
 version = "0.1.0"
 dependencies = [
  "anf-core",
- "anf-easy",
  "anf-plugins",
  "async-trait",
  "base64 0.22.1",
@@ -165,7 +164,6 @@ version = "0.1.0"
 dependencies = [
  "anf-channel-model",
  "anf-core",
- "anf-easy",
  "anf-know-engines",
  "anf-plugins",
  "anf-resource-fetcher",
@@ -188,7 +186,6 @@ version = "0.1.0"
 dependencies = [
  "anf-channel-model",
  "anf-core",
- "anf-easy",
  "anf-know-engines",
  "anf-plugins",
  "anf-resource-fetcher",

@@ -33,12 +33,7 @@ impl AppState {
         let mut search_engine = SearchEngine::new();
         let mut proposal_engine = ProposalEngine::new();
 
-        anf_know_engines::register_all_engines(
-            &mut comic_engine,
-            &mut search_engine,
-            &mut proposal_engine,
-            network.clone(),
-        );
+        anf_know_engines::register_all_engines(&mut comic_engine);
 
         // Load Lua plugins
         let plugin_dir = std::env::var("ANF_PLUGINS_DIR")

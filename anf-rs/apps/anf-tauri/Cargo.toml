@@ -9,7 +9,6 @@ path = "src/main.rs"
 
 [dependencies]
 anf-core = { workspace = true }
-anf-easy = { workspace = true }
 anf-know-engines = { workspace = true }
 anf-channel-model = { workspace = true }
 anf-resource-fetcher = { workspace = true }

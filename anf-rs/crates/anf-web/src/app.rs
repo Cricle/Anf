@@ -16,15 +16,8 @@ pub async fn create_app() -> anyhow::Result<Router> {
     let mut search_engine = SearchEngine::new();
     let mut proposal_engine = ProposalEngine::new();
 
-    // Register built-in Rust engines
-    register_all_engines(
-        &mut comic_engine,
-        &mut search_engine,
-        &mut proposal_engine,
-        network.clone(),
-    );
+    register_all_engines(&mut comic_engine);
 
-    // Register Lua plugins from ./plugins/ directory
     let plugin_dir = std::env::var("ANF_PLUGINS_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("plugins"));
@@ -43,7 +36,6 @@ pub async fn create_app() -> anyhow::Result<Router> {
         .route("/get-image", get(reading::get_image))
         .route("/get-proposal", get(reading::get_proposal));
 
-    // Serve frontend static files
     let frontend_dir = std::env::var("ANF_FRONTEND_DIR")
         .map(PathBuf::from)
         .unwrap_or_else(|_| PathBuf::from("apps/frontend/dist"));

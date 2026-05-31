@@ -3,6 +3,7 @@ mod lua_network;
 mod lua_proposal;
 mod lua_provider;
 mod lua_search;
+mod lua_snapshot;
 mod plugin_loader;
 
 pub use lua_condition::LuaCondition;

@@ -5,7 +5,6 @@ edition.workspace = true
 
 [dependencies]
 anf-core = { workspace = true }
-anf-easy = { workspace = true }
 async-trait = { workspace = true }
 bytes = { workspace = true }
 boa_engine = { workspace = true }

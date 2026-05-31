@@ -3,11 +3,9 @@ pub mod error;
 pub mod json_visitor;
 pub mod models;
 pub mod network;
-pub mod notifyer;
 pub mod proposal;
 pub mod provider;
 pub mod search;
-pub mod task_queue;
 pub mod url_helper;
 
 pub use engine::ComicEngine;

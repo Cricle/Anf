@@ -1,20 +1,29 @@
 use anf_core::{ComicEngine, NetworkAdapter, ProposalEngine, ReqwestAdapter, SearchEngine};
 use anf_know_engines::register_all_engines;
+use anf_plugins::PluginLoader;
+use std::path::PathBuf;
 use std::sync::Arc;
 
-#[tokio::test]
-async fn test_all_proposals() {
+fn setup() -> (ComicEngine, SearchEngine, ProposalEngine) {
     let network: Arc<dyn NetworkAdapter> = Arc::new(ReqwestAdapter::with_default());
     let mut comic_engine = ComicEngine::new(network.clone());
     let mut search_engine = SearchEngine::new();
     let mut proposal_engine = ProposalEngine::new();
 
-    register_all_engines(
-        &mut comic_engine,
-        &mut search_engine,
-        &mut proposal_engine,
-        network,
-    );
+    register_all_engines(&mut comic_engine);
+
+    let plugin_dir = std::env::var("ANF_PLUGINS_DIR")
+        .map(PathBuf::from)
+        .unwrap_or_else(|_| PathBuf::from("plugins"));
+    let loader = PluginLoader::new(&plugin_dir);
+    loader.load_all(&mut comic_engine, &mut search_engine, &mut proposal_engine, network);
+
+    (comic_engine, search_engine, proposal_engine)
+}
+
+#[tokio::test]
+async fn test_all_proposals() {
+    let (_, _, proposal_engine) = setup();
 
     let descs = proposal_engine.descriptions().to_vec();
     let mut pass = 0;
@@ -42,17 +51,7 @@ async fn test_all_proposals() {
 
 #[tokio::test]
 async fn test_all_searches() {
-    let network: Arc<dyn NetworkAdapter> = Arc::new(ReqwestAdapter::with_default());
-    let mut comic_engine = ComicEngine::new(network.clone());
-    let mut search_engine = SearchEngine::new();
-    let mut proposal_engine = ProposalEngine::new();
-
-    register_all_engines(
-        &mut comic_engine,
-        &mut search_engine,
-        &mut proposal_engine,
-        network,
-    );
+    let (_, search_engine, _) = setup();
 
     let keyword = "naruto";
     let providers = search_engine.providers().to_vec();
