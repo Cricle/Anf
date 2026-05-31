@@ -8,7 +8,7 @@
 
 # What is this
 
-A cross-platform comic reader with a Rust backend, supporting multiple comic sources through a plugin-based engine system.
+A cross-platform comic reader with a Rust backend, supporting multiple comic sources through a Lua plugin system.
 
 # Architecture
 
@@ -17,30 +17,34 @@ anf-rs/
 ├── crates/
 │   ├── anf-core          # Core traits and models
 │   ├── anf-easy          # Easy-to-use abstractions
-│   ├── anf-know-engines  # Built-in comic engine implementations
+│   ├── anf-know-engines  # Built-in comic source conditions (URL matching)
 │   ├── anf-web           # Axum web server
-│   ├── anf-plugins       # Lua plugin system
+│   ├── anf-plugins       # Lua plugin system (mlua)
 │   ├── anf-resource-fetcher
 │   └── anf-channel-model
-└── apps/
-    └── anf-tauri         # Tauri desktop app
+├── apps/
+│   ├── anf-tauri         # Tauri desktop app
+│   └── frontend          # Vue 3 + Vuestic UI (shared)
+└── plugins/              # Lua plugin scripts
 ```
 
 # Supported Engines
 
-| Engine | Search | Proposal | Source |
+All search and proposal engines are implemented as Lua plugins in the `plugins/` directory.
+
+| Plugin | Search | Proposal | Source |
 |--------|--------|----------|--------|
-| Dm5 | ✓ | ✓ | dm5.com |
-| DMZJ | ✓ | ✓ | dmzj.com |
-| Bilibili | ✓ | ✓ | manga.bilibili.com |
-| Kuaikan | ✓ | ✓ | kuaikanmanhua.com |
-| Tencent | ✓ | ✓ | ac.qq.com |
-| Mangabz | ✓ | ✓ | mangabz.com |
-| Qimiao | ✓ | ✓ | qimiaomh.com |
-| Bikabika | ✓ | ✓ | bikabika.com |
-| Jisu | ✓ | ✓ | 1kkk.com |
-| Xmanhua | ✓ | ✓ | xmanhua.com |
-| Soman | ✓ | - | soman.com |
+| dm5.lua | ✓ | ✓ | dm5.com |
+| jisu.lua | ✓ | ✓ | 1kkk.com |
+| mangabz.lua | ✓ | ✓ | mangabz.com |
+| xmanhua.lua | ✓ | ✓ | xmanhua.com |
+| kuaikan.lua | ✓ | ✓ | kuaikanmanhua.com |
+| tencent.lua | ✓ | ✓ | ac.qq.com |
+| bilibili.lua | - | ✓ | manga.bilibili.com |
+
+Bilibili search API is currently broken server-side (returns error 99).
+
+See `plugins/example.lua` for the Lua plugin API reference.
 
 # Build
 
@@ -56,12 +60,15 @@ cargo build -p anf-tauri
 
 # Run tests
 cargo test
+
+# Test engines
+cargo run --example test_engines
 ```
 
 # Run
 
 ```bash
-# Start web server
+# Start web server (port 5000)
 cargo run -p anf-web
 
 # Start desktop app

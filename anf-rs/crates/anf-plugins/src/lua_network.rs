@@ -22,10 +22,10 @@ pub fn register_network(lua: &Lua, network: Arc<dyn NetworkAdapter>) -> LuaResul
                 .map(|s| s.to_string())
                 .ok_or_else(|| LuaError::runtime("http.get_string: url required"))?;
             let settings = build_settings(&url, &args);
-            let rt = tokio::runtime::Handle::current();
-            let s = rt
-                .block_on(async { net.get_string(&settings).await })
-                .map_err(|e| LuaError::runtime(format!("network: {e}")))?;
+            let s = tokio::task::block_in_place(|| {
+                tokio::runtime::Handle::current().block_on(async { net.get_string(&settings).await })
+            })
+            .map_err(|e| LuaError::runtime(format!("network: {e}")))?;
             Ok(s)
         })?;
         http.set("get_string", f)?;
@@ -41,10 +41,10 @@ pub fn register_network(lua: &Lua, network: Arc<dyn NetworkAdapter>) -> LuaResul
                 .map(|s| s.to_string())
                 .ok_or_else(|| LuaError::runtime("http.get: url required"))?;
             let settings = build_settings(&url, &args);
-            let rt = tokio::runtime::Handle::current();
-            let data = rt
-                .block_on(async { net.get_stream(&settings).await })
-                .map_err(|e| LuaError::runtime(format!("network: {e}")))?;
+            let data = tokio::task::block_in_place(|| {
+                tokio::runtime::Handle::current().block_on(async { net.get_stream(&settings).await })
+            })
+            .map_err(|e| LuaError::runtime(format!("network: {e}")))?;
             Ok(_lua.create_string(&data)?)
         })?;
         http.set("get", f)?;
@@ -67,10 +67,10 @@ pub fn register_network(lua: &Lua, network: Arc<dyn NetworkAdapter>) -> LuaResul
             let mut settings = build_settings(&url, &args);
             settings.method = Some("POST".into());
             settings.data = Some(Bytes::from(body));
-            let rt = tokio::runtime::Handle::current();
-            let s = rt
-                .block_on(async { net.get_string(&settings).await })
-                .map_err(|e| LuaError::runtime(format!("network: {e}")))?;
+            let s = tokio::task::block_in_place(|| {
+                tokio::runtime::Handle::current().block_on(async { net.get_string(&settings).await })
+            })
+            .map_err(|e| LuaError::runtime(format!("network: {e}")))?;
             Ok(s)
         })?;
         http.set("post", f)?;

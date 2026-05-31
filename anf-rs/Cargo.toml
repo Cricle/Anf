@@ -47,7 +47,7 @@ moka = { version = "0.12", features = ["future"] }
 # Web framework
 axum = { version = "0.8", features = ["macros"] }
 tower = "0.5"
-tower-http = { version = "0.6", features = ["cors", "compression-full"] }
+tower-http = { version = "0.6", features = ["cors", "compression-full", "fs"] }
 
 # Logging
 tracing = "0.1"

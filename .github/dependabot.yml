@@ -1,8 +1,14 @@
 version: 2
 updates:
-- package-ecosystem: nuget
-  directory: "/Platforms"
+- package-ecosystem: cargo
+  directory: "/anf-rs"
   schedule:
-    interval: daily
+    interval: weekly
+  open-pull-requests-limit: 10
+  target-branch: dev
+- package-ecosystem: npm
+  directory: "/anf-rs/apps/frontend"
+  schedule:
+    interval: weekly
   open-pull-requests-limit: 10
   target-branch: dev

@@ -37,7 +37,7 @@ impl AppState {
             &mut comic_engine,
             &mut search_engine,
             &mut proposal_engine,
-            network,
+            network.clone(),
         );
 
         // Load Lua plugins
@@ -45,7 +45,7 @@ impl AppState {
             .map(PathBuf::from)
             .unwrap_or_else(|_| PathBuf::from("plugins"));
         let loader = PluginLoader::new(&plugin_dir);
-        let lua_count = loader.load_all(&mut comic_engine);
+        let lua_count = loader.load_all(&mut comic_engine, &mut search_engine, &mut proposal_engine, network.clone());
         tracing::info!(count = lua_count, "loaded lua plugins");
 
         let comic_engine = Arc::new(comic_engine);

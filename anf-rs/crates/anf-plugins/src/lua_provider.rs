@@ -116,6 +116,10 @@ impl ComicSourceProvider for LuaProvider {
 }
 
 /// Register `html` global with HTML parsing helpers backed by scraper.
+pub fn register_html_helper_static(lua: &Lua) -> LuaResult<()> {
+    register_html_helper(lua)
+}
+
 fn register_html_helper(lua: &Lua) -> LuaResult<()> {
     let html = lua.create_table()?;
 
