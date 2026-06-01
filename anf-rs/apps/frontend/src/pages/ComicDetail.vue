@@ -12,6 +12,7 @@ const bookshelf = useBookshelfStore()
 const entity = ref<ComicEntityTruck | null>(null)
 const loading = ref(false)
 const error = ref('')
+const downloading = ref(false)
 
 const comicUrl = computed(() => (route.query.url as string) || '')
 
@@ -47,6 +48,19 @@ async function addToBookshelf() {
     descript: entity.value.descript,
     chapters_count: entity.value.chapters.length,
   })
+}
+
+async function startDownload() {
+  if (!entity.value) return
+  downloading.value = true
+  try {
+    const adapter = await getAdapter()
+    await adapter.startDownload(comicUrl.value, entity.value.name)
+  } catch (e: any) {
+    console.error('download failed:', e)
+  } finally {
+    downloading.value = false
+  }
 }
 
 function goBack() {
@@ -88,6 +102,15 @@ function goBack() {
               </va-button>
               <va-button @click="addToBookshelf" preset="secondary" icon="bookmark" class="detail__btn">
                 Add to Bookshelf
+              </va-button>
+              <va-button
+                @click="startDownload"
+                preset="secondary"
+                icon="download"
+                class="detail__btn"
+                :loading="downloading"
+              >
+                Download
               </va-button>
             </div>
           </div>
@@ -218,5 +241,24 @@ function goBack() {
   margin-right: 0.75rem;
   color: var(--va-text-secondary);
   font-size: 0.85rem;
+}
+
+@media (max-width: 640px) {
+  .detail__header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .detail__cover {
+    width: 140px;
+  }
+
+  .detail__cover-placeholder {
+    height: 187px;
+  }
+
+  .detail__actions {
+    flex-direction: column;
+  }
 }
 </style>

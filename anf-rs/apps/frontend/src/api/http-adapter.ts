@@ -1,6 +1,7 @@
-import type { ComicAdapter, SearchComicResult, ComicEntityTruck, WithPageChapter, ComicSnapshot, BookshelfItem } from './types'
+import type { ComicAdapter, SearchComicResult, ComicEntityTruck, WithPageChapter, ComicSnapshot, BookshelfItem, DownloadInfo } from './types'
 
 const BASE = '/api/v1/reading'
+const DL_BASE = '/api/v1/download'
 
 interface EntityResult<T> {
   code: number
@@ -61,5 +62,36 @@ export const httpAdapter: ComicAdapter = {
 
   updateReadingProgress(): Promise<void> {
     return Promise.resolve()
+  },
+
+  async listDownloads(): Promise<DownloadInfo[]> {
+    const res = await fetch(`${DL_BASE}/list`)
+    const json = await res.json()
+    if (json.code !== 0) throw new Error(json.msg || 'request failed')
+    return json.data ?? []
+  },
+
+  async startDownload(url: string, name: string): Promise<string> {
+    const res = await fetch(`${DL_BASE}/start?url=${encodeURIComponent(url)}&name=${encodeURIComponent(name)}`)
+    const json = await res.json()
+    if (json.code !== 0) throw new Error(json.msg || 'request failed')
+    return json.data
+  },
+
+  async getDownloadStatus(url: string): Promise<DownloadInfo | null> {
+    const res = await fetch(`${DL_BASE}/status?url=${encodeURIComponent(url)}`)
+    const json = await res.json()
+    if (json.code !== 0) throw new Error(json.msg || 'request failed')
+    return json.data ?? null
+  },
+
+  async cancelDownload(url: string): Promise<void> {
+    const res = await fetch(`${DL_BASE}/cancel?url=${encodeURIComponent(url)}`)
+    const json = await res.json()
+    if (json.code !== 0) throw new Error(json.msg || 'request failed')
+  },
+
+  exportPdfUrl(name: string): string {
+    return `${DL_BASE}/export-pdf?name=${encodeURIComponent(name)}`
   },
 }

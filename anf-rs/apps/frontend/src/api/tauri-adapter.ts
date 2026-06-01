@@ -1,5 +1,5 @@
 import { invoke } from '@tauri-apps/api/core'
-import type { ComicAdapter, SearchComicResult, ComicEntityTruck, WithPageChapter, ComicSnapshot, BookshelfItem } from './types'
+import type { ComicAdapter, SearchComicResult, ComicEntityTruck, WithPageChapter, ComicSnapshot, BookshelfItem, DownloadInfo } from './types'
 
 // Cache for Tauri image blob URLs
 const imageUrlCache = new Map<string, string>()
@@ -62,5 +62,25 @@ export const tauriAdapter: ComicAdapter = {
 
   updateReadingProgress(url: string, chapter: number, page: number): Promise<void> {
     return invoke('update_reading_progress', { url, chapter, page })
+  },
+
+  listDownloads(): Promise<DownloadInfo[]> {
+    return Promise.resolve([])
+  },
+
+  startDownload(): Promise<string> {
+    return Promise.resolve('ok')
+  },
+
+  getDownloadStatus(): Promise<DownloadInfo | null> {
+    return Promise.resolve(null)
+  },
+
+  cancelDownload(): Promise<void> {
+    return Promise.resolve()
+  },
+
+  exportPdfUrl(): string {
+    return ''
   },
 }

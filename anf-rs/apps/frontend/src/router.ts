@@ -7,6 +7,7 @@ const router = createRouter({
     { path: '/comic', component: () => import('./pages/ComicDetail.vue') },
     { path: '/reader', component: () => import('./pages/Reader.vue') },
     { path: '/bookshelf', component: () => import('./pages/Bookshelf.vue') },
+    { path: '/downloads', component: () => import('./pages/Downloads.vue') },
   ],
 })
 

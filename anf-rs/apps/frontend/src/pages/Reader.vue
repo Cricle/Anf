@@ -22,12 +22,36 @@ const imageUrls = computed(() =>
   pages.value.map(p => adapter.getImageUrl(entityUrl.value, p.target_url))
 )
 
+// Preload next images in single mode
+const preloaded = new Set<string>()
+
+function preloadImage(url: string) {
+  if (!url || preloaded.has(url)) return
+  preloaded.add(url)
+  const img = new Image()
+  img.src = url
+}
+
+watch(currentIndex, (idx) => {
+  // Preload next 2 images
+  for (let i = 1; i <= 2; i++) {
+    const nextIdx = idx + i
+    if (nextIdx < imageUrls.value.length) {
+      preloadImage(imageUrls.value[nextIdx])
+    }
+  }
+})
+
 onMounted(async () => {
   if (!chapterUrl.value || !entityUrl.value) return
   loading.value = true
   try {
     const chapter = await adapter.getChapter(entityUrl.value, chapterUrl.value)
     pages.value = chapter.pages
+    // Preload first 2 images
+    for (let i = 0; i < Math.min(2, imageUrls.value.length); i++) {
+      preloadImage(imageUrls.value[i])
+    }
   } catch (e) {
     console.error(e)
   } finally {
@@ -195,5 +219,13 @@ onUnmounted(() => {
   justify-content: center;
   height: 400px;
   color: var(--va-text-secondary);
+}
+
+@media (max-width: 640px) {
+  .reader__toolbar {
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    padding: 0.5rem;
+  }
 }
 </style>

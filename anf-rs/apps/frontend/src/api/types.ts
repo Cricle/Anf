@@ -51,6 +51,18 @@ export interface BookshelfItem {
   chapters_count: number
 }
 
+export type DownloadStatus = 'preparing' | 'downloading' | 'completed' | 'failed' | 'cancelled'
+
+export interface DownloadInfo {
+  url: string
+  name: string
+  status: DownloadStatus
+  total_pages: number
+  downloaded_pages: number
+  current_chapter: string
+  error: string | null
+}
+
 export interface ComicAdapter {
   getProviders(): Promise<string[]>
   search(keyword: string, skip?: number, take?: number): Promise<SearchComicResult>
@@ -62,4 +74,9 @@ export interface ComicAdapter {
   addToBookshelf(item: Omit<BookshelfItem, 'current_chapter' | 'current_page'>): Promise<void>
   removeFromBookshelf(url: string): Promise<void>
   updateReadingProgress(url: string, chapter: number, page: number): Promise<void>
+  listDownloads(): Promise<DownloadInfo[]>
+  startDownload(url: string, name: string): Promise<string>
+  getDownloadStatus(url: string): Promise<DownloadInfo | null>
+  cancelDownload(url: string): Promise<void>
+  exportPdfUrl(name: string): string
 }

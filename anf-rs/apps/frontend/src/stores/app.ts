@@ -1,11 +1,17 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
+import { ref, watch } from 'vue'
 import type { ComicSnapshot } from '@/api/types'
 
 export const useAppStore = defineStore('app', () => {
   const keyword = ref('')
   const searchResults = ref<ComicSnapshot[]>([])
   const searching = ref(false)
+  const darkMode = ref(localStorage.getItem('anf-dark') === 'true')
+
+  watch(darkMode, (v) => {
+    localStorage.setItem('anf-dark', String(v))
+    document.documentElement.classList.toggle('dark', v)
+  }, { immediate: true })
 
   function setKeyword(v: string) {
     keyword.value = v
@@ -19,5 +25,9 @@ export const useAppStore = defineStore('app', () => {
     searching.value = v
   }
 
-  return { keyword, searchResults, searching, setKeyword, setSearchResults, setSearching }
+  function toggleDark() {
+    darkMode.value = !darkMode.value
+  }
+
+  return { keyword, searchResults, searching, darkMode, setKeyword, setSearchResults, setSearching, toggleDark }
 })

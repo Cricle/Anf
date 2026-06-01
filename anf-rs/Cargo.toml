@@ -62,6 +62,11 @@ urlencoding = "2"
 url = "2"
 bytes = "1"
 chrono = "0.4"
+# PDF
+printpdf = { version = "0.7", features = ["embedded_images"] }
+image = "0.24"
+# Test
+tempfile = "3"
 # SQLite
 rusqlite = { version = "0.32", features = ["bundled"] }
 dirs = "6"

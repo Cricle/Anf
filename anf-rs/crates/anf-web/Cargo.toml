@@ -23,3 +23,10 @@ serde = { workspace = true }
 serde_json = { workspace = true }
 moka = { workspace = true }
 anyhow = { workspace = true }
+printpdf = { workspace = true }
+image = { workspace = true }
+
+[dev-dependencies]
+tempfile = "3"
+tower = { workspace = true, features = ["util"] }
+image = { workspace = true }
