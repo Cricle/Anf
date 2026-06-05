@@ -68,7 +68,7 @@ image = "0.24"
 # Test
 tempfile = "3"
 # SQLite
-rusqlite = { version = "0.32", features = ["bundled"] }
+rusqlite = { version = "0.40", features = ["bundled"] }
 dirs = "6"
 # Lua scripting
 mlua = { version = "0.10", features = ["luau", "serialize", "send"] }
