@@ -71,7 +71,7 @@ tempfile = "3"
 rusqlite = { version = "0.32", features = ["bundled"] }
 dirs = "6"
 # Lua scripting
-mlua = { version = "0.10", features = ["luau", "serialize", "send"] }
+mlua = { version = "0.11", features = ["luau", "serialize", "send"] }
 
 # Internal crates
 anf-core = { path = "crates/anf-core" }
