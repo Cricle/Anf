@@ -41,7 +41,7 @@ boa_gc = "0.20"
 md-5 = "0.10"
 
 # Cache
-lru = "0.14"
+lru = "0.18"
 moka = { version = "0.12", features = ["future"] }
 
 # Web framework
